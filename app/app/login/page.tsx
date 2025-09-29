@@ -1,143 +1,352 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from "react";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter, useSearchParams } from 'next/navigation';
-import Link from 'next/link';
-import { z } from 'zod';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
-import { Alert, AlertDescription } from '@/components/ui/alert';
-import { Icons } from '@/components/ui/icons';
-
-const loginSchema = z.object({
-  email: z.string().email('Invalid email address'),
-  password: z.string().min(6, 'Password must be at least 6 characters'),
-});
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { useToast } from "@/hooks/use-toast";
+import { ComingSoonBadge } from "@/components/ui/coming-soon-badge";
+import { loginSchema, signupSchema, type LoginFormData, type SignupFormData } from "@/lib/auth/schemas";
 
 export default function LoginPage() {
+  const [activeTab, setActiveTab] = useState("login");
+  const { toast } = useToast();
   const router = useRouter();
   const searchParams = useSearchParams();
   const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
 
   const redirectTo = searchParams.get('redirect') || '/dashboard';
 
-  async function onSubmit(event: React.FormEvent<HTMLFormElement>) {
-    event.preventDefault();
-    setIsLoading(true);
-    setError(null);
+  const loginForm = useForm<LoginFormData>({
+    resolver: zodResolver(loginSchema),
+    defaultValues: {
+      username: "",
+      password: "",
+    },
+  });
 
-    const formData = new FormData(event.currentTarget);
-    const email = formData.get('email') as string;
-    const password = formData.get('password') as string;
+  const signupForm = useForm<SignupFormData>({
+    resolver: zodResolver(signupSchema),
+    defaultValues: {
+      username: "",
+      email: "",
+      password: "",
+      confirmPassword: "",
+      firstName: "",
+      lastName: "",
+    },
+  });
 
+  const onLoginSubmit = async (data: LoginFormData) => {
     try {
-      const validation = loginSchema.parse({ email, password });
-
+      setIsLoading(true);
       const response = await fetch('/api/auth/login', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(validation),
+        body: JSON.stringify({ email: data.username, password: data.password }),
       });
 
-      const data = await response.json();
+      const result = await response.json();
 
       if (!response.ok) {
-        throw new Error(data.error || 'Failed to login');
+        throw new Error(result.error || 'Failed to login');
       }
 
-      // Refresh the page to trigger middleware redirect
+      toast({
+        title: "Welcome back!",
+        description: "You have successfully logged in.",
+      });
       router.push(redirectTo);
       router.refresh();
-    } catch (error) {
-      if (error instanceof z.ZodError) {
-        setError(error.errors[0].message);
-      } else if (error instanceof Error) {
-        setError(error.message);
-      } else {
-        setError('An unexpected error occurred');
-      }
+    } catch (error: any) {
+      toast({
+        title: "Login failed",
+        description: error.message || "Invalid credentials",
+        variant: "destructive",
+      });
     } finally {
       setIsLoading(false);
     }
-  }
+  };
+
+  const onSignupSubmit = async (data: SignupFormData) => {
+    try {
+      setIsLoading(true);
+      const { confirmPassword, ...signupData } = data;
+      const response = await fetch('/api/auth/signup', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(signupData),
+      });
+
+      const result = await response.json();
+
+      if (!response.ok) {
+        throw new Error(result.error || 'Failed to create account');
+      }
+
+      toast({
+        title: "Account created!",
+        description: "Please check your email and click the verification link to activate your account.",
+      });
+      setActiveTab("login");
+      signupForm.reset();
+    } catch (error: any) {
+      toast({
+        title: "Signup failed",
+        description: error.message || "Failed to create account",
+        variant: "destructive",
+      });
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   return (
-    <Card className="border-primary/20">
-      <CardHeader className="space-y-1">
-        <CardTitle className="text-2xl">Sign in</CardTitle>
-        <CardDescription>
-          Enter your email and password to access your account
-        </CardDescription>
-      </CardHeader>
-      <form onSubmit={onSubmit}>
-        <CardContent className="space-y-4">
-          {error && (
-            <Alert variant="destructive">
-              <AlertDescription>{error}</AlertDescription>
-            </Alert>
-          )}
-          <div className="space-y-2">
-            <Label htmlFor="email">Email</Label>
-            <Input
-              id="email"
-              name="email"
-              type="email"
-              placeholder="name@example.com"
-              autoCapitalize="none"
-              autoComplete="email"
-              autoCorrect="off"
-              disabled={isLoading}
-              required
-            />
-          </div>
-          <div className="space-y-2">
-            <Label htmlFor="password">Password</Label>
-            <Input
-              id="password"
-              name="password"
-              type="password"
-              placeholder="Enter your password"
-              autoComplete="current-password"
-              disabled={isLoading}
-              required
-            />
-          </div>
-          <div className="flex items-center justify-between">
-            <Link
-              href="/auth/forgot-password"
-              className="text-sm text-muted-foreground hover:text-primary"
-            >
-              Forgot password?
-            </Link>
-          </div>
-        </CardContent>
-        <CardFooter className="flex flex-col space-y-4">
-          <Button
-            type="submit"
-            className="w-full"
-            disabled={isLoading}
-          >
-            {isLoading && (
-              <Icons.spinner className="mr-2 h-4 w-4 animate-spin" />
-            )}
-            Sign In
-          </Button>
-          <div className="text-center text-sm text-muted-foreground">
-            Don&apos;t have an account?{' '}
-            <Link
-              href="/auth/signup"
-              className="text-primary hover:underline"
-            >
-              Sign up
-            </Link>
-          </div>
-        </CardFooter>
-      </form>
-    </Card>
+    <div className="min-h-screen hero-gradient flex items-center justify-center pt-16">
+      <div className="w-full max-w-md p-4">
+        <Card className="shadow-2xl border border-gray-100 rounded-2xl overflow-hidden" style={{ backgroundColor: '#ffffff' }}>
+          <CardHeader className="text-center pb-4 pt-8">
+            <CardTitle className="text-3xl font-bold mb-1">
+              {activeTab === "login" ? (
+                <>
+                  <span className="hero-gradient-text">Welcome to </span>
+                  <span className="bg-gradient-to-br from-[#ff7033] via-orange-500 to-purple-600 bg-clip-text text-transparent inline-block">Strive</span>
+                </>
+              ) : (
+                <>
+                  <span className="hero-gradient-text">Ready to </span>
+                  <span className="bg-gradient-to-br from-[#ff7033] via-orange-500 to-purple-600 bg-clip-text text-transparent inline-block">Strive</span>
+                  <span className="hero-gradient-text">?</span>
+                </>
+              )}
+            </CardTitle>
+            <div className="flex justify-center mt-2 mb-2">
+              <ComingSoonBadge size="md" variant="hero" />
+            </div>
+            <CardDescription className="text-gray-600">
+              {activeTab === "login"
+                ? "Sign in to your account to access your dashboard"
+                : "Join us and watch your business thrive"
+              }
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="px-8 pb-8">
+            <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+              <TabsList className="grid w-full grid-cols-2">
+                <TabsTrigger
+                  value="login"
+                  data-testid="tab-login"
+                  className="data-[state=active]:bg-[#ff7033] data-[state=active]:text-white"
+                >
+                  Login
+                </TabsTrigger>
+                <TabsTrigger
+                  value="signup"
+                  data-testid="tab-signup"
+                  className="data-[state=active]:bg-[#ff7033] data-[state=active]:text-white"
+                >
+                  Sign Up
+                </TabsTrigger>
+              </TabsList>
+
+              <TabsContent value="login" className="space-y-4 min-h-[280px]">
+                <Form {...loginForm}>
+                  <form onSubmit={loginForm.handleSubmit(onLoginSubmit)} className="space-y-4">
+                    <FormField
+                      control={loginForm.control}
+                      name="username"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel style={{ color: '#1e3a8a' }}>Username or Email</FormLabel>
+                          <FormControl>
+                            <Input
+                              placeholder="Enter your username or email"
+                              data-testid="input-login-username"
+                              style={{ backgroundColor: '#ffffff', color: '#020a1c', borderColor: '#ff7033' }}
+                              {...field}
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                    <FormField
+                      control={loginForm.control}
+                      name="password"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel style={{ color: '#1e3a8a' }}>Password</FormLabel>
+                          <FormControl>
+                            <Input
+                              type="password"
+                              placeholder="Enter your password"
+                              data-testid="input-login-password"
+                              style={{ backgroundColor: '#ffffff', color: '#020a1c', borderColor: '#ff7033' }}
+                              {...field}
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                    <Button
+                      type="submit"
+                      className="w-full relative overflow-hidden group transition-all duration-300 hover:scale-105 shadow-lg hover:shadow-xl before:absolute before:inset-0 before:bg-gradient-to-r before:from-transparent before:via-white/15 before:to-transparent before:-translate-x-full hover:before:translate-x-full before:transition-transform before:duration-500"
+                      disabled={isLoading}
+                      data-testid="button-submit-login"
+                    >
+                      {isLoading ? "Signing in..." : "Sign In"}
+                    </Button>
+                    <div className="text-center">
+                      <a href="#" className="text-sm text-primary hover:underline">
+                        Forgot Password?
+                      </a>
+                    </div>
+                  </form>
+                </Form>
+              </TabsContent>
+
+              <TabsContent value="signup" className="space-y-4 min-h-[450px]">
+                <Form {...signupForm}>
+                  <form onSubmit={signupForm.handleSubmit(onSignupSubmit)} className="space-y-4">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <FormField
+                        control={signupForm.control}
+                        name="firstName"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel style={{ color: '#1e3a8a' }}>First Name</FormLabel>
+                            <FormControl>
+                              <Input
+                                placeholder="John"
+                                data-testid="input-signup-first-name"
+                                style={{ backgroundColor: '#ffffff', color: '#020a1c', borderColor: '#ff7033' }}
+                                {...field}
+                              />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                      <FormField
+                        control={signupForm.control}
+                        name="lastName"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel style={{ color: '#1e3a8a' }}>Last Name</FormLabel>
+                            <FormControl>
+                              <Input
+                                placeholder="Doe"
+                                data-testid="input-signup-last-name"
+                                style={{ backgroundColor: '#ffffff', color: '#020a1c', borderColor: '#ff7033' }}
+                                {...field}
+                              />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                    </div>
+                    <FormField
+                      control={signupForm.control}
+                      name="username"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel style={{ color: '#1e3a8a' }}>Username</FormLabel>
+                          <FormControl>
+                            <Input
+                              placeholder="Choose a username"
+                              data-testid="input-signup-username"
+                              style={{ backgroundColor: '#ffffff', color: '#020a1c', borderColor: '#ff7033' }}
+                              {...field}
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                    <FormField
+                      control={signupForm.control}
+                      name="email"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel style={{ color: '#1e3a8a' }}>Email</FormLabel>
+                          <FormControl>
+                            <Input
+                              type="email"
+                              placeholder="Enter your email address"
+                              data-testid="input-signup-email"
+                              style={{ backgroundColor: '#ffffff', color: '#020a1c', borderColor: '#ff7033' }}
+                              {...field}
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                    <FormField
+                      control={signupForm.control}
+                      name="password"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel style={{ color: '#1e3a8a' }}>Password</FormLabel>
+                          <FormControl>
+                            <Input
+                              type="password"
+                              placeholder="Create a password"
+                              data-testid="input-signup-password"
+                              style={{ backgroundColor: '#ffffff', color: '#020a1c', borderColor: '#ff7033' }}
+                              {...field}
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                    <FormField
+                      control={signupForm.control}
+                      name="confirmPassword"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel style={{ color: '#1e3a8a' }}>Confirm Password</FormLabel>
+                          <FormControl>
+                            <Input
+                              type="password"
+                              placeholder="Confirm your password"
+                              data-testid="input-signup-confirm-password"
+                              style={{ backgroundColor: '#ffffff', color: '#020a1c', borderColor: '#ff7033' }}
+                              {...field}
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                    <Button
+                      type="submit"
+                      className="w-full relative overflow-hidden group transition-all duration-300 hover:scale-105 shadow-lg hover:shadow-xl before:absolute before:inset-0 before:bg-gradient-to-r before:from-transparent before:via-white/15 before:to-transparent before:-translate-x-full hover:before:translate-x-full before:transition-transform before:duration-500"
+                      disabled={isLoading}
+                      data-testid="button-submit-signup"
+                    >
+                      {isLoading ? "Creating account..." : "Create Account"}
+                    </Button>
+                  </form>
+                </Form>
+              </TabsContent>
+            </Tabs>
+          </CardContent>
+        </Card>
+      </div>
+    </div>
   );
 }

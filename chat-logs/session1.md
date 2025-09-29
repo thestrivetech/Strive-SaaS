@@ -12,7 +12,7 @@ Should we start from scratch or incrementally migrate the existing React/Vite ma
 
 ### Decision Made
 **Hybrid Approach:** Keep marketing site separate, build new SaaS platform fresh
-- Marketing site (strivetech.ai) - Legacy React app in `old/` (not actively developed)
+- Marketing site (strivetech.ai) - Legacy React app in `app/web/` (not actively developed)
 - SaaS platform (app.strivetech.ai) - Fresh Next.js 15 build in `app/`
 
 ### Rationale
@@ -31,7 +31,7 @@ Should we start from scratch or incrementally migrate the existing React/Vite ma
 ✅ TypeScript configured
 ✅ Tailwind CSS + shadcn/ui
 ✅ ESLint enabled
-✅ 56 UI components copied from old/client/src/components/ui/
+✅ 56 UI components copied from app/web/client/src/components/ui/
 ✅ Hooks and utilities migrated
 ```
 
@@ -137,7 +137,7 @@ app/components/
 
 ### Database Strategy
 - **Two separate Supabase databases:**
-  - Marketing DB: Existing (old site)
+  - Marketing DB: Existing (legacy marketing site)
   - SaaS DB: New in "Strive-App-Creation" org (development)
 - **Migration plan:** Transfer to production org when ready
 - **User sync:** Will create records in both DBs on signup

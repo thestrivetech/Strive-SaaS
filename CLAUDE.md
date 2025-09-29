@@ -10,7 +10,7 @@
 **Stack:** Next.js 15.5.4 + React 19.1.0 + TypeScript + Prisma + Supabase
 **Focus:** Enterprise B2B, Multi-tenant, 3-tier subscriptions, and used internally by Strive Tech daily (employees & admins)
 
-> **NOTE:** `old/` = legacy marketing site (DO NOT MODIFY unless asked)
+> **NOTE:** `app/web/` = legacy marketing site (DO NOT MODIFY unless asked)
 
 ---
 
@@ -198,6 +198,7 @@ export type { Customer } from '@prisma/client';
 
 ```typescript
 // Anti-patterns to AVOID
+❌ Create files or folders that already exist (same goes for scripts or tests) just update existing ones or ask user for direction
 ❌ Creating files in root directory (no logs, .md files, images)
 ❌ import from '../modules/other-module' (cross-module)
 ❌ prisma.$queryRaw with string interpolation

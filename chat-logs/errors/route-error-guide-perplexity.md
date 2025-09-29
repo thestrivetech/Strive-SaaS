@@ -16,7 +16,7 @@ The issue stems from **multiple conflicting factors** that have created a perfec
 
 2. **File System Path Conflicts**: Multiple lockfiles across the project directory were confusing Next.js about the project root[1]
 
-3. **Legacy Directory Interference**: The presence of the `old/` directory with its own Node.js projects was causing module resolution conflicts[1]
+3. **Legacy Directory Interference**: The presence of the legacy directory structure with its own Node.js projects was causing module resolution conflicts[1]
 
 4. **Configuration Issues**: The middleware is expecting routes like `/auth/login` but the route groups don't expose them at those paths[1]
 

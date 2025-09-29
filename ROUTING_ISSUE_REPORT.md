@@ -38,8 +38,8 @@ app/
 ## What We've Tried
 1. **Removed conflicting lockfiles:**
    - Deleted `C:/Users/zochr/pnpm-lock.yaml`
-   - Deleted `old/package-lock.json`
-   - Deleted `old/Strive-dashboard-MVP/project/package-lock.json`
+   - Deleted `app/web/package-lock.json`
+   - Deleted `app/web/Strive-dashboard-MVP/project/package-lock.json`
 
 2. **Fixed Tailwind CSS errors:**
    - Replaced `border-border` with `border` in multiple files

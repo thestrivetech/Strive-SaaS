@@ -17,7 +17,7 @@
 - Built with Next.js 15.5.4 App Router
 - Production-ready with comprehensive security and performance standards
 
-**Legacy Marketing Website** (`old/`) → `strivetech.ai`
+**Legacy Marketing Website** (`app/web/`) → `strivetech.ai`
 - To be migrated/integrated with SaaS platform in future
 - Legacy React app (not actively developed)
 - **DO NOT MODIFY** unless explicitly requested
@@ -69,7 +69,7 @@ Errors: Sentry
 Logs: Structured JSON
 ```
 
-### Legacy Marketing Website (old/) - MAINTENANCE ONLY - Will be integrated into the SaaS in the future after it's updated to fit with next.js and the SaaS
+### Legacy Marketing Website (app/web/) - MAINTENANCE ONLY - Will be integrated into the SaaS in the future after it's updated to fit with next.js and the SaaS
 - Legacy React + Express.js
 - PostgreSQL via Supabase (separate DB)
 - Drizzle ORM + Passport.js auth
@@ -82,7 +82,7 @@ Logs: Structured JSON
 ### Root Directory
 ```
 /
-├── old/                 # Legacy marketing website (React)
+├── app/web/             # Legacy marketing website (React)
 ├── app/                 # SaaS platform (Next.js 15)
 ├── docs/                # Documentation (future)
 ├── .env                 # Environment variables (gitignored)
@@ -90,9 +90,9 @@ Logs: Structured JSON
 └── [essential configs only]
 ```
 
-### Marketing Website (old/)
+### Marketing Website (app/web/)
 ```
-old/
+app/web/
 ├── client/              # React frontend
 │   ├── src/
 │   │   ├── components/  # UI components (shadcn/ui)
@@ -186,7 +186,7 @@ app/
 
 ## Common Development Commands
 
-### Marketing Website (old/)
+### Marketing Website (app/web/)
 
 ```bash
 # Development
@@ -345,7 +345,7 @@ Before adding:
   3. Client Components - Interactive UI
   4. API Routes - Webhooks only
 
-#### For Marketing Website (old/):
+#### For Marketing Website (app/web/):
 - Keep existing stack (Drizzle + Passport) - DO NOT CHANGE
 - Only make changes when explicitly requested
 
@@ -413,7 +413,7 @@ import _ from 'lodash';                 // ❌
 
 ## Environment Variables
 
-### Marketing Website (old/.env)
+### Marketing Website (app/web/.env)
 ```bash
 PORT=3000
 SITE_URL=http://localhost:3000
@@ -460,10 +460,10 @@ NODE_ENV="development"
 
 ## Path Aliases
 
-### Marketing Website (old/)
-- `@/*` → `client/src/*`
-- `@shared/*` → `shared/*`
-- `@assets/*` → `attached_assets/*`
+### Marketing Website (app/web/)
+- `@/*` → `app/web/client/src/*`
+- `@shared/*` → `app/web/shared/*`
+- `@assets/*` → `app/web/attached_assets/*`
 
 ### SaaS Platform (app/)
 - `@/*` → `app/*` (app root)
@@ -474,7 +474,7 @@ NODE_ENV="development"
 
 **Two Separate Supabase Databases:**
 
-1. **Marketing Site DB** (`old/`) - Existing production database
+1. **Marketing Site DB** (`app/web/`) - Existing production database
    - ORM: Drizzle
    - Purpose: Marketing site data (contacts, analytics)
 

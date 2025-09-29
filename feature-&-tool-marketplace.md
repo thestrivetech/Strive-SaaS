@@ -2,7 +2,7 @@
 
 **Last Updated:** January 2025
 **Target Market:** C-Level Executives across all industries
-**Source:** Based on `old/client/src/data/solutions.tsx` and `industries.tsx`
+**Source:** Based on `app/web/client/src/data/solutions.tsx` and `industries.tsx`
 
 ---
 

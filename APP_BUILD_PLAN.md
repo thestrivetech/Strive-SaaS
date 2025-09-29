@@ -9,7 +9,7 @@
 ## Architecture Overview
 
 ### Deployment Structure
-- **Marketing Site:** `strivetech.ai` (existing React site in `old/` - legacy, not actively developed)
+- **Marketing Site:** `strivetech.ai` (existing React site in `app/web/` - legacy, not actively developed)
 - **SaaS Platform:** `app.strivetech.ai` (new Next.js 15 app in `app/`)
   - Contains: Admin dashboard, client portal, employee workspace, CRM, projects, AI tools
 
@@ -31,7 +31,7 @@ The `app/` directory contains multiple dashboard experiences within the applicat
 - All share the same database and infrastructure but have role-based views
 
 ### Design System
-- Reuse shadcn/ui components from `old/client/src/components/ui/`
+- Reuse shadcn/ui components from `app/web/client/src/components/ui/`
 - Maintain consistent UI/UX with marketing site
 - Add new app-specific components as needed (dashboards, CRM, project views)
 
@@ -43,7 +43,7 @@ The `app/` directory contains multiple dashboard experiences within the applicat
 - [x] Initialize Next.js 15 app with App Router
 - [x] Setup TypeScript configuration
 - [x] Create comprehensive Prisma schema (13 models)
-- [x] Copy 56 UI components from old/client/src/components/ui
+- [x] Copy 56 UI components from app/web/client/src/components/ui
 - [x] Setup basic project dependencies (Prisma, Supabase, shadcn utilities)
 - [x] Create environment template (.env.local.example)
 - [x] Setup Tailwind CSS configuration with brand colors
@@ -231,7 +231,7 @@ app/                             # SaaS Platform root directory
 │   ├── layout.tsx              # Root layout
 │   └── globals.css             # Global styles
 ├── components/
-│   ├── ui/                     # Copied from old/client/src/components/ui (56 components)
+│   ├── ui/                     # Copied from app/web/client/src/components/ui (56 components)
 │   ├── admin/                  # Admin dashboard components
 │   ├── employee/               # Employee dashboard components
 │   ├── client/                 # Client portal components

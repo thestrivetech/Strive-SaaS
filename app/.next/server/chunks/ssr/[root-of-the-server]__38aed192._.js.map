@@ -1,6 +1,0 @@
-{
-  "version": 3,
-  "sources": [],
-  "sections": [
-    {"offset": {"line": 18, "column": 0}, "map": {"version":3,"sources":["file:///C:/Users/zochr/Desktop/GitHub/Strive_Website/app/app/page.tsx"],"sourcesContent":["import { redirect } from 'next/navigation';\n\nexport default function Home() {\n  // Redirect to dashboard (middleware will handle auth check)\n  redirect('/dashboard');\n}"],"names":[],"mappings":";;;;AAAA;AAAA;;AAEe,SAAS;IACtB,4DAA4D;IAC5D,IAAA,iMAAQ,EAAC;AACX","debugId":null}}]
-}
