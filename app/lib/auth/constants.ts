@@ -17,10 +17,10 @@ export const SUBSCRIPTION_TIERS = {
 export type SubscriptionTier = keyof typeof SUBSCRIPTION_TIERS;
 
 export const AUTH_ROUTES = {
-  LOGIN: '/auth/login',
-  SIGNUP: '/auth/signup',
-  FORGOT_PASSWORD: '/auth/forgot-password',
-  RESET_PASSWORD: '/auth/reset-password',
+  LOGIN: '/login',
+  SIGNUP: '/login',
+  FORGOT_PASSWORD: '/login',
+  RESET_PASSWORD: '/login',
 } as const;
 
 export const PROTECTED_ROUTES = [
@@ -34,10 +34,7 @@ export const PROTECTED_ROUTES = [
 
 export const PUBLIC_ROUTES = [
   '/',
-  '/auth/login',
-  '/auth/signup',
-  '/auth/forgot-password',
-  '/auth/reset-password',
+  '/login',
 ] as const;
 
 export const ROLE_PERMISSIONS = {

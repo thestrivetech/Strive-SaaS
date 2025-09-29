@@ -1,19 +1,18 @@
 'use server';
 
-import { createServerSupabaseClientWithAuth } from '@/lib/supabase-server';
+import { getCurrentUser } from '@/lib/auth/auth-helpers';
 import { getDashboardStats, getActivityFeed } from './queries';
 import { getUserOrganizations } from '../organization/queries';
 
 export async function fetchDashboardData() {
-  const supabase = await createServerSupabaseClientWithAuth();
-  const { data: { user } } = await supabase.auth.getUser();
+  const currentUser = await getCurrentUser();
 
-  if (!user) {
+  if (!currentUser) {
     throw new Error('Unauthorized');
   }
 
   // Get user's organizations
-  const organizations = await getUserOrganizations(user.id);
+  const organizations = await getUserOrganizations(currentUser.id);
 
   if (organizations.length === 0) {
     // Return empty stats if user has no organization
@@ -44,14 +43,13 @@ export async function fetchDashboardData() {
 }
 
 export async function fetchActivityFeed(limit: number = 20) {
-  const supabase = await createServerSupabaseClientWithAuth();
-  const { data: { user } } = await supabase.auth.getUser();
+  const currentUser = await getCurrentUser();
 
-  if (!user) {
+  if (!currentUser) {
     throw new Error('Unauthorized');
   }
 
-  const organizations = await getUserOrganizations(user.id);
+  const organizations = await getUserOrganizations(currentUser.id);
 
   if (organizations.length === 0) {
     return [];

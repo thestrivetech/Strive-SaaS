@@ -3,6 +3,10 @@ import { createServerClient } from '@supabase/ssr';
 import { z } from 'zod';
 import { prisma } from '@/lib/prisma';
 
+// Force dynamic rendering and prevent caching
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
+
 const loginSchema = z.object({
   email: z.string().email(),
   password: z.string().min(6),
@@ -13,7 +17,10 @@ export async function POST(request: NextRequest) {
     const body = await request.json();
     const { email, password } = loginSchema.parse(body);
 
-    // Create Supabase client
+    // Collect cookies that Supabase will set
+    const cookiesToSet: Array<{ name: string; value: string; options: any }> = [];
+
+    // Create Supabase client with cookie collectors
     const supabase = createServerClient(
       process.env.NEXT_PUBLIC_SUPABASE_URL!,
       process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
@@ -22,17 +29,17 @@ export async function POST(request: NextRequest) {
           get(name: string) {
             return request.cookies.get(name)?.value;
           },
-          set(_name: string, _value: string, _options: unknown) {
-            // We'll set cookies in the response
+          set(name: string, value: string, options: any) {
+            cookiesToSet.push({ name, value, options });
           },
-          remove(_name: string, _options: unknown) {
-            // We'll remove cookies in the response
+          remove(name: string, options: any) {
+            cookiesToSet.push({ name, value: '', options });
           },
         },
       }
     );
 
-    // Attempt to sign in
+    // Attempt to sign in - this will collect cookies via the handlers above
     const { data, error } = await supabase.auth.signInWithPassword({
       email,
       password,
@@ -61,7 +68,7 @@ export async function POST(request: NextRequest) {
       });
     }
 
-    // Create response with session cookies
+    // Create the final response with user data
     const response = NextResponse.json(
       {
         user: {
@@ -72,32 +79,19 @@ export async function POST(request: NextRequest) {
         },
         session: data.session,
       },
-      { status: 200 }
+      {
+        status: 200,
+        headers: {
+          'Cache-Control': 'no-store, no-cache, must-revalidate, proxy-revalidate',
+          'Pragma': 'no-cache',
+          'Expires': '0',
+        }
+      }
     );
 
-    // Set auth cookies
-    if (data.session) {
-      const { access_token, refresh_token } = data.session;
-
-      response.cookies.set({
-        name: 'sb-access-token',
-        value: access_token,
-        httpOnly: true,
-        secure: process.env.NODE_ENV === 'production',
-        sameSite: 'lax',
-        maxAge: 60 * 60, // 1 hour
-        path: '/',
-      });
-
-      response.cookies.set({
-        name: 'sb-refresh-token',
-        value: refresh_token,
-        httpOnly: true,
-        secure: process.env.NODE_ENV === 'production',
-        sameSite: 'lax',
-        maxAge: 60 * 60 * 24 * 30, // 30 days
-        path: '/',
-      });
+    // Now set all the cookies that Supabase collected
+    for (const cookie of cookiesToSet) {
+      response.cookies.set(cookie.name, cookie.value, cookie.options);
     }
 
     return response;

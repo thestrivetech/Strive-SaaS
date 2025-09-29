@@ -1,7 +1,6 @@
 import { createServerClient } from '@supabase/ssr';
 import { cookies } from 'next/headers';
 import { redirect } from 'next/navigation';
-import { cache } from 'react';
 import { prisma } from '@/lib/prisma';
 import { AUTH_ROUTES, UserRole } from './constants';
 
@@ -27,7 +26,7 @@ export const createSupabaseServerClient = async () => {
   );
 };
 
-export const getSession = cache(async () => {
+export const getSession = async () => {
   const supabase = await createSupabaseServerClient();
 
   try {
@@ -43,9 +42,9 @@ export const getSession = cache(async () => {
     console.error('Error in getSession:', error);
     return null;
   }
-});
+};
 
-export const getCurrentUser = cache(async () => {
+export const getCurrentUser = async () => {
   const session = await getSession();
 
   if (!session?.user) {
@@ -71,7 +70,7 @@ export const getCurrentUser = cache(async () => {
     console.error('Error fetching user from database:', error);
     return null;
   }
-});
+};
 
 export const requireAuth = async () => {
   const session = await getSession();
