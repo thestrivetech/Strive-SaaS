@@ -63,7 +63,7 @@ Client Profiles: AI usage history, pain points, opportunity forecasts.
 Proposal Builder: Templates for AI demos, pricing calculators.
 Demo Scheduler: Calendar for proof-of-concepts, with embedded AI chatbots.
 Analytics Page: Win/loss analysis, AI-driven lead predictions.
-
+Lead generation
 
 Key Features: Integration with email/SMS for personalized outreach, sentiment analysis on interactions.
 Value: Sales teams close deals faster; CEOs forecast AI revenue streams—essential for growth.
@@ -101,7 +101,7 @@ Diversity Dashboard: Metrics for inclusive AI teams.
 Key Features: AI resume parsing, burnout detection from activity logs.
 Value: CHROs build specialized teams; crucial in the talent-scarce AI field.
 
-7. Marketing & Content Module (CMS-Tailored)
+7. Marketing & Content Module (CMS-Tailored)  --- Separate these 2
 Promotes your AI solutions via thought leadership.
 
 Dashboards/Pages:
