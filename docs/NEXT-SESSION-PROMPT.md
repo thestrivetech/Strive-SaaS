@@ -445,17 +445,3 @@ After each phase:
 
 **Ready to migrate? Start with Phase 1 and work sequentially. Good luck! 🚀**
 
-
-# Migration plan start prompt
-
- please follow this plan
-    in order to fix the error so we aren't messing things
-  up
-    moving forward:
-  /Users/grant/Documents/GitHub/Strive-Sa
-    aS/docs/SINGLE_APP_MIGRATION_PLAN.md -> This is the
-    smaller plan guide that you might be able to follow
-    better:
-  /Users/grant/Documents/GitHub/Strive-SaaS/app/MI
-    GRATION_SESSIONS.md -> Create a todo list to start
-    session one and to complete phase 1 

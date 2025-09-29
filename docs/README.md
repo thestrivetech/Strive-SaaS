@@ -69,7 +69,7 @@ Errors: Sentry
 Logs: Structured JSON
 ```
 
-### Legacy Marketing Website (app/web/) - MAINTENANCE ONLY - Will be integrated into the SaaS in the future after it's updated to fit with next.js and the SaaS
+### Legacy Marketing Website (app/web/) - MAINTENANCE ONLY - Will be integrated into the SaaS in the future after it's updated to fit with next.js and the SaaS -> Currrently happening
 - Legacy React + Express.js
 - PostgreSQL via Supabase (separate DB)
 - Drizzle ORM + Passport.js auth
@@ -77,7 +77,7 @@ Logs: Structured JSON
 
 ---
 
-## Project Structure
+## Project Structure -> Currently changing
 
 ### Root Directory
 ```

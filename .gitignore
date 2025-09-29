@@ -105,3 +105,4 @@ STRIVE_WEBSITE_INTEGRATION.md
 .env.vercel
 .env*.local
 .next/
+old-website-docs-.env
