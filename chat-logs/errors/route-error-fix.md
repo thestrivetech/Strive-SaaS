@@ -49,14 +49,14 @@ Next.js 15 with Turbopack was not recognizing route groups using parentheses syn
 #### ❌ Fix Attempt 1: Lockfile Conflicts
 **Issue Found:** Multiple lockfiles across the project
 - `C:/Users/zochr/pnpm-lock.yaml` (user directory)
-- `app/web/package-lock.json`
-- `app/web/Strive-dashboard-MVP/project/package-lock.json`
+- `old/package-lock.json`
+- `old/Strive-dashboard-MVP/project/package-lock.json`
 
 **Action Taken:**
 ```bash
 rm "C:/Users/zochr/pnpm-lock.yaml"
-rm "C:/Users/zochr/Desktop/GitHub/Strive_Website/app/web/package-lock.json"
-rm "C:/Users/zochr/Desktop/GitHub/Strive_Website/app/web/Strive-dashboard-MVP/project/package-lock.json"
+rm "C:/Users/zochr/Desktop/GitHub/Strive_Website/old/package-lock.json"
+rm "C:/Users/zochr/Desktop/GitHub/Strive_Website/old/Strive-dashboard-MVP/project/package-lock.json"
 ```
 
 **Result:** ❌ Route groups still didn't work
@@ -105,11 +105,11 @@ npm install next@canary  # Installed 15.6.0-canary.33
 **Result:** ❌ Route groups still didn't work
 
 #### ❌ Fix Attempt 6: Isolate Old Folder
-**Theory:** The legacy folder with duplicate Next.js projects might be interfering
+**Theory:** The `old/` folder with duplicate Next.js projects might be interfering
 
 **Action:**
 ```bash
-mv app/web/ web_backup/
+mv old/ old_backup/
 ```
 
 **Result:**
@@ -214,7 +214,7 @@ The issue appears to be a fundamental incompatibility between:
 1. **Next.js 15 + App Router** - Newer version with potential bugs
 2. **Turbopack** - Experimental bundler with known issues
 3. **Windows file system** - Path handling differences
-4. **Multiple Node.js projects** in same repository (the legacy marketing folder)
+4. **Multiple Node.js projects** in same repository (the `old/` folder)
 
 ### Key Indicators It Was Never Working
 - Session 2 logs: "Module resolution issue with @supabase/ssr in middleware"
@@ -233,7 +233,7 @@ The issue appears to be a fundamental incompatibility between:
 ### 2. Multiple Lockfiles Cause Issues
 - Keep only one lockfile per project
 - Remove lockfiles from parent/child directories
-- The legacy folder interference was real but not the root cause
+- The `old/` folder interference was real but not the root cause
 
 ### 3. Missing Dependencies Give Misleading Errors
 - The 500 error on `/login` was due to missing `zod` and `@radix-ui/react-label`
