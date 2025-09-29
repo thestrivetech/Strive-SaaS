@@ -94,10 +94,10 @@ export async function POST(request: NextRequest) {
       { error: 'Failed to create user account' },
       { status: 500 }
     );
-  } catch (error: any) {
-    if (error.name === 'ZodError') {
+  } catch (error: unknown) {
+    if (error && typeof error === 'object' && 'name' in error && error.name === 'ZodError') {
       return NextResponse.json(
-        { error: error.errors[0].message },
+        { error: 'errors' in error && Array.isArray(error.errors) && error.errors[0]?.message || 'Validation error' },
         { status: 400 }
       );
     }

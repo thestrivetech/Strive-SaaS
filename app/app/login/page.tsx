@@ -65,10 +65,10 @@ export default function LoginPage() {
       });
       router.push(redirectTo);
       router.refresh();
-    } catch (error: any) {
+    } catch (error: unknown) {
       toast({
         title: "Login failed",
-        description: error.message || "Invalid credentials",
+        description: (error instanceof Error ? error.message : "Invalid credentials"),
         variant: "destructive",
       });
     } finally {
@@ -100,10 +100,10 @@ export default function LoginPage() {
       });
       setActiveTab("login");
       signupForm.reset();
-    } catch (error: any) {
+    } catch (error: unknown) {
       toast({
         title: "Signup failed",
-        description: error.message || "Failed to create account",
+        description: (error instanceof Error ? error.message : "Failed to create account"),
         variant: "destructive",
       });
     } finally {

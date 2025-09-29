@@ -195,14 +195,14 @@ export default async function SettingsPage() {
                   <div>
                     <p className="font-semibold">
                       {user?.subscriptionTier === 'FREE' ? 'Free Plan' :
-                       user?.subscriptionTier === 'TIER_1' ? 'Starter Plan' :
-                       user?.subscriptionTier === 'TIER_2' ? 'Professional Plan' :
+                       user?.subscriptionTier === 'BASIC' ? 'Basic Plan' :
+                       user?.subscriptionTier === 'PRO' ? 'Professional Plan' :
                        'Enterprise Plan'}
                     </p>
                     <p className="text-sm text-muted-foreground">
                       {user?.subscriptionTier === 'FREE' ? 'Basic features' :
-                       user?.subscriptionTier === 'TIER_1' ? '$299/month • 3 tools' :
-                       user?.subscriptionTier === 'TIER_2' ? '$699/month • 10 tools' :
+                       user?.subscriptionTier === 'BASIC' ? '$299/month • 3 tools' :
+                       user?.subscriptionTier === 'PRO' ? '$699/month • 10 tools' :
                        'Custom pricing • Unlimited tools'}
                     </p>
                   </div>
