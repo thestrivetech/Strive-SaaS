@@ -2,6 +2,44 @@ import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 
 export async function middleware(request: NextRequest) {
+  const path = request.nextUrl.pathname;
+
+  // Handle CORS for public analytics endpoints
+  if (path.startsWith('/api/analytics/')) {
+    // Allow website domain to send analytics data
+    const allowedOrigins = [
+      'https://strivetech.ai',
+      'https://www.strivetech.ai',
+      'http://localhost:5173', // Vite dev server
+      'http://localhost:3000', // Next.js dev server
+    ];
+
+    const origin = request.headers.get('origin');
+    const isAllowedOrigin = origin && allowedOrigins.includes(origin);
+
+    // Handle preflight requests
+    if (request.method === 'OPTIONS') {
+      return new NextResponse(null, {
+        status: 200,
+        headers: {
+          'Access-Control-Allow-Origin': isAllowedOrigin ? origin : allowedOrigins[0],
+          'Access-Control-Allow-Methods': 'POST, OPTIONS',
+          'Access-Control-Allow-Headers': 'Content-Type',
+          'Access-Control-Max-Age': '86400',
+        },
+      });
+    }
+
+    // Add CORS headers to actual requests
+    const response = NextResponse.next();
+    if (isAllowedOrigin) {
+      response.headers.set('Access-Control-Allow-Origin', origin);
+      response.headers.set('Access-Control-Allow-Methods', 'POST, OPTIONS');
+      response.headers.set('Access-Control-Allow-Headers', 'Content-Type');
+    }
+    return response;
+  }
+
   let response = NextResponse.next({
     request: {
       headers: request.headers,
@@ -61,7 +99,8 @@ export async function middleware(request: NextRequest) {
     data: { user },
   } = await supabase.auth.getUser();
 
-  const path = request.nextUrl.pathname;
+  // Admin routes that require ADMIN role
+  const isAdminRoute = path.startsWith('/admin') || path.startsWith('/api/admin/');
 
   // Protected routes that require authentication
   const isProtectedRoute = path.startsWith('/dashboard') ||
@@ -69,7 +108,8 @@ export async function middleware(request: NextRequest) {
                           path.startsWith('/projects') ||
                           path.startsWith('/ai') ||
                           path.startsWith('/tools') ||
-                          path.startsWith('/settings');
+                          path.startsWith('/settings') ||
+                          isAdminRoute;
 
   // If user is not authenticated and trying to access protected route
   if (!user && isProtectedRoute) {
@@ -80,6 +120,26 @@ export async function middleware(request: NextRequest) {
     redirectResponse.headers.set('Pragma', 'no-cache');
     redirectResponse.headers.set('Expires', '0');
     return redirectResponse;
+  }
+
+  // Admin route protection - check ADMIN role
+  if (user && isAdminRoute) {
+    // Dynamic import to prevent circular dependency
+    const { prisma } = await import('./lib/prisma');
+
+    const dbUser = await prisma.user.findUnique({
+      where: { email: user.email! },
+      select: { role: true },
+    });
+
+    if (!dbUser || dbUser.role !== 'ADMIN') {
+      // User is not admin, redirect to dashboard
+      const redirectResponse = NextResponse.redirect(new URL('/dashboard', request.url));
+      redirectResponse.headers.set('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate');
+      redirectResponse.headers.set('Pragma', 'no-cache');
+      redirectResponse.headers.set('Expires', '0');
+      return redirectResponse;
+    }
   }
 
   // If user is authenticated and trying to access auth pages, redirect to dashboard
@@ -109,8 +169,11 @@ export async function middleware(request: NextRequest) {
     return redirectResponse;
   }
 
-  // Add no-cache headers to auth-related pages
-  if (path.startsWith('/login') || path.startsWith('/dashboard') || isProtectedRoute) {
+  // Add no-cache headers ONLY to HTML pages (not static assets)
+  // This prevents browser caching of auth state but allows JS/CSS/images to cache
+  const isStaticAsset = path.match(/\.(js|css|png|jpg|jpeg|gif|svg|ico|woff|woff2)$/);
+
+  if (!isStaticAsset && (path.startsWith('/login') || path.startsWith('/dashboard') || isProtectedRoute)) {
     response.headers.set('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate');
     response.headers.set('Pragma', 'no-cache');
     response.headers.set('Expires', '0');
@@ -129,5 +192,8 @@ export const config = {
      * - public folder
      */
     '/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)',
+    '/api/analytics/:path*',
+    '/api/admin/:path*',
+    '/admin/:path*',
   ],
 };

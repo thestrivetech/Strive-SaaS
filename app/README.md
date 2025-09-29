@@ -17,12 +17,12 @@ This is the **entire SaaS application**, not just "a dashboard". It contains:
 
 ---
 
-## Why "app/" not "dashboard/"?
+## Directory Structure
 
-1. **Semantic accuracy** - This is the application, containing multiple dashboards
-2. **Matches subdomain** - `app.strivetech.ai` ✅
-3. **Future-proof** - Room for growth without misleading names
-4. **Industry standard** - Most SaaS use: `web/` (marketing) + `app/` (platform)
+The Next.js App Router code lives in `platform/` to distinguish it from the main project folder:
+- `platform/` - Next.js App Router (login, dashboard, etc.)
+- `web/` - Legacy marketing site
+- `components/`, `lib/`, `hooks/` - Shared across the platform
 
 ---
 
@@ -117,7 +117,7 @@ Visit: http://localhost:3000
 - [x] TypeScript + Tailwind + ESLint configured
 - [x] shadcn/ui setup with 56 components
 - [x] Prisma schema with 13 models
-- [x] Directory renamed: `dashboard/` → `app/`
+- [x] Directory structure: `platform/` for Next.js App Router
 
 ### Phase 2 (Core) 🚧 NEXT
 - [ ] Auth middleware implementation

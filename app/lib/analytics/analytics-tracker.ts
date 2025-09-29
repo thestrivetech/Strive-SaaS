@@ -1,8 +1,8 @@
 import { WebVitalsMetric } from "./web-vitals";
 
 // Configuration
-const ANALYTICS_SOURCE = 'website'; // Identifier for website analytics
-const API_BASE_URL = import.meta.env.VITE_ANALYTICS_API_URL || 'https://app.strivetech.ai/api/analytics';
+const ANALYTICS_SOURCE = 'saas'; // Identifier for SaaS app analytics
+const API_BASE_URL = '/api/analytics'; // Relative path for same-domain requests
 
 // Session and user tracking
 let sessionId: string | null = null;
@@ -21,7 +21,7 @@ function getDeviceType(): string {
 
 function getBrowserInfo(): { browser: string; os: string } {
   const userAgent = navigator.userAgent.toLowerCase();
-  
+
   let browser = 'unknown';
   if (userAgent.includes('chrome')) browser = 'chrome';
   else if (userAgent.includes('firefox')) browser = 'firefox';
@@ -56,21 +56,21 @@ function generateSessionId(): string {
 
 function getOrCreateSessionId(): string {
   if (sessionId) return sessionId;
-  
+
   // Try to get from sessionStorage first
   const stored = sessionStorage.getItem('analytics_session_id');
   if (stored) {
     sessionId = stored;
     return sessionId;
   }
-  
+
   // Create new session
   sessionId = generateSessionId();
   sessionStorage.setItem('analytics_session_id', sessionId);
-  
+
   // Start session tracking
   startSession();
-  
+
   return sessionId;
 }
 
@@ -86,7 +86,7 @@ async function sendAnalyticsData(endpoint: string, data: any): Promise<void> {
       },
       body: JSON.stringify({
         ...data,
-        source: ANALYTICS_SOURCE, // Always tag with 'website'
+        source: ANALYTICS_SOURCE, // Tag all data with source
       }),
       keepalive: true, // Important for page unload events
     });
@@ -100,7 +100,7 @@ async function sendAnalyticsData(endpoint: string, data: any): Promise<void> {
 async function startSession(): Promise<void> {
   const { browser, os } = getBrowserInfo();
   const utmParams = getUtmParams();
-  
+
   await sendAnalyticsData('session', {
     sessionId: getOrCreateSessionId(),
     userId,
@@ -126,14 +126,14 @@ async function updateSession(updates: any): Promise<void> {
 // Page view tracking
 export async function trackPageView(additionalData?: any): Promise<void> {
   if (!isTrackingEnabled || !consentGiven) return;
-  
+
   const { browser, os } = getBrowserInfo();
   const utmParams = getUtmParams();
-  
+
   // Calculate time on previous page
   const viewDuration = Math.round((Date.now() - pageStartTime) / 1000);
   pageStartTime = Date.now();
-  
+
   const pageViewData = {
     sessionId: getOrCreateSessionId(),
     userId,
@@ -150,7 +150,7 @@ export async function trackPageView(additionalData?: any): Promise<void> {
     viewDuration: viewDuration > 0 ? viewDuration : undefined,
     ...additionalData,
   };
-  
+
   await sendAnalyticsData('pageview', pageViewData);
 }
 
@@ -162,7 +162,7 @@ export async function trackEvent(
   element?: HTMLElement
 ): Promise<void> {
   if (!isTrackingEnabled || !consentGiven) return;
-  
+
   const eventData = {
     sessionId: getOrCreateSessionId(),
     userId,
@@ -175,7 +175,7 @@ export async function trackEvent(
     elementText: element?.textContent?.slice(0, 100) || undefined, // Limit text length
     properties: properties ? JSON.stringify(properties) : undefined,
   };
-  
+
   await sendAnalyticsData('event', eventData);
 }
 
@@ -200,7 +200,7 @@ export async function trackScroll(depth: number): Promise<void> {
     depth,
     maxDepth: Math.max(depth, parseInt(sessionStorage.getItem('max_scroll_depth') || '0')),
   });
-  
+
   // Store max scroll depth for this session
   const currentMax = parseInt(sessionStorage.getItem('max_scroll_depth') || '0');
   if (depth > currentMax) {
@@ -211,9 +211,9 @@ export async function trackScroll(depth: number): Promise<void> {
 // Web Vitals integration
 export async function trackWebVitals(metric: WebVitalsMetric): Promise<void> {
   if (!isTrackingEnabled || !consentGiven) return;
-  
+
   const { browser, os } = getBrowserInfo();
-  
+
   const webVitalsData = {
     sessionId: getOrCreateSessionId(),
     userId,
@@ -227,7 +227,7 @@ export async function trackWebVitals(metric: WebVitalsMetric): Promise<void> {
     browser,
     connectionType: (navigator as any).connection?.effectiveType || undefined,
   };
-  
+
   await sendAnalyticsData('web-vitals', webVitalsData);
 }
 
@@ -240,20 +240,20 @@ function calculateScrollDepth(): number {
   const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
   const windowHeight = window.innerHeight;
   const documentHeight = document.documentElement.scrollHeight;
-  
+
   const scrollPercent = Math.round((scrollTop + windowHeight) / documentHeight * 100);
   return Math.min(scrollPercent, 100);
 }
 
 function setupScrollTracking(): void {
   let ticking = false;
-  
+
   function updateScrollDepth() {
     const currentDepth = calculateScrollDepth();
-    
+
     if (currentDepth > maxScrollDepth) {
       maxScrollDepth = currentDepth;
-      
+
       // Track milestone depths
       for (const marker of scrollDepthMarkers) {
         if (currentDepth >= marker && !trackedDepths.has(marker)) {
@@ -262,10 +262,10 @@ function setupScrollTracking(): void {
         }
       }
     }
-    
+
     ticking = false;
   }
-  
+
   window.addEventListener('scroll', () => {
     if (!ticking) {
       requestAnimationFrame(updateScrollDepth);
@@ -279,35 +279,35 @@ function setupAutoTracking(): void {
   // Track clicks on important elements
   document.addEventListener('click', (event) => {
     const element = event.target as HTMLElement;
-    
+
     // Track button clicks
     if (element.tagName === 'BUTTON' || element.role === 'button') {
       trackClick(element, 'button_click');
     }
-    
+
     // Track link clicks
     else if (element.tagName === 'A' || element.closest('a')) {
       const link = element.tagName === 'A' ? element : element.closest('a')!;
       trackClick(link as HTMLElement, 'link_click');
     }
-    
+
     // Track CTA clicks (elements with specific classes)
-    else if (element.classList.contains('cta') || 
+    else if (element.classList.contains('cta') ||
              element.classList.contains('btn-primary') ||
              element.closest('.cta, .btn-primary')) {
       trackClick(element, 'cta_click');
     }
   });
-  
+
   // Track form submissions
   document.addEventListener('submit', (event) => {
     const form = event.target as HTMLFormElement;
     trackFormSubmit(form);
   });
-  
+
   // Setup scroll tracking
   setupScrollTracking();
-  
+
   // Track page visibility changes
   document.addEventListener('visibilitychange', () => {
     if (document.hidden) {
@@ -318,12 +318,12 @@ function setupAutoTracking(): void {
       });
     }
   });
-  
+
   // Track page unload
   window.addEventListener('beforeunload', () => {
     const sessionDuration = Math.round((Date.now() - pageStartTime) / 1000);
     const scrollDepth = maxScrollDepth;
-    
+
     // Update session with final data
     updateSession({
       endTime: new Date(),
@@ -338,7 +338,7 @@ function setupAutoTracking(): void {
 export function setTrackingConsent(consent: boolean): void {
   consentGiven = consent;
   localStorage.setItem('analytics_consent', consent.toString());
-  
+
   if (consent) {
     // Initialize tracking if consent is given
     initializeAnalytics();
@@ -377,12 +377,12 @@ export function initializeAnalytics(options: {
     requireConsent = true,
     userId: initialUserId
   } = options;
-  
+
   // Set user ID if provided
   if (initialUserId) {
     setUserId(initialUserId);
   }
-  
+
   // Check consent
   if (requireConsent) {
     consentGiven = hasTrackingConsent();
@@ -393,18 +393,18 @@ export function initializeAnalytics(options: {
   } else {
     consentGiven = true;
   }
-  
+
   // Initialize session
   getOrCreateSessionId();
-  
+
   // Track initial page view
   trackPageView();
-  
+
   // Setup auto-tracking if enabled
   if (enableAutoTracking) {
     setupAutoTracking();
   }
-  
+
   console.debug('Analytics tracking initialized', {
     sessionId: getSessionId(),
     userId: getUserId(),

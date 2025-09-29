@@ -75,8 +75,31 @@ async function Page() {
 
 ### Architecture Laws
 - **NO cross-module imports** (`crm/` ❌→ `projects/`)
-- **File limits:** Components 200 lines, Services 300 lines
 - **Edit existing files** - don't create new ones unless necessary
+
+### File Size Standards
+**Hard Limit:** 500 lines per file (enforced by ESLint)
+- Applies to all `.ts`/`.tsx` files
+- Exception: Pure data/content files (no logic)
+- Blocks PRs when exceeded
+
+**Soft Targets (Code Review Warning):**
+- UI Components: 200 lines
+- Server Components: 250 lines
+- Services/Logic: 300 lines
+- API Routes: 150 lines
+
+**When approaching soft target:**
+- Extract reusable hooks/utilities
+- Use component composition
+- Separate concerns into modules
+- Consider if file has multiple responsibilities
+
+**Refactoring triggers:**
+- File reaches 400+ lines
+- Multiple responsibilities in one file
+- Difficulty testing or understanding
+- Logic that could be reused elsewhere
 
 ### Single Source of Truth
 - **Database:** Prisma ONLY (no Drizzle, no raw SQL)

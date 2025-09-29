@@ -1,10 +1,8 @@
 import { useState, useEffect } from "react";
 import { Link, useLocation } from "wouter";
-import { Menu, User, LogOut, Home, Cpu, FolderOpen, BookOpen, Building, Mail } from "lucide-react";
+import { Menu, Home, Cpu, FolderOpen, BookOpen, Building, Mail } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
-import { useAuth } from "@/lib/auth";
-import { useToast } from "@/hooks/use-toast";
 import LazyImage from "@/components/ui/lazy-image";
 import logoImage from "@assets/STRIVE_Orange_Text_Transparent_1483 x 320px.webp";
 import healthcareIcon from "@assets/generated_images/Healthcare_industry_icon_f2723fd3.png";
@@ -19,26 +17,6 @@ import portfolioIcon from "@assets/generated_images/Portfolio_categories_gradien
 const Navigation = () => {
   const [location] = useLocation();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  // Navbar always shows gradient - no scroll detection needed
-  // Removed dropdown state - simplified navigation
-  const { user, isAuthenticated, logout } = useAuth();
-  const { toast } = useToast();
-
-  const handleLogout = async () => {
-    try {
-      await logout();
-      toast({
-        title: "Logged out",
-        description: "You have been successfully logged out.",
-      });
-    } catch (error: any) {
-      toast({
-        title: "Logout failed",
-        description: error.message || "Failed to logout",
-        variant: "destructive",
-      });
-    }
-  };
 
   const handleLogoClick = (e: React.MouseEvent) => {
     if (location === "/") {
@@ -181,55 +159,25 @@ const Navigation = () => {
                     Contact
                   </Link>
                   <div className="space-y-3 mt-8 pt-6 border-t border-white/20">
-                    {isAuthenticated ? (
-                      <>
-                        <Link href="/dashboard">
-                          <Button 
-                            variant="ghost"
-                            className="w-full bg-white/10 text-white hover:bg-primary hover:text-white transition-all duration-300 rounded-xl"
-                            data-testid="mobile-button-dashboard"
-                            onClick={() => setMobileMenuOpen(false)}
-                          >
-                            <User className="mr-2 h-4 w-4" />
-                            Dashboard
-                          </Button>
-                        </Link>
-                        <Button 
-                          variant="outline"
-                          className="w-full bg-white/10 text-white hover:bg-red-500 hover:text-white transition-all duration-300 rounded-xl"
-                          onClick={() => {
-                            handleLogout();
-                            setMobileMenuOpen(false);
-                          }}
-                          data-testid="mobile-button-logout"
-                        >
-                          <LogOut className="mr-2 h-4 w-4" />
-                          Logout
-                        </Button>
-                      </>
-                    ) : (
-                      <>
-                        <a href="http://localhost:3000/login" target="_self">
-                          <Button 
-                            variant="ghost"
-                            className="w-full bg-white/10 text-white hover:bg-primary hover:text-white transition-all duration-300 rounded-xl"
-                            data-testid="mobile-button-login"
-                            onClick={() => setMobileMenuOpen(false)}
-                          >
-                            Login
-                          </Button>
-                        </a>
-                        <Link href="/request">
-                          <Button 
-                            className="w-full bg-primary text-white hover:bg-primary/90 transition-all duration-300 rounded-xl shadow-lg"
-                            data-testid="mobile-button-get-started"
-                            onClick={() => setMobileMenuOpen(false)}
-                          >
-                            Get Started
-                          </Button>
-                        </Link>
-                      </>
-                    )}
+                    <a href="http://localhost:3000/login" target="_self">
+                      <Button
+                        variant="ghost"
+                        className="w-full bg-white/10 text-white hover:bg-primary hover:text-white transition-all duration-300 rounded-xl"
+                        data-testid="mobile-button-login"
+                        onClick={() => setMobileMenuOpen(false)}
+                      >
+                        Login
+                      </Button>
+                    </a>
+                    <Link href="/request">
+                      <Button
+                        className="w-full bg-primary text-white hover:bg-primary/90 transition-all duration-300 rounded-xl shadow-lg"
+                        data-testid="mobile-button-get-started"
+                        onClick={() => setMobileMenuOpen(false)}
+                      >
+                        Get Started
+                      </Button>
+                    </Link>
                   </div>
                 </div>
               </SheetContent>
@@ -246,31 +194,18 @@ const Navigation = () => {
             />
           </Link>
           
-          {/* Right: Login/User Icon */}
+          {/* Right: Login Button */}
           <div className="flex items-center">
-            {isAuthenticated ? (
-              <Link href="/dashboard">
-                <Button 
-                  variant="ghost"
-                  size="icon"
-                  className="text-foreground hover:text-primary"
-                  data-testid="mobile-button-user-icon"
-                >
-                  <User className="h-6 w-6" />
-                </Button>
-              </Link>
-            ) : (
-              <a href="http://localhost:3000/login" target="_self">
-                <Button 
-                  variant="ghost"
-                  size="sm"
-                  className="text-foreground hover:text-primary text-sm px-3"
-                  data-testid="mobile-button-login-nav"
-                >
-                  Login
-                </Button>
-              </a>
-            )}
+            <a href="http://localhost:3000/login" target="_self">
+              <Button
+                variant="ghost"
+                size="sm"
+                className="text-foreground hover:text-primary text-sm px-3"
+                data-testid="mobile-button-login-nav"
+              >
+                Login
+              </Button>
+            </a>
           </div>
         </div>
         
@@ -361,49 +296,23 @@ const Navigation = () => {
 
           {/* Desktop Auth Section */}
           <div className="hidden md:flex items-center space-x-4">
-            {isAuthenticated ? (
-              <>
-                <Link href="/dashboard">
-                  <Button 
-                    variant="ghost"
-                    className="text-foreground hover:text-primary hover:bg-transparent"
-                    data-testid="button-dashboard"
-                  >
-                    <User className="mr-2 h-4 w-4" />
-                    {user?.username || 'Dashboard'}
-                  </Button>
-                </Link>
-                <Button 
-                  variant="outline"
-                  onClick={handleLogout}
-                  className="text-foreground hover:text-primary"
-                  data-testid="button-logout"
-                >
-                  <LogOut className="mr-2 h-4 w-4" />
-                  Logout
-                </Button>
-              </>
-            ) : (
-              <>
-                <a href="http://localhost:3000/login" target="_self">
-                  <Button 
-                    variant="ghost"
-                    className="text-foreground hover:text-primary hover:bg-transparent"
-                    data-testid="button-login"
-                  >
-                    Login
-                  </Button>
-                </a>
-                <Link href="/request">
-                  <Button 
-                    className="bg-primary text-primary-foreground hover:bg-primary/90"
-                    data-testid="button-get-started"
-                  >
-                    Get Started
-                  </Button>
-                </Link>
-              </>
-            )}
+            <a href="http://localhost:3000/login" target="_self">
+              <Button
+                variant="ghost"
+                className="text-foreground hover:text-primary hover:bg-transparent"
+                data-testid="button-login"
+              >
+                Login
+              </Button>
+            </a>
+            <Link href="/request">
+              <Button
+                className="bg-primary text-primary-foreground hover:bg-primary/90"
+                data-testid="button-get-started"
+              >
+                Get Started
+              </Button>
+            </Link>
           </div>
         </div>
       </div>

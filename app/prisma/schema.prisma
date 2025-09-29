@@ -453,3 +453,144 @@ model ActivityLog {
   @@index([userId])
   @@map("activity_logs")
 }
+
+// ==========================================
+// ANALYTICS & PERFORMANCE TRACKING
+// ==========================================
+
+model PageView {
+  id           String   @id @default(uuid())
+  source       String   @default("saas") // "website" or "saas"
+  sessionId    String   @map("session_id")
+  userId       String?  @map("user_id")
+  url          String
+  path         String
+  title        String?
+  referrer     String?
+  userAgent    String?  @map("user_agent")
+  ipAddress    String?  @map("ip_address")
+  country      String?
+  city         String?
+  device       String? // mobile, desktop, tablet
+  browser      String?
+  os           String?
+  utmSource    String?  @map("utm_source")
+  utmMedium    String?  @map("utm_medium")
+  utmCampaign  String?  @map("utm_campaign")
+  viewDuration Int?     @map("view_duration") // Time spent on page in seconds
+  timestamp    DateTime @default(now())
+
+  @@index([source])
+  @@index([sessionId])
+  @@index([timestamp])
+  @@index([path])
+  @@map("page_views")
+}
+
+model UserSession {
+  id         String    @id @default(uuid())
+  source     String    @default("saas") // "website" or "saas"
+  sessionId  String    @unique @map("session_id")
+  userId     String?   @map("user_id")
+  startTime  DateTime  @default(now()) @map("start_time")
+  endTime    DateTime? @map("end_time")
+  duration   Int?      // Session duration in seconds
+  pageViews  Int       @default(0) @map("page_views")
+  bounced    Boolean   @default(false) // Single page session
+  converted  Boolean   @default(false) // Goal completion
+  userAgent  String?   @map("user_agent")
+  ipAddress  String?   @map("ip_address")
+  country    String?
+  city       String?
+  device     String?
+  browser    String?
+  os         String?
+  referrer   String?
+  entryPage  String?   @map("entry_page")
+  exitPage   String?   @map("exit_page")
+
+  @@index([source])
+  @@index([startTime])
+  @@map("user_sessions")
+}
+
+model AnalyticsEvent {
+  id           String   @id @default(uuid())
+  source       String   @default("saas") // "website" or "saas"
+  sessionId    String   @map("session_id")
+  userId       String?  @map("user_id")
+  eventType    String   @map("event_type") // click, scroll, form_submit, etc.
+  eventName    String   @map("event_name")
+  elementId    String?  @map("element_id")
+  elementClass String?  @map("element_class")
+  elementText  String?  @map("element_text")
+  url          String
+  path         String
+  xPosition    Int?     @map("x_position")
+  yPosition    Int?     @map("y_position")
+  scrollDepth  Int?     @map("scroll_depth") // Percentage
+  properties   Json? // Additional event data
+  timestamp    DateTime @default(now())
+
+  @@index([source])
+  @@index([sessionId])
+  @@index([eventType])
+  @@index([timestamp])
+  @@map("analytics_events")
+}
+
+model WebVitalsMetric {
+  id             String   @id @default(uuid())
+  source         String   @default("saas") // "website" or "saas"
+  sessionId      String   @map("session_id")
+  userId         String?  @map("user_id")
+  url            String
+  path           String
+  metricName     String   @map("metric_name") // LCP, FID, CLS, FCP, TTFB
+  metricValue    Float    @map("metric_value")
+  metricRating   String   @map("metric_rating") // good, needs-improvement, poor
+  metricId       String   @map("metric_id")
+  userAgent      String?  @map("user_agent")
+  device         String?
+  browser        String?
+  connectionType String?  @map("connection_type") // 4g, wifi, etc.
+  timestamp      DateTime @default(now())
+
+  @@index([source])
+  @@index([metricName])
+  @@index([timestamp])
+  @@map("web_vitals_metrics")
+}
+
+model AnalyticsGoal {
+  id          String   @id @default(uuid())
+  name        String
+  description String?
+  type        String // page_view, event, duration
+  conditions  Json // Goal conditions as JSON
+  value       Float? // Monetary value of conversion
+  isActive    Boolean  @default(true) @map("is_active")
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+
+  conversions GoalConversion[]
+
+  @@map("analytics_goals")
+}
+
+model GoalConversion {
+  id        String   @id @default(uuid())
+  goalId    String   @map("goal_id")
+  sessionId String   @map("session_id")
+  userId    String?  @map("user_id")
+  value     Float? // Conversion value
+  url       String
+  path      String
+  timestamp DateTime @default(now())
+
+  goal AnalyticsGoal @relation(fields: [goalId], references: [id], onDelete: Cascade)
+
+  @@index([goalId])
+  @@index([timestamp])
+  @@map("goal_conversions")
+}

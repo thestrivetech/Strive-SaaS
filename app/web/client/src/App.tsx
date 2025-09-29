@@ -30,7 +30,6 @@ const Contact = lazy(() => import("@/pages/contact"));
 const Assessment = lazy(() => import("@/pages/assessment"));
 const Onboarding = lazy(() => import("@/pages/onboarding"));
 const Request = lazy(() => import("@/pages/request"));
-const Dashboard = lazy(() => import("@/pages/dashboard"));
 const Privacy = lazy(() => import("@/pages/privacy"));
 const Terms = lazy(() => import("@/pages/terms"));
 const Cookies = lazy(() => import("@/pages/cookies"));
@@ -83,7 +82,6 @@ function Router() {
             <Route path="/assessment" component={Assessment} />
             <Route path="/onboarding" component={Onboarding} />
             <Route path="/request" component={Request} />
-            <Route path="/dashboard" component={Dashboard} />
             <Route path="/privacy" component={Privacy} />
             <Route path="/terms" component={Terms} />
             <Route path="/cookies" component={Cookies} />

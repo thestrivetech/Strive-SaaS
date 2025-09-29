@@ -20,6 +20,28 @@ const eslintConfig = [
       "next-env.d.ts",
     ],
   },
+  {
+    rules: {
+      // File size limits
+      "max-lines": ["error", {
+        "max": 500,
+        "skipBlankLines": true,
+        "skipComments": true
+      }],
+      "max-lines-per-function": ["warn", {
+        "max": 50,
+        "skipBlankLines": true,
+        "skipComments": true
+      }],
+    },
+  },
+  {
+    // Exception: Data/content files can be any size
+    files: ["**/data/**/*.ts", "**/data/**/*.tsx"],
+    rules: {
+      "max-lines": "off",
+    },
+  },
 ];
 
 export default eslintConfig;
