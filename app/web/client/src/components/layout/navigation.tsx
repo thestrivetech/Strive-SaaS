@@ -209,7 +209,7 @@ const Navigation = () => {
                       </>
                     ) : (
                       <>
-                        <Link href="/login">
+                        <a href="http://localhost:3000/login" target="_self">
                           <Button 
                             variant="ghost"
                             className="w-full bg-white/10 text-white hover:bg-primary hover:text-white transition-all duration-300 rounded-xl"
@@ -218,7 +218,7 @@ const Navigation = () => {
                           >
                             Login
                           </Button>
-                        </Link>
+                        </a>
                         <Link href="/request">
                           <Button 
                             className="w-full bg-primary text-white hover:bg-primary/90 transition-all duration-300 rounded-xl shadow-lg"
@@ -260,7 +260,7 @@ const Navigation = () => {
                 </Button>
               </Link>
             ) : (
-              <Link href="/login">
+              <a href="http://localhost:3000/login" target="_self">
                 <Button 
                   variant="ghost"
                   size="sm"
@@ -269,7 +269,7 @@ const Navigation = () => {
                 >
                   Login
                 </Button>
-              </Link>
+              </a>
             )}
           </div>
         </div>
@@ -385,7 +385,7 @@ const Navigation = () => {
               </>
             ) : (
               <>
-                <Link href="/login">
+                <a href="http://localhost:3000/login" target="_self">
                   <Button 
                     variant="ghost"
                     className="text-foreground hover:text-primary hover:bg-transparent"
@@ -393,7 +393,7 @@ const Navigation = () => {
                   >
                     Login
                   </Button>
-                </Link>
+                </a>
                 <Link href="/request">
                   <Button 
                     className="bg-primary text-primary-foreground hover:bg-primary/90"

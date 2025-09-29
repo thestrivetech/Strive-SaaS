@@ -25,7 +25,7 @@ export default function LoginPage() {
   const loginForm = useForm<LoginFormData>({
     resolver: zodResolver(loginSchema),
     defaultValues: {
-      username: "",
+      email: "",
       password: "",
     },
   });
@@ -50,7 +50,7 @@ export default function LoginPage() {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ email: data.username, password: data.password }),
+        body: JSON.stringify({ email: data.email, password: data.password }),
       });
 
       const result = await response.json();
@@ -164,14 +164,15 @@ export default function LoginPage() {
                   <form onSubmit={loginForm.handleSubmit(onLoginSubmit)} className="space-y-4">
                     <FormField
                       control={loginForm.control}
-                      name="username"
+                      name="email"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel style={{ color: '#1e3a8a' }}>Username or Email</FormLabel>
+                          <FormLabel style={{ color: '#1e3a8a' }}>Email</FormLabel>
                           <FormControl>
                             <Input
-                              placeholder="Enter your username or email"
-                              data-testid="input-login-username"
+                              type="email"
+                              placeholder="Enter your email address"
+                              data-testid="input-login-email"
                               style={{ backgroundColor: '#ffffff', color: '#020a1c', borderColor: '#ff7033' }}
                               {...field}
                             />
