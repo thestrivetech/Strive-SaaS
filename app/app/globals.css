@@ -1,0 +1,123 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    /* Strive Tech Brand Colors - Dark Theme by Default */
+    --background: 222 84% 4.9%; /* hsl(222, 84%, 4.9%) - Deep Navy #020A1C */
+    --foreground: 210 40% 98%;
+    --card: 222 84% 5.9%;
+    --card-foreground: 210 40% 98%;
+    --popover: 222 84% 5.9%;
+    --popover-foreground: 210 40% 98%;
+    --primary: 18 100% 60%; /* hsl(18, 100%, 60%) - Strive Orange #FF7033 */
+    --primary-foreground: 222 84% 4.9%;
+    --secondary: 217 32% 17%;
+    --secondary-foreground: 210 40% 98%;
+    --muted: 217 32% 17%;
+    --muted-foreground: 215 20% 65%;
+    --accent: 217 32% 17%;
+    --accent-foreground: 210 40% 98%;
+    --destructive: 0 62% 55%;
+    --destructive-foreground: 210 40% 98%;
+    --border: 217 32% 17%;
+    --input: 217 32% 17%;
+    --ring: 18 100% 60%; /* Orange focus ring */
+
+    /* Chart Colors */
+    --chart-1: 18 100% 60%;  /* Orange */
+    --chart-2: 250 95% 75%;  /* Purple */
+    --chart-3: 197 100% 45%; /* Cyan */
+    --chart-4: 283 100% 65%; /* Purple */
+    --chart-5: 340 75% 55%;  /* Red */
+
+    /* Sidebar Colors */
+    --sidebar: 222 84% 4.9%;
+    --sidebar-foreground: 210 40% 98%;
+    --sidebar-primary: 18 100% 60%;
+    --sidebar-primary-foreground: 222 84% 4.9%;
+    --sidebar-accent: 217 32% 17%;
+    --sidebar-accent-foreground: 210 40% 98%;
+    --sidebar-border: 217 32% 17%;
+    --sidebar-ring: 18 100% 60%;
+
+    /* Font Variables */
+    --font-sans: 'Inter', sans-serif;
+    --font-serif: 'Inter', sans-serif;
+    --font-mono: 'JetBrains Mono', monospace;
+
+    /* Border Radius */
+    --radius: 0.75rem;
+  }
+
+  .dark {
+    /* Dark mode is our default - same values */
+    --background: 222 84% 4.9%;
+    --foreground: 210 40% 98%;
+    --card: 222 84% 5.9%;
+    --card-foreground: 210 40% 98%;
+    --popover: 222 84% 5.9%;
+    --popover-foreground: 210 40% 98%;
+    --primary: 18 100% 60%;
+    --primary-foreground: 222 84% 4.9%;
+    --secondary: 217 32% 17%;
+    --secondary-foreground: 210 40% 98%;
+    --muted: 217 32% 17%;
+    --muted-foreground: 215 20% 65%;
+    --accent: 217 32% 17%;
+    --accent-foreground: 210 40% 98%;
+    --destructive: 0 62% 55%;
+    --destructive-foreground: 210 40% 98%;
+    --border: 217 32% 17%;
+    --input: 217 32% 17%;
+    --ring: 18 100% 60%;
+    --chart-1: 18 100% 60%;
+    --chart-2: 250 95% 75%;
+    --chart-3: 197 100% 45%;
+    --chart-4: 283 100% 65%;
+    --chart-5: 340 75% 55%;
+    --sidebar: 222 84% 4.9%;
+    --sidebar-foreground: 210 40% 98%;
+    --sidebar-primary: 18 100% 60%;
+    --sidebar-primary-foreground: 222 84% 4.9%;
+    --sidebar-accent: 217 32% 17%;
+    --sidebar-accent-foreground: 210 40% 98%;
+    --sidebar-border: 217 32% 17%;
+    --sidebar-ring: 18 100% 60%;
+  }
+
+  * {
+    border-color: hsl(var(--border));
+  }
+
+  html, body {
+    overflow-x: hidden;
+    width: 100%;
+  }
+
+  body {
+    @apply bg-background text-foreground font-sans antialiased;
+    min-width: 320px;
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+}
+
+/* Custom Gradient Backgrounds */
+@layer utilities {
+  .bg-gradient-brand {
+    background: linear-gradient(135deg, hsl(18, 100%, 60%) 0%, hsl(283, 100%, 65%) 100%);
+  }
+
+  .bg-gradient-cta {
+    background: linear-gradient(
+      to bottom right,
+      hsl(18, 100%, 60%),
+      hsl(22, 100%, 50%),
+      hsl(283, 100%, 65%)
+    );
+  }
+}
