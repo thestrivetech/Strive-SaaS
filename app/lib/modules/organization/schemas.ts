@@ -14,13 +14,13 @@ export const updateOrganizationSchema = createOrganizationSchema.partial();
 
 export const inviteTeamMemberSchema = z.object({
   email: z.string().email(),
-  role: z.enum(['ADMIN', 'MODERATOR', 'EMPLOYEE', 'CLIENT']),
+  role: z.enum(['OWNER', 'ADMIN', 'MEMBER', 'VIEWER']),
   organizationId: z.string().uuid(),
 });
 
 export const updateMemberRoleSchema = z.object({
   memberId: z.string().uuid(),
-  role: z.enum(['ADMIN', 'MODERATOR', 'EMPLOYEE', 'CLIENT']),
+  role: z.enum(['OWNER', 'ADMIN', 'MEMBER', 'VIEWER']),
 });
 
 export type CreateOrganizationInput = z.infer<typeof createOrganizationSchema>;
