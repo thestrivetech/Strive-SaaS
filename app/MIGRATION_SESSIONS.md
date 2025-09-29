@@ -152,10 +152,11 @@ ready for the next.js integration and update.
 
 ### Git Issues Fixed:
 - ✅ Resolved symlink error: `app/app/` paths beyond symbolic link
-  - Removed cached entries: `app/app/package.json`, `app/app/package-lock.json`
-  - These were tracked through `app -> platform` symlink
-  - Added `app/app/` to `.gitignore` to prevent re-tracking after git reset
-  - Fix: `git rm --cached app/app/package*.json` + add to `.gitignore`
+  - **Root cause:** `app -> platform` symlink caused git to track files as `app/app/*`
+  - **Final solution:** Removed the symlink entirely with `rm app`
+  - This fixed the "beyond a symbolic link" fatal error
+  - Platform files remain safely in `platform/` directory
+  - **Note:** Initial attempts to remove cached entries didn't work - removing symlink was required
 
 ### Dependencies: 127 → 47 packages
 - Removed: Vite, Express, Drizzle, Wouter, Auth, Testing, Build tools

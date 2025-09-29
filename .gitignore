@@ -38,7 +38,7 @@ build-test.log
 chat_logs/
 prompts
 copy-wireframes/
-docs/
+#docs/
 tests/
 
 # Database migrations (not needed for Vercel deployment)
