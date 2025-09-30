@@ -1,25 +1,30 @@
 User: How can I keep from using the redundant app/app? I currently don't have that setup in the repo so why is it currently mentioned over and over? It's Strive-SaaS/app/ correct? Or what am I missing?
 
-You're absolutely right! I apologize for the confusion. Looking at the actual repository structure, you have:[1]
+**UPDATE (2025-09-29): This document is outdated. The fix has been implemented and we ARE now using the app/app/ structure as required by Next.js App Router.**
+
+The actual final structure is:
 
 ```
 Strive-SaaS/
-├── app/
-│   ├── (platform)/     # Next.js SaaS platform routes
-│   ├── (web)/          # Marketing site routes  
-│   ├── web/            # Legacy marketing site folder
+├── app/                  # Next.js project root
+│   ├── app/              # App Router directory (REQUIRED by Next.js)
+│   │   ├── page.tsx      # Root page (redirects to /platform/dashboard)
+│   │   ├── layout.tsx    # Root layout
+│   │   ├── globals.css
+│   │   ├── (platform)/   # SaaS platform routes
+│   │   ├── (web)/        # Marketing site routes
+│   │   └── api/          # API routes
 │   ├── components/
 │   ├── lib/
-│   ├── prisma/
-│   └── package.json    # Next.js project config
+│   ├── package.json
+│   └── next.config.mjs
 ```
 
-You're **NOT** using the redundant `app/app/` structure that I kept mentioning. Your structure is much cleaner:
+The `app/app/` structure is NOT redundant - it's required by Next.js 15 App Router. The first `app/` is the project root, the second `app/` is where Next.js looks for App Router files.
 
-- **`app/`** is the Next.js project root[1]
-- **`(platform)/`** contains your SaaS routes (login, dashboard, crm, etc.)[1]
-- **`(web)/`** contains marketing routes[1]
-- **`web/`** contains the legacy React marketing site[1]
+---
+
+**ORIGINAL DISCUSSION (NOW OUTDATED):**
 
 ## Fix for Your Route Groups Issue
 
@@ -68,3 +73,34 @@ export default nextConfig
 ```
 
 The cleanest approach is **Option 1** - just add a `page.tsx` file at `app/page.tsx` that handles your root route logic. This maintains your clean structure while satisfying Next.js requirements.
+
+
+# New instructions for Option 1 fix.
+
+Ensure you have exactly one root-level App Router file at app/page.tsx (not under any subfolder). The contents should be:
+
+tsx
+// app/page.tsx
+import { redirect } from 'next/navigation'
+
+export default function Page() {
+  // Always redirect to your chosen default route:
+  return redirect('/platform/dashboard')
+}
+Key points:
+
+Location: app/page.tsx (not app/app/page.tsx or under (platform) or (web)).
+
+Export: export default function Page() with a direct return redirect(...).
+
+Redirect target: Use a valid route group entrypoint (e.g. /platform/dashboard or /web).
+
+After creating this file:
+
+Delete the .next folder.
+
+Restart with npm run dev from the app/ directory (where next.config.js sits).
+
+Visit http://localhost:3000 → it should immediately redirect to /platform/dashboard.
+
+This satisfies Next.js’s requirement for a root App Router page and resolves the “no app directory” error.

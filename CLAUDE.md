@@ -6,11 +6,12 @@
 
 ## 🎯 PROJECT: Strive Tech SaaS Platform
 
-**Location:** `app/` → app.strivetech.ai
+**Location:** `app/` → app.strivetech.ai (Next.js project root)
 **Stack:** Next.js 15.5.4 + React 19.1.0 + TypeScript + Prisma + Supabase
 **Focus:** Enterprise B2B, Multi-tenant, 3-tier subscriptions, and used internally by Strive Tech daily (employees & admins)
 
 > **NOTE:** `app/web/` = legacy marketing site (DO NOT MODIFY unless asked)
+> **IMPORTANT:** Next.js App Router files are in `app/app/` subdirectory
 
 ---
 
@@ -32,20 +33,28 @@ Testing: Jest + React Testing Library (80% min) + Playwright
 ## 📁 STRUCTURE
 
 ```
-app/
-├── app/(auth)/          # Login routes
-├── app/(platform)/      # Protected: dashboard, crm, projects, ai, tools
-├── app/api/             # Webhooks ONLY
+app/                          # Next.js project root
+├── app/                      # App Router directory (Next.js requirement)
+│   ├── page.tsx             # Root page (redirects to /platform/dashboard)
+│   ├── layout.tsx           # Root layout
+│   ├── globals.css          # Global styles
+│   ├── (platform)/          # Protected: dashboard, crm, projects, ai, tools
+│   ├── (web)/               # Marketing routes (legacy)
+│   ├── api/                 # Webhooks ONLY
+│   └── favicon.ico
 ├── components/
-│   ├── ui/              # shadcn
-│   ├── features/        # Feature-specific
-│   └── shared/          # Layouts, nav
-├── lib/modules/[feat]/  # Self-contained modules
-│   ├── actions/         # Server Actions
-│   ├── queries/         # Data fetching
-│   ├── schemas/         # Zod
-│   └── index.ts         # Public API
-└── middleware.ts        # Auth + RBAC
+│   ├── ui/                  # shadcn
+│   ├── features/            # Feature-specific
+│   └── shared/              # Layouts, nav
+├── lib/
+│   └── modules/[feat]/      # Self-contained modules
+│       ├── actions/         # Server Actions
+│       ├── queries/         # Data fetching
+│       ├── schemas/         # Zod
+│       └── index.ts         # Public API
+├── middleware.ts            # Auth + RBAC
+├── package.json
+└── next.config.mjs
 ```
 
 ---
