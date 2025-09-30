@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 
 export async function middleware(request: NextRequest) {
+  const hostname = request.headers.get('host') || '';
   const path = request.nextUrl.pathname;
 
   // Handle CORS for public analytics endpoints
@@ -39,6 +40,37 @@ export async function middleware(request: NextRequest) {
     }
     return response;
   }
+
+  // ============================================
+  // HOST-BASED ROUTING
+  // ============================================
+
+  // Marketing site (strivetech.ai) - no auth required
+  // Routes are in app/(web)/ so Next.js handles them automatically
+  const isMarketingSite =
+    hostname === 'strivetech.ai' ||
+    hostname === 'www.strivetech.ai' ||
+    (hostname.includes('localhost') && path.startsWith('/web'));
+
+  if (isMarketingSite) {
+    // No auth checks for marketing site
+    return NextResponse.next();
+  }
+
+  // Platform site (app.strivetech.ai) - auth required for most routes
+  // Routes are in app/(platform)/
+  const isPlatformSite =
+    hostname === 'app.strivetech.ai' ||
+    (hostname.includes('localhost') && !path.startsWith('/web'));
+
+  if (!isPlatformSite) {
+    // Unknown hostname, continue normally
+    return NextResponse.next();
+  }
+
+  // ============================================
+  // PLATFORM AUTH & ROUTING
+  // ============================================
 
   let response = NextResponse.next({
     request: {

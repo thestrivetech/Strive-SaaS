@@ -33,7 +33,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Button } from '@/components/ui/button';
 import { updateProject } from '@/lib/modules/projects/actions';
 import { updateProjectSchema, type UpdateProjectInput } from '@/lib/modules/projects/schemas';
-import { ProjectStatus, ProjectPriority } from '@prisma/client';
+import { ProjectStatus, Priority } from '@prisma/client';
 import { Pencil, Loader2 } from 'lucide-react';
 import { toast } from 'sonner';
 
@@ -43,7 +43,7 @@ interface EditProjectDialogProps {
     name: string;
     description: string | null;
     status: ProjectStatus;
-    priority: ProjectPriority;
+    priority: Priority;
     customerId: string | null;
     projectManagerId: string;
     startDate: Date | null;
@@ -253,10 +253,10 @@ export function EditProjectDialog({
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent>
-                        <SelectItem value={ProjectPriority.LOW}>Low</SelectItem>
-                        <SelectItem value={ProjectPriority.MEDIUM}>Medium</SelectItem>
-                        <SelectItem value={ProjectPriority.HIGH}>High</SelectItem>
-                        <SelectItem value={ProjectPriority.CRITICAL}>Critical</SelectItem>
+                        <SelectItem value={Priority.LOW}>Low</SelectItem>
+                        <SelectItem value={Priority.MEDIUM}>Medium</SelectItem>
+                        <SelectItem value={Priority.HIGH}>High</SelectItem>
+                        <SelectItem value={Priority.CRITICAL}>Critical</SelectItem>
                       </SelectContent>
                     </Select>
                     <FormMessage />

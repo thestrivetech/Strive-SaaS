@@ -36,6 +36,7 @@ model User {
   activityLogs        ActivityLog[]
   appointments        Appointment[]
   contentAuthored     Content[]
+  uploadedAttachments Attachment[] @relation("UploadedAttachments")
 
   @@map("users")
 }
@@ -78,6 +79,7 @@ model Organization {
   appointments       Appointment[]
   content            Content[]
   activityLogs       ActivityLog[]
+  attachments        Attachment[]
 
   @@map("organizations")
 }
@@ -593,4 +595,29 @@ model GoalConversion {
   @@index([goalId])
   @@index([timestamp])
   @@map("goal_conversions")
+}
+
+// ==========================================
+// FILE ATTACHMENTS
+// ==========================================
+
+model Attachment {
+  id             String   @id @default(uuid())
+  organizationId String   @map("organization_id")
+  entityType     String   @map("entity_type") // task, project, customer
+  entityId       String   @map("entity_id")
+  fileName       String   @map("file_name")
+  fileSize       Int      @map("file_size")
+  mimeType       String   @map("mime_type")
+  filePath       String   @map("file_path") // Supabase Storage path
+  uploadedById   String   @map("uploaded_by_id")
+  createdAt      DateTime @default(now()) @map("created_at")
+  updatedAt      DateTime @updatedAt @map("updated_at")
+
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  uploadedBy   User         @relation("UploadedAttachments", fields: [uploadedById], references: [id])
+
+  @@index([organizationId])
+  @@index([entityType, entityId])
+  @@map("attachments")
 }

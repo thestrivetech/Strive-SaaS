@@ -33,7 +33,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Button } from '@/components/ui/button';
 import { createProject } from '@/lib/modules/projects/actions';
 import { createProjectSchema, type CreateProjectInput } from '@/lib/modules/projects/schemas';
-import { ProjectStatus, ProjectPriority, type Customer, type User } from '@prisma/client';
+import { ProjectStatus, Priority, type Customer, type User } from '@prisma/client';
 import { Plus, Loader2 } from 'lucide-react';
 import { toast } from 'sonner';
 
@@ -60,7 +60,7 @@ export function CreateProjectDialog({
       name: '',
       description: '',
       status: ProjectStatus.PLANNING,
-      priority: ProjectPriority.MEDIUM,
+      priority: Priority.MEDIUM,
       organizationId,
     },
   });
@@ -75,7 +75,7 @@ export function CreateProjectDialog({
         name: '',
         description: '',
         status: ProjectStatus.PLANNING,
-        priority: ProjectPriority.MEDIUM,
+        priority: Priority.MEDIUM,
         organizationId,
       });
       router.refresh();
@@ -233,10 +233,10 @@ export function CreateProjectDialog({
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent>
-                        <SelectItem value={ProjectPriority.LOW}>Low</SelectItem>
-                        <SelectItem value={ProjectPriority.MEDIUM}>Medium</SelectItem>
-                        <SelectItem value={ProjectPriority.HIGH}>High</SelectItem>
-                        <SelectItem value={ProjectPriority.CRITICAL}>Critical</SelectItem>
+                        <SelectItem value={Priority.LOW}>Low</SelectItem>
+                        <SelectItem value={Priority.MEDIUM}>Medium</SelectItem>
+                        <SelectItem value={Priority.HIGH}>High</SelectItem>
+                        <SelectItem value={Priority.CRITICAL}>Critical</SelectItem>
                       </SelectContent>
                     </Select>
                     <FormMessage />
