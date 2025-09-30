@@ -54,10 +54,26 @@ export async function getCustomers(
   });
 }
 
+type CustomerWithDetails = Prisma.CustomerGetPayload<{
+  include: {
+    assignedTo: { select: { id: true; name: true; email: true; avatarUrl: true } };
+    projects: {
+      include: {
+        projectManager: { select: { id: true; name: true; email: true } };
+      };
+    };
+    appointments: {
+      include: {
+        assignedTo: { select: { id: true; name: true } };
+      };
+    };
+  };
+}>;
+
 export async function getCustomerById(
   customerId: string,
   organizationId: string
-): Promise<Customer | null> {
+): Promise<CustomerWithDetails | null> {
   return prisma.customer.findFirst({
     where: {
       id: customerId,

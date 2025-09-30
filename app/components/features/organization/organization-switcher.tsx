@@ -1,7 +1,8 @@
 'use client';
 
 import { useState } from 'react';
-import { Check, ChevronsUpDown, PlusCircle } from 'lucide-react';
+import { useRouter } from 'next/navigation';
+import { Check, ChevronsUpDown, PlusCircle, Loader2 } from 'lucide-react';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -14,23 +15,41 @@ import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import type { Organization, OrganizationMember } from '@prisma/client';
 import { CreateOrganizationDialog } from './create-organization-dialog';
+import { setCurrentOrganization } from '@/lib/modules/organization/context';
+import { toast } from 'sonner';
 
 interface OrganizationSwitcherProps {
   organizations: (OrganizationMember & { organization: Organization })[];
   currentOrgId: string;
+  userId: string;
 }
 
-export function OrganizationSwitcher({ organizations, currentOrgId }: OrganizationSwitcherProps) {
+export function OrganizationSwitcher({ organizations, currentOrgId, userId }: OrganizationSwitcherProps) {
   const [open, setOpen] = useState(false);
   const [showCreateDialog, setShowCreateDialog] = useState(false);
+  const [isSwitching, setIsSwitching] = useState(false);
+  const router = useRouter();
 
   const currentOrg = organizations.find((org) => org.organizationId === currentOrgId);
 
-  const handleOrgSwitch = (orgId: string) => {
-    // In a real app, this would update the user's current organization context
-    // For now, we'll just refresh the page with the new org in context
-    // This would typically be handled by updating a cookie or session
-    window.location.href = `?org=${orgId}`;
+  const handleOrgSwitch = async (orgId: string) => {
+    if (orgId === currentOrgId) {
+      setOpen(false);
+      return;
+    }
+
+    setIsSwitching(true);
+    try {
+      await setCurrentOrganization(orgId, userId);
+      setOpen(false);
+      toast.success('Organization switched successfully');
+      router.refresh();
+    } catch (error) {
+      const message = error instanceof Error ? error.message : 'Failed to switch organization';
+      toast.error(message);
+    } finally {
+      setIsSwitching(false);
+    }
   };
 
   return (
@@ -43,10 +62,19 @@ export function OrganizationSwitcher({ organizations, currentOrgId }: Organizati
             aria-expanded={open}
             className="w-[200px] justify-between"
           >
-            <span className="truncate">
-              {currentOrg?.organization.name || 'Select organization'}
-            </span>
-            <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+            {isSwitching ? (
+              <>
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                <span>Switching...</span>
+              </>
+            ) : (
+              <>
+                <span className="truncate">
+                  {currentOrg?.organization.name || 'Select organization'}
+                </span>
+                <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+              </>
+            )}
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent className="w-[200px]" align="start">

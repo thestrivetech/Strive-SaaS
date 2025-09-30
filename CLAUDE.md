@@ -1,7 +1,11 @@
 # CLAUDE-CONCISE.md
 
 **Claude's Session Memory | v2.0 | Production Standards**
- IMPORTANT!!! READ ANY FILE BEFORE YOU TRY TO EDIT OR UPDATE !!!!!!!
+
+> **IMPORTANT!!! READ ANY FILE BEFORE YOU TRY TO EDIT OR UPDATE !!!!!!**
+>
+> **For comprehensive documentation:** See [`docs/README.md`](docs/README.md) for detailed architecture, complete command references, and expanded explanations.
+
 ---
 
 ## 🎯 PROJECT: Strive Tech SaaS Platform
@@ -83,7 +87,7 @@ async function Page() {
 4. **API Routes** → Webhooks ONLY
 
 ### Architecture Laws
-- **NO cross-module imports** (`crm/` ❌→ `projects/`)
+- **NO cross-module imports** (`crm/` ❌→ `projects/`) -> User: This will definitely have to change in the future unless we can setup data or information transfer system (whatever is more efficient)
 - **Edit existing files** - don't create new ones unless necessary
 
 ### File Size Standards
@@ -238,7 +242,7 @@ export type { Customer } from '@prisma/client';
 ❌ <img> instead of Next.js Image
 ❌ API routes for internal data fetching
 ❌ Multiple auth systems or database clients
-❌ Files over 200/300 lines
+❌ Files over 200/300 lines (500 line max for specific cases, ask the user for permission, unless its for data: Blogs, Case Studies, Whitepapers, Articles, etc. Please read other documentation in chat logs for more context, search data)
 ❌ Skipping Zod validation
 ❌ Committing without lint + typecheck
 ```
@@ -247,7 +251,7 @@ export type { Customer } from '@prisma/client';
 
 ## 🔗 QUICK REFS
 
-- **Tiers:** T1 ($299) 3 tools | T2 ($699) 10 tools | T3 (Custom) unlimited
+- **Tiers:** T0 (FREE) Low Request/Rate Limit with lower open source models | T1 ($299) 3 tools | T2 ($699) 10 tools | T3 (Custom) unlimited
 - **Models:** User, Organization, Customer, Project, Task, AIConversation (13 total)
 - **Docs:** `CLAUDE.md` (full), `DASHBOARD_BUILD_PLAN.md`, `feature-&-tool-marketplace.md`
 

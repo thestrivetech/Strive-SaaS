@@ -1,5 +1,8 @@
+"use client";
+
 import { useState, useEffect } from "react";
 import { MapPin, Phone, Mail, Clock, Calendar, Download, MessageCircle, ChevronDown, ChevronUp, Users, Eye, FileText } from "lucide-react";
+import { useRouter } from "next/navigation";
 
 import { Card, CardContent } from "@/components/ui/card";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
@@ -9,14 +12,13 @@ import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Checkbox } from "@/components/ui/checkbox";
 import { useToast } from "@/hooks/use-toast";
-import { useLocation } from "wouter";
 import { validatePhone } from "@/lib/validation";
 import ProfessionalBrochure from "@/components/ui/professional-brochure";
 import { generatePDF, generateProfessionalBrochurePDF } from "@/lib/pdf-generator";
 
-const Contact = () => {
+export default function ContactPage() {
   const { toast } = useToast();
-  const [, setLocation] = useLocation();
+  const router = useRouter();
   const [formData, setFormData] = useState({
     firstName: "",
     lastName: "",
@@ -30,7 +32,7 @@ const Contact = () => {
   const [validationErrors, setValidationErrors] = useState({
     phone: ""
   });
-  
+
   const [expandedFaq, setExpandedFaq] = useState<number | null>(null);
   const [isBrochureModalOpen, setIsBrochureModalOpen] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -94,7 +96,7 @@ const Contact = () => {
     },
     {
       icon: <Phone className="text-primary w-6" />,
-      title: "Phone", 
+      title: "Phone",
       content: "(731)-431-2320"
     },
     {
@@ -154,7 +156,7 @@ const Contact = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (!formData.privacyConsent) {
       toast({
         title: "Privacy consent required",
@@ -257,14 +259,14 @@ const Contact = () => {
   const handleQuickAction = (action: string) => {
     switch (action) {
       case "demo":
-        setLocation('/request');
+        router.push('/request');
         break;
       case "brochure":
         setIsBrochureModalOpen(true);
         break;
       case "chat":
         // Navigate to the full Sai chatbot page
-        setLocation('/chatbot-sai');
+        router.push('/chatbot-sai');
         break;
     }
   };
@@ -303,13 +305,13 @@ const Contact = () => {
       <section className="hero-gradient pt-16 md:pt-20 pb-12 md:pb-16">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12 md:mb-16">
-            <h1 
+            <h1
               className="text-3xl md:text-4xl lg:text-5xl font-bold mb-4 md:mb-6 leading-tight"
               data-testid="text-contact-title"
             >
               Accelerate Your <span className="bg-gradient-to-br from-[#ff7033] via-orange-500 to-purple-600 bg-clip-text text-transparent inline-block">Business Success</span> with AI
             </h1>
-            <p 
+            <p
               className="text-lg md:text-xl text-muted-foreground max-w-3xl mx-auto leading-relaxed"
               data-testid="text-contact-subtitle"
             >
@@ -321,7 +323,7 @@ const Contact = () => {
             {/* Contact Form */}
             <Card className="p-6 md:p-8" style={{ backgroundColor: '#ffffffeb' }}>
               <CardContent className="p-0">
-                <h2 
+                <h2
                   className="text-xl md:text-2xl font-bold mb-4 md:mb-6"
                   style={{ color: '#ff7033' }}
                   data-testid="text-form-title"
@@ -357,7 +359,7 @@ const Contact = () => {
                       />
                     </div>
                   </div>
-                  
+
                   <div>
                     <label className="block text-sm font-medium mb-2" style={{ color: '#020a1c' }}>Business Email *</label>
                     <Input
@@ -393,10 +395,10 @@ const Contact = () => {
                           }
                         }
                       }}
-                      style={{ 
-                        backgroundColor: '#ffffff', 
-                        color: '#020a1c', 
-                        borderColor: validationErrors.phone ? '#ef4444' : '#ff7033' 
+                      style={{
+                        backgroundColor: '#ffffff',
+                        color: '#020a1c',
+                        borderColor: validationErrors.phone ? '#ef4444' : '#ff7033'
                       }}
                       className="focus:ring-primary focus:border-primary h-11 md:h-10"
                       data-testid="input-phone"
@@ -483,7 +485,7 @@ const Contact = () => {
               {/* Contact Details */}
               <Card className="p-6 md:p-8" style={{ backgroundColor: '#ffffffeb' }}>
                 <CardContent className="p-0">
-                  <h3 
+                  <h3
                     className="text-lg md:text-xl font-bold mb-4 md:mb-6"
                     style={{ color: '#020a1c' }}
                     data-testid="text-contact-info-title"
@@ -517,7 +519,7 @@ const Contact = () => {
                     <div className="w-10 h-10 md:w-12 md:h-12 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-2 md:mb-3">
                       <Calendar className="w-5 h-5 md:w-6 md:h-6 text-primary" />
                     </div>
-                    <h3 
+                    <h3
                       className="text-lg md:text-2xl font-bold mb-1 md:mb-2"
                       style={{ color: '#020a1c' }}
                       data-testid="text-quick-actions-title"
@@ -528,19 +530,19 @@ const Contact = () => {
                       Book your free strategy assessment and explore our resources
                     </p>
                   </div>
-                  
+
                   <div className="space-y-3 md:space-y-4">
                     {/* Primary assessment button */}
                     <Button
                       className="w-full bg-primary text-primary-foreground hover:bg-primary/90 py-2 sm:py-3 md:py-4 px-3 sm:px-4 text-sm sm:text-base md:text-lg font-semibold shadow-lg hover:shadow-xl transition-all duration-300 relative overflow-hidden group hover:scale-105 before:absolute before:inset-0 before:bg-gradient-to-r before:from-transparent before:via-white/15 before:to-transparent before:-translate-x-full hover:before:translate-x-full before:transition-transform before:duration-500 min-h-[2.75rem] sm:min-h-[3rem]"
-                      onClick={() => window.location.href = '/assessment'}
+                      onClick={() => router.push('/assessment')}
                       data-testid="button-schedule-assessment"
                     >
                       <Calendar className="mr-1 sm:mr-2 w-4 h-4 sm:w-5 sm:h-5 flex-shrink-0" />
                       <span className="hidden sm:inline">Book Free Strategy Assessment</span>
                       <span className="sm:hidden text-center leading-tight">Book Free Assessment</span>
                     </Button>
-                    
+
                     {/* Secondary actions */}
                     <div className="grid grid-cols-1 gap-3">
                       {quickActions.slice(0, 2).map((action, index) => (
@@ -577,13 +579,13 @@ const Contact = () => {
           {/* FAQ Section */}
           <div className="mt-16 md:mt-20">
             <div className="text-center mb-8 md:mb-12">
-              <h2 
+              <h2
                 className="text-2xl md:text-3xl lg:text-4xl font-bold mb-3 md:mb-4"
                 data-testid="text-faq-title"
               >
                 Frequently Asked Questions
               </h2>
-              <p 
+              <p
                 className="text-lg md:text-xl text-muted-foreground"
                 data-testid="text-faq-subtitle"
               >
@@ -611,7 +613,7 @@ const Contact = () => {
                     </div>
                   </button>
                   {expandedFaq === index && (
-                    <div 
+                    <div
                       className="px-4 md:px-6 pb-4 md:pb-6 text-sm md:text-base leading-relaxed"
                       style={{ color: '#666' }}
                       data-testid={`text-faq-answer-${index}`}
@@ -641,6 +643,4 @@ const Contact = () => {
       </Dialog>
     </div>
   );
-};
-
-export default Contact;
+}

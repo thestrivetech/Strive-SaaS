@@ -7,17 +7,19 @@
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.6+-blue)](https://www.typescriptlang.org/)
 [![Prisma](https://img.shields.io/badge/Prisma-6.16.2-green)](https://www.prisma.io/)
 
+> **Quick Reference:** For concise development rules and quick lookup, see [`/CLAUDE.md`](../CLAUDE.md). This file contains comprehensive project documentation, architecture details, and complete command references.
+
 ---
 
 ## Project Overview
 
 **Strive Tech SaaS Platform** (`app/`) → `app.strivetech.ai`
 - Enterprise B2B platform with AI-powered tools
-- Multi-tenant architecture with 3-tier subscription model
+- Multi-tenant architecture with 3/4-tier subscription model
 - Built with Next.js 15.5.4 App Router
 - Production-ready with comprehensive security and performance standards
 
-**Legacy Marketing Website** (`app/web/`) → `strivetech.ai`
+**Legacy Marketing Website** (`app/web/`) → `strivetech.ai` -> In progress
 - To be migrated/integrated with SaaS platform in future
 - Legacy React app (not actively developed)
 - **DO NOT MODIFY** unless explicitly requested
@@ -69,7 +71,7 @@ Errors: Sentry
 Logs: Structured JSON
 ```
 
-### Legacy Marketing Website (app/web/) - MAINTENANCE ONLY - Will be integrated into the SaaS in the future after it's updated to fit with next.js and the SaaS -> Currrently happening
+### Legacy Marketing Website (app//app/web/) - Will be integrated into the SaaS in the future after it's updated to fit with next.js and the SaaS -> Currrently happening
 - Legacy React + Express.js
 - PostgreSQL via Supabase (separate DB)
 - Drizzle ORM + Passport.js auth
@@ -253,16 +255,19 @@ npm start                # Start production server
   - No image.png, test-results.json, etc.
 - ❌ **NEVER** commit AI tool configs to source control
   - .claude/, .serena/ must be in .gitignore
-- ❌ **NEVER** create monolithic "god files" over 300 lines
+- ❌ **NEVER** create monolithic "god files" over 500 lines (unless pure data/content)
 - ❌ **NEVER** mix business logic with UI components
 - ❌ **NEVER** create duplicate solutions (multiple DB clients, auth systems)
+- ❌ **NEVER** create files in root directory (no logs, .md files, images)
+- ❌ **NEVER** skip Zod validation on inputs
+- ❌ **NEVER** commit without running lint + typecheck
 
 ### ✅ Project Organization (DO THIS)
 
 - ✅ All documentation goes in `docs/` directory
 - ✅ Keep root directory clean (only essential config files)
 - ✅ One file, one responsibility (Single Responsibility Principle)
-- ✅ Files under 300 lines - split into smaller modules if exceeding
+- ✅ Files under 300 lines - split into smaller modules if exceeding (500 line limit in specific cases)
 - ✅ Separate concerns: UI in `components/`, logic in `lib/`, types in `types/`
 
 ---
@@ -275,11 +280,10 @@ npm start                # Start production server
 
 1. **Feature Module Pattern** (for `app/`)
    ```
-   lib/modules/crm/
-   ├── services/        # Business logic
-   ├── queries/         # Database queries
-   ├── mutations/       # Database mutations
-   ├── types.ts         # Module-specific types
+   lib/modules/[feature]/
+   ├── actions/         # Server Actions (mutations with validation)
+   ├── queries/         # Database queries (read operations)
+   ├── schemas/         # Zod validation schemas
    └── index.ts         # Public API
    ```
 
@@ -296,9 +300,17 @@ npm start                # Start production server
    - Keep services pure and testable
 
 4. **File Size Limits**
-   - Components: 200 lines max
-   - Services: 300 lines max
-   - If exceeding, split into multiple files
+   - **Hard Limit:** 500 lines per file (enforced by ESLint)
+     - Applies to all `.ts`/`.tsx` files
+     - Exception: Pure data/content files (Blogs, Case Studies, Whitepapers, Articles, etc.)
+     - Blocks PRs when exceeded
+   - **Soft Targets (Code Review Warning):**
+     - UI Components: 200 lines
+     - Server Components: 250 lines
+     - Services/Logic: 300 lines
+     - API Routes: 150 lines
+   - **When approaching soft target:** Extract reusable hooks/utilities, use component composition, separate concerns
+   - **If exceeding:** Split into multiple files
 
 ### Dependency Management
 
@@ -472,10 +484,10 @@ NODE_ENV="development"
 
 ## Database Architecture
 
-**Two Separate Supabase Databases:**
+**Two Separate Supabase Databases:** -> Currently changing to one
 
 1. **Marketing Site DB** (`app/web/`) - Existing production database
-   - ORM: Drizzle
+   - ORM: Drizzle -> Prisma
    - Purpose: Marketing site data (contacts, analytics)
 
 2. **SaaS Platform DB** (`app/`) - New dedicated database ✅
@@ -489,11 +501,12 @@ NODE_ENV="development"
 
 ## Subscription Tiers & Access Control
 
-The SaaS platform has **3 subscription tiers** with different module access:
+The SaaS platform has **4 subscription tiers** with different module access:
 
-- **Tier 1 ($299-$499):** Basic dashboard, limited modules, best for solopreneurs & startups
-- **Tier 2 ($699-$1,000):** Industry-specific dashboard, more modules, best for SMEs & growth
-- **Tier 3 (Enterprise):** Fully customized dashboard, all modules, custom workflows
+- **Tier 0 (FREE):** Very low rate limit with open source models, basic features
+- **Tier 1 ($299):** Basic dashboard, 3 tools, best for solopreneurs & startups
+- **Tier 2 ($699):** Industry-specific dashboard, 10 tools, best for SMEs & growth
+- **Tier 3 (Enterprise/Custom):** Fully customized dashboard, unlimited tools, custom workflows
 
 **RBAC Implementation:**
 - Middleware checks user role and subscription tier
@@ -594,8 +607,8 @@ USING (org_id = current_user_org());
 10. **Continuous improvement** - Measure and iterate
 
 ### ⚠️ Critical Rules
-- **File size limits:** Components 200 lines, Services 300 lines
-- **No cross-module imports** - Modules are self-contained
+- **File size limits:** Components 200 lines, Services 300 lines, Hard limit 500 lines (exception for data: Blogs, Case Studies, Whitepapers, Articles, etc.)
+- **No cross-module imports** - Modules are self-contained (may change in future with data/information transfer system)
 - **One solution per problem** - No duplicate dependencies
 - **Always run pre-commit checks** - lint, typecheck, test
 - **Server Components by default** - "use client" only when needed

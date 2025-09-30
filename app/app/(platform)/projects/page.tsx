@@ -1,113 +1,70 @@
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import {
   Plus,
   Calendar,
-  Users,
-  Clock,
-  MoreHorizontal,
   FolderKanban,
   CheckCircle,
   AlertCircle,
-  XCircle
+  Clock,
+  XCircle,
 } from 'lucide-react';
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
+import { getCurrentUser } from '@/lib/auth/auth-helpers';
+import { getUserOrganizations, getOrganizationMembers } from '@/lib/modules/organization/queries';
+import { getProjects, getProjectStats, calculateProjectProgress } from '@/lib/modules/projects/queries';
+import { getCustomers } from '@/lib/modules/crm/queries';
+import { CreateProjectDialog } from '@/components/features/projects/create-project-dialog';
 
 export default async function ProjectsPage() {
-  const projects = [
-    {
-      id: 1,
-      name: 'Website Redesign',
-      client: 'Acme Corp',
-      status: 'in_progress',
-      progress: 75,
-      priority: 'high',
-      dueDate: '2024-02-15',
-      team: [
-        { name: 'John Doe', avatar: null },
-        { name: 'Jane Smith', avatar: null },
-        { name: 'Bob Johnson', avatar: null },
-      ],
-      tasks: { total: 24, completed: 18 },
-    },
-    {
-      id: 2,
-      name: 'Mobile App Development',
-      client: 'TechStart',
-      status: 'in_progress',
-      progress: 45,
-      priority: 'medium',
-      dueDate: '2024-03-01',
-      team: [
-        { name: 'Alice Brown', avatar: null },
-        { name: 'Charlie Wilson', avatar: null },
-      ],
-      tasks: { total: 36, completed: 16 },
-    },
-    {
-      id: 3,
-      name: 'SEO Optimization',
-      client: 'GlobalTech',
-      status: 'in_progress',
-      progress: 90,
-      priority: 'low',
-      dueDate: '2024-01-30',
-      team: [
-        { name: 'David Lee', avatar: null },
-      ],
-      tasks: { total: 12, completed: 11 },
-    },
-    {
-      id: 4,
-      name: 'Cloud Migration',
-      client: 'Innovation Labs',
-      status: 'planning',
-      progress: 10,
-      priority: 'high',
-      dueDate: '2024-04-15',
-      team: [
-        { name: 'Emma Davis', avatar: null },
-        { name: 'Frank Miller', avatar: null },
-        { name: 'Grace Taylor', avatar: null },
-      ],
-      tasks: { total: 48, completed: 5 },
-    },
-    {
-      id: 5,
-      name: 'E-commerce Platform',
-      client: 'Digital Dynamics',
-      status: 'completed',
-      progress: 100,
-      priority: 'medium',
-      dueDate: '2024-01-15',
-      team: [
-        { name: 'Henry Anderson', avatar: null },
-        { name: 'Iris Martinez', avatar: null },
-      ],
-      tasks: { total: 30, completed: 30 },
-    },
-  ];
+  const user = await getCurrentUser();
+
+  if (!user) {
+    return null;
+  }
+
+  const userOrgs = await getUserOrganizations(user.id);
+  const currentOrg = userOrgs[0];
+
+  if (!currentOrg) {
+    return (
+      <div className="space-y-6">
+        <div>
+          <h1 className="text-3xl font-bold">Projects</h1>
+          <p className="text-muted-foreground">
+            Create an organization first to manage projects.
+          </p>
+        </div>
+      </div>
+    );
+  }
+
+  const [projects, stats, customers, orgMembers] = await Promise.all([
+    getProjects(currentOrg.organizationId),
+    getProjectStats(currentOrg.organizationId),
+    getCustomers(currentOrg.organizationId),
+    getOrganizationMembers(currentOrg.organizationId),
+  ]);
+
+  // Map organization members to team members format
+  const teamMembers = orgMembers.map((member) => ({
+    id: member.user.id,
+    name: member.user.name || member.user.email,
+  }));
 
   const getStatusIcon = (status: string) => {
     switch (status) {
-      case 'completed':
+      case 'COMPLETED':
         return <CheckCircle className="h-4 w-4 text-green-600" />;
-      case 'in_progress':
+      case 'ACTIVE':
         return <AlertCircle className="h-4 w-4 text-blue-600" />;
-      case 'planning':
+      case 'PLANNING':
         return <Clock className="h-4 w-4 text-yellow-600" />;
-      case 'on_hold':
+      case 'ON_HOLD':
+        return <XCircle className="h-4 w-4 text-orange-600" />;
+      case 'CANCELLED':
         return <XCircle className="h-4 w-4 text-red-600" />;
       default:
         return <Clock className="h-4 w-4 text-gray-600" />;
@@ -116,15 +73,26 @@ export default async function ProjectsPage() {
 
   const getPriorityColor = (priority: string) => {
     switch (priority) {
-      case 'high':
+      case 'CRITICAL':
         return 'bg-red-500/10 text-red-700 border-red-200';
-      case 'medium':
+      case 'HIGH':
+        return 'bg-orange-500/10 text-orange-700 border-orange-200';
+      case 'MEDIUM':
         return 'bg-yellow-500/10 text-yellow-700 border-yellow-200';
-      case 'low':
+      case 'LOW':
         return 'bg-green-500/10 text-green-700 border-green-200';
       default:
         return 'bg-gray-500/10 text-gray-700 border-gray-200';
     }
+  };
+
+  const formatDate = (date: Date | null) => {
+    if (!date) return 'No due date';
+    return new Intl.DateTimeFormat('en-US', {
+      month: 'short',
+      day: 'numeric',
+      year: 'numeric',
+    }).format(new Date(date));
   };
 
   return (
@@ -136,145 +104,130 @@ export default async function ProjectsPage() {
             Manage and track all your projects
           </p>
         </div>
-        <Button>
-          <Plus className="mr-2 h-4 w-4" />
-          New Project
-        </Button>
+        <CreateProjectDialog
+          organizationId={currentOrg.organizationId}
+          customers={customers.map((c) => ({ id: c.id, name: c.name }))}
+          teamMembers={teamMembers}
+        />
       </div>
 
       <div className="grid gap-4 md:grid-cols-4">
         <Card>
           <CardHeader className="pb-3">
+            <CardTitle className="text-sm font-medium">Total Projects</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">{stats.totalProjects}</div>
+            <p className="text-xs text-muted-foreground">All projects</p>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardHeader className="pb-3">
             <CardTitle className="text-sm font-medium">Active Projects</CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">12</div>
-            <p className="text-xs text-muted-foreground">3 completed this week</p>
+            <div className="text-2xl font-bold">{stats.activeProjects}</div>
+            <p className="text-xs text-muted-foreground">Currently active</p>
           </CardContent>
         </Card>
         <Card>
           <CardHeader className="pb-3">
-            <CardTitle className="text-sm font-medium">Total Tasks</CardTitle>
+            <CardTitle className="text-sm font-medium">Completed</CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">150</div>
-            <p className="text-xs text-muted-foreground">80 completed</p>
+            <div className="text-2xl font-bold">{stats.completedProjects}</div>
+            <p className="text-xs text-muted-foreground">Successfully finished</p>
           </CardContent>
         </Card>
         <Card>
           <CardHeader className="pb-3">
-            <CardTitle className="text-sm font-medium">On Track</CardTitle>
+            <CardTitle className="text-sm font-medium">Total Budget</CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">85%</div>
-            <p className="text-xs text-muted-foreground">Projects on schedule</p>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardHeader className="pb-3">
-            <CardTitle className="text-sm font-medium">Team Members</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">24</div>
+            <div className="text-2xl font-bold">
+              ${stats.totalBudget ? (stats.totalBudget / 1000).toFixed(0) + 'k' : '0'}
+            </div>
             <p className="text-xs text-muted-foreground">Across all projects</p>
           </CardContent>
         </Card>
       </div>
 
-      <Tabs defaultValue="all" className="space-y-4">
-        <TabsList>
-          <TabsTrigger value="all">All Projects</TabsTrigger>
-          <TabsTrigger value="active">Active</TabsTrigger>
-          <TabsTrigger value="completed">Completed</TabsTrigger>
-          <TabsTrigger value="on_hold">On Hold</TabsTrigger>
-        </TabsList>
-        <TabsContent value="all" className="space-y-4">
-          <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-            {projects.map((project) => (
+      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+        {projects.length === 0 ? (
+          <Card className="col-span-full">
+            <CardContent className="flex flex-col items-center justify-center h-64">
+              <div className="text-center">
+                <p className="text-muted-foreground">No projects yet.</p>
+                <p className="text-sm text-muted-foreground">
+                  Click "New Project" to create your first project.
+                </p>
+              </div>
+            </CardContent>
+          </Card>
+        ) : (
+          projects.map((project) => {
+            const progress = calculateProjectProgress(project.tasks);
+
+            return (
               <Card key={project.id} className="overflow-hidden">
                 <CardHeader>
                   <div className="flex items-start justify-between">
                     <div className="space-y-1">
                       <CardTitle className="text-lg">{project.name}</CardTitle>
-                      <CardDescription>{project.client}</CardDescription>
+                      <CardDescription>
+                        {project.customer?.name || 'No customer'}
+                      </CardDescription>
                     </div>
-                    <DropdownMenu>
-                      <DropdownMenuTrigger asChild>
-                        <Button variant="ghost" size="icon" className="h-8 w-8">
-                          <MoreHorizontal className="h-4 w-4" />
-                        </Button>
-                      </DropdownMenuTrigger>
-                      <DropdownMenuContent align="end">
-                        <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                        <DropdownMenuSeparator />
-                        <DropdownMenuItem>View Details</DropdownMenuItem>
-                        <DropdownMenuItem>Edit Project</DropdownMenuItem>
-                        <DropdownMenuItem>View Tasks</DropdownMenuItem>
-                        <DropdownMenuSeparator />
-                        <DropdownMenuItem className="text-destructive">
-                          Archive Project
-                        </DropdownMenuItem>
-                      </DropdownMenuContent>
-                    </DropdownMenu>
                   </div>
                 </CardHeader>
                 <CardContent className="space-y-4">
                   <div className="flex items-center gap-2">
                     {getStatusIcon(project.status)}
                     <span className="text-sm capitalize">
-                      {project.status.replace('_', ' ')}
+                      {project.status.replace('_', ' ').toLowerCase()}
                     </span>
                     <Badge variant="outline" className={getPriorityColor(project.priority)}>
-                      {project.priority}
+                      {project.priority.toLowerCase()}
                     </Badge>
                   </div>
 
                   <div className="space-y-2">
                     <div className="flex items-center justify-between text-sm">
                       <span className="text-muted-foreground">Progress</span>
-                      <span className="font-medium">{project.progress}%</span>
+                      <span className="font-medium">{progress}%</span>
                     </div>
-                    <Progress value={project.progress} className="h-2" />
+                    <Progress value={progress} className="h-2" />
                   </div>
 
                   <div className="flex items-center gap-4 text-sm text-muted-foreground">
                     <div className="flex items-center gap-1">
                       <Calendar className="h-3 w-3" />
-                      {new Date(project.dueDate).toLocaleDateString()}
+                      {formatDate(project.dueDate)}
                     </div>
                     <div className="flex items-center gap-1">
                       <FolderKanban className="h-3 w-3" />
-                      {project.tasks.completed}/{project.tasks.total} tasks
+                      {project.tasks.length} tasks
                     </div>
                   </div>
+
+                  {project.projectManager && (
+                    <div className="flex items-center gap-2 pt-2 border-t">
+                      <Avatar className="h-6 w-6">
+                        <AvatarFallback className="text-xs">
+                          {(project.projectManager.name || 'PM').substring(0, 2).toUpperCase()}
+                        </AvatarFallback>
+                      </Avatar>
+                      <span className="text-sm text-muted-foreground">
+                        {project.projectManager.name || 'Project Manager'}
+                      </span>
+                    </div>
+                  )}
                 </CardContent>
-                <CardFooter className="border-t bg-muted/50 px-6 py-3">
-                  <div className="flex items-center justify-between w-full">
-                    <div className="flex -space-x-2">
-                      {project.team.slice(0, 3).map((member, index) => (
-                        <Avatar key={index} className="h-7 w-7 border-2 border-background">
-                          <AvatarImage src={member.avatar || undefined} />
-                          <AvatarFallback className="text-xs">
-                            {member.name.split(' ').map(n => n[0]).join('')}
-                          </AvatarFallback>
-                        </Avatar>
-                      ))}
-                      {project.team.length > 3 && (
-                        <div className="flex h-7 w-7 items-center justify-center rounded-full border-2 border-background bg-muted text-xs">
-                          +{project.team.length - 3}
-                        </div>
-                      )}
-                    </div>
-                    <Button variant="ghost" size="sm">
-                      View
-                    </Button>
-                  </div>
-                </CardFooter>
               </Card>
-            ))}
-          </div>
-        </TabsContent>
-      </Tabs>
+            );
+          })
+        )}
+      </div>
     </div>
   );
 }

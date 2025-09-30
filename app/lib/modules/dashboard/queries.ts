@@ -119,3 +119,39 @@ export async function getActivityFeed(organizationId: string, limit: number = 20
     },
   });
 }
+
+/**
+ * Get activity logs for a specific resource or all resources in an organization
+ */
+export async function getActivityLogs(
+  organizationId: string,
+  resourceType?: string,
+  resourceId?: string,
+  limit: number = 50
+) {
+  const where: any = { organizationId };
+
+  if (resourceType) {
+    where.resourceType = resourceType;
+  }
+
+  if (resourceId) {
+    where.resourceId = resourceId;
+  }
+
+  return prisma.activityLog.findMany({
+    where,
+    orderBy: { createdAt: 'desc' },
+    take: limit,
+    include: {
+      user: {
+        select: {
+          id: true,
+          name: true,
+          email: true,
+          avatarUrl: true,
+        },
+      },
+    },
+  });
+}

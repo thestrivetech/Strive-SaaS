@@ -11,21 +11,21 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
-import { Plus, Search, Filter, MoreHorizontal } from 'lucide-react';
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
+import { Plus, Search, Filter } from 'lucide-react';
 import { getCurrentUser } from '@/lib/auth/auth-helpers';
 import { getUserOrganizations } from '@/lib/modules/organization/queries';
 import { getCustomers, getCustomerStats } from '@/lib/modules/crm/queries';
 import { CreateCustomerDialog } from '@/components/features/crm/create-customer-dialog';
+import { CustomerActionsMenu } from '@/components/features/crm/customer-actions-menu';
+import { CustomerSearch } from '@/components/features/crm/customer-search';
+import { CustomerFilters } from '@/components/features/crm/customer-filters';
+import type { CustomerStatus, CustomerSource } from '@prisma/client';
 
-export default async function CRMPage() {
+export default async function CRMPage({
+  searchParams,
+}: {
+  searchParams: { search?: string; status?: CustomerStatus; source?: CustomerSource };
+}) {
   const user = await getCurrentUser();
 
   if (!user) {
@@ -48,8 +48,16 @@ export default async function CRMPage() {
     );
   }
 
+  const filters = {
+    search: searchParams.search,
+    status: searchParams.status,
+    source: searchParams.source,
+    limit: 50,
+    offset: 0,
+  };
+
   const [customers, stats] = await Promise.all([
-    getCustomers(currentOrg.organizationId),
+    getCustomers(currentOrg.organizationId, filters),
     getCustomerStats(currentOrg.organizationId),
   ]);
 
@@ -137,17 +145,8 @@ export default async function CRMPage() {
           <div className="flex items-center justify-between">
             <CardTitle>Customers</CardTitle>
             <div className="flex items-center gap-2">
-              <div className="relative">
-                <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
-                <Input
-                  type="search"
-                  placeholder="Search customers..."
-                  className="w-[200px] pl-8"
-                />
-              </div>
-              <Button variant="outline" size="icon">
-                <Filter className="h-4 w-4" />
-              </Button>
+              <CustomerSearch />
+              <CustomerFilters />
             </div>
           </div>
         </CardHeader>
@@ -208,25 +207,7 @@ export default async function CRMPage() {
                       {formatTimeAgo(new Date(customer.createdAt))}
                     </TableCell>
                     <TableCell>
-                      <DropdownMenu>
-                        <DropdownMenuTrigger asChild>
-                          <Button variant="ghost" size="icon" className="h-8 w-8">
-                            <MoreHorizontal className="h-4 w-4" />
-                          </Button>
-                        </DropdownMenuTrigger>
-                        <DropdownMenuContent align="end">
-                          <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                          <DropdownMenuSeparator />
-                          <DropdownMenuItem>View details</DropdownMenuItem>
-                          <DropdownMenuItem>Edit customer</DropdownMenuItem>
-                          <DropdownMenuItem>Send email</DropdownMenuItem>
-                          <DropdownMenuItem>View history</DropdownMenuItem>
-                          <DropdownMenuSeparator />
-                          <DropdownMenuItem className="text-destructive">
-                            Delete customer
-                          </DropdownMenuItem>
-                        </DropdownMenuContent>
-                      </DropdownMenu>
+                      <CustomerActionsMenu customer={customer} />
                     </TableCell>
                   </TableRow>
                 ))

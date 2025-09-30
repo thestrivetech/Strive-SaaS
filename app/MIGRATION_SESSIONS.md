@@ -73,18 +73,20 @@ app/                    # Next.js project root
 
 ---
 
-## Session 2: Convert Web Home & Core Pages (60 min) - 🟡 75% COMPLETE
+## Session 2: Convert Web Home & Core Pages (60 min) - ✅ COMPLETED
 
-### Phase: 4.1-4.3 (partial) - Started 2025-09-29
+### Phase: 4.1-4.3 - Completed 2025-09-30 (Session 5)
 
 ### Goals:
 - ✅ Analyze web structure
 - ✅ Create web root layout
 - ✅ Convert homepage
 - ✅ Convert about page
-- ⚠️ Convert contact page (DEFERRED to Session 5)
+- ✅ Convert contact page
 
-### What Was Actually Done (Session 4 - 2025-09-29):
+### What Was Actually Done:
+
+**Session 4 (2025-09-29):**
 ```bash
 # Created web components directory
 mkdir -p app/components/web
@@ -130,38 +132,57 @@ mkdir -p app/components/web
 # - File size: ~450 lines
 ```
 
-### Deliverable: ✅ (Partial)
-**3 of 4 pages converted:**
-- ✅ Layout: app/(web)/layout.tsx
-- ✅ Home: app/(web)/page.tsx
-- ✅ About: app/(web)/about/page.tsx
-- ⚠️ Contact: PENDING (blocked by dev server issue)
+**Session 5 (2025-09-30):**
+```bash
+# Fixed dev server - Prisma client wasn't generated
+npx prisma generate
+
+# Converted contact page
+# Source: app/web/client/src/pages/contact.tsx
+# Target: app/(web)/contact/page.tsx
+# - Added "use client" directive
+# - Replaced useLocation from wouter → useRouter from next/navigation
+# - Replaced setLocation('/path') → router.push('/path')
+# - Kept all: localStorage, validation, FAQ accordion, brochure modal
+# - File size: ~457 lines
+
+# Deleted old source files
+rm -f web/client/src/components/layout/navigation.tsx
+rm -f web/client/src/components/layout/footer.tsx
+rm -f web/client/src/pages/home.tsx
+rm -f web/client/src/pages/company.tsx
+rm -f web/client/src/pages/contact.tsx
+```
+
+### Deliverable: ✅ COMPLETE
+**All 4 pages converted:**
+- ✅ Layout: app/app/(web)/layout.tsx
+- ✅ Home: app/app/(web)/page.tsx
+- ✅ About: app/app/(web)/about/page.tsx
+- ✅ Contact: app/app/(web)/contact/page.tsx
+
+**Components:**
+- ✅ Navigation: app/components/web/navigation.tsx
+- ✅ Footer: app/components/web/footer.tsx
 
 ### Code Quality:
 - ✅ Zero TypeScript errors in new code
 - ✅ Proper "use client" usage (only where needed)
 - ✅ All Wouter imports replaced with Next.js
 - ✅ Clean component separation
+- ✅ Old source files deleted
 
-### Issues Encountered:
-1. **Dev server won't start** (CRITICAL)
-   - Error: "Couldn't find any pages or app directory"
-   - Route groups exist correctly, both have layouts
-   - TypeScript compiles cleanly
-   - Blocking testing and further development
+### Issues Resolved:
+1. **Dev server fixed** ✅
+   - Root cause: Prisma client wasn't generated
+   - Solution: `npx prisma generate` from root directory
+   - Dev server now running at http://localhost:3000
 
-### Time Taken: ~3 hours (Session 4)
-### Status: 🟡 **75% COMPLETE - Contact page pending, blocked by dev server issue**
+### Time Taken: ~3 hours (Session 4) + 1.5 hours (Session 5) = 4.5 hours total
+### Status: ✅ **COMPLETE**
 ### Documentation:
 - Session 4 log: `chat-logs/old-site-updates/session4.md`
-- Session 5 plan: `chat-logs/old-site-updates/session5.md`
-
-### Next Steps (Session 5):
-1. **CRITICAL:** Fix dev server configuration issue
-2. Test all converted pages
-3. Convert contact page (30-40 min)
-4. Delete old source files
-5. Complete Session 2 objectives
+- Session 5 log: `chat-logs/old-site-updates/session5.md`
 
 ---
 
