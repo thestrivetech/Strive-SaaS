@@ -24,6 +24,7 @@ import { ProjectFilters } from '@/components/features/projects/project-filters';
 import { ExportButton } from '@/components/features/export/export-button';
 import { formatDateForCSV, type CSVColumn } from '@/lib/export/csv';
 import type { ProjectStatus, Priority, Project } from '@prisma/client';
+import type { ProjectFilters as ProjectFiltersType } from '@/lib/types/filters';
 
 export default async function ProjectsPage({
   searchParams,
@@ -87,9 +88,9 @@ async function ProjectListContent({
   organizationId: string;
   currentPage: number;
   pageSize: number;
-  searchParams: any;
+  searchParams: Record<string, string | undefined>;
 }) {
-  const filters: any = {
+  const filters: ProjectFiltersType = {
     limit: pageSize,
     offset: (currentPage - 1) * pageSize,
   };
@@ -261,7 +262,7 @@ async function ProjectListContent({
               <div className="text-center">
                 <p className="text-muted-foreground">No projects yet.</p>
                 <p className="text-sm text-muted-foreground">
-                  Click "New Project" to create your first project.
+                  Click &quot;New Project&quot; to create your first project.
                 </p>
               </div>
             </CardContent>

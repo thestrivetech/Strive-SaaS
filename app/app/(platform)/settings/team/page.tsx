@@ -84,7 +84,7 @@ export default async function TeamPage() {
         <div>
           <h1 className="text-3xl font-bold">Team Management</h1>
           <p className="text-muted-foreground">
-            Manage your organization's team members and their roles
+            Manage your organization&apos;s team members and their roles
           </p>
         </div>
         <InviteMemberDialog organizationId={currentOrg.organizationId} />

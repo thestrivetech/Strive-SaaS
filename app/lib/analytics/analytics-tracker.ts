@@ -8,7 +8,7 @@ const API_BASE_URL = '/api/analytics'; // Relative path for same-domain requests
 let sessionId: string | null = null;
 let userId: string | null = null;
 let pageStartTime: number = Date.now();
-let isTrackingEnabled = true;
+const isTrackingEnabled = true;
 let consentGiven = false;
 
 // Device and browser detection
@@ -233,8 +233,8 @@ export async function trackWebVitals(metric: WebVitalsMetric): Promise<void> {
 
 // Scroll depth tracking
 let maxScrollDepth = 0;
-let scrollDepthMarkers = [25, 50, 75, 90, 100];
-let trackedDepths = new Set<number>();
+const scrollDepthMarkers = [25, 50, 75, 90, 100];
+const trackedDepths = new Set<number>();
 
 function calculateScrollDepth(): number {
   const scrollTop = window.pageYOffset || document.documentElement.scrollTop;

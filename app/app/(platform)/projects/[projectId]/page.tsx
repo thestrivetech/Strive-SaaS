@@ -18,6 +18,7 @@ import { CreateTaskDialog } from '@/components/features/tasks/create-task-dialog
 import { TaskAttachments } from '@/components/features/tasks/task-attachments';
 import { ActivityTimeline } from '@/components/features/shared/activity-timeline';
 import { getAttachments } from '@/lib/modules/attachments';
+import type { OrganizationMember, TeamMember } from '@/lib/types/organization';
 
 export default async function ProjectDetailPage({
   params,
@@ -51,7 +52,7 @@ export default async function ProjectDetailPage({
   }
 
   // Map organization members to team members format
-  const teamMembers = orgMembers.map((member: any) => ({
+  const teamMembers: TeamMember[] = (orgMembers as OrganizationMember[]).map((member) => ({
     id: member.user.id,
     name: member.user.name || member.user.email,
   }));
@@ -100,7 +101,7 @@ export default async function ProjectDetailPage({
     }).format(new Date(date));
   };
 
-  const formatCurrency = (amount: any) => {
+  const formatCurrency = (amount: number | null) => {
     if (!amount) return 'Not set';
     return new Intl.NumberFormat('en-US', {
       style: 'currency',
@@ -217,7 +218,7 @@ export default async function ProjectDetailPage({
             <CardContent>
               {tasks.length > 0 ? (
                 <TaskList
-                  tasks={tasks.map((task: any) => ({
+                  tasks={tasks.map((task) => ({
                     ...task,
                     estimatedHours: task.estimatedHours ? Number(task.estimatedHours) : null,
                   }))}
@@ -245,7 +246,7 @@ export default async function ProjectDetailPage({
               <TaskAttachments
                 taskId={project.id}
                 projectId={project.id}
-                initialAttachments={attachments.map((att: any) => ({
+                initialAttachments={attachments.map((att) => ({
                   id: att.id,
                   fileName: att.fileName,
                   fileSize: att.fileSize,

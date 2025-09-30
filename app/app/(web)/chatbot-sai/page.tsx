@@ -1,5 +1,6 @@
 "use client";
 
+import '@/lib/types/analytics';
 import { Bot, Sparkles, AlertCircle, Loader2, MessageCircle, Clock } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";

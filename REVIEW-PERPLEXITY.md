@@ -180,3 +180,12 @@ Weak points: Route conflicts, middleware complexity, testing gaps
 The foundation is solid, but critical issues prevent production deployment. With the identified fixes, this could become an A+ Next.js implementation.
 
 Priority: Fix the route group conflict first - everything else depends on a buildable application.
+
+# Additional User Notes & Concerns
+
+- We need to check and see what still needs to be done for the admin dashboards. 
+I know that we still have to make sure the websites performance and analytic data needs to be configured properly 
+
+- We need to do a thorough check on current mobile device design, layout, and functionality.
+    - Create an entire mobile design plan to make this SaaS platform be a top notch experience for mobile users
+    - Additionaly, we need to double check if the mobile design and functionality was transferred over from the legacy files

@@ -1,13 +1,11 @@
-export interface CSVColumn<T = any> {
-  key: keyof T | string;
-  label: string;
-  format?: (value: any, row: T) => string;
-}
+import type { CSVColumn as CSVColumnType } from '@/lib/types/csv';
+
+export type CSVColumn<T = Record<string, unknown>> = CSVColumnType<T>;
 
 /**
  * Escape special characters for CSV format
  */
-function escapeCSVValue(value: any): string {
+function escapeCSVValue(value: unknown): string {
   if (value === null || value === undefined) {
     return '';
   }
@@ -25,7 +23,7 @@ function escapeCSVValue(value: any): string {
 /**
  * Generate CSV content from data
  */
-export function generateCSV<T extends Record<string, any>>(
+export function generateCSV<T extends Record<string, unknown>>(
   data: T[],
   columns: CSVColumn<T>[]
 ): string {
@@ -40,7 +38,7 @@ export function generateCSV<T extends Record<string, any>>(
   const rows = data.map((item) =>
     columns
       .map((col) => {
-        let value: any;
+        let value: unknown;
 
         // Get value from key
         if (typeof col.key === 'string' && col.key.includes('.')) {

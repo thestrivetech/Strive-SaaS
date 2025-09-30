@@ -26,6 +26,7 @@ import { getCustomersCount } from '@/lib/modules/crm/queries';
 import { ExportButton } from '@/components/features/export/export-button';
 import { formatDateForCSV, type CSVColumn } from '@/lib/export/csv';
 import type { CustomerStatus, CustomerSource, Customer } from '@prisma/client';
+import type { CRMFilters } from '@/lib/types/filters';
 
 export default async function CRMPage({
   searchParams,
@@ -65,7 +66,7 @@ export default async function CRMPage({
   const currentPage = parseInt(searchParams.page || '1');
   const pageSize = parseInt(searchParams.limit || '25');
 
-  const filters: any = {
+  const filters: CRMFilters = {
     search: searchParams.search,
     limit: pageSize,
     offset: (currentPage - 1) * pageSize,
@@ -104,7 +105,7 @@ async function CustomerListContent({
   pageSize,
 }: {
   organizationId: string;
-  filters: any;
+  filters: CRMFilters;
   currentPage: number;
   pageSize: number;
 }) {
@@ -237,7 +238,7 @@ async function CustomerListContent({
                   <TableCell colSpan={6} className="h-24 text-center">
                     <div className="text-muted-foreground">
                       <p>No customers yet.</p>
-                      <p className="text-sm">Click "Add Customer" to create your first customer.</p>
+                      <p className="text-sm">Click &quot;Add Customer&quot; to create your first customer.</p>
                     </div>
                   </TableCell>
                 </TableRow>
