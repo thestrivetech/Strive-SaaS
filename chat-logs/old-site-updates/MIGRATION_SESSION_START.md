@@ -11,7 +11,7 @@
 1. CLAUDE.md (project root)                           # Dev rules (~2 min)
 2. app/MIGRATION_SESSIONS.md                          # Session tracker (~2 min)
 3. app/SINGLE_APP_MIGRATION_PLAN.md                   # Plan overview (~2 min)
-4. chat-logs/old-site-updates/session11.md           # Current session plan (~1 min)
+4. chat-logs/old-site-updates/session13.md           # Current session plan (~1 min)
 ```
 
 **From CLAUDE.md:**
@@ -24,7 +24,7 @@
 - Current deliverables
 - Known blockers
 
-**From Current Session Plan (session[11].md):**
+**From Current Session Plan (session[13].md):**
 - Session goals and objectives
 - **Critical blockers** from previous session
 - Exact next steps and priorities

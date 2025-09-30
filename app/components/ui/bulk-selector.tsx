@@ -11,7 +11,7 @@ import {
   DropdownMenuTrigger,
   DropdownMenuSeparator,
 } from '@/components/ui/dropdown-menu';
-import { ChevronDown } from 'lucide-react';
+import { ChevronDown, Loader2 } from 'lucide-react';
 
 export interface BulkAction {
   id: string;
@@ -27,6 +27,7 @@ interface BulkSelectorProps<T extends { id: string }> {
   onBulkAction: (actionId: string, selectedIds: string[]) => void | Promise<void>;
   selectedIds?: string[];
   onSelectionChange?: (selectedIds: string[]) => void;
+  isLoading?: boolean;
 }
 
 export function BulkSelector<T extends { id: string }>({
@@ -35,6 +36,7 @@ export function BulkSelector<T extends { id: string }>({
   onBulkAction,
   selectedIds: controlledSelectedIds,
   onSelectionChange,
+  isLoading = false,
 }: BulkSelectorProps<T>) {
   const [internalSelectedIds, setInternalSelectedIds] = useState<Set<string>>(new Set());
 
@@ -94,9 +96,18 @@ export function BulkSelector<T extends { id: string }>({
 
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button variant="outline" size="sm" className="h-8">
-                Bulk Actions
-                <ChevronDown className="ml-2 h-4 w-4" />
+              <Button variant="outline" size="sm" className="h-8" disabled={isLoading}>
+                {isLoading ? (
+                  <>
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    Processing...
+                  </>
+                ) : (
+                  <>
+                    Bulk Actions
+                    <ChevronDown className="ml-2 h-4 w-4" />
+                  </>
+                )}
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="start">

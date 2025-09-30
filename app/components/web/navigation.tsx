@@ -7,7 +7,7 @@ import { Menu, Home, Cpu, FolderOpen, BookOpen, Building, Mail } from "lucide-re
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import Image from "next/image";
-import logoImage from "@/web/client/src/assets/STRIVE_Orange_Text_Transparent_1483 x 320px.webp";
+import logoImage from "@/assets/strive_logo.webp";
 
 const Navigation = () => {
   const pathname = usePathname();

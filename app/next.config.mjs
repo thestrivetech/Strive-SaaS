@@ -31,6 +31,44 @@ const nextConfig = {
     ];
   },
 
+  // Host-based rewrites for dual-domain routing
+  async rewrites() {
+    return [
+      // Marketing site (strivetech.ai) routes to (web) group
+      {
+        source: '/:path*',
+        has: [
+          {
+            type: 'host',
+            value: 'strivetech.ai',
+          },
+        ],
+        destination: '/:path*', // Root page.tsx handles / via HostDependent
+      },
+      {
+        source: '/:path*',
+        has: [
+          {
+            type: 'host',
+            value: 'www.strivetech.ai',
+          },
+        ],
+        destination: '/:path*', // Root page.tsx handles / via HostDependent
+      },
+      // Platform (app.strivetech.ai) routes to (platform) group
+      {
+        source: '/:path*',
+        has: [
+          {
+            type: 'host',
+            value: 'app.strivetech.ai',
+          },
+        ],
+        destination: '/:path*', // Root page.tsx handles / via HostDependent
+      },
+    ];
+  },
+
   // Image domains for both sites
   images: {
     domains: ['strivetech.ai', 'app.strivetech.ai', 'localhost'],

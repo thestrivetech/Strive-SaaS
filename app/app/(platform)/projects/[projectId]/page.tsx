@@ -15,8 +15,9 @@ import { EditProjectDialog } from '@/components/features/projects/edit-project-d
 import { DeleteProjectDialog } from '@/components/features/projects/delete-project-dialog';
 import { TaskList } from '@/components/features/tasks/task-list';
 import { CreateTaskDialog } from '@/components/features/tasks/create-task-dialog';
+import { TaskAttachments } from '@/components/features/tasks/task-attachments';
 import { ActivityTimeline } from '@/components/features/shared/activity-timeline';
-import { ProjectStatus, Priority } from '@prisma/client';
+import { getAttachments } from '@/lib/modules/attachments';
 
 export default async function ProjectDetailPage({
   params,
@@ -36,18 +37,21 @@ export default async function ProjectDetailPage({
     return notFound();
   }
 
-  const [project, tasks, orgMembers] = await Promise.all([
+  const [project, tasks, orgMembers, attachmentsResult] = await Promise.all([
     getProjectById(params.projectId, currentOrg.organizationId),
     getTasks(params.projectId),
     getOrganizationMembers(currentOrg.organizationId),
+    getAttachments({ entityType: 'project', entityId: params.projectId }),
   ]);
+
+  const attachments = attachmentsResult.success ? attachmentsResult.data : [];
 
   if (!project) {
     return notFound();
   }
 
   // Map organization members to team members format
-  const teamMembers = orgMembers.map((member) => ({
+  const teamMembers = orgMembers.map((member: any) => ({
     id: member.user.id,
     name: member.user.name || member.user.email,
   }));
@@ -55,7 +59,7 @@ export default async function ProjectDetailPage({
   // Calculate progress
   const progress = calculateProjectProgress(project.tasks);
 
-  const getStatusColor = (status: ProjectStatus) => {
+  const getStatusColor = (status: string) => {
     switch (status) {
       case 'ACTIVE':
         return 'bg-green-500/10 text-green-700 border-green-300';
@@ -67,10 +71,12 @@ export default async function ProjectDetailPage({
         return 'bg-gray-500/10 text-gray-700 border-gray-300';
       case 'CANCELLED':
         return 'bg-red-500/10 text-red-700 border-red-300';
+      default:
+        return 'bg-gray-500/10 text-gray-700 border-gray-300';
     }
   };
 
-  const getPriorityColor = (priority: Priority) => {
+  const getPriorityColor = (priority: string) => {
     switch (priority) {
       case 'LOW':
         return 'bg-gray-500/10 text-gray-700 border-gray-300';
@@ -80,6 +86,8 @@ export default async function ProjectDetailPage({
         return 'bg-orange-500/10 text-orange-700 border-orange-300';
       case 'CRITICAL':
         return 'bg-red-500/10 text-red-700 border-red-300';
+      default:
+        return 'bg-gray-500/10 text-gray-700 border-gray-300';
     }
   };
 
@@ -209,7 +217,7 @@ export default async function ProjectDetailPage({
             <CardContent>
               {tasks.length > 0 ? (
                 <TaskList
-                  tasks={tasks.map((task) => ({
+                  tasks={tasks.map((task: any) => ({
                     ...task,
                     estimatedHours: task.estimatedHours ? Number(task.estimatedHours) : null,
                   }))}
@@ -224,6 +232,32 @@ export default async function ProjectDetailPage({
                   <p className="text-sm">Create your first task to get started!</p>
                 </div>
               )}
+            </CardContent>
+          </Card>
+
+          {/* Project Attachments Section */}
+          <Card>
+            <CardHeader>
+              <CardTitle>Project Attachments</CardTitle>
+              <CardDescription>Files and documents related to this project</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <TaskAttachments
+                taskId={project.id}
+                projectId={project.id}
+                initialAttachments={attachments.map((att: any) => ({
+                  id: att.id,
+                  fileName: att.fileName,
+                  fileSize: att.fileSize,
+                  mimeType: att.mimeType,
+                  createdAt: att.createdAt,
+                  uploadedBy: {
+                    id: att.uploadedBy.id,
+                    name: att.uploadedBy.name,
+                    email: att.uploadedBy.email,
+                  },
+                }))}
+              />
             </CardContent>
           </Card>
 

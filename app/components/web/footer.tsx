@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { Facebook, Instagram, Linkedin } from "lucide-react";
 import Image from "next/image";
-import logoImage from "@/web/client/src/assets/STRIVE_Orange_Text_Transparent_1483 x 320px.webp";
+import logoImage from "@/assets/strive_logo.webp";
 
 // Custom X (formerly Twitter) icon component
 const XIcon = ({ className }: { className?: string }) => (

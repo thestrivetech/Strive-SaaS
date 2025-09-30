@@ -2,14 +2,14 @@
 
 import { Target, Eye, Heart, CheckCircle, Calendar, Rocket, Zap, Users, ChevronLeft, ChevronRight } from "lucide-react";
 import { ArrowTrendingUpIcon, LightBulbIcon, GlobeAltIcon, CpuChipIcon } from "@heroicons/react/24/outline";
-import TeamMember from "@/web/client/src/components/ui/team-member";
+import TeamMember from "@/components/ui/team-member";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
 import Image from "next/image";
-import GarrettHeadshot from "@/web/client/src/assets/Garrett-Headshot.webp";
-import JeffHeadshot from "@/web/client/src/assets/Jeff-Headshot.webp";
-import GrantHeadshot from "@/web/client/src/assets/Grant-Headshot.webp";
+import GarrettHeadshot from "@/assets/Garrett-Headshot.webp";
+import JeffHeadshot from "@/assets/Jeff-Headshot.webp";
+import GrantHeadshot from "@/assets/Grant-Headshot.webp";
 
 const Company = () => {
   const [currentTeamIndex, setCurrentTeamIndex] = useState(0);
