@@ -1318,6 +1318,9 @@ git push origin feature/single-app-migration
 6. ❌ Phase 12: Configure Vercel for dual-domain deployment
 7. ❌ Phase 15: Final validation checklist
 
+User note: Is this path still used or necessary? -> /Users/grant/Documents/GitHub/Strive-SaaS/app/web
+  - If so, is this the best repo structure or how could we organize it more? (Look at phase 13 mentioned below)
+
 **Optional Polish:**
 - Phase 5: Better component organization
 - Phase 9: Tailwind cleanup
