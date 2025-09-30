@@ -1,3 +1,4 @@
+Perplexity:
 Based on my comprehensive examination of the Strive-SaaS repository, here's my deep analysis covering architecture, Next.js best practices, and identified weaknesses:
 
 🎯 Overall Assessment: Strong Foundation with Critical Issues
