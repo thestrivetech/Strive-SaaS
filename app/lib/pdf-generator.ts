@@ -1,5 +1,15 @@
 import html2canvas from 'html2canvas';
 import jsPDF from 'jspdf';
+import {
+  drawBox,
+  BRAND_COLORS,
+  drawGradientBackground,
+  addSectionTitle,
+  addBodyText,
+  setPDFOpacity,
+  resetPDFOpacity,
+  BROCHURE_DATA,
+} from './pdf-generator-helpers';
 
 export interface PDFOptions {
   filename?: string;
@@ -227,8 +237,8 @@ export const generateProfessionalBrochurePDF = async (
     let yPos = margin;
 
     // Brand colors
-    const orangeColor: [number, number, number] = [255, 112, 51]; // #ff7033
-    const grayColor: [number, number, number] = [148, 163, 184]; // #94a3b8
+    const orangeColor = BRAND_COLORS.orange;
+    const grayColor = BRAND_COLORS.gray;
 
     // Helper function to add a new page if needed
     const checkPageBreak = (spaceNeeded: number) => {
@@ -240,31 +250,13 @@ export const generateProfessionalBrochurePDF = async (
       return false;
     };
 
-    // Helper function to draw a colored box
-    const drawBox = (x: number, y: number, width: number, height: number, color: [number, number, number], alpha: number = 1) => {
-      pdf.setFillColor(...color);
-      pdf.setGState(new (pdf as any).GState({ opacity: alpha }));
-      pdf.rect(x, y, width, height, 'F');
-      pdf.setGState(new (pdf as any).GState({ opacity: 1 }));
-    };
-
     // ===== COVER PAGE =====
-    // Orange gradient background (simulated with rectangles)
-    for (let i = 0; i < pageHeight; i += 2) {
-      const ratio = i / pageHeight;
-      const r = 255;
-      const g = Math.floor(112 + (51 - 112) * ratio);
-      const b = Math.floor(51 + (234 - 51) * ratio);
-      pdf.setFillColor(r, g, b);
-      pdf.rect(0, i, pageWidth, 2, 'F');
-    }
+    // Orange gradient background
+    drawGradientBackground(pdf, { r: 255, g: 112, b: 51 }, { r: 255, g: 51, b: 234 });
 
     // Add logo placeholder (would need actual logo image)
     yPos = 60;
-    pdf.setFillColor(255, 255, 255);
-    pdf.setGState(new (pdf as any).GState({ opacity: 0.2 }));
-    pdf.rect(pageWidth / 2 - 20, yPos, 40, 40, 'F');
-    pdf.setGState(new (pdf as any).GState({ opacity: 1 }));
+    drawBox(pdf, pageWidth / 2 - 20, yPos, 40, 40, BRAND_COLORS.white, 0.2);
 
     // Company name
     yPos = 115;
@@ -295,94 +287,41 @@ export const generateProfessionalBrochurePDF = async (
     pdf.setFillColor(255, 255, 255);
     pdf.rect(0, 0, pageWidth, pageHeight, 'F');
 
-    // Section title
-    pdf.setFontSize(20);
-    pdf.setFont('helvetica', 'bold');
-    pdf.setTextColor(...orangeColor);
-    pdf.text('Company Overview', pageWidth / 2, yPos, { align: 'center' });
-    yPos += 12;
-
-    // Company description
-    pdf.setFontSize(10);
-    pdf.setFont('helvetica', 'normal');
-    pdf.setTextColor(80, 80, 80);
-    const companyDesc = pdf.splitTextToSize(
-      'Strive is a leading provider of AI-powered business solutions, helping organizations across industries transform their operations, improve efficiency, and drive sustainable growth. Our comprehensive suite of services combines cutting-edge artificial intelligence with deep industry expertise to deliver measurable results.',
-      contentWidth
-    );
-    pdf.text(companyDesc, margin, yPos);
-    yPos += companyDesc.length * 5 + 10;
-
+    yPos = addSectionTitle(pdf, 'Company Overview', yPos, orangeColor);
+    yPos = addBodyText(pdf, BROCHURE_DATA.company.description, yPos, margin);
     // Mission, Vision, Values boxes
     const boxWidth = (contentWidth - 10) / 3;
     const boxHeight = 35;
     const boxY = yPos;
 
-    // Mission
-    drawBox(margin, boxY, boxWidth, boxHeight, [255, 112, 51], 0.1);
-    pdf.setFontSize(12);
-    pdf.setFont('helvetica', 'bold');
-    pdf.setTextColor(...orangeColor);
-    pdf.text('Our Mission', margin + boxWidth / 2, boxY + 10, { align: 'center' });
-    pdf.setFontSize(8);
-    pdf.setFont('helvetica', 'normal');
-    pdf.setTextColor(80, 80, 80);
-    const missionText = pdf.splitTextToSize(
-      'Democratizing AI to make intelligent solutions accessible to businesses of all sizes',
-      boxWidth - 6
-    );
-    pdf.text(missionText, margin + boxWidth / 2, boxY + 17, { align: 'center' });
+    // Mission, Vision, Values
+    const mvvItems = [
+      { title: 'Our Mission', text: BROCHURE_DATA.company.mission },
+      { title: 'Our Vision', text: BROCHURE_DATA.company.vision },
+      { title: 'Our Values', text: BROCHURE_DATA.company.values }
+    ];
 
-    // Vision
-    drawBox(margin + boxWidth + 5, boxY, boxWidth, boxHeight, [255, 112, 51], 0.1);
-    pdf.setFontSize(12);
-    pdf.setFont('helvetica', 'bold');
-    pdf.setTextColor(...orangeColor);
-    pdf.text('Our Vision', margin + boxWidth + 5 + boxWidth / 2, boxY + 10, { align: 'center' });
-    pdf.setFontSize(8);
-    pdf.setFont('helvetica', 'normal');
-    pdf.setTextColor(80, 80, 80);
-    const visionText = pdf.splitTextToSize(
-      'Creating a future where AI amplifies human potential and drives innovation',
-      boxWidth - 6
-    );
-    pdf.text(visionText, margin + boxWidth + 5 + boxWidth / 2, boxY + 17, { align: 'center' });
-
-    // Values
-    drawBox(margin + (boxWidth + 5) * 2, boxY, boxWidth, boxHeight, [255, 112, 51], 0.1);
-    pdf.setFontSize(12);
-    pdf.setFont('helvetica', 'bold');
-    pdf.setTextColor(...orangeColor);
-    pdf.text('Our Values', margin + (boxWidth + 5) * 2 + boxWidth / 2, boxY + 10, { align: 'center' });
-    pdf.setFontSize(8);
-    pdf.setFont('helvetica', 'normal');
-    pdf.setTextColor(80, 80, 80);
-    const valuesText = pdf.splitTextToSize(
-      'Innovation, integrity, and impact in everything we deliver',
-      boxWidth - 6
-    );
-    pdf.text(valuesText, margin + (boxWidth + 5) * 2 + boxWidth / 2, boxY + 17, { align: 'center' });
+    mvvItems.forEach((item, index) => {
+      const xOffset = margin + (boxWidth + 5) * index;
+      drawBox(pdf, xOffset, boxY, boxWidth, boxHeight, orangeColor, 0.1);
+      pdf.setFontSize(12);
+      pdf.setFont('helvetica', 'bold');
+      pdf.setTextColor(...orangeColor);
+      pdf.text(item.title, xOffset + boxWidth / 2, boxY + 10, { align: 'center' });
+      pdf.setFontSize(8);
+      pdf.setFont('helvetica', 'normal');
+      pdf.setTextColor(80, 80, 80);
+      const text = pdf.splitTextToSize(item.text, boxWidth - 6);
+      pdf.text(text, xOffset + boxWidth / 2, boxY + 17, { align: 'center' });
+    });
 
     yPos += boxHeight + 15;
 
     // ===== SERVICES & SOLUTIONS =====
     checkPageBreak(60);
-    pdf.setFontSize(20);
-    pdf.setFont('helvetica', 'bold');
-    pdf.setTextColor(...orangeColor);
-    pdf.text('Services & Solutions', pageWidth / 2, yPos, { align: 'center' });
-    yPos += 12;
+    yPos = addSectionTitle(pdf, 'Services & Solutions', yPos, orangeColor);
 
-    const services = [
-      { title: 'AI & Machine Learning Solutions', desc: 'Custom AI models, machine learning pipelines, and intelligent automation systems tailored to your business needs.' },
-      { title: 'Intelligent Process Automation', desc: 'Streamline operations with AI-powered automation that reduces costs and improves efficiency.' },
-      { title: 'Predictive Analytics & BI', desc: 'Transform data into actionable insights with advanced analytics and real-time business intelligence.' },
-      { title: 'Custom AI Development', desc: 'End-to-end development of bespoke AI solutions that integrate seamlessly with your existing systems.' },
-      { title: 'Data Engineering & Architecture', desc: 'Robust data infrastructure design and implementation for scalable AI and analytics platforms.' },
-      { title: 'Cloud Infrastructure & DevOps', desc: 'Modern cloud architecture with automated deployment pipelines and infrastructure management.' }
-    ];
-
-    services.forEach((service, index) => {
+    BROCHURE_DATA.services.forEach((service) => {
       checkPageBreak(25);
       pdf.setFontSize(11);
       pdf.setFont('helvetica', 'bold');
@@ -400,11 +339,7 @@ export const generateProfessionalBrochurePDF = async (
 
     // ===== INDUSTRY EXPERTISE =====
     checkPageBreak(60);
-    pdf.setFontSize(20);
-    pdf.setFont('helvetica', 'bold');
-    pdf.setTextColor(...orangeColor);
-    pdf.text('Industry Expertise - 20+ Industries Served', pageWidth / 2, yPos, { align: 'center' });
-    yPos += 8;
+    yPos = addSectionTitle(pdf, 'Industry Expertise - 20+ Industries Served', yPos, orangeColor) - 4;
 
     pdf.setFontSize(10);
     pdf.setFont('helvetica', 'normal');
@@ -416,18 +351,7 @@ export const generateProfessionalBrochurePDF = async (
     pdf.text(industryDesc, pageWidth / 2, yPos, { align: 'center' });
     yPos += industryDesc.length * 5 + 8;
 
-    const industries = [
-      'Healthcare & Life Sciences',
-      'Financial Services & Banking',
-      'Manufacturing & Supply Chain',
-      'Retail & E-commerce',
-      'Technology & SaaS',
-      'Education & EdTech',
-      'Real Estate & PropTech',
-      'Legal & Compliance'
-    ];
-
-    industries.forEach((industry, index) => {
+    BROCHURE_DATA.industries.forEach((industry, index) => {
       if (index % 2 === 0 && index > 0) {
         yPos += 8;
         checkPageBreak(8);
@@ -445,24 +369,13 @@ export const generateProfessionalBrochurePDF = async (
 
     // ===== PROVEN RESULTS =====
     checkPageBreak(50);
-    pdf.setFontSize(20);
-    pdf.setFont('helvetica', 'bold');
-    pdf.setTextColor(...orangeColor);
-    pdf.text('Proven Results', pageWidth / 2, yPos, { align: 'center' });
-    yPos += 12;
-
-    const metrics = [
-      { number: '500+', label: 'AI Models Deployed' },
-      { number: '95%', label: 'Client Retention Rate' },
-      { number: '40%', label: 'Average Cost Reduction' },
-      { number: '3x', label: 'ROI Within First Year' }
-    ];
+    yPos = addSectionTitle(pdf, 'Proven Results', yPos, orangeColor);
 
     const metricBoxWidth = (contentWidth - 15) / 4;
     let metricX = margin;
 
-    metrics.forEach((metric, index) => {
-      drawBox(metricX, yPos, metricBoxWidth, 25, [255, 112, 51], 0.05);
+    BROCHURE_DATA.metrics.forEach((metric) => {
+      drawBox(pdf, metricX, yPos, metricBoxWidth, 25, orangeColor, 0.05);
       pdf.setFontSize(18);
       pdf.setFont('helvetica', 'bold');
       pdf.setTextColor(...orangeColor);
@@ -477,20 +390,9 @@ export const generateProfessionalBrochurePDF = async (
 
     // ===== TECHNOLOGY STACK =====
     checkPageBreak(80);
-    pdf.setFontSize(20);
-    pdf.setFont('helvetica', 'bold');
-    pdf.setTextColor(...orangeColor);
-    pdf.text('Technology Stack', pageWidth / 2, yPos, { align: 'center' });
-    yPos += 12;
+    yPos = addSectionTitle(pdf, 'Technology Stack', yPos, orangeColor);
 
-    const technologies = [
-      { category: 'AI/ML', tools: ['TensorFlow', 'PyTorch', 'Scikit-learn', 'OpenAI GPT', 'Hugging Face'] },
-      { category: 'Cloud', tools: ['AWS', 'Azure', 'Google Cloud', 'Kubernetes', 'Docker'] },
-      { category: 'Data', tools: ['Snowflake', 'Databricks', 'Apache Spark', 'PostgreSQL', 'MongoDB'] },
-      { category: 'DevOps', tools: ['Jenkins', 'GitLab CI/CD', 'Terraform', 'Ansible', 'Prometheus'] }
-    ];
-
-    technologies.forEach((tech, index) => {
+    BROCHURE_DATA.technologies.forEach((tech, index) => {
       if (index % 2 === 0) {
         checkPageBreak(40);
       }
@@ -519,20 +421,9 @@ export const generateProfessionalBrochurePDF = async (
 
     // ===== WHY CHOOSE STRIVE =====
     checkPageBreak(70);
-    pdf.setFontSize(20);
-    pdf.setFont('helvetica', 'bold');
-    pdf.setTextColor(...orangeColor);
-    pdf.text('Why Choose Strive?', pageWidth / 2, yPos, { align: 'center' });
-    yPos += 12;
+    yPos = addSectionTitle(pdf, 'Why Choose Strive?', yPos, orangeColor);
 
-    const reasons = [
-      { title: 'Proven Track Record', desc: '500+ successful AI implementations across diverse industries' },
-      { title: 'Expert Team', desc: 'Certified AI engineers, data scientists, and business strategists' },
-      { title: 'End-to-End Solutions', desc: 'From strategy to deployment, we handle every aspect of your AI journey' },
-      { title: '24/7 Support', desc: 'Continuous monitoring, maintenance, and optimization of your AI systems' }
-    ];
-
-    reasons.forEach((reason) => {
+    BROCHURE_DATA.reasons.forEach((reason) => {
       checkPageBreak(18);
       pdf.setFontSize(11);
       pdf.setFont('helvetica', 'bold');
@@ -550,11 +441,7 @@ export const generateProfessionalBrochurePDF = async (
 
     // ===== GET STARTED TODAY =====
     checkPageBreak(60);
-    pdf.setFontSize(20);
-    pdf.setFont('helvetica', 'bold');
-    pdf.setTextColor(...orangeColor);
-    pdf.text('Get Started Today', pageWidth / 2, yPos, { align: 'center' });
-    yPos += 12;
+    yPos = addSectionTitle(pdf, 'Get Started Today', yPos, orangeColor);
 
     // Contact Information
     pdf.setFontSize(14);
@@ -563,18 +450,18 @@ export const generateProfessionalBrochurePDF = async (
     pdf.text('Contact Information', margin, yPos);
     yPos += 8;
 
-    const contactInfo = [
-      '📞 (731)-431-2320',
-      '✉️ contact@strivetech.ai',
-      '📍 Nashville, TN',
-      '🕐 Mon-Fri: 8:00 AM - 8:00 PM EST',
-      '🌐 www.strivetech.ai'
+    const contactItems = [
+      `📞 ${BROCHURE_DATA.contact.phone}`,
+      `✉️ ${BROCHURE_DATA.contact.email}`,
+      `📍 ${BROCHURE_DATA.contact.location}`,
+      `🕐 ${BROCHURE_DATA.contact.hours}`,
+      `🌐 ${BROCHURE_DATA.contact.website}`
     ];
 
     pdf.setFontSize(10);
     pdf.setFont('helvetica', 'normal');
     pdf.setTextColor(...grayColor);
-    contactInfo.forEach(info => {
+    contactItems.forEach(info => {
       pdf.text(info, margin, yPos);
       yPos += 6;
     });
@@ -583,24 +470,15 @@ export const generateProfessionalBrochurePDF = async (
     pdf.setFontSize(12);
     pdf.setFont('helvetica', 'bold');
     pdf.setTextColor(...orangeColor);
-    pdf.text('Ready to Transform Your Business?', margin, yPos);
+    pdf.text(BROCHURE_DATA.cta.title, margin, yPos);
     yPos += 6;
 
-    pdf.setFontSize(9);
-    pdf.setFont('helvetica', 'normal');
-    pdf.setTextColor(...grayColor);
-    const ctaText = pdf.splitTextToSize(
-      'Schedule a free consultation to discuss how AI can accelerate your growth and competitive advantage.',
-      contentWidth
-    );
-    pdf.text(ctaText, margin, yPos);
-    yPos += ctaText.length * 5 + 8;
+    yPos = addBodyText(pdf, BROCHURE_DATA.cta.description, yPos, margin, 9, grayColor);
 
-    pdf.text('✓ Free initial consultation', margin, yPos);
-    yPos += 5;
-    pdf.text('✓ Custom AI strategy development', margin, yPos);
-    yPos += 5;
-    pdf.text('✓ ROI-focused implementation', margin, yPos);
+    BROCHURE_DATA.cta.bullets.forEach(bullet => {
+      pdf.text(bullet, margin, yPos);
+      yPos += 5;
+    });
 
     // ===== FOOTER =====
     pdf.addPage();

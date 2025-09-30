@@ -125,7 +125,16 @@ export async function updateTask(input: UpdateTaskInput) {
   }
 
   // Prepare update data (only include fields that are provided)
-  const updateData: any = {};
+  const updateData: Partial<{
+    title: string;
+    description: string | null;
+    assignedToId: string | null;
+    status: TaskStatus;
+    priority: string;
+    dueDate: Date | null;
+    estimatedHours: number | null;
+    tags: string[];
+  }> = {};
 
   if (validated.title !== undefined) updateData.title = validated.title;
   if (validated.description !== undefined) updateData.description = validated.description;

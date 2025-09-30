@@ -1,8 +1,8 @@
-import { createClient } from '@supabase/supabase-js';
+import { createClient, RealtimePostgresChangesPayload } from '@supabase/supabase-js';
 
 export type RealtimeEvent = 'INSERT' | 'UPDATE' | 'DELETE';
 
-export interface RealtimePayload<T = any> {
+export interface RealtimePayload<T = Record<string, unknown>> {
   eventType: RealtimeEvent;
   new: T;
   old: T;
@@ -32,7 +32,7 @@ export class RealtimeClient {
           table: 'Task',
           filter: `projectId=eq.${projectId}`,
         },
-        (payload: any) => {
+        (payload: RealtimePostgresChangesPayload<Record<string, unknown>>) => {
           callback({
             eventType: payload.eventType as RealtimeEvent,
             new: payload.new,
@@ -61,7 +61,7 @@ export class RealtimeClient {
           table: 'Customer',
           filter: `organizationId=eq.${organizationId}`,
         },
-        (payload: any) => {
+        (payload: RealtimePostgresChangesPayload<Record<string, unknown>>) => {
           callback({
             eventType: payload.eventType as RealtimeEvent,
             new: payload.new,
@@ -90,7 +90,7 @@ export class RealtimeClient {
           table: 'Project',
           filter: `organizationId=eq.${organizationId}`,
         },
-        (payload: any) => {
+        (payload: RealtimePostgresChangesPayload<Record<string, unknown>>) => {
           callback({
             eventType: payload.eventType as RealtimeEvent,
             new: payload.new,
@@ -119,7 +119,7 @@ export class RealtimeClient {
           table: 'Notification',
           filter: `userId=eq.${userId}`,
         },
-        (payload: any) => {
+        (payload: RealtimePostgresChangesPayload<Record<string, unknown>>) => {
           callback({
             eventType: payload.eventType as RealtimeEvent,
             new: payload.new,
