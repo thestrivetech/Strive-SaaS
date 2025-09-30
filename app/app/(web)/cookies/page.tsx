@@ -7,7 +7,7 @@ const Cookies = () => {
             <h1 className="text-4xl font-bold mb-8" data-testid="text-cookies-title">
               Cookie Policy
             </h1>
-            
+
             <div className="prose prose-lg max-w-none">
               <p className="text-muted-foreground text-lg mb-8">
                 Last updated: {new Date().toLocaleDateString()}
@@ -16,8 +16,8 @@ const Cookies = () => {
               <section className="mb-8">
                 <h2 className="text-2xl font-semibold mb-4 text-[#ffffff]">1. What Are Cookies</h2>
                 <p className="text-muted-foreground mb-4">
-                  Cookies are small text files that are placed on your device when you visit our website. 
-                  They help us provide you with a better user experience by remembering your preferences 
+                  Cookies are small text files that are placed on your device when you visit our website.
+                  They help us provide you with a better user experience by remembering your preferences
                   and improving our services.
                 </p>
               </section>
@@ -35,7 +35,7 @@ const Cookies = () => {
               <section className="mb-8">
                 <h2 className="text-2xl font-semibold mb-4 text-[#ffffff]">3. Managing Cookies</h2>
                 <p className="text-muted-foreground mb-4">
-                  You can control and manage cookies through your browser settings. Please note that 
+                  You can control and manage cookies through your browser settings. Please note that
                   disabling certain cookies may affect the functionality of our website.
                 </p>
               </section>
@@ -43,7 +43,7 @@ const Cookies = () => {
               <section className="mb-8">
                 <h2 className="text-2xl font-semibold mb-4 text-[#ffffff]">4. Third-Party Cookies</h2>
                 <p className="text-muted-foreground mb-4">
-                  We may use third-party services that set cookies on your device. These services have 
+                  We may use third-party services that set cookies on your device. These services have
                   their own privacy policies and cookie practices.
                 </p>
               </section>
@@ -51,7 +51,7 @@ const Cookies = () => {
               <section className="mb-8">
                 <h2 className="text-2xl font-semibold mb-4 text-[#ffffff]">5. Contact Us</h2>
                 <p className="text-muted-foreground">
-                  If you have any questions about our Cookie Policy, please contact us at 
+                  If you have any questions about our Cookie Policy, please contact us at
                   <a href="mailto:contact@strivetech.ai" className="text-primary hover:underline ml-1">
                     contact@strivetech.ai
                   </a>

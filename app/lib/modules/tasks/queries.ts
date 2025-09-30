@@ -127,6 +127,40 @@ export async function getTasks(
 }
 
 /**
+ * Get count of tasks for a project with optional filters
+ */
+export async function getTasksCount(
+  projectId: string,
+  filters?: TaskFilters
+): Promise<number> {
+  const where: Prisma.TaskWhereInput = {
+    projectId,
+  };
+
+  // Apply optional filters
+  if (filters?.status) {
+    where.status = filters.status;
+  }
+
+  if (filters?.priority) {
+    where.priority = filters.priority;
+  }
+
+  if (filters?.assignedToId) {
+    where.assignedToId = filters.assignedToId;
+  }
+
+  if (filters?.search) {
+    where.OR = [
+      { title: { contains: filters.search, mode: 'insensitive' } },
+      { description: { contains: filters.search, mode: 'insensitive' } },
+    ];
+  }
+
+  return prisma.task.count({ where });
+}
+
+/**
  * Get single task by ID with full details
  */
 export async function getTaskById(

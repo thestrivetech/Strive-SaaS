@@ -1,161 +1,165 @@
 'use client';
 
+import { useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { Filter, X } from 'lucide-react';
+import { Filter } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuCheckboxItem,
-  DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
+  Sheet,
+  SheetContent,
+  SheetDescription,
+  SheetFooter,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+} from '@/components/ui/sheet';
 import { CustomerStatus, CustomerSource } from '@prisma/client';
 import { Badge } from '@/components/ui/badge';
+import { MultiSelect } from '@/components/ui/multi-select';
+import { DateRangePicker } from '@/components/ui/date-range-picker';
 
 export function CustomerFilters() {
   const router = useRouter();
   const searchParams = useSearchParams();
 
-  const currentStatus = searchParams.get('status') as CustomerStatus | null;
-  const currentSource = searchParams.get('source') as CustomerSource | null;
+  // Read current filters from URL
+  const [selectedStatuses, setSelectedStatuses] = useState<string[]>(
+    searchParams.get('status')?.split(',').filter(Boolean) || []
+  );
+  const [selectedSources, setSelectedSources] = useState<string[]>(
+    searchParams.get('source')?.split(',').filter(Boolean) || []
+  );
+  const [createdFrom, setCreatedFrom] = useState<Date | undefined>(
+    searchParams.get('createdFrom') ? new Date(searchParams.get('createdFrom')!) : undefined
+  );
+  const [createdTo, setCreatedTo] = useState<Date | undefined>(
+    searchParams.get('createdTo') ? new Date(searchParams.get('createdTo')!) : undefined
+  );
 
-  const updateFilter = (key: string, value: string | null) => {
+  const statusOptions = [
+    { value: 'LEAD', label: 'Lead' },
+    { value: 'PROSPECT', label: 'Prospect' },
+    { value: 'ACTIVE', label: 'Active' },
+    { value: 'CHURNED', label: 'Churned' },
+  ];
+
+  const sourceOptions = [
+    { value: 'WEBSITE', label: 'Website' },
+    { value: 'REFERRAL', label: 'Referral' },
+    { value: 'SOCIAL', label: 'Social Media' },
+    { value: 'EMAIL', label: 'Email' },
+    { value: 'OTHER', label: 'Other' },
+  ];
+
+  const handleApplyFilters = () => {
     const params = new URLSearchParams(searchParams.toString());
 
-    if (value) {
-      params.set(key, value);
+    // Update URL params
+    if (selectedStatuses.length > 0) {
+      params.set('status', selectedStatuses.join(','));
     } else {
-      params.delete(key);
+      params.delete('status');
     }
 
+    if (selectedSources.length > 0) {
+      params.set('source', selectedSources.join(','));
+    } else {
+      params.delete('source');
+    }
+
+    if (createdFrom) {
+      params.set('createdFrom', createdFrom.toISOString());
+    } else {
+      params.delete('createdFrom');
+    }
+
+    if (createdTo) {
+      params.set('createdTo', createdTo.toISOString());
+    } else {
+      params.delete('createdTo');
+    }
+
+    params.set('page', '1'); // Reset to page 1 on filter change
     router.push(`?${params.toString()}`);
   };
 
   const clearAllFilters = () => {
-    const params = new URLSearchParams(searchParams.toString());
-    params.delete('status');
-    params.delete('source');
-    router.push(`?${params.toString()}`);
+    setSelectedStatuses([]);
+    setSelectedSources([]);
+    setCreatedFrom(undefined);
+    setCreatedTo(undefined);
+    router.push(window.location.pathname); // Clear all params
   };
 
-  const hasFilters = currentStatus || currentSource;
-  const filterCount = [currentStatus, currentSource].filter(Boolean).length;
+  const filterCount =
+    selectedStatuses.length + selectedSources.length + (createdFrom || createdTo ? 1 : 0);
 
   return (
-    <div className="flex items-center gap-2">
-      <DropdownMenu>
-        <DropdownMenuTrigger asChild>
-          <Button variant="outline" size="sm">
-            <Filter className="mr-2 h-4 w-4" />
-            Filters
-            {filterCount > 0 && (
-              <Badge variant="secondary" className="ml-2 px-1.5 py-0.5 text-xs">
-                {filterCount}
-              </Badge>
-            )}
-          </Button>
-        </DropdownMenuTrigger>
-        <DropdownMenuContent align="end" className="w-[200px]">
-          <DropdownMenuLabel>Filter by Status</DropdownMenuLabel>
-          <DropdownMenuCheckboxItem
-            checked={!currentStatus}
-            onCheckedChange={() => updateFilter('status', null)}
-          >
-            All Statuses
-          </DropdownMenuCheckboxItem>
-          <DropdownMenuCheckboxItem
-            checked={currentStatus === CustomerStatus.LEAD}
-            onCheckedChange={(checked) =>
-              updateFilter('status', checked ? CustomerStatus.LEAD : null)
-            }
-          >
-            Lead
-          </DropdownMenuCheckboxItem>
-          <DropdownMenuCheckboxItem
-            checked={currentStatus === CustomerStatus.PROSPECT}
-            onCheckedChange={(checked) =>
-              updateFilter('status', checked ? CustomerStatus.PROSPECT : null)
-            }
-          >
-            Prospect
-          </DropdownMenuCheckboxItem>
-          <DropdownMenuCheckboxItem
-            checked={currentStatus === CustomerStatus.ACTIVE}
-            onCheckedChange={(checked) =>
-              updateFilter('status', checked ? CustomerStatus.ACTIVE : null)
-            }
-          >
-            Active
-          </DropdownMenuCheckboxItem>
-          <DropdownMenuCheckboxItem
-            checked={currentStatus === CustomerStatus.CHURNED}
-            onCheckedChange={(checked) =>
-              updateFilter('status', checked ? CustomerStatus.CHURNED : null)
-            }
-          >
-            Churned
-          </DropdownMenuCheckboxItem>
-
-          <DropdownMenuSeparator />
-
-          <DropdownMenuLabel>Filter by Source</DropdownMenuLabel>
-          <DropdownMenuCheckboxItem
-            checked={!currentSource}
-            onCheckedChange={() => updateFilter('source', null)}
-          >
-            All Sources
-          </DropdownMenuCheckboxItem>
-          <DropdownMenuCheckboxItem
-            checked={currentSource === CustomerSource.WEBSITE}
-            onCheckedChange={(checked) =>
-              updateFilter('source', checked ? CustomerSource.WEBSITE : null)
-            }
-          >
-            Website
-          </DropdownMenuCheckboxItem>
-          <DropdownMenuCheckboxItem
-            checked={currentSource === CustomerSource.REFERRAL}
-            onCheckedChange={(checked) =>
-              updateFilter('source', checked ? CustomerSource.REFERRAL : null)
-            }
-          >
-            Referral
-          </DropdownMenuCheckboxItem>
-          <DropdownMenuCheckboxItem
-            checked={currentSource === CustomerSource.SOCIAL}
-            onCheckedChange={(checked) =>
-              updateFilter('source', checked ? CustomerSource.SOCIAL : null)
-            }
-          >
-            Social Media
-          </DropdownMenuCheckboxItem>
-          <DropdownMenuCheckboxItem
-            checked={currentSource === CustomerSource.EMAIL}
-            onCheckedChange={(checked) =>
-              updateFilter('source', checked ? CustomerSource.EMAIL : null)
-            }
-          >
-            Email
-          </DropdownMenuCheckboxItem>
-          <DropdownMenuCheckboxItem
-            checked={currentSource === CustomerSource.OTHER}
-            onCheckedChange={(checked) =>
-              updateFilter('source', checked ? CustomerSource.OTHER : null)
-            }
-          >
-            Other
-          </DropdownMenuCheckboxItem>
-        </DropdownMenuContent>
-      </DropdownMenu>
-
-      {hasFilters && (
-        <Button variant="ghost" size="sm" onClick={clearAllFilters}>
-          <X className="mr-2 h-4 w-4" />
-          Clear filters
+    <Sheet>
+      <SheetTrigger asChild>
+        <Button variant="outline" size="sm">
+          <Filter className="mr-2 h-4 w-4" />
+          Filters
+          {filterCount > 0 && (
+            <Badge variant="secondary" className="ml-2">
+              {filterCount}
+            </Badge>
+          )}
         </Button>
-      )}
-    </div>
+      </SheetTrigger>
+      <SheetContent>
+        <SheetHeader>
+          <SheetTitle>Filter Customers</SheetTitle>
+          <SheetDescription>
+            Apply filters to narrow down your customer list
+          </SheetDescription>
+        </SheetHeader>
+
+        <div className="space-y-4 py-4">
+          {/* Status filter */}
+          <div className="space-y-2">
+            <label className="text-sm font-medium">Status</label>
+            <MultiSelect
+              options={statusOptions}
+              selected={selectedStatuses}
+              onChange={setSelectedStatuses}
+              placeholder="Select statuses"
+            />
+          </div>
+
+          {/* Source filter */}
+          <div className="space-y-2">
+            <label className="text-sm font-medium">Source</label>
+            <MultiSelect
+              options={sourceOptions}
+              selected={selectedSources}
+              onChange={setSelectedSources}
+              placeholder="Select sources"
+            />
+          </div>
+
+          {/* Created date range */}
+          <div className="space-y-2">
+            <label className="text-sm font-medium">Created Date</label>
+            <DateRangePicker
+              from={createdFrom}
+              to={createdTo}
+              onSelect={(range) => {
+                setCreatedFrom(range.from);
+                setCreatedTo(range.to);
+              }}
+              placeholder="Select date range"
+            />
+          </div>
+        </div>
+
+        <SheetFooter>
+          <Button variant="outline" onClick={clearAllFilters}>
+            Clear Filters
+          </Button>
+          <Button onClick={handleApplyFilters}>Apply Filters</Button>
+        </SheetFooter>
+      </SheetContent>
+    </Sheet>
   );
 }

@@ -8,7 +8,7 @@
 
 ## 1. Create Session Summary (45 min)
 
-**File:** `chat-logs/Session[N]_Summary.md`
+**File:** `chat-logs/Session6_Summary.md`
 
 ### Required Sections (Comprehensive):
 

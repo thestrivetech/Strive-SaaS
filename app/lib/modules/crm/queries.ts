@@ -13,11 +13,13 @@ export async function getCustomers(
   const where: any = { organizationId };
 
   if (filters?.status) {
-    where.status = filters.status;
+    // Support array of statuses (OR logic)
+    where.status = Array.isArray(filters.status) ? { in: filters.status } : filters.status;
   }
 
   if (filters?.source) {
-    where.source = filters.source;
+    // Support array of sources (OR logic)
+    where.source = Array.isArray(filters.source) ? { in: filters.source } : filters.source;
   }
 
   if (filters?.assignedToId) {
@@ -36,6 +38,17 @@ export async function getCustomers(
     where.tags = { hasSome: filters.tags };
   }
 
+  // Date range filters
+  if (filters?.createdFrom || filters?.createdTo) {
+    where.createdAt = {};
+    if (filters.createdFrom) {
+      where.createdAt.gte = filters.createdFrom;
+    }
+    if (filters.createdTo) {
+      where.createdAt.lte = filters.createdTo;
+    }
+  }
+
   return prisma.customer.findMany({
     where,
     include: {
@@ -52,6 +65,52 @@ export async function getCustomers(
     take: filters?.limit || 50,
     skip: filters?.offset || 0,
   });
+}
+
+export async function getCustomersCount(
+  organizationId: string,
+  filters?: CustomerFilters
+): Promise<number> {
+  const where: any = { organizationId };
+
+  if (filters?.status) {
+    // Support array of statuses (OR logic)
+    where.status = Array.isArray(filters.status) ? { in: filters.status } : filters.status;
+  }
+
+  if (filters?.source) {
+    // Support array of sources (OR logic)
+    where.source = Array.isArray(filters.source) ? { in: filters.source } : filters.source;
+  }
+
+  if (filters?.assignedToId) {
+    where.assignedToId = filters.assignedToId;
+  }
+
+  if (filters?.search) {
+    where.OR = [
+      { name: { contains: filters.search, mode: 'insensitive' } },
+      { email: { contains: filters.search, mode: 'insensitive' } },
+      { company: { contains: filters.search, mode: 'insensitive' } },
+    ];
+  }
+
+  if (filters?.tags && filters.tags.length > 0) {
+    where.tags = { hasSome: filters.tags };
+  }
+
+  // Date range filters
+  if (filters?.createdFrom || filters?.createdTo) {
+    where.createdAt = {};
+    if (filters.createdFrom) {
+      where.createdAt.gte = filters.createdFrom;
+    }
+    if (filters.createdTo) {
+      where.createdAt.lte = filters.createdTo;
+    }
+  }
+
+  return prisma.customer.count({ where });
 }
 
 type CustomerWithDetails = Prisma.CustomerGetPayload<{

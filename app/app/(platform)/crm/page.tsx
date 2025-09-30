@@ -1,3 +1,4 @@
+import { Suspense } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -19,12 +20,23 @@ import { CreateCustomerDialog } from '@/components/features/crm/create-customer-
 import { CustomerActionsMenu } from '@/components/features/crm/customer-actions-menu';
 import { CustomerSearch } from '@/components/features/crm/customer-search';
 import { CustomerFilters } from '@/components/features/crm/customer-filters';
+import { CustomerListSkeleton } from '@/components/features/crm/customer-list-skeleton';
+import { PaginationControls } from '@/components/ui/pagination-controls';
+import { getCustomersCount } from '@/lib/modules/crm/queries';
 import type { CustomerStatus, CustomerSource } from '@prisma/client';
 
 export default async function CRMPage({
   searchParams,
 }: {
-  searchParams: { search?: string; status?: CustomerStatus; source?: CustomerSource };
+  searchParams: {
+    search?: string;
+    status?: string;
+    source?: string;
+    page?: string;
+    limit?: string;
+    createdFrom?: string;
+    createdTo?: string;
+  };
 }) {
   const user = await getCurrentUser();
 
@@ -48,17 +60,56 @@ export default async function CRMPage({
     );
   }
 
-  const filters = {
+  const currentPage = parseInt(searchParams.page || '1');
+  const pageSize = parseInt(searchParams.limit || '25');
+
+  const filters: any = {
     search: searchParams.search,
-    status: searchParams.status,
-    source: searchParams.source,
-    limit: 50,
-    offset: 0,
+    limit: pageSize,
+    offset: (currentPage - 1) * pageSize,
   };
 
-  const [customers, stats] = await Promise.all([
-    getCustomers(currentOrg.organizationId, filters),
-    getCustomerStats(currentOrg.organizationId),
+  // Handle multi-select filters
+  if (searchParams.status) {
+    filters.status = searchParams.status.split(',');
+  }
+  if (searchParams.source) {
+    filters.source = searchParams.source.split(',');
+  }
+  if (searchParams.createdFrom) {
+    filters.createdFrom = new Date(searchParams.createdFrom);
+  }
+  if (searchParams.createdTo) {
+    filters.createdTo = new Date(searchParams.createdTo);
+  }
+
+  return (
+    <Suspense fallback={<CustomerListSkeleton />}>
+      <CustomerListContent
+        organizationId={currentOrg.organizationId}
+        filters={filters}
+        currentPage={currentPage}
+        pageSize={pageSize}
+      />
+    </Suspense>
+  );
+}
+
+async function CustomerListContent({
+  organizationId,
+  filters,
+  currentPage,
+  pageSize,
+}: {
+  organizationId: string;
+  filters: any;
+  currentPage: number;
+  pageSize: number;
+}) {
+  const [customers, stats, totalCount] = await Promise.all([
+    getCustomers(organizationId, filters),
+    getCustomerStats(organizationId),
+    getCustomersCount(organizationId, filters),
   ]);
 
   const getStatusColor = (status: string) => {
@@ -98,7 +149,7 @@ export default async function CRMPage({
             Manage your customers and sales pipeline
           </p>
         </div>
-        <CreateCustomerDialog organizationId={currentOrg.organizationId} />
+        <CreateCustomerDialog organizationId={organizationId} />
       </div>
 
       <div className="grid gap-4 md:grid-cols-4">
@@ -214,6 +265,11 @@ export default async function CRMPage({
               )}
             </TableBody>
           </Table>
+          <PaginationControls
+            currentPage={currentPage}
+            totalItems={totalCount}
+            itemsPerPage={pageSize}
+          />
         </CardContent>
       </Card>
     </div>

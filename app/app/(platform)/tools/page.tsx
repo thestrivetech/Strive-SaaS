@@ -27,7 +27,7 @@ export default async function ToolsPage() {
       title: 'ROI Calculator',
       description: 'Calculate return on investment',
       icon: Calculator,
-      tier: 'TIER_1',
+      tier: 'BASIC',
       status: 'Coming Soon',
       category: 'Finance',
     },
@@ -35,7 +35,7 @@ export default async function ToolsPage() {
       title: 'Invoice Generator',
       description: 'Create professional invoices',
       icon: FileText,
-      tier: 'TIER_1',
+      tier: 'BASIC',
       status: 'Coming Soon',
       category: 'Finance',
     },
@@ -43,7 +43,7 @@ export default async function ToolsPage() {
       title: 'Email Templates',
       description: 'Pre-built email templates',
       icon: Mail,
-      tier: 'TIER_1',
+      tier: 'BASIC',
       status: 'Coming Soon',
       category: 'Communication',
     },
@@ -51,7 +51,7 @@ export default async function ToolsPage() {
       title: 'Meeting Scheduler',
       description: 'Schedule and manage meetings',
       icon: Calendar,
-      tier: 'TIER_2',
+      tier: 'PRO',
       status: 'Coming Soon',
       category: 'Productivity',
     },
@@ -59,7 +59,7 @@ export default async function ToolsPage() {
       title: 'Link Shortener',
       description: 'Create short, trackable links',
       icon: Link,
-      tier: 'TIER_2',
+      tier: 'PRO',
       status: 'Coming Soon',
       category: 'Marketing',
     },
@@ -67,7 +67,7 @@ export default async function ToolsPage() {
       title: 'QR Generator',
       description: 'Generate custom QR codes',
       icon: QrCode,
-      tier: 'TIER_2',
+      tier: 'PRO',
       status: 'Coming Soon',
       category: 'Marketing',
     },
@@ -75,7 +75,7 @@ export default async function ToolsPage() {
       title: 'Image Optimizer',
       description: 'Compress and optimize images',
       icon: ImageIcon,
-      tier: 'TIER_2',
+      tier: 'PRO',
       status: 'Coming Soon',
       category: 'Media',
     },
@@ -83,7 +83,7 @@ export default async function ToolsPage() {
       title: 'Data Export',
       description: 'Export data in multiple formats',
       icon: Database,
-      tier: 'TIER_2',
+      tier: 'PRO',
       status: 'Coming Soon',
       category: 'Data',
     },
@@ -91,7 +91,7 @@ export default async function ToolsPage() {
       title: 'Time Tracker',
       description: 'Track time spent on projects',
       icon: Clock,
-      tier: 'TIER_3',
+      tier: 'ENTERPRISE',
       status: 'Coming Soon',
       category: 'Productivity',
     },
@@ -99,7 +99,7 @@ export default async function ToolsPage() {
       title: 'Analytics Dashboard',
       description: 'Advanced analytics and reporting',
       icon: TrendingUp,
-      tier: 'TIER_3',
+      tier: 'ENTERPRISE',
       status: 'Coming Soon',
       category: 'Analytics',
     },
@@ -107,11 +107,11 @@ export default async function ToolsPage() {
 
   const getTierBadgeColor = (tier: string) => {
     switch (tier) {
-      case 'TIER_1':
+      case 'BASIC':
         return 'bg-blue-500/10 text-blue-700 hover:bg-blue-500/20';
-      case 'TIER_2':
+      case 'PRO':
         return 'bg-purple-500/10 text-purple-700 hover:bg-purple-500/20';
-      case 'TIER_3':
+      case 'ENTERPRISE':
         return 'bg-orange-500/10 text-orange-700 hover:bg-orange-500/20';
       default:
         return 'bg-gray-500/10 text-gray-700 hover:bg-gray-500/20';
@@ -120,12 +120,12 @@ export default async function ToolsPage() {
 
   const getTierName = (tier: string) => {
     switch (tier) {
-      case 'TIER_1':
-        return 'Tier 1';
-      case 'TIER_2':
-        return 'Tier 2';
-      case 'TIER_3':
-        return 'Tier 3';
+      case 'BASIC':
+        return 'Basic';
+      case 'PRO':
+        return 'Pro';
+      case 'ENTERPRISE':
+        return 'Enterprise';
       default:
         return 'Free';
     }
@@ -136,14 +136,14 @@ export default async function ToolsPage() {
     if (toolLimit === 0) return false;
 
     const tierLevels: Record<string, number> = {
-      'TIER_1': 1,
-      'TIER_2': 2,
-      'TIER_3': 3,
+      'BASIC': 1,
+      'PRO': 2,
+      'ENTERPRISE': 3,
     };
 
-    const userTierLevel = user?.subscriptionTier === 'TIER_1' ? 1 :
-                          user?.subscriptionTier === 'TIER_2' ? 2 :
-                          user?.subscriptionTier === 'TIER_3' ? 3 : 0;
+    const userTierLevel = user?.subscriptionTier === 'BASIC' ? 1 :
+                          user?.subscriptionTier === 'PRO' ? 2 :
+                          user?.subscriptionTier === 'ENTERPRISE' ? 3 : 0;
 
     return tierLevels[toolTier] <= userTierLevel;
   };

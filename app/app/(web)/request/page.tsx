@@ -1,5 +1,8 @@
+"use client";
+
 import { useState, useCallback } from "react";
-import { 
+import { useRouter } from "next/navigation";
+import {
   Users, Target, Calendar, Clock, CheckCircle, ChevronRight, Zap
 } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -120,6 +123,7 @@ const CalendlyIframe = React.memo(({
 CalendlyIframe.displayName = 'CalendlyIframe';
 
 const Request = () => {
+  const router = useRouter();
   const [formStep, setFormStep] = useState(1);
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [validationErrors, setValidationErrors] = useState({
@@ -135,7 +139,7 @@ const Request = () => {
     phone: "",
     companyName: "",
     jobTitle: "",
-    
+
     // Business Information
     industry: "",
     companySize: "",
@@ -143,10 +147,10 @@ const Request = () => {
     otherChallengeText: "", // New field for custom challenge text
     projectTimeline: "",
     budgetRange: "",
-    
+
     // Request Types
     requestTypes: [] as string[],
-    
+
     // Demo Preferences
     demoFocusAreas: [] as string[],
     otherDemoFocusText: "", // New field for custom demo focus text
@@ -154,33 +158,33 @@ const Request = () => {
   });
 
   const industries = [
-    "Healthcare", "Finance", "Manufacturing", "Retail", 
+    "Healthcare", "Finance", "Manufacturing", "Retail",
     "Technology", "Education", "Real Estate", "Legal", "Other"
   ];
 
   const companySizes = [
-    "1-10 employees", "11-50 employees", "51-200 employees", 
+    "1-10 employees", "11-50 employees", "51-200 employees",
     "201-500 employees", "501-1000 employees", "1000+ employees"
   ];
 
   const challenges = [
-    "Process Automation", "Data Analytics", "Customer Experience", 
+    "Process Automation", "Data Analytics", "Customer Experience",
     "Operational Efficiency", "Cost Reduction", "Scalability",
     "Security & Compliance", "Digital Transformation"
   ];
 
   const projectTimelines = [
     "Immediate (ASAP)",
-    "Within 1 month", 
+    "Within 1 month",
     "1-3 months",
-    "3-6 months", 
+    "3-6 months",
     "6-12 months",
     "12+ months",
     "Just exploring"
   ];
 
   const budgetRanges = [
-    "$1,000 - $5,000", "$5,000 - $10,000", "$10,000 - $25,000", 
+    "$1,000 - $5,000", "$5,000 - $10,000", "$10,000 - $25,000",
     "$25,000 - $50,000", "Over $50,000", "Not sure yet"
   ];
 
@@ -196,10 +200,10 @@ const Request = () => {
   ];
 
   // Repeated input styling
-  const inputStyle = { 
-    backgroundColor: '#ffffff', 
-    color: '#020a1c', 
-    borderColor: '#ff7033' 
+  const inputStyle = {
+    backgroundColor: '#ffffff',
+    color: '#020a1c',
+    borderColor: '#ff7033'
   };
 
   // Validation functions using reusable utilities
@@ -219,18 +223,14 @@ const Request = () => {
     console.log('[Calendly] Iframe loaded successfully');
   }, []);
 
-
-
-
-
   const handleInputChange = (field: string, value: any) => {
     setFormData(prev => ({ ...prev, [field]: value }));
-    
+
     // Clear validation error when user starts typing
     if (field === 'email' || field === 'phone') {
       setValidationErrors(prev => ({ ...prev, [field]: "" }));
     }
-    
+
     // Validate on change for immediate feedback
     if (field === 'email' && value) {
       const emailValidation = validateEmail(value);
@@ -238,7 +238,7 @@ const Request = () => {
         setValidationErrors(prev => ({ ...prev, email: emailValidation.errorMessage || "" }));
       }
     }
-    
+
     if (field === 'phone' && value) {
       const phoneValidation = validatePhone(value, true);
       if (!phoneValidation.isValid) {
@@ -267,12 +267,12 @@ const Request = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     // Only submit if we're on step 3, otherwise do nothing
     if (formStep !== 3) {
       return;
     }
-    
+
     // Include custom challenge text in the submission if "Other" is selected
     const submissionData = {
       firstName: formData.firstName,
@@ -296,7 +296,7 @@ const Request = () => {
       additionalRequirements: formData.additionalRequirements,
       preferredDate: null // Add missing required field
     };
-    
+
     try {
       const response = await fetch('/api/request', {
         method: 'POST',
@@ -307,7 +307,7 @@ const Request = () => {
       });
 
       const result = await response.json();
-      
+
       if (response.ok && result.success) {
         setIsSubmitted(true);
         // Scroll to top to show success message
@@ -327,9 +327,9 @@ const Request = () => {
   const isStepComplete = (step: number) => {
     switch (step) {
       case 1:
-        return formData.firstName && 
-               formData.lastName && 
-               formData.email && 
+        return formData.firstName &&
+               formData.lastName &&
+               formData.email &&
                isEmailValid(formData.email) &&
                formData.companyName &&
                formData.phone &&
@@ -374,8 +374,8 @@ const Request = () => {
                 </li>
               </ul>
             </div>
-            <Button 
-              onClick={() => window.location.href = "/"}
+            <Button
+              onClick={() => router.push("/")}
               className="bg-primary hover:bg-primary/90 hover:scale-105 hover:shadow-xl transition-all duration-300"
               size="lg"
             >
@@ -411,7 +411,7 @@ const Request = () => {
                 </div>
                 {/* Progress line */}
                 <div className="absolute top-5 left-5 right-5 h-1 bg-gray-200">
-                  <div 
+                  <div
                     className={`h-full bg-primary transition-all duration-300`}
                     style={{ width: `${((formStep - 1) / 2) * 100}%` }}
                   />
@@ -470,7 +470,7 @@ const Request = () => {
                           />
                         </div>
                       </div>
-                      
+
                       <div>
                         <Label htmlFor="email" className="text-white text-sm md:text-base">Email Address *</Label>
                         <Input
@@ -490,7 +490,7 @@ const Request = () => {
                           <p className="text-sm text-red-400 mt-1">{validationErrors.email}</p>
                         )}
                       </div>
-                      
+
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
                         <div>
                           <Label htmlFor="phone" className="text-white text-sm md:text-base">Phone Number *</Label>
@@ -524,7 +524,7 @@ const Request = () => {
                           />
                         </div>
                       </div>
-                      
+
                       <div>
                         <Label htmlFor="jobTitle" className="text-white text-sm md:text-base">Job Title</Label>
                         <Input
@@ -545,8 +545,8 @@ const Request = () => {
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
                         <div>
                           <Label htmlFor="industry" className="text-white text-sm md:text-base">Industry *</Label>
-                          <Select 
-                            value={formData.industry} 
+                          <Select
+                            value={formData.industry}
                             onValueChange={(value) => handleInputChange("industry", value)}
                           >
                             <SelectTrigger className="h-11 md:h-10" style={inputStyle}>
@@ -563,8 +563,8 @@ const Request = () => {
                         </div>
                         <div>
                           <Label htmlFor="companySize" className="text-white text-sm md:text-base">Company Size *</Label>
-                          <Select 
-                            value={formData.companySize} 
+                          <Select
+                            value={formData.companySize}
                             onValueChange={(value) => handleInputChange("companySize", value)}
                           >
                             <SelectTrigger className="h-11 md:h-10" style={inputStyle}>
@@ -580,7 +580,7 @@ const Request = () => {
                           </Select>
                         </div>
                       </div>
-                      
+
                       <div>
                         <Label className="text-white text-sm md:text-base">Current Challenges * (Select all that apply)</Label>
                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 md:gap-4 mt-3">
@@ -589,12 +589,12 @@ const Request = () => {
                               <Checkbox
                                 id={challenge}
                                 checked={formData.currentChallenges.includes(challenge)}
-                                onCheckedChange={(checked) => 
+                                onCheckedChange={(checked) =>
                                   handleCheckboxChange("currentChallenges", challenge, checked as boolean)
                                 }
                               />
-                              <Label 
-                                htmlFor={challenge} 
+                              <Label
+                                htmlFor={challenge}
                                 className="text-xs md:text-sm font-normal cursor-pointer text-white"
                               >
                                 {challenge}
@@ -614,8 +614,8 @@ const Request = () => {
                                 }
                               }}
                             />
-                            <Label 
-                              htmlFor="other-challenge" 
+                            <Label
+                              htmlFor="other-challenge"
                               className="text-xs md:text-sm font-normal cursor-pointer text-white"
                             >
                               Other
@@ -635,11 +635,11 @@ const Request = () => {
                           </div>
                         )}
                       </div>
-                      
+
                       <div>
                         <Label htmlFor="projectTimeline" className="text-white text-sm md:text-base">Project Timeline *</Label>
-                        <Select 
-                          value={formData.projectTimeline} 
+                        <Select
+                          value={formData.projectTimeline}
                           onValueChange={(value) => handleInputChange("projectTimeline", value)}
                         >
                           <SelectTrigger className="h-11 md:h-10" style={inputStyle}>
@@ -654,11 +654,11 @@ const Request = () => {
                           </SelectContent>
                         </Select>
                       </div>
-                      
+
                       <div>
                         <Label htmlFor="budgetRange" className="text-white text-sm md:text-base">Budget Range</Label>
-                        <Select 
-                          value={formData.budgetRange} 
+                        <Select
+                          value={formData.budgetRange}
                           onValueChange={(value) => handleInputChange("budgetRange", value)}
                         >
                           <SelectTrigger className="h-11 md:h-10" style={inputStyle}>
@@ -731,8 +731,8 @@ const Request = () => {
                                   }
                                 }}
                               />
-                              <Label 
-                                htmlFor={option} 
+                              <Label
+                                htmlFor={option}
                                 className="text-xs md:text-sm font-normal cursor-pointer text-white"
                               >
                                 {option}
@@ -753,7 +753,7 @@ const Request = () => {
                           </div>
                         )}
                       </div>
-                      
+
                       <div>
                         <Label htmlFor="additionalRequirements" className="text-white text-sm md:text-base">
                           Additional Requirements or Questions
@@ -789,7 +789,7 @@ const Request = () => {
                                 formData={formData}
                               />
                             ) : (
-                              <CalendlyFallback 
+                              <CalendlyFallback
                                 status={calendlyIntegration.status}
                                 error={calendlyIntegration.error}
                                 onRetry={calendlyIntegration.retry}
@@ -827,7 +827,7 @@ const Request = () => {
                         Previous
                       </Button>
                     )}
-                    
+
                     {formStep < 3 ? (
                       <Button
                         type="button"
@@ -885,7 +885,7 @@ const Request = () => {
                   </p>
                 </CardContent>
               </Card>
-              
+
               <Card className="hero-gradient backdrop-blur-sm min-w-[280px] snap-center md:min-w-0">
                 <CardContent className="p-4 md:p-6 text-center">
                   <div className="w-10 h-10 md:w-12 md:h-12 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-3 md:mb-4">
@@ -897,7 +897,7 @@ const Request = () => {
                   </p>
                 </CardContent>
               </Card>
-              
+
               <Card className="hero-gradient backdrop-blur-sm min-w-[280px] snap-center md:min-w-0">
                 <CardContent className="p-4 md:p-6 text-center">
                   <div className="w-10 h-10 md:w-12 md:h-12 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-3 md:mb-4">

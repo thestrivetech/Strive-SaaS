@@ -1,5 +1,8 @@
+"use client";
+
 import { useState } from "react";
 import React from "react";
+import { useRouter } from "next/navigation";
 import { Bot, Code, Blocks, Brain, BrainCircuit, Database, Globe, Zap, Eye, Play, ExternalLink, X, Github, Monitor, Smartphone, ChevronRight, Filter, ChevronDown } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -16,6 +19,7 @@ import { getSolutionById } from "@/data/solutions-mapping";
 // Project interface is now imported from the modular structure
 
 const Portfolio = () => {
+  const router = useRouter();
   const [selectedProject, setSelectedProject] = useState<Project | null>(null);
   const [selectedFilter, setSelectedFilter] = useState("all");
 
@@ -28,8 +32,8 @@ const Portfolio = () => {
     { id: "template", name: "Templates", icon: <Blocks className="h-4 w-4" /> }
   ];
 
-  const filteredProjects = selectedFilter === "all" 
-    ? projects 
+  const filteredProjects = selectedFilter === "all"
+    ? projects
     : projects.filter(project => project.type === selectedFilter);
 
   const getCategoryIcon = (category: string) => {
@@ -47,7 +51,7 @@ const Portfolio = () => {
   const getTypeColor = (type: string) => {
     const colorMap: { [key: string]: string } = {
       "demo": "bg-green-500",
-      "prototype": "bg-blue-500", 
+      "prototype": "bg-blue-500",
       "template": "bg-purple-500"
     };
     return colorMap[type] || "bg-gray-500";
@@ -74,7 +78,7 @@ const Portfolio = () => {
             ))}
           </div>
         </div>
-        
+
         <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
           <div className="text-center">
             <div className="flex items-center justify-center mb-4 sm:mb-5 md:mb-6">
@@ -100,7 +104,7 @@ const Portfolio = () => {
                 size="lg"
                 className="bg-primary hover:bg-primary/90 text-primary-foreground px-6 sm:px-7 md:px-8 py-3 sm:py-3.5 md:py-4 text-sm sm:text-base md:text-lg font-semibold rounded-xl transition-all duration-300 hover:scale-105 shadow-lg hover:shadow-xl relative overflow-hidden group
                   before:absolute before:inset-0 before:bg-gradient-to-r before:from-transparent before:via-white/15 before:to-transparent before:-translate-x-full hover:before:translate-x-full before:transition-transform before:duration-500 min-h-[44px] w-full sm:w-auto"
-                onClick={() => window.location.href = '/request'}
+                onClick={() => router.push('/request')}
                 data-testid="button-view-work"
               >
                 Request Personalized Demo
@@ -145,12 +149,12 @@ const Portfolio = () => {
                 </SelectTrigger>
                 <SelectContent className="bg-[#020a1c] border-orange-500">
                   {filters.map((filter) => (
-                    <SelectItem 
-                      key={filter.id} 
+                    <SelectItem
+                      key={filter.id}
                       value={filter.id}
                       className={`text-white cursor-pointer hover:bg-orange-500/20 focus:bg-orange-500/20 ${
-                        selectedFilter === filter.id 
-                          ? "bg-orange-500/20 text-orange-400" 
+                        selectedFilter === filter.id
+                          ? "bg-orange-500/20 text-orange-400"
                           : ""
                       }`}
                     >
@@ -195,7 +199,7 @@ const Portfolio = () => {
                   <div className="flex items-center gap-2">
                     <Filter className="h-4 w-4 flex-shrink-0" />
                     <span className="flex-grow text-left">
-                      {selectedFilter !== "all" && selectedFilter 
+                      {selectedFilter !== "all" && selectedFilter
                         ? filters.find(f => f.id === selectedFilter)?.name || "Filter"
                         : "Filter"
                       }
@@ -204,12 +208,12 @@ const Portfolio = () => {
                 </SelectTrigger>
                 <SelectContent>
                   {filters.filter(f => f.id !== "all").map((filter) => (
-                    <SelectItem 
-                      key={filter.id} 
+                    <SelectItem
+                      key={filter.id}
                       value={filter.id}
                       className={`cursor-pointer hover:text-[#ff7033] hover:[&>div]:text-[#ff7033] ${
-                        selectedFilter === filter.id 
-                          ? "bg-[#ff7033]/10 text-[#ff7033] [&>div]:text-[#ff7033]" 
+                        selectedFilter === filter.id
+                          ? "bg-[#ff7033]/10 text-[#ff7033] [&>div]:text-[#ff7033]"
                           : ""
                       }`}
                     >
@@ -227,7 +231,7 @@ const Portfolio = () => {
           {/* Project Gallery */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 md:gap-6 lg:gap-8">
             {filteredProjects.map((project) => (
-              <Card 
+              <Card
                 key={project.id}
                 className="group overflow-hidden border-0 shadow-lg hover:shadow-2xl hover:shadow-primary/20 transition-all duration-500 cursor-pointer hover:-translate-y-2 bg-gradient-to-br from-white to-gray-50 dark:from-gray-900 dark:to-gray-800"
                 onClick={() => setSelectedProject(project)}
@@ -237,8 +241,8 @@ const Portfolio = () => {
                 <div className="flex flex-row md:flex-col">
                   {/* Image Container */}
                   <div className="relative overflow-hidden w-28 h-48 md:w-full md:h-32 lg:h-48 flex-shrink-0">
-                    <img 
-                      src={project.imageUrl} 
+                    <img
+                      src={project.imageUrl}
                       alt={project.title}
                       className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
                       data-testid={`img-project-${project.id}`}
@@ -262,7 +266,7 @@ const Portfolio = () => {
                       </div>
                     </div>
                   </div>
-                  
+
                   {/* Content Container */}
                   <CardContent className="p-3 md:p-6 flex-1 min-w-0">
                     <div className="flex items-center gap-1 md:gap-2 mb-1 md:mb-3">
@@ -273,24 +277,24 @@ const Portfolio = () => {
                         {project.category}
                       </span>
                     </div>
-                    
+
                     <h3 className="text-sm md:text-xl font-bold text-[#ff7033] mb-1 md:mb-3 group-hover:text-primary transition-colors duration-300 line-clamp-2">
                       {project.title}
                     </h3>
-                    
+
                     <p className="text-muted-foreground mb-2 md:mb-4 line-clamp-2 text-xs md:text-sm">
                       {project.shortDescription}
                     </p>
-                    
+
                     <div className="flex flex-wrap gap-1 mb-2 md:mb-4">
                       {project.technologies.slice(0, 2).map((tech, index) => (
-                        <Badge 
-                          key={index} 
-                          variant="secondary" 
+                        <Badge
+                          key={index}
+                          variant="secondary"
                           className="text-xs cursor-pointer hover:bg-[#ff7033] hover:text-white transition-colors px-1 py-0.5"
                           onClick={(e) => {
                             e.stopPropagation();
-                            window.location.href = `/resources?filter=tools-tech&tech=${encodeURIComponent(tech.toLowerCase())}`;
+                            router.push(`/resources?filter=tools-tech&tech=${encodeURIComponent(tech.toLowerCase())}`);
                           }}
                         >
                           {tech}
@@ -302,13 +306,13 @@ const Portfolio = () => {
                         </Badge>
                       )}
                     </div>
-                    
-                    <Button 
+
+                    <Button
                       className="w-full group-hover:bg-primary group-hover:text-white transition-all duration-300 text-xs md:text-sm py-1 md:py-2"
                       variant="outline"
                     >
-                      {project.type === 'demo' ? 'View Demo' : 
-                       project.type === 'prototype' ? 'View Prototype' : 
+                      {project.type === 'demo' ? 'View Demo' :
+                       project.type === 'prototype' ? 'View Prototype' :
                        project.type === 'template' ? 'View Template' : 'View Details'}
                       {project.type === 'demo' ? <Play className="ml-1 h-3 w-3 md:ml-2 md:h-4 md:w-4" /> :
                        project.type === 'prototype' ? <Code className="ml-1 h-3 w-3 md:ml-2 md:h-4 md:w-4" /> :
@@ -337,8 +341,8 @@ const Portfolio = () => {
                 Detailed view of {selectedProject.title} project including description, features, and performance metrics
               </DialogDescription>
               <div className="relative">
-                <img 
-                  src={selectedProject.imageUrl} 
+                <img
+                  src={selectedProject.imageUrl}
                   alt={selectedProject.title}
                   className="w-full h-64 object-cover rounded-lg"
                 />
@@ -347,7 +351,7 @@ const Portfolio = () => {
                 <X className="h-5 w-5 text-white m-auto" />
                 <span className="sr-only">Close</span>
               </DialogPrimitive.Close>
-              
+
               <div className="p-6 space-y-6">
                 <div className="flex items-center gap-3">
                   <div className="text-primary">
@@ -358,9 +362,9 @@ const Portfolio = () => {
                     <p className="text-muted-foreground">{selectedProject.category}</p>
                   </div>
                 </div>
-                
+
                 <p className="text-lg leading-relaxed">{selectedProject.fullDescription}</p>
-                
+
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div>
                     <h3 className="text-lg font-semibold mb-3">Key Features</h3>
@@ -373,7 +377,7 @@ const Portfolio = () => {
                       ))}
                     </ul>
                   </div>
-                  
+
                   <div>
                     <h3 className="text-lg font-semibold mb-3">Performance Metrics</h3>
                     <div className="space-y-2">
@@ -386,19 +390,19 @@ const Portfolio = () => {
                     </div>
                   </div>
                 </div>
-                
+
                 <div>
                   <h3 className="text-lg font-semibold mb-3">Solutions</h3>
                   <div className="flex flex-wrap gap-2">
                     {selectedProject.relatedSolutions?.map((solutionId: string, index: number) => {
                       const solution = getSolutionById(solutionId);
                       return solution ? (
-                        <Badge 
-                          key={index} 
-                          variant="secondary" 
+                        <Badge
+                          key={index}
+                          variant="secondary"
                           className="px-3 py-1 cursor-pointer hover:bg-[#ff7033] hover:text-white transition-colors"
                           onClick={() => {
-                            window.location.href = `/solutions?solution=${solutionId}`;
+                            router.push(`/solutions?solution=${solutionId}`);
                           }}
                         >
                           {solution.title}
@@ -407,13 +411,13 @@ const Portfolio = () => {
                     })}
                   </div>
                 </div>
-                
+
                 <div className="flex gap-4 pt-4">
                   <Button className="flex-1" onClick={() => window.open(selectedProject.demoUrl, '_blank')}>
                     <Play className="mr-2 h-4 w-4" />
                     View Demo
                   </Button>
-                  <Button variant="outline" onClick={() => window.location.href = '/contact'}>
+                  <Button variant="outline" onClick={() => router.push('/contact')}>
                     Get Started
                   </Button>
                 </div>

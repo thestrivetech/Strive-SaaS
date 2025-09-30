@@ -1,3 +1,4 @@
+import { Suspense } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -14,11 +15,30 @@ import {
 } from 'lucide-react';
 import { getCurrentUser } from '@/lib/auth/auth-helpers';
 import { getUserOrganizations, getOrganizationMembers } from '@/lib/modules/organization/queries';
-import { getProjects, getProjectStats, calculateProjectProgress } from '@/lib/modules/projects/queries';
+import { getProjects, getProjectStats, calculateProjectProgress, getProjectsCount } from '@/lib/modules/projects/queries';
 import { getCustomers } from '@/lib/modules/crm/queries';
 import { CreateProjectDialog } from '@/components/features/projects/create-project-dialog';
+import { ProjectListSkeleton } from '@/components/features/projects/project-list-skeleton';
+import { PaginationControls } from '@/components/ui/pagination-controls';
+import { ProjectFilters } from '@/components/features/projects/project-filters';
+import type { ProjectStatus, Priority } from '@prisma/client';
 
-export default async function ProjectsPage() {
+export default async function ProjectsPage({
+  searchParams,
+}: {
+  searchParams: {
+    page?: string;
+    limit?: string;
+    status?: string;
+    priority?: string;
+    manager?: string;
+    customer?: string;
+    createdFrom?: string;
+    createdTo?: string;
+    dueFrom?: string;
+    dueTo?: string;
+  };
+}) {
   const user = await getCurrentUser();
 
   if (!user) {
@@ -41,11 +61,69 @@ export default async function ProjectsPage() {
     );
   }
 
-  const [projects, stats, customers, orgMembers] = await Promise.all([
-    getProjects(currentOrg.organizationId),
-    getProjectStats(currentOrg.organizationId),
-    getCustomers(currentOrg.organizationId),
-    getOrganizationMembers(currentOrg.organizationId),
+  const currentPage = parseInt(searchParams.page || '1');
+  const pageSize = parseInt(searchParams.limit || '25');
+
+  return (
+    <Suspense fallback={<ProjectListSkeleton />}>
+      <ProjectListContent
+        organizationId={currentOrg.organizationId}
+        currentPage={currentPage}
+        pageSize={pageSize}
+        searchParams={searchParams}
+      />
+    </Suspense>
+  );
+}
+
+async function ProjectListContent({
+  organizationId,
+  currentPage,
+  pageSize,
+  searchParams,
+}: {
+  organizationId: string;
+  currentPage: number;
+  pageSize: number;
+  searchParams: any;
+}) {
+  const filters: any = {
+    limit: pageSize,
+    offset: (currentPage - 1) * pageSize,
+  };
+
+  // Add filter parameters
+  if (searchParams.status) {
+    filters.status = searchParams.status.split(',');
+  }
+  if (searchParams.priority) {
+    filters.priority = searchParams.priority.split(',');
+  }
+  if (searchParams.manager && searchParams.manager !== '__none__') {
+    filters.projectManagerId = searchParams.manager;
+  }
+  if (searchParams.customer && searchParams.customer !== '__none__') {
+    filters.customerId = searchParams.customer;
+  }
+  if (searchParams.createdFrom) {
+    filters.createdFrom = new Date(searchParams.createdFrom);
+  }
+  if (searchParams.createdTo) {
+    filters.createdTo = new Date(searchParams.createdTo);
+  }
+  if (searchParams.dueFrom) {
+    filters.dueFrom = new Date(searchParams.dueFrom);
+  }
+  if (searchParams.dueTo) {
+    filters.dueTo = new Date(searchParams.dueTo);
+  }
+
+  const [projects, stats, customers, orgMembers, totalCount] = await Promise.all([
+    getProjects(organizationId, filters),
+    getProjectStats(organizationId),
+    getCustomers(organizationId),
+    getOrganizationMembers(organizationId),
+    getProjectsCount(organizationId, filters),
   ]);
 
   // Map organization members to team members format
@@ -104,11 +182,17 @@ export default async function ProjectsPage() {
             Manage and track all your projects
           </p>
         </div>
-        <CreateProjectDialog
-          organizationId={currentOrg.organizationId}
-          customers={customers.map((c) => ({ id: c.id, name: c.name }))}
-          teamMembers={teamMembers}
-        />
+        <div className="flex items-center gap-2">
+          <ProjectFilters
+            customers={customers.map((c) => ({ id: c.id, name: c.name }))}
+            teamMembers={teamMembers}
+          />
+          <CreateProjectDialog
+            organizationId={organizationId}
+            customers={customers.map((c) => ({ id: c.id, name: c.name }))}
+            teamMembers={teamMembers}
+          />
+        </div>
       </div>
 
       <div className="grid gap-4 md:grid-cols-4">
@@ -145,7 +229,7 @@ export default async function ProjectsPage() {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">
-              ${stats.totalBudget ? (stats.totalBudget / 1000).toFixed(0) + 'k' : '0'}
+              ${stats.totalBudget ? (Number(stats.totalBudget) / 1000).toFixed(0) + 'k' : '0'}
             </div>
             <p className="text-xs text-muted-foreground">Across all projects</p>
           </CardContent>
@@ -228,6 +312,14 @@ export default async function ProjectsPage() {
           })
         )}
       </div>
+
+      {projects.length > 0 && (
+        <PaginationControls
+          currentPage={currentPage}
+          totalItems={totalCount}
+          itemsPerPage={pageSize}
+        />
+      )}
     </div>
   );
 }

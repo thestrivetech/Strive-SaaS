@@ -8,7 +8,7 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Separator } from '@/components/ui/separator';
 import { Progress } from '@/components/ui/progress';
 import { getCurrentUser } from '@/lib/auth/auth-helpers';
-import { getUserOrganizations } from '@/lib/modules/organization/queries';
+import { getUserOrganizations, getOrganizationMembers } from '@/lib/modules/organization/queries';
 import { getProjectById, calculateProjectProgress } from '@/lib/modules/projects/queries';
 import { getTasks } from '@/lib/modules/tasks/queries';
 import { EditProjectDialog } from '@/components/features/projects/edit-project-dialog';
@@ -36,14 +36,21 @@ export default async function ProjectDetailPage({
     return notFound();
   }
 
-  const project = await getProjectById(params.projectId, currentOrg.organizationId);
+  const [project, tasks, orgMembers] = await Promise.all([
+    getProjectById(params.projectId, currentOrg.organizationId),
+    getTasks(params.projectId),
+    getOrganizationMembers(currentOrg.organizationId),
+  ]);
 
   if (!project) {
     return notFound();
   }
 
-  // Get tasks for this project
-  const tasks = await getTasks(params.projectId);
+  // Map organization members to team members format
+  const teamMembers = orgMembers.map((member) => ({
+    id: member.user.id,
+    name: member.user.name || member.user.email,
+  }));
 
   // Calculate progress
   const progress = calculateProjectProgress(project.tasks);
@@ -196,7 +203,7 @@ export default async function ProjectDetailPage({
                     {project.tasks.length} task{project.tasks.length !== 1 ? 's' : ''} in this project
                   </CardDescription>
                 </div>
-                <CreateTaskDialog projectId={project.id} teamMembers={[]} />
+                <CreateTaskDialog projectId={project.id} teamMembers={teamMembers} />
               </div>
             </CardHeader>
             <CardContent>
@@ -207,6 +214,7 @@ export default async function ProjectDetailPage({
                     estimatedHours: task.estimatedHours ? Number(task.estimatedHours) : null,
                   }))}
                   projectId={project.id}
+                  teamMembers={teamMembers}
                   groupByStatus={true}
                 />
               ) : (

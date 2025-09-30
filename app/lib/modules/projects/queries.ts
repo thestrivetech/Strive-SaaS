@@ -17,11 +17,13 @@ export async function getProjects(
   const where: any = { organizationId };
 
   if (filters?.status) {
-    where.status = filters.status;
+    // Support array of statuses (OR logic)
+    where.status = Array.isArray(filters.status) ? { in: filters.status } : filters.status;
   }
 
   if (filters?.priority) {
-    where.priority = filters.priority;
+    // Support array of priorities (OR logic)
+    where.priority = Array.isArray(filters.priority) ? { in: filters.priority } : filters.priority;
   }
 
   if (filters?.customerId) {
@@ -37,6 +39,27 @@ export async function getProjects(
       { name: { contains: filters.search, mode: 'insensitive' } },
       { description: { contains: filters.search, mode: 'insensitive' } },
     ];
+  }
+
+  // Date range filters
+  if (filters?.createdFrom || filters?.createdTo) {
+    where.createdAt = {};
+    if (filters.createdFrom) {
+      where.createdAt.gte = filters.createdFrom;
+    }
+    if (filters.createdTo) {
+      where.createdAt.lte = filters.createdTo;
+    }
+  }
+
+  if (filters?.dueFrom || filters?.dueTo) {
+    where.dueDate = {};
+    if (filters.dueFrom) {
+      where.dueDate.gte = filters.dueFrom;
+    }
+    if (filters.dueTo) {
+      where.dueDate.lte = filters.dueTo;
+    }
   }
 
   return prisma.project.findMany({
@@ -68,6 +91,61 @@ export async function getProjects(
     take: filters?.limit || 50,
     skip: filters?.offset || 0,
   });
+}
+
+export async function getProjectsCount(
+  organizationId: string,
+  filters?: ProjectFilters
+): Promise<number> {
+  const where: any = { organizationId };
+
+  if (filters?.status) {
+    // Support array of statuses (OR logic)
+    where.status = Array.isArray(filters.status) ? { in: filters.status } : filters.status;
+  }
+
+  if (filters?.priority) {
+    // Support array of priorities (OR logic)
+    where.priority = Array.isArray(filters.priority) ? { in: filters.priority } : filters.priority;
+  }
+
+  if (filters?.customerId) {
+    where.customerId = filters.customerId;
+  }
+
+  if (filters?.projectManagerId) {
+    where.projectManagerId = filters.projectManagerId;
+  }
+
+  if (filters?.search) {
+    where.OR = [
+      { name: { contains: filters.search, mode: 'insensitive' } },
+      { description: { contains: filters.search, mode: 'insensitive' } },
+    ];
+  }
+
+  // Date range filters
+  if (filters?.createdFrom || filters?.createdTo) {
+    where.createdAt = {};
+    if (filters.createdFrom) {
+      where.createdAt.gte = filters.createdFrom;
+    }
+    if (filters.createdTo) {
+      where.createdAt.lte = filters.createdTo;
+    }
+  }
+
+  if (filters?.dueFrom || filters?.dueTo) {
+    where.dueDate = {};
+    if (filters.dueFrom) {
+      where.dueDate.gte = filters.dueFrom;
+    }
+    if (filters.dueTo) {
+      where.dueDate.lte = filters.dueTo;
+    }
+  }
+
+  return prisma.project.count({ where });
 }
 
 export async function getProjectById(
