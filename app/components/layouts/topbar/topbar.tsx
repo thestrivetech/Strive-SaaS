@@ -1,6 +1,6 @@
 'use client';
 
-import { Menu, Search, Bell, User, Settings, LogOut } from 'lucide-react';
+import { Menu, Search, User, Settings, LogOut } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import {
@@ -13,7 +13,11 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { UserRole } from '@/lib/auth/constants';
 import { signOutAction } from '@/lib/auth/actions';
+import { NotificationDropdown } from '@/components/shared/navigation/notification-dropdown';
 import Link from 'next/link';
+import { useEffect, useState } from 'react';
+import { getUnreadNotifications, getUnreadCount } from '@/lib/modules/notifications/queries';
+import type { Notification } from '@prisma/client';
 
 interface TopbarProps {
   user: {
@@ -24,11 +28,35 @@ interface TopbarProps {
     role: UserRole;
     subscriptionTier: string;
   };
+  organizationId: string;
   sidebarOpen: boolean;
   onSidebarToggle: () => void;
 }
 
-export function Topbar({ user, onSidebarToggle }: TopbarProps) {
+export function Topbar({ user, organizationId, onSidebarToggle }: TopbarProps) {
+  const [initialNotifications, setInitialNotifications] = useState<Notification[]>([]);
+  const [initialUnreadCount, setInitialUnreadCount] = useState(0);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchNotifications = async () => {
+      try {
+        const [notifications, unreadCount] = await Promise.all([
+          getUnreadNotifications(user.id, organizationId, 20),
+          getUnreadCount(user.id, organizationId),
+        ]);
+        setInitialNotifications(notifications);
+        setInitialUnreadCount(unreadCount);
+      } catch (error) {
+        console.error('Failed to fetch notifications:', error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchNotifications();
+  }, [user.id, organizationId]);
+
   return (
     <header className="sticky top-0 z-40 flex h-16 items-center gap-4 border-b bg-background px-6">
       <Button
@@ -53,39 +81,14 @@ export function Topbar({ user, onSidebarToggle }: TopbarProps) {
       </div>
 
       <div className="flex items-center gap-2">
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="ghost" size="icon" className="relative">
-              <Bell className="h-5 w-5" />
-              <span className="absolute right-1 top-1 h-2 w-2 rounded-full bg-destructive"></span>
-              <span className="sr-only">Notifications</span>
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end" className="w-80">
-            <DropdownMenuLabel>Notifications</DropdownMenuLabel>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem>
-              <div className="flex flex-col gap-1">
-                <span className="text-sm font-medium">New project assigned</span>
-                <span className="text-xs text-muted-foreground">
-                  You have been assigned to &quot;Website Redesign&quot;
-                </span>
-              </div>
-            </DropdownMenuItem>
-            <DropdownMenuItem>
-              <div className="flex flex-col gap-1">
-                <span className="text-sm font-medium">Task completed</span>
-                <span className="text-xs text-muted-foreground">
-                  &quot;Update dashboard UI&quot; has been marked as complete
-                </span>
-              </div>
-            </DropdownMenuItem>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem className="text-center">
-              View all notifications
-            </DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
+        {!isLoading && (
+          <NotificationDropdown
+            userId={user.id}
+            organizationId={organizationId}
+            initialNotifications={initialNotifications}
+            initialUnreadCount={initialUnreadCount}
+          />
+        )}
 
         <div className="h-8 w-px bg-border" />
 

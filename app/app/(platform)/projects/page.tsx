@@ -21,7 +21,9 @@ import { CreateProjectDialog } from '@/components/features/projects/create-proje
 import { ProjectListSkeleton } from '@/components/features/projects/project-list-skeleton';
 import { PaginationControls } from '@/components/ui/pagination-controls';
 import { ProjectFilters } from '@/components/features/projects/project-filters';
-import type { ProjectStatus, Priority } from '@prisma/client';
+import { ExportButton } from '@/components/features/export/export-button';
+import { formatDateForCSV, type CSVColumn } from '@/lib/export/csv';
+import type { ProjectStatus, Priority, Project } from '@prisma/client';
 
 export default async function ProjectsPage({
   searchParams,
@@ -132,6 +134,17 @@ async function ProjectListContent({
     name: member.user.name || member.user.email,
   }));
 
+  // CSV Export columns
+  const exportColumns: CSVColumn<Project>[] = [
+    { key: 'name', label: 'Project Name' },
+    { key: 'status', label: 'Status' },
+    { key: 'priority', label: 'Priority' },
+    { key: 'startDate', label: 'Start Date', format: (value) => formatDateForCSV(value) },
+    { key: 'endDate', label: 'End Date', format: (value) => formatDateForCSV(value) },
+    { key: 'budget', label: 'Budget' },
+    { key: 'createdAt', label: 'Created Date', format: (value) => formatDateForCSV(value) },
+  ];
+
   const getStatusIcon = (status: string) => {
     switch (status) {
       case 'COMPLETED':
@@ -183,6 +196,11 @@ async function ProjectListContent({
           </p>
         </div>
         <div className="flex items-center gap-2">
+          <ExportButton
+            data={projects}
+            columns={exportColumns}
+            filename="projects"
+          />
           <ProjectFilters
             customers={customers.map((c) => ({ id: c.id, name: c.name }))}
             teamMembers={teamMembers}

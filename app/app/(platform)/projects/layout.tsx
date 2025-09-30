@@ -23,6 +23,12 @@ export default async function ProjectsLayout({
     redirect('/login');
   }
 
+  // Get user's organization
+  const userOrg = user.organizationMembers[0];
+  if (!userOrg) {
+    redirect('/onboarding');
+  }
+
   // Check if user can access projects
   const canAccess = await canAccessRoute('/projects');
   if (!canAccess) {
@@ -42,6 +48,7 @@ export default async function ProjectsLayout({
         role: user.role as UserRole,
         subscriptionTier: user.subscriptionTier || 'FREE',
       }}
+      organizationId={userOrg.organizationId}
       navigationItems={navigationItems}
     >
       {children}

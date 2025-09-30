@@ -16,6 +16,7 @@ interface DashboardShellProps {
     role: UserRole;
     subscriptionTier: string;
   };
+  organizationId: string;
   navigationItems: Array<{
     title: string;
     href: string;
@@ -27,6 +28,7 @@ interface DashboardShellProps {
 export function DashboardShell({
   children,
   user,
+  organizationId,
   navigationItems,
 }: DashboardShellProps) {
   const [sidebarOpen, setSidebarOpen] = useState(true);
@@ -43,6 +45,7 @@ export function DashboardShell({
         <div className="flex flex-1 flex-col overflow-hidden">
           <Topbar
             user={user}
+            organizationId={organizationId}
             sidebarOpen={sidebarOpen}
             onSidebarToggle={() => setSidebarOpen(!sidebarOpen)}
           />

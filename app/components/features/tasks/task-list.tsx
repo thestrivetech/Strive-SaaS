@@ -12,8 +12,9 @@ import {
   DropdownMenuTrigger,
   DropdownMenuSeparator,
 } from '@/components/ui/dropdown-menu';
-import { MoreVertical, Pencil, Trash2, CheckCircle2 } from 'lucide-react';
+import { MoreVertical, Pencil, Trash2, CheckCircle2, Clock, Users } from 'lucide-react';
 import { updateTaskStatus, deleteTask } from '@/lib/modules/tasks/actions';
+import { bulkUpdateTaskStatus, bulkDeleteTasks, bulkAssignTasks } from '@/lib/modules/tasks/bulk-actions';
 import { toast } from 'sonner';
 import { useRouter } from 'next/navigation';
 import {
@@ -26,6 +27,8 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog';
+import { BulkSelector, BulkSelectCheckbox, type BulkAction } from '@/components/ui/bulk-selector';
+import { useRealtimeTaskUpdates } from '@/lib/realtime/use-realtime';
 
 interface TaskListProps {
   tasks: Array<{
@@ -49,16 +52,24 @@ interface TaskListProps {
 }
 
 export function TaskList({
-  tasks,
+  tasks: initialTasks,
   projectId,
   teamMembers = [],
   groupByStatus = true,
 }: TaskListProps) {
+  // Realtime integration
+  const { tasks, isConnected, setTasks } = useRealtimeTaskUpdates(projectId, initialTasks);
+
   const [selectedTask, setSelectedTask] = useState<string | null>(null);
   const [editDialogOpen, setEditDialogOpen] = useState(false);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [taskToDelete, setTaskToDelete] = useState<string | null>(null);
   const [isDeleting, setIsDeleting] = useState(false);
+
+  // Bulk operations state
+  const [selectedIds, setSelectedIds] = useState<string[]>([]);
+  const [isBulkProcessing, setIsBulkProcessing] = useState(false);
+
   const router = useRouter();
 
   const handleStatusChange = async (taskId: string, newStatus: TaskStatus) => {
@@ -100,6 +111,76 @@ export function TaskList({
     setDeleteDialogOpen(true);
   };
 
+  // Bulk operations handler
+  const handleBulkAction = async (actionId: string, ids: string[]) => {
+    setIsBulkProcessing(true);
+    try {
+      if (actionId === 'delete') {
+        if (!confirm(`Delete ${ids.length} task${ids.length > 1 ? 's' : ''}?`)) {
+          setIsBulkProcessing(false);
+          return;
+        }
+        const result = await bulkDeleteTasks({ taskIds: ids });
+        if (result.success) {
+          toast.success(`Deleted ${result.data?.count} task${result.data?.count !== 1 ? 's' : ''}`);
+          setSelectedIds([]);
+          router.refresh();
+        } else {
+          toast.error(result.error || 'Failed to delete tasks');
+        }
+      } else if (actionId.startsWith('status-')) {
+        const statusMap: Record<string, TaskStatus> = {
+          'status-todo': TaskStatus.TODO,
+          'status-in-progress': TaskStatus.IN_PROGRESS,
+          'status-review': TaskStatus.REVIEW,
+          'status-done': TaskStatus.DONE,
+        };
+        const status = statusMap[actionId];
+        if (status) {
+          const result = await bulkUpdateTaskStatus({ taskIds: ids, status });
+          if (result.success) {
+            toast.success(`Updated ${result.data?.count} task${result.data?.count !== 1 ? 's' : ''}`);
+            setSelectedIds([]);
+            router.refresh();
+          } else {
+            toast.error(result.error || 'Failed to update tasks');
+          }
+        }
+      } else if (actionId.startsWith('assign-')) {
+        const assigneeId = actionId.replace('assign-', '');
+        const result = await bulkAssignTasks({ taskIds: ids, assigneeId });
+        if (result.success) {
+          toast.success(`Assigned ${result.data?.count} task${result.data?.count !== 1 ? 's' : ''}`);
+          setSelectedIds([]);
+          router.refresh();
+        } else {
+          toast.error(result.error || 'Failed to assign tasks');
+        }
+      }
+    } catch (error) {
+      toast.error('An error occurred during bulk operation');
+      console.error('Bulk operation error:', error);
+    } finally {
+      setIsBulkProcessing(false);
+    }
+  };
+
+  // Define bulk actions
+  const bulkActions: BulkAction[] = [
+    { id: 'status-todo', label: 'Mark as To Do', icon: <Clock className="h-4 w-4" /> },
+    { id: 'status-in-progress', label: 'Mark as In Progress', icon: <Clock className="h-4 w-4" /> },
+    { id: 'status-review', label: 'Mark as In Review', icon: <Clock className="h-4 w-4" /> },
+    { id: 'status-done', label: 'Mark as Done', icon: <CheckCircle2 className="h-4 w-4" /> },
+    ...(teamMembers.length > 0
+      ? teamMembers.slice(0, 5).map((member) => ({
+          id: `assign-${member.id}`,
+          label: `Assign to ${member.name || 'User'}`,
+          icon: <Users className="h-4 w-4" />,
+        }))
+      : []),
+    { id: 'delete', label: 'Delete', icon: <Trash2 className="h-4 w-4" />, variant: 'destructive' as const },
+  ];
+
   // Group tasks by status
   const groupedTasks: Record<TaskStatus, typeof tasks> = {
     [TaskStatus.TODO]: [],
@@ -122,11 +203,30 @@ export function TaskList({
   };
 
   const renderTaskCard = (task: typeof tasks[0]) => {
-    const taskData = tasks.find((t) => t.id === task.id);
+    const isSelected = selectedIds.includes(task.id);
 
     return (
       <div key={task.id} className="relative group">
-        <TaskCard task={task} />
+        <div className="flex items-start gap-3">
+          {/* Bulk select checkbox */}
+          <div className="pt-4">
+            <BulkSelectCheckbox
+              id={task.id}
+              checked={isSelected}
+              onCheckedChange={() => {
+                setSelectedIds((prev) =>
+                  prev.includes(task.id)
+                    ? prev.filter((id) => id !== task.id)
+                    : [...prev, task.id]
+                );
+              }}
+            />
+          </div>
+
+          <div className="flex-1">
+            <TaskCard task={task} />
+          </div>
+        </div>
 
         {/* Actions Menu */}
         <div className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity">
@@ -183,6 +283,25 @@ export function TaskList({
   if (!groupByStatus) {
     return (
       <>
+        {/* Connection Status & Bulk Selector */}
+        <div className="flex items-center justify-between mb-4">
+          <div className="flex items-center gap-4">
+            <BulkSelector
+              items={tasks}
+              actions={bulkActions}
+              onBulkAction={handleBulkAction}
+              selectedIds={selectedIds}
+              onSelectionChange={setSelectedIds}
+            />
+          </div>
+          <div className="flex items-center gap-2">
+            <div className={`h-2 w-2 rounded-full ${isConnected ? 'bg-green-500' : 'bg-gray-300'}`} />
+            <span className="text-xs text-muted-foreground">
+              {isConnected ? 'Live updates' : 'Connecting...'}
+            </span>
+          </div>
+        </div>
+
         <div className="grid gap-3">
           {tasks.map((task) => renderTaskCard(task))}
         </div>
@@ -225,6 +344,25 @@ export function TaskList({
   // Render grouped by status
   return (
     <>
+      {/* Connection Status & Bulk Selector */}
+      <div className="flex items-center justify-between mb-6">
+        <div className="flex items-center gap-4">
+          <BulkSelector
+            items={tasks}
+            actions={bulkActions}
+            onBulkAction={handleBulkAction}
+            selectedIds={selectedIds}
+            onSelectionChange={setSelectedIds}
+          />
+        </div>
+        <div className="flex items-center gap-2">
+          <div className={`h-2 w-2 rounded-full ${isConnected ? 'bg-green-500' : 'bg-gray-300'}`} />
+          <span className="text-xs text-muted-foreground">
+            {isConnected ? 'Live updates' : 'Connecting...'}
+          </span>
+        </div>
+      </div>
+
       <div className="space-y-6">
         {Object.entries(groupedTasks).map(([status, statusTasks]) => {
           if (statusTasks.length === 0) return null;

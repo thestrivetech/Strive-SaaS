@@ -506,6 +506,236 @@ Production-ready, documented, ready to deploy
 
 ---
 
+## Session 9: Technology Pages & Complex Forms (90 min) - ✅ COMPLETED
+
+**Status:** ✅ Complete (2025-09-30)
+**Progress:** 63% → 84% (22 → 28 pages converted)
+
+### Completed:
+1. **Technology Detail Pages (3):**
+   - `/solutions/technologies/nlp/page.tsx` (274 lines) - Natural Language Processing
+   - `/solutions/technologies/computer-vision/page.tsx` (238 lines) - Computer Vision
+   - `/solutions/technologies/ai-ml/page.tsx` (247 lines) - AI & Machine Learning
+
+2. **Case Study Pages (1):**
+   - `/solutions/case-studies/healthcare/page.tsx` (298 lines) - Healthcare industry case study
+
+3. **Complex Utility Pages (2):**
+   - `/assessment/page.tsx` (698 lines) - Multi-step business assessment form with validation
+   - `/onboarding/page.tsx` (483 lines) - Multi-step wizard flow with progress tracking
+
+### Technical Details:
+- **Technology pages:** Server Components (no "use client" needed)
+- **Utility pages:** Client Components (forms, state management, Calendly integration)
+- **Total converted:** 2,238 lines of code
+- **Pattern:** Wouter Link → Next.js Link, complex form validation preserved
+
+### Time Taken: ~2 hours
+### Documentation:
+- Session 9 summary: `chat-logs/old-site-updates/session9_summary.md`
+- Session 10 plan: `chat-logs/old-site-updates/session10.md`
+
+---
+
+## Session 10: Chatbot-SAI & Analytics Migration Cleanup (60 min) - ✅ COMPLETED
+
+**Status:** ✅ Complete (2025-09-30)
+**Progress:** 84% → 97% (28 → 31 pages converted)
+
+### Primary Task: Convert Chatbot-SAI Page
+
+**Converted:**
+- `/chatbot-sai/page.tsx` (541 lines) - Live chat interface with iframe communication
+
+**Technical Implementation:**
+- Added `"use client"` directive (required for hooks, refs, browser APIs)
+- Replaced Vite env vars: `import.meta.env.VITE_CHATBOT_URL` → `process.env.NEXT_PUBLIC_CHATBOT_URL`
+- Replaced dev check: `import.meta.env.DEV` → `process.env.NODE_ENV === 'development'`
+- Copied supporting libraries to `app/lib/`:
+  - `chatbot-iframe-communication.ts` - Message passing between iframe and parent
+  - `chatbot-performance-monitor.ts` - Performance tracking for chatbot loading
+- **Complex features preserved:**
+  - Custom hooks: `useViewport()`, `useDynamicChatHeight()`
+  - Responsive viewport detection (mobile/tablet/desktop)
+  - Dynamic iframe height calculation
+  - Connection status management (loading/ready/error/timeout)
+  - Error handling with retry logic
+  - Loading overlay with smooth transitions
+  - Debug panel for development mode
+
+**Environment Variable Required:**
+```bash
+# Add to app/.env.local
+NEXT_PUBLIC_CHATBOT_URL=https://chatbot.strivetech.ai
+```
+
+### Analytics & Performance Dashboard Migration Documentation
+
+**IMPORTANT:** Analytics and performance dashboards were **NOT converted to web pages**. They were migrated to the **admin section of the SaaS app** in an earlier analytics migration session.
+
+#### Architecture Overview:
+
+```
+┌─────────────────────────┐         ┌──────────────────────────┐
+│   Marketing Website     │         │   SaaS App               │
+│   (strivetech.ai)       │         │   (app.strivetech.ai)    │
+│                         │         │                          │
+│  ✅ Tracks analytics    │────────▶│  ✅ Receives data        │
+│  ✅ Sends to SaaS API   │         │  ✅ Admin dashboards     │
+│  ❌ NO dashboards       │         │  ✅ Views all data       │
+└─────────────────────────┘         └──────────────────────────┘
+           │                                   │
+           └────────────┬──────────────────────┘
+                        ▼
+               ┌──────────────────┐
+               │  Public API       │
+               │  /api/analytics/* │
+               │  (CORS enabled)   │
+               └──────────────────┘
+                        │
+                        ▼
+               ┌──────────────────┐
+               │  Database         │
+               │  source: 'website'│
+               │  source: 'saas'   │
+               └──────────────────┘
+                        │
+                        ▼
+               ┌──────────────────────┐
+               │  Admin API (protected)│
+               │  /api/admin/analytics/*│
+               │  (Role: ADMIN only)   │
+               └──────────────────────┘
+                        │
+                        ▼
+               ┌──────────────────┐
+               │  Admin Dashboards │
+               │  /admin/analytics │
+               │  /admin/performance│
+               │  (Filter by source)│
+               └──────────────────┘
+```
+
+#### How It Works:
+
+1. **Website Tracking (Data Collection):**
+   - Website uses `web/client/src/lib/analytics-tracker.ts`
+   - Automatically tracks: page views, sessions, events, web vitals
+   - All data tagged with `source: 'website'`
+   - Sends data to SaaS app via public API: `https://app.strivetech.ai/api/analytics/*`
+
+2. **Public API Routes (Data Ingestion) - No Auth Required:**
+   - `/api/analytics/pageview` - POST - Track page views
+   - `/api/analytics/session` - POST - Track user sessions
+   - `/api/analytics/event` - POST - Track events (clicks, scrolls, form submits)
+   - `/api/analytics/web-vitals` - POST - Track Core Web Vitals (LCP, FID, CLS)
+   - **CORS enabled** for website domains (strivetech.ai, localhost)
+
+3. **Database Storage (Unified Data):**
+   - **Prisma models** (in SaaS app database):
+     - `PageView` - Page view tracking with `source` field
+     - `UserSession` - Session tracking with `source` field
+     - `AnalyticsEvent` - Event tracking with `source` field
+     - `WebVitalsMetric` - Core Web Vitals with `source` field
+   - **Source field values:** `"website"` or `"saas"`
+   - All data stored in single database, filterable by source
+
+4. **Admin API Routes (Data Retrieval) - Auth Required:**
+   - `/api/admin/analytics/dashboard` - GET - Aggregated analytics
+     - Query params: `?source=website|saas|all&timeframe=1d|7d|30d|90d`
+     - Returns: summary metrics, top pages, traffic sources, device breakdown
+   - `/api/admin/analytics/realtime` - GET - Last 30 min activity
+   - `/api/admin/analytics/performance` - GET - Web vitals metrics
+   - **Authentication:** Supabase auth + role check (must be ADMIN)
+   - **Authorization:** Non-admin users get 403 Forbidden
+
+5. **Admin Dashboard Pages (Data Visualization) - TODO:**
+   - **Planned locations (not yet created):**
+     - `/admin/analytics/page.tsx` - Full analytics dashboard
+     - `/admin/performance/page.tsx` - Performance metrics dashboard
+   - **Features:**
+     - Source filter dropdown (website/saas/all)
+     - Timeframe selector (1d/7d/30d/90d)
+     - Real-time updates
+     - Charts and visualizations
+     - Export capabilities
+
+#### What Was Deleted in Session 10:
+
+```bash
+# Old website dashboard pages (DELETED - moved to admin):
+rm web/client/src/pages/analytics-dashboard.tsx  # 567 lines
+rm web/client/src/pages/performance-dashboard.tsx  # 269 lines
+
+# Empty placeholder directories (DELETED):
+rm -rf app/(web)/analytics-dashboard/
+rm -rf app/(web)/performance-dashboard/
+```
+
+**Rationale:** These were public-facing pages on the marketing website. Analytics dashboards should be **admin-only** and located in the SaaS app, not publicly accessible. The migration architecture allows:
+- ✅ Website tracks its own analytics
+- ✅ SaaS app tracks its own analytics
+- ✅ Both sources feed into unified database
+- ✅ Admins view combined data in one place
+- ✅ Non-admin users cannot access analytics
+
+#### Reference Documentation:
+- **Full architecture:** `chat-logs/analytics-migration-progress.md`
+- **Completed:** Public API routes, website integration, CORS setup
+- **TODO:** Admin UI pages (Phase 5 of analytics migration)
+
+### Additional Cleanup:
+
+**Deleted old source files (7 files):**
+```bash
+rm web/client/src/pages/assessment.tsx  # Already converted
+rm web/client/src/pages/chatbot-sai.tsx  # Converted this session
+rm web/client/src/pages/onboarding.tsx  # Already converted
+rm web/client/src/pages/resources.tsx  # Already converted
+rm web/client/src/pages/solutions.tsx  # Already converted
+rm web/client/src/pages/analytics-dashboard.tsx  # Moved to admin
+rm web/client/src/pages/performance-dashboard.tsx  # Moved to admin
+
+# Deleted entire solutions subdirectory with 15+ old files
+rm -rf web/client/src/pages/solutions/
+```
+
+**Result:** `web/client/src/pages/` directory is now **empty** - all pages migrated!
+
+### Migration Statistics:
+
+**Total Converted:** 31/33 pages (97% complete)
+
+**Breakdown by session:**
+- Sessions 5-7: Home, About, Contact, Request, Resources, Solutions, Portfolio, Legal pages (15 pages)
+- Session 8: 12 solution detail pages + technology overview (13 pages)
+- Session 9: 3 technology pages + 1 case study + 2 utility pages (6 pages)
+- **Session 10: Chatbot-SAI (1 page)** ← Current
+- **Analytics & Performance:** Migrated to admin (not counted in web pages)
+
+**Remaining (2 pages):**
+- Admin/internal tools (deferred - not public website pages)
+
+### Files Created/Modified:
+
+**Created:**
+1. `app/(web)/chatbot-sai/page.tsx` (541 lines)
+2. `app/lib/chatbot-iframe-communication.ts` (copied from web)
+3. `app/lib/chatbot-performance-monitor.ts` (copied from web)
+
+**Deleted:**
+- 7 old source files (assessment, chatbot, onboarding, resources, solutions, analytics, performance)
+- Entire `web/client/src/pages/solutions/` directory
+- Empty `app/(web)/analytics-dashboard/` and `app/(web)/performance-dashboard/` directories
+
+### Time Taken: ~1 hour
+### Status: ✅ **COMPLETE - 97% Migration Achieved**
+### Documentation:
+- Session 10 summary: `chat-logs/old-site-updates/session10_summary.md`
+- Analytics architecture: `chat-logs/analytics-migration-progress.md`
+
+---
+
 ## Progress Tracking
 
 ### Completed Sessions:

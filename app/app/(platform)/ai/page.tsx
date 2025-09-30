@@ -1,12 +1,12 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Textarea } from '@/components/ui/textarea';
 import { Badge } from '@/components/ui/badge';
 import { getCurrentUser } from '@/lib/auth/auth-helpers';
+import { AIChat } from '@/components/features/ai/ai-chat';
+import { getModelsForTier, type SubscriptionTier } from '@/lib/ai/config';
 import {
   Bot,
   Sparkles,
-  MessageSquare,
   FileText,
   Image as ImageIcon,
   Code,
@@ -17,14 +17,11 @@ import {
 export default async function AIPage() {
   const user = await getCurrentUser();
 
+  // Get available models for user's subscription tier
+  const tier = (user?.subscriptionTier || 'FREE') as SubscriptionTier;
+  const availableModels = getModelsForTier(tier);
+
   const aiFeatures = [
-    {
-      title: 'Chat Assistant',
-      description: 'Natural language conversations with AI',
-      icon: MessageSquare,
-      status: 'Coming Soon',
-      color: 'text-blue-500',
-    },
     {
       title: 'Content Generation',
       description: 'Generate marketing copy and documents',
@@ -80,33 +77,9 @@ export default async function AIPage() {
         </Badge>
       </div>
 
-      <Card className="border-dashed border-2">
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <MessageSquare className="h-5 w-5" />
-            AI Chat (Coming Soon)
-          </CardTitle>
-          <CardDescription>
-            Ask questions, get insights, and automate tasks using natural language
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <div className="space-y-4">
-            <Textarea
-              placeholder="Ask me anything... (Feature coming soon)"
-              className="min-h-[120px] resize-none"
-              disabled
-            />
-            <div className="flex items-center justify-between">
-              <div className="text-sm text-muted-foreground">
-                Powered by advanced AI models
-              </div>
-              <Button disabled>
-                <Sparkles className="mr-2 h-4 w-4" />
-                Send Message
-              </Button>
-            </div>
-          </div>
+      <Card className="h-[calc(100vh-300px)] min-h-[600px]">
+        <CardContent className="p-0 h-full">
+          <AIChat availableModels={availableModels} userTier={tier} />
         </CardContent>
       </Card>
 

@@ -9,11 +9,11 @@ export const createTaskSchema = z.object({
   description: z.string().optional(),
   projectId: z.string().min(1, 'Project ID is required'),
   assignedToId: z.string().optional().nullable(),
-  status: z.nativeEnum(TaskStatus).default(TaskStatus.TODO),
-  priority: z.nativeEnum(Priority).default(Priority.MEDIUM),
+  status: z.nativeEnum(TaskStatus),
+  priority: z.nativeEnum(Priority),
   dueDate: z.coerce.date().optional().nullable(),
   estimatedHours: z.number().positive('Estimated hours must be positive').optional().nullable(),
-  tags: z.array(z.string()).optional().default([]),
+  tags: z.array(z.string()),
 });
 
 export type CreateTaskInput = z.infer<typeof createTaskSchema>;

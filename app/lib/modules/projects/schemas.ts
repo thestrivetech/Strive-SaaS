@@ -1,13 +1,13 @@
 import { z } from 'zod';
-import { ProjectStatus, ProjectPriority } from '@prisma/client';
+import { ProjectStatus, Priority } from '@prisma/client';
 
 export const createProjectSchema = z.object({
   name: z.string().min(1, 'Project name is required').max(255),
   description: z.string().optional(),
   customerId: z.string().optional(),
   projectManagerId: z.string().optional(),
-  status: z.nativeEnum(ProjectStatus).default(ProjectStatus.PLANNING),
-  priority: z.nativeEnum(ProjectPriority).default(ProjectPriority.MEDIUM),
+  status: z.nativeEnum(ProjectStatus),
+  priority: z.nativeEnum(Priority),
   startDate: z.coerce.date().optional(),
   dueDate: z.coerce.date().optional(),
   budget: z.number().positive().optional(),
@@ -21,7 +21,7 @@ export const updateProjectSchema = z.object({
   customerId: z.string().optional().nullable(),
   projectManagerId: z.string().optional().nullable(),
   status: z.nativeEnum(ProjectStatus).optional(),
-  priority: z.nativeEnum(ProjectPriority).optional(),
+  priority: z.nativeEnum(Priority).optional(),
   startDate: z.coerce.date().optional().nullable(),
   dueDate: z.coerce.date().optional().nullable(),
   budget: z.number().positive().optional().nullable(),
@@ -29,7 +29,7 @@ export const updateProjectSchema = z.object({
 
 export const projectFiltersSchema = z.object({
   status: z.nativeEnum(ProjectStatus).optional(),
-  priority: z.nativeEnum(ProjectPriority).optional(),
+  priority: z.nativeEnum(Priority).optional(),
   customerId: z.string().optional(),
   projectManagerId: z.string().optional(),
   search: z.string().optional(),

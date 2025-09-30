@@ -13,7 +13,7 @@
 1. CLAUDE.md                    # Dev rules (~1.8K tokens)
 2. docs/APP_BUILD_PLAN.md       # Project status (~2.8K tokens)
 3. docs/README.md               # Tech stack & architecture (~4.2K tokens)
-4. chat-logs/Session9.md    # Current session (~3K tokens)
+4. chat-logs/Session11.md    # Current session (~3K tokens)
 ```
 
 **From CLAUDE.md - Critical Rules:**
@@ -66,7 +66,7 @@ After reading all 4 files, confirm understanding:
 
 ## 3. Create Detailed To-Do List
 
-**Use TodoWrite tool to track all tasks from Session[9].md**
+**Use TodoWrite tool to track all tasks from Session[11].md**
 
 Break down today's goals into actionable tasks:
 - Each priority → Multiple specific tasks

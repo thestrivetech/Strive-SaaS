@@ -23,7 +23,9 @@ import { CustomerFilters } from '@/components/features/crm/customer-filters';
 import { CustomerListSkeleton } from '@/components/features/crm/customer-list-skeleton';
 import { PaginationControls } from '@/components/ui/pagination-controls';
 import { getCustomersCount } from '@/lib/modules/crm/queries';
-import type { CustomerStatus, CustomerSource } from '@prisma/client';
+import { ExportButton } from '@/components/features/export/export-button';
+import { formatDateForCSV, type CSVColumn } from '@/lib/export/csv';
+import type { CustomerStatus, CustomerSource, Customer } from '@prisma/client';
 
 export default async function CRMPage({
   searchParams,
@@ -112,6 +114,17 @@ async function CustomerListContent({
     getCustomersCount(organizationId, filters),
   ]);
 
+  // CSV Export columns
+  const exportColumns: CSVColumn<Customer>[] = [
+    { key: 'name', label: 'Name' },
+    { key: 'email', label: 'Email' },
+    { key: 'phone', label: 'Phone' },
+    { key: 'company', label: 'Company' },
+    { key: 'status', label: 'Status' },
+    { key: 'source', label: 'Source' },
+    { key: 'createdAt', label: 'Created Date', format: (value) => formatDateForCSV(value) },
+  ];
+
   const getStatusColor = (status: string) => {
     switch (status) {
       case 'ACTIVE':
@@ -196,6 +209,11 @@ async function CustomerListContent({
           <div className="flex items-center justify-between">
             <CardTitle>Customers</CardTitle>
             <div className="flex items-center gap-2">
+              <ExportButton
+                data={customers}
+                columns={exportColumns}
+                filename="customers"
+              />
               <CustomerSearch />
               <CustomerFilters />
             </div>
