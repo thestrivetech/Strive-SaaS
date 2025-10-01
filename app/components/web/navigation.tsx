@@ -7,7 +7,8 @@ import { Menu, Home, Cpu, FolderOpen, BookOpen, Building, Mail } from "lucide-re
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import Image from "next/image";
-import logoImage from "@/assets/strive_logo.webp";
+// Updated for Next.js public directory (Session 16)
+const logoImage = "/assets/logos/strive_logo.webp";
 
 const Navigation = () => {
   const pathname = usePathname();

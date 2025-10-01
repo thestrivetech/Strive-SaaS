@@ -10,18 +10,21 @@
 # Required files:
 1. CLAUDE.md                              # Dev rules (if not already familiar)
 2. CHATBOT-INTEGRATION-GUIDE.md           # Complete integration plan
-3. chat-logs/chatbot/Session[N].md        # Current session plan (if exists)
+3. chat-logs/chatbot/QUICK_STATUS.md      # One-page current status
+4. chat-logs/chatbot/Session[2].md        # Current session plan
 ```
 
-**From CHATBOT-INTEGRATION-GUIDE.md - Current Status:**
-- Phase [N]: [Phase Name] ([X]% complete)
-- Files migrated: [X] of 37
-- Import paths updated: Yes/No
+**From QUICK_STATUS.md - Current Progress:**
+- Session 1: ✅ Complete (Phases 1-5)
+- Current: Session 2 (Phases 6-8)
+- Files migrated: 32/32 (100%)
+- Next: Phase 6 - Database Integration
 
-**Critical Fixes Required (Phase 1):**
-- 🔴 useChat.ts (523 lines) - Must split to < 500 lines
-- 🔴 Missing Zod validation in API route
-- 🔴 Add 'server-only' to rag-service.ts
+**Session Files Reference:**
+- `session1.md` - Detailed Session 1 log
+- `Session1_Summary.md` - Session 1 recap
+- `Session2.md` - Current session plan
+- `QUICK_STATUS.md` - Quick reference
 
 ---
 
@@ -29,36 +32,44 @@
 
 ```
 📊 Integration Status:
-- Current Phase: [N] of 8 - [Phase Name]
-- Files Migrated: [X]/37
-- Today's Focus: [Main objective]
+- Session: 2 of 2 - Database, Testing, Cleanup
+- Progress: 62.5% (5/8 phases complete)
+- Today's Focus: [Phase 6, 7, or 8]
 
-🎯 Session Goals:
-1. [Specific task from integration guide]
-2. [Next task]
-3. [Additional task if time]
+🎯 Session Goals (from Session2.md):
+- Phase 6: Add Prisma schema, migration, update RAG service
+- Phase 7: Type checks, build, functional testing
+- Phase 8: Remove old files, documentation, commit
 
-📁 Working Directory:
-- Source: chatbot/
-- Target: app/lib/modules/chatbot/
+📁 Key Locations:
+- Module: app/lib/modules/chatbot/
+- Routes: app/app/(chatbot)/{full,widget}
+- API: app/api/chat/route.ts
+- Subdomain: chatbot.strivetech.ai
 ```
 
 ---
 
 ## 3. Create To-Do List
 
-**Use TodoWrite tool to track tasks from CHATBOT-INTEGRATION-GUIDE.md**
+**Use TodoWrite tool to track current phase tasks**
 
-Example structure for current phase:
+Example for Phase 6 (Database):
 ```
-Task 1: [Main task]
-├─ [Subtask 1]
-├─ [Subtask 2]
-└─ Verify: [Test command]
+Task 1: Add Conversation model to Prisma schema
+├─ Edit app/prisma/schema.prisma
+├─ Add Conversation model definition
+└─ Verify: npx prisma validate
 
-Task 2: [Next task]
-├─ [Subtask 1]
-└─ Verify: [Test command]
+Task 2: Generate Prisma client and create migration
+├─ npx prisma generate
+├─ npx prisma migrate dev --name add_chatbot_conversations
+└─ Verify: npx prisma migrate status
+
+Task 3: Update RAG service
+├─ Edit app/lib/modules/chatbot/services/rag-service.ts
+├─ Add storeConversation function with Prisma
+└─ Verify: npx tsc --noEmit
 ```
 
 ---
@@ -67,17 +78,21 @@ Task 2: [Next task]
 
 ### Quick Checks
 ```bash
-# Before starting
-ls chatbot-backup || echo "Create backup first!"
-env | grep GROQ || echo "Set environment variables!"
+# Verify backups exist (from Session 1)
+ls chatbot-backup && ls app-backup
 
-# During phase - follow CHATBOT-INTEGRATION-GUIDE.md exactly
+# Check current structure
+ls app/lib/modules/chatbot/
+ls "app/app/(chatbot)/"
+
+# During phase - follow Session2.md exactly
 # Update TodoWrite after each task
 
-# Phase verification (examples)
-wc -l chatbot/hooks/useChat.ts  # Phase 1: < 500 lines
-ls app/lib/modules/chatbot/     # Phase 2: Structure exists
-find app/lib/modules/chatbot -type f | wc -l  # Phase 3: File count
+# Phase-specific verification
+npx prisma validate               # Phase 6: Schema valid
+npx tsc --noEmit                  # Phase 7: No type errors
+npm run build                     # Phase 7: Build succeeds
+ls chatbot 2>/dev/null            # Phase 8: Old folder removed
 ```
 
 ---
@@ -89,37 +104,97 @@ find app/lib/modules/chatbot -type f | wc -l  # Phase 3: File count
 # Type check
 npx tsc --noEmit
 
+# Linting
+npm run lint
+
+# Build test
+npm run build
+
 # Dev server
 npm run dev
-# Test at: http://localhost:3000/chatbot/full
 
-# API test
+# Test chatbot routes (subdomain structure)
+# ✅ http://localhost:3000/      → Redirects to /full
+# ✅ http://localhost:3000/full  → Full-page chatbot
+# ✅ http://localhost:3000/widget → Widget mode
+
+# API test (requires GROQ_API_KEY)
 curl -X POST http://localhost:3000/api/chat \
   -H "Content-Type: application/json" \
-  -d '{"messages":[{"role":"user","content":"test"}],"sessionId":"test"}'
+  -d '{"messages":[{"role":"user","content":"test"}],"sessionId":"test","industry":"strive"}'
 ```
 
-### Phase Completion
+### Phase Completion Checklist
 - [ ] TodoWrite tasks completed
-- [ ] Tests passing
-- [ ] Chatbot functional
+- [ ] Tests passing (type check, lint, build)
+- [ ] Chatbot routes load correctly
+- [ ] No console errors
+- [ ] Session summary created
 - [ ] Ready for next phase
 
 ---
 
-## 6. Quick Fixes
+## 6. Quick Fixes & Troubleshooting
 
 ```bash
+# Type errors → Regenerate Prisma client
+npx prisma generate
+rm -rf .next
+npx tsc --noEmit
+
 # Module errors → Clear cache
-rm -rf .next && npm run dev
+rm -rf .next node_modules/.cache
+npm run dev
 
-# Import errors → Check patterns
-grep -r "from '\.\./types/" app/lib/modules/chatbot
+# Import errors → Check new patterns
+grep -r "from '@/types/" app/lib/modules/chatbot  # Should be 0
+grep -r "from '@/lib/modules/chatbot/types/" app/lib/modules/chatbot  # ✅
 
-# Rollback if needed
-cp -r chatbot-backup chatbot
+# Routes not loading → Check middleware
+grep -A 5 "isChatbotSite" app/middleware.ts
+
+# Database errors → Check migrations
+npx prisma migrate status
+npx prisma studio  # Visual database check
+
+# Rollback if needed (backup from Session 1)
+git checkout chatbot-integration-backup
+# Or: cp -r chatbot-backup chatbot
 ```
 
 ---
 
-**Workflow:** Read files → Check status → Create todos → Execute phase → Test → Move to next phase
+## 7. Session End Workflow
+
+```bash
+# 1. Verify completion
+npm run build && npx tsc --noEmit && npm run lint
+
+# 2. Create session summary
+# → Update Session[N]_Summary.md with results
+
+# 3. Commit if phase complete
+git add -A
+git status  # Review changes
+git commit -m "feat: [phase description]"
+
+# 4. Update QUICK_STATUS.md for next session
+```
+
+---
+
+## 📚 Documentation Hierarchy
+
+**For Quick Reference:**
+1. `QUICK_STATUS.md` - Current state (1 page)
+
+**For Current Session:**
+2. `Session2.md` - Detailed plan for Phases 6-8
+
+**For Context:**
+3. `Session1_Summary.md` - What was completed
+4. `CHATBOT-INTEGRATION-GUIDE.md` - Complete guide
+
+---
+
+**Workflow:** Read status → Create todos → Execute phase → Test → Document → Next phase

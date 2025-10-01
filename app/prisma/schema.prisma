@@ -80,6 +80,7 @@ model Organization {
   content            Content[]
   activityLogs       ActivityLog[]
   attachments        Attachment[]
+  conversations      Conversation[]
 
   @@map("organizations")
 }
@@ -620,4 +621,35 @@ model Attachment {
   @@index([organizationId])
   @@index([entityType, entityId])
   @@map("attachments")
+}
+
+// ==========================================
+// CHATBOT CONVERSATIONS
+// ==========================================
+
+model Conversation {
+  id                   String   @id @default(uuid())
+  organizationId       String   @map("organization_id")
+  industry             String   @default("strive")
+  sessionId            String   @map("session_id")
+  userMessage          String   @map("user_message") @db.Text
+  assistantResponse    String   @map("assistant_response") @db.Text
+  embedding            Json?    // Store as JSON until pgvector setup
+  problemDetected      String?  @map("problem_detected")
+  solutionPresented    String?  @map("solution_presented")
+  conversationStage    String   @map("conversation_stage")
+  outcome              String?
+  conversionScore      Float?   @map("conversion_score")
+  bookingCompleted     Boolean  @default(false) @map("booking_completed")
+  responseTimeMs       Int?     @map("response_time_ms")
+  userSatisfaction     Int?     @map("user_satisfaction")
+  createdAt            DateTime @default(now()) @map("created_at")
+  updatedAt            DateTime @updatedAt @map("updated_at")
+
+  organization Organization @relation(fields: [organizationId], references: [id])
+
+  @@map("conversations")
+  @@index([organizationId])
+  @@index([sessionId])
+  @@index([industry])
 }

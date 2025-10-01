@@ -1,0 +1,150 @@
+@import "tailwindcss";
+
+@theme {
+  --color-background: hsl(222, 84%, 4.9%); /* Deep Navy #020A1C */
+  --color-foreground: hsl(210, 40%, 98%);
+  --color-card: hsl(222, 84%, 5.9%);
+  --color-card-foreground: hsl(210, 40%, 98%);
+  --color-popover: hsl(222, 84%, 5.9%);
+  --color-popover-foreground: hsl(210, 40%, 98%);
+  --color-primary: hsl(18, 100%, 60%); /* Strive Orange #FF7033 */
+  --color-primary-foreground: hsl(222, 84%, 4.9%);
+  --color-secondary: hsl(217, 32%, 17%);
+  --color-secondary-foreground: hsl(210, 40%, 98%);
+  --color-muted: hsl(217, 32%, 17%);
+  --color-muted-foreground: hsl(215, 20%, 65%);
+  --color-accent: hsl(217, 32%, 17%);
+  --color-accent-foreground: hsl(210, 40%, 98%);
+  --color-destructive: hsl(0, 62%, 55%);
+  --color-destructive-foreground: hsl(210, 40%, 98%);
+  --color-border: hsl(217, 32%, 17%);
+  --color-input: hsl(217, 32%, 17%);
+  --color-ring: hsl(18, 100%, 60%); /* Orange focus ring */
+
+  /* Chart Colors */
+  --color-chart-1: hsl(18, 100%, 60%);  /* Orange */
+  --color-chart-2: hsl(250, 95%, 75%);  /* Purple */
+  --color-chart-3: hsl(197, 100%, 45%); /* Cyan */
+  --color-chart-4: hsl(283, 100%, 65%); /* Purple */
+  --color-chart-5: hsl(340, 75%, 55%);  /* Red */
+
+  /* Sidebar Colors */
+  --color-sidebar: hsl(222, 84%, 4.9%);
+  --color-sidebar-foreground: hsl(210, 40%, 98%);
+  --color-sidebar-primary: hsl(18, 100%, 60%);
+  --color-sidebar-primary-foreground: hsl(222, 84%, 4.9%);
+  --color-sidebar-accent: hsl(217, 32%, 17%);
+  --color-sidebar-accent-foreground: hsl(210, 40%, 98%);
+  --color-sidebar-border: hsl(217, 32%, 17%);
+  --color-sidebar-ring: hsl(18, 100%, 60%);
+
+  /* Font Variables */
+  --font-family-sans: 'Inter', sans-serif;
+  --font-family-serif: 'Inter', sans-serif;
+  --font-family-mono: 'JetBrains Mono', monospace;
+
+  /* Border Radius */
+    --radius: 0.75rem;
+  }
+
+  .dark {
+    /* Dark mode is our default - same values */
+    --background: 222 84% 4.9%;
+    --foreground: 210 40% 98%;
+    --card: 222 84% 5.9%;
+    --card-foreground: 210 40% 98%;
+    --popover: 222 84% 5.9%;
+    --popover-foreground: 210 40% 98%;
+    --primary: 18 100% 60%;
+    --primary-foreground: 222 84% 4.9%;
+    --secondary: 217 32% 17%;
+    --secondary-foreground: 210 40% 98%;
+    --muted: 217 32% 17%;
+    --muted-foreground: 215 20% 65%;
+    --accent: 217 32% 17%;
+    --accent-foreground: 210 40% 98%;
+    --destructive: 0 62% 55%;
+    --destructive-foreground: 210 40% 98%;
+    --border: 217 32% 17%;
+    --input: 217 32% 17%;
+    --ring: 18 100% 60%;
+    --chart-1: 18 100% 60%;
+    --chart-2: 250 95% 75%;
+    --chart-3: 197 100% 45%;
+    --chart-4: 283 100% 65%;
+    --chart-5: 340 75% 55%;
+    --sidebar: 222 84% 4.9%;
+    --sidebar-foreground: 210 40% 98%;
+    --sidebar-primary: 18 100% 60%;
+    --sidebar-primary-foreground: 222 84% 4.9%;
+    --sidebar-accent: 217 32% 17%;
+    --sidebar-accent-foreground: 210 40% 98%;
+    --sidebar-border: 217 32% 17%;
+    --sidebar-ring: 18 100% 60%;
+  }
+
+  * {
+    border-color: hsl(var(--border));
+  }
+
+  html, body {
+    overflow-x: hidden;
+    width: 100%;
+  }
+
+  body {
+    @apply bg-background text-foreground font-sans antialiased;
+    min-width: 320px;
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+
+/* Custom Gradient Backgrounds */
+@layer utilities {
+  .bg-gradient-brand {
+    background: linear-gradient(135deg, hsl(18, 100%, 60%) 0%, hsl(283, 100%, 65%) 100%);
+  }
+
+  .bg-gradient-cta {
+    background: linear-gradient(
+      to bottom right,
+      hsl(18, 100%, 60%),
+      hsl(22, 100%, 50%),
+      hsl(283, 100%, 65%)
+    );
+  }
+
+  /* Hero gradient background for login page */
+  .hero-gradient {
+    background: linear-gradient(135deg, hsl(222, 84%, 4.9%) 0%, hsl(250, 50%, 10%) 50%, hsl(222, 84%, 4.9%) 100%);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .hero-gradient::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: radial-gradient(ellipse at center, rgba(255, 112, 51, 0.1) 0%, transparent 50%);
+    pointer-events: none;
+  }
+
+  .hero-gradient-text {
+    background: linear-gradient(135deg, hsl(222, 84%, 4.9%) 0%, hsl(250, 50%, 10%) 50%, hsl(222, 84%, 4.9%) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  /* Mobile optimization for hero gradient */
+  @media (max-width: 640px) {
+    .hero-gradient {
+      background: linear-gradient(135deg, hsl(222, 84%, 4.9%) 0%, hsl(250, 50%, 10%) 40%, hsl(222, 84%, 4.9%) 100%);
+    }
+  }
+}

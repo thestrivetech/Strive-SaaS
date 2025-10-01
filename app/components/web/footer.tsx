@@ -1,7 +1,8 @@
 import Link from "next/link";
 import { Facebook, Instagram, Linkedin } from "lucide-react";
 import Image from "next/image";
-import logoImage from "@/assets/strive_logo.webp";
+// Updated for Next.js public directory (Session 16)
+const logoImage = "/assets/logos/strive_logo.webp";
 
 // Custom X (formerly Twitter) icon component
 const XIcon = ({ className }: { className?: string }) => (

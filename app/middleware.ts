@@ -45,6 +45,18 @@ export async function middleware(request: NextRequest) {
   // HOST-BASED ROUTING
   // ============================================
 
+  // Chatbot subdomain (chatbot.strivetech.ai) - no auth required
+  // Routes are in app/(chatbot)/ so Next.js handles them automatically
+  const isChatbotSite =
+    hostname === 'chatbot.strivetech.ai' ||
+    hostname === 'www.chatbot.strivetech.ai' ||
+    (hostname.includes('localhost') && (path.startsWith('/full') || path.startsWith('/widget')));
+
+  if (isChatbotSite) {
+    // No auth checks for chatbot - publicly accessible
+    return NextResponse.next();
+  }
+
   // Marketing site (strivetech.ai) - no auth required
   // Routes are in app/(web)/ so Next.js handles them automatically
   const isMarketingSite =

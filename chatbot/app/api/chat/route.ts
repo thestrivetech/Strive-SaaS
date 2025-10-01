@@ -2,10 +2,12 @@
 
 import { NextRequest, NextResponse } from 'next/server';
 import Groq from 'groq-sdk';
+import { z } from 'zod';
 import { loadIndustryConfig } from '@/lib/industries';
 import { RAGService } from '@/lib/services/rag-service';
 import { IndustryType } from '@/types/industry';
 import { Message } from '@/types/conversation';
+import { ChatRequestSchema } from '../../../schemas/chat-request';
 
 const groq = new Groq({
   apiKey: process.env.GROQ_API_KEY,
@@ -13,23 +15,15 @@ const groq = new Groq({
 
 export async function POST(req: NextRequest) {
   try {
+    // Parse and validate request body
     const body = await req.json();
+    const validated = ChatRequestSchema.parse(body);
+
     const {
       messages,
       industry = 'strive',
       sessionId,
-    }: {
-      messages: Message[];
-      industry: IndustryType;
-      sessionId: string;
-    } = body;
-
-    if (!messages || messages.length === 0) {
-      return NextResponse.json(
-        { error: 'Messages are required' },
-        { status: 400 }
-      );
-    }
+    } = validated;
 
     // Load industry configuration
     const config = await loadIndustryConfig(industry);
@@ -134,6 +128,21 @@ export async function POST(req: NextRequest) {
       },
     });
   } catch (error) {
+    // Handle validation errors
+    if (error instanceof z.ZodError) {
+      return NextResponse.json(
+        {
+          error: 'Invalid request format',
+          details: error.errors.map(e => ({
+            path: e.path.join('.'),
+            message: e.message
+          }))
+        },
+        { status: 400 }
+      );
+    }
+
+    // Handle other errors
     console.error('Chat API error:', error);
     return NextResponse.json(
       { error: 'Internal server error' },

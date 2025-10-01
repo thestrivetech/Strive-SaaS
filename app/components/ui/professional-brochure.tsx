@@ -22,7 +22,8 @@ import {
   CheckCircle
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import STLogo from '@/assets/ST-Transparent.png';
+// Updated for Next.js public directory (Session 16)
+const STLogo = '/assets/logos/ST-Transparent.png';
 
 interface ProfessionalBrochureProps {
   onDownload: () => void;

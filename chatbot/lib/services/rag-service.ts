@@ -1,4 +1,5 @@
 // lib/services/rag-service.ts
+import 'server-only';
 
 import { createClient } from '@supabase/supabase-js';
 import OpenAI from 'openai';

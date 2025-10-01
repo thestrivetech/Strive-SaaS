@@ -7,9 +7,10 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
 import Image from "next/image";
-import GarrettHeadshot from "@/assets/Garrett-Headshot.webp";
-import JeffHeadshot from "@/assets/Jeff-Headshot.webp";
-import GrantHeadshot from "@/assets/Grant-Headshot.webp";
+// Updated for Next.js public directory (Session 16)
+const GarrettHeadshot = "/assets/headshots/Garrett-Headshot.webp";
+const JeffHeadshot = "/assets/headshots/Jeff-Headshot.webp";
+const GrantHeadshot = "/assets/headshots/Grant-Headshot.webp";
 
 const Company = () => {
   const [currentTeamIndex, setCurrentTeamIndex] = useState(0);
