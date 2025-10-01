@@ -21,7 +21,7 @@
 - Next: Phase 6 - Database Integration
 
 **Session Files Reference:**
-- `session1.md` - Detailed Session 1 log
+- `session2.md` - Detailed Session 2 log
 - `Session1_Summary.md` - Session 1 recap
 - `Session2.md` - Current session plan
 - `QUICK_STATUS.md` - Quick reference

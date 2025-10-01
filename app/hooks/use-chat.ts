@@ -9,7 +9,7 @@ import {
   detectProblemsClientSide,
   determineConversationStage,
   getCurrentDateContext
-} from './useChatHelpers';
+} from './use-chat-helpers';
 
 interface Message {
   id: string;

@@ -1,7 +1,14 @@
 import { useMemo } from 'react';
 import { useLocation } from 'wouter';
 import { getPageSEO } from '@/lib/seo-config';
-import { SEOConfig } from '@/lib/modules/chatbot/types/seo';
+
+interface SEOConfig {
+  title: string;
+  description: string;
+  keywords?: string[];
+  ogImage?: string;
+  ogType?: string;
+}
 
 interface UseSEOOptions {
   title?: string;

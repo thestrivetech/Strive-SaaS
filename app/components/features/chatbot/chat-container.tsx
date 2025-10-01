@@ -8,13 +8,13 @@ import {
   TrendingUp, Eye, MessageCircle, Calendar, Sparkles, Zap,
   ArrowRight, Download, Mail, FileText, Command, ChevronDown
 } from 'lucide-react';
-import ChatMessage from './ChatMessage';
-import ChatInput from './ChatInput';
-import { useChat } from '@/hooks/useChat';
-import { URLS, SERVICE_CARDS } from '@/app/constants/chatConstants';
-import { useTimeBasedGreeting, useKeyboardShortcuts } from '@/hooks/useAdvancedChat';
-import useScrollManager from '@/hooks/useScrollManager';
-import parentComm from '@/app/utils/parentCommunication';
+import ChatMessage from './chat-message';
+import ChatInput from './chat-input';
+import { useChat } from '@/hooks/use-chat';
+import { URLS, SERVICE_CARDS } from '@/lib/modules/chatbot/constants';
+import { useTimeBasedGreeting, useKeyboardShortcuts } from '@/hooks/use-advanced-chat';
+import useScrollManager from '@/hooks/use-scroll-manager';
+import parentComm from '@/lib/utils/parent-communication';
 
 // Quick action suggestions component
 const QuickActions = memo(({ messageCount, onAction }: { messageCount: number; onAction: (action: string) => void }) => {

@@ -26,16 +26,16 @@ export async function POST(req: NextRequest) {
     } = validated;
 
     // Load industry configuration
-    const config = await loadIndustryConfig(industry);
+    const config = await loadIndustryConfig(industry as IndustryType);
 
     // Get the latest user message
     const latestUserMessage = messages[messages.length - 1];
 
     // Build conversation history context
     const conversationHistory = {
-      stage: determineConversationStage(messages),
+      stage: determineConversationStage(messages as unknown as Message[]),
       messageCount: messages.length,
-      problemsDiscussed: extractProblemsDiscussed(messages),
+      problemsDiscussed: extractProblemsDiscussed(messages as unknown as Message[]),
     };
 
     // 🔥 RAG ENHANCEMENT: Get semantic context
@@ -133,7 +133,7 @@ export async function POST(req: NextRequest) {
       return NextResponse.json(
         {
           error: 'Invalid request format',
-          details: error.errors.map(e => ({
+          details: error.issues.map((e: z.ZodIssue) => ({
             path: e.path.join('.'),
             message: e.message
           }))
@@ -156,7 +156,7 @@ export async function POST(req: NextRequest) {
  */
 function buildEnhancedSystemPrompt(
   basePrompt: string,
-  ragContext: any
+  ragContext: { searchResults: { detectedProblems: string[]; recommendedSolutions: string[]; confidence: { overallConfidence: number } }; guidance: { suggestedApproach: string; keyPoints: string[]; urgencyLevel: string } }
 ): string {
   const { searchResults, guidance } = ragContext;
 

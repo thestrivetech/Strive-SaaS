@@ -3,7 +3,7 @@ import 'server-only';
 
 import { createClient } from '@supabase/supabase-js';
 import OpenAI from 'openai';
-import { CacheService } from './cache-service';  // ✅ ADD THIS IMPORT
+import { CacheService } from './cache-service';
 import {
   SemanticSearchResult,
   SimilarConversation,
@@ -13,7 +13,7 @@ import {
 
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_KEY!
+  process.env.SUPABASE_SERVICE_ROLE_KEY!
 );
 
 const openai = new OpenAI({
@@ -311,32 +311,51 @@ export class RAGService {
   /**
    * Store conversation with embedding for future learning
    */
-  static async storeConversation(
-    conversation: Omit<ConversationEmbedding, 'id' | 'embedding' | 'createdAt' | 'updatedAt'>
-  ): Promise<void> {
-    // Generate embedding for user message (will use cache if available)
-    const embedding = await this.generateEmbedding(conversation.userMessage);
+  static async storeConversation(data: {
+    industry: string;
+    sessionId: string;
+    userMessage: string;
+    assistantResponse: string;
+    conversationStage: string;
+    outcome?: string;
+    problemDetected?: string;
+    solutionPresented?: string;
+    organizationId?: string;
+    conversionScore?: number;
+    bookingCompleted?: boolean;
+    responseTimeMs?: number;
+    userSatisfaction?: number;
+  }): Promise<void> {
+    try {
+      // Generate embedding for user message (will use cache if available)
+      const embedding = await this.generateEmbedding(data.userMessage);
 
-    const { error } = await supabase.from('conversations').insert({
-      industry: conversation.industry,
-      client_id: conversation.clientId,
-      session_id: conversation.sessionId,
-      user_message: conversation.userMessage,
-      assistant_response: conversation.assistantResponse,
-      embedding,
-      problem_detected: conversation.problemDetected,
-      solution_presented: conversation.solutionPresented,
-      conversation_stage: conversation.conversationStage,
-      outcome: conversation.outcome,
-      conversion_score: conversation.conversionScore,
-      booking_completed: conversation.bookingCompleted,
-      response_time_ms: conversation.responseTimeMs,
-      user_satisfaction: conversation.userSatisfaction,
-    });
+      // Use default org ID if not provided (public chatbot)
+      const orgId = data.organizationId || 'public-chatbot-org';
 
-    if (error) {
-      console.error('Error storing conversation:', error);
-      throw error;
+      const { error } = await supabase.from('conversations').insert({
+        organization_id: orgId,
+        industry: data.industry,
+        session_id: data.sessionId,
+        user_message: data.userMessage,
+        assistant_response: data.assistantResponse,
+        embedding: embedding,
+        conversation_stage: data.conversationStage,
+        outcome: data.outcome,
+        problem_detected: data.problemDetected,
+        solution_presented: data.solutionPresented,
+        conversion_score: data.conversionScore,
+        booking_completed: data.bookingCompleted,
+        response_time_ms: data.responseTimeMs,
+        user_satisfaction: data.userSatisfaction,
+      });
+
+      if (error) {
+        console.error('Failed to store conversation:', error);
+      }
+    } catch (error) {
+      console.error('Failed to store conversation:', error);
+      // Don't throw - logging failure shouldn't break chat
     }
   }
 
@@ -347,17 +366,21 @@ export class RAGService {
     sessionId: string,
     conversionScore: number = 1.0
   ): Promise<void> {
-    const { error } = await supabase
-      .from('conversations')
-      .update({
-        outcome: 'booking_completed',
-        booking_completed: true,
-        conversion_score: conversionScore,
-        updated_at: new Date().toISOString(),
-      })
-      .eq('session_id', sessionId);
+    try {
+      const { error } = await supabase
+        .from('conversations')
+        .update({
+          outcome: 'booking_completed',
+          booking_completed: true,
+          conversion_score: conversionScore,
+          updated_at: new Date().toISOString(),
+        })
+        .eq('session_id', sessionId);
 
-    if (error) {
+      if (error) {
+        console.error('Error marking conversation success:', error);
+      }
+    } catch (error) {
       console.error('Error marking conversation success:', error);
     }
   }

@@ -188,4 +188,4 @@ I know that we still have to make sure the websites performance and analytic dat
 
 - We need to do a thorough check on current mobile device design, layout, and functionality.
     - Create an entire mobile design plan to make this SaaS platform be a top notch experience for mobile users
-    - Additionaly, we need to double check if the mobile design and functionality was transferred over from the legacy files
+    - Additionaly, we need to double check if the mobile design and functionality was transferred over from the web legacy files (through past commits for original files to see original mobile design)
