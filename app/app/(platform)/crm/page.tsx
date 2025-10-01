@@ -72,12 +72,12 @@ export default async function CRMPage({
     offset: (currentPage - 1) * pageSize,
   };
 
-  // Handle multi-select filters
+  // Handle filters
   if (searchParams.status) {
-    filters.status = searchParams.status.split(',');
+    filters.status = searchParams.status as CustomerStatus;
   }
   if (searchParams.source) {
-    filters.source = searchParams.source.split(',');
+    filters.source = searchParams.source as CustomerSource;
   }
   if (searchParams.createdFrom) {
     filters.createdFrom = new Date(searchParams.createdFrom);
@@ -123,7 +123,7 @@ async function CustomerListContent({
     { key: 'company', label: 'Company' },
     { key: 'status', label: 'Status' },
     { key: 'source', label: 'Source' },
-    { key: 'createdAt', label: 'Created Date', format: (value) => formatDateForCSV(value) },
+    { key: 'createdAt', label: 'Created Date', format: (value) => formatDateForCSV(value as Date | string | null) },
   ];
 
   const getStatusColor = (status: string) => {

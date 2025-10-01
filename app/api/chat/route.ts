@@ -8,6 +8,7 @@ import { RAGService } from '@/lib/modules/chatbot/services/rag-service';
 import { IndustryType } from '@/lib/modules/chatbot/types/industry';
 import { Message } from '@/lib/modules/chatbot/types/conversation';
 import { ChatRequestSchema } from '@/lib/modules/chatbot/schemas/chat-request';
+import { RAGContext } from '@/lib/modules/chatbot/types/rag';
 
 const groq = new Groq({
   apiKey: process.env.GROQ_API_KEY,
@@ -156,7 +157,7 @@ export async function POST(req: NextRequest) {
  */
 function buildEnhancedSystemPrompt(
   basePrompt: string,
-  ragContext: { searchResults: { detectedProblems: string[]; recommendedSolutions: string[]; confidence: { overallConfidence: number } }; guidance: { suggestedApproach: string; keyPoints: string[]; urgencyLevel: string } }
+  ragContext: RAGContext
 ): string {
   const { searchResults, guidance } = ragContext;
 
@@ -189,7 +190,7 @@ function buildEnhancedSystemPrompt(
     enhancement += '\n';
   }
 
-  if (guidance.avoidTopics.length > 0) {
+  if (guidance.avoidTopics && guidance.avoidTopics.length > 0) {
     enhancement += `**Topics to Avoid:**\n`;
     guidance.avoidTopics.forEach((topic: string) => {
       enhancement += `- ${topic}\n`;

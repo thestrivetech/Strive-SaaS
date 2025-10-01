@@ -26,6 +26,7 @@ interface UnifiedFilterDropdownProps {
   showCounts?: boolean;
   showCorrelations?: boolean;
   maxCorrelationsToShow?: number;
+  solutionCount?: number;
 }
 
 export function UnifiedFilterDropdown({
@@ -34,7 +35,8 @@ export function UnifiedFilterDropdown({
   className = "",
   showCounts = true,
   showCorrelations = true,
-  maxCorrelationsToShow = 3
+  maxCorrelationsToShow = 3,
+  solutionCount
 }: UnifiedFilterDropdownProps) {
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [filterSearch, setFilterSearch] = useState("");

@@ -29,8 +29,8 @@ export class RealtimeClient {
         {
           event: '*',
           schema: 'public',
-          table: 'Task',
-          filter: `projectId=eq.${projectId}`,
+          table: 'tasks',
+          filter: `project_id=eq.${projectId}`,
         },
         (payload: RealtimePostgresChangesPayload<Record<string, unknown>>) => {
           callback({
@@ -58,8 +58,8 @@ export class RealtimeClient {
         {
           event: '*',
           schema: 'public',
-          table: 'Customer',
-          filter: `organizationId=eq.${organizationId}`,
+          table: 'customers',
+          filter: `organization_id=eq.${organizationId}`,
         },
         (payload: RealtimePostgresChangesPayload<Record<string, unknown>>) => {
           callback({
@@ -87,8 +87,8 @@ export class RealtimeClient {
         {
           event: '*',
           schema: 'public',
-          table: 'Project',
-          filter: `organizationId=eq.${organizationId}`,
+          table: 'projects',
+          filter: `organization_id=eq.${organizationId}`,
         },
         (payload: RealtimePostgresChangesPayload<Record<string, unknown>>) => {
           callback({
@@ -116,8 +116,8 @@ export class RealtimeClient {
         {
           event: '*',
           schema: 'public',
-          table: 'Notification',
-          filter: `userId=eq.${userId}`,
+          table: 'notifications',
+          filter: `user_id=eq.${userId}`,
         },
         (payload: RealtimePostgresChangesPayload<Record<string, unknown>>) => {
           callback({

@@ -6,7 +6,7 @@
 
 ## 1. Create Session Summary
 
-**File:** `chat-logs/chatbot/Session[1]_Summary.md`
+**File:** `chat-logs/chatbot/Session[2]_Summary.md`
 
 ### Template:
 

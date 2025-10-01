@@ -11,7 +11,7 @@
 1. CLAUDE.md                              # Dev rules (if not already familiar)
 2. CHATBOT-INTEGRATION-GUIDE.md           # Complete integration plan
 3. chat-logs/chatbot/QUICK_STATUS.md      # One-page current status
-4. chat-logs/chatbot/Session[2].md        # Current session plan
+4. chat-logs/chatbot/Session[3].md        # Current session plan
 ```
 
 **From QUICK_STATUS.md - Current Progress:**
@@ -76,7 +76,7 @@ Task 3: Update RAG service
 
 ## 4. Execute Phase
 
-### Quick Checks
+### Quick Checks - moved to /archive
 ```bash
 # Verify backups exist (from Session 1)
 ls chatbot-backup && ls app-backup
@@ -85,7 +85,7 @@ ls chatbot-backup && ls app-backup
 ls app/lib/modules/chatbot/
 ls "app/app/(chatbot)/"
 
-# During phase - follow Session2.md exactly
+# During phase - follow Session[N].md exactly
 # Update TodoWrite after each task
 
 # Phase-specific verification
@@ -189,11 +189,14 @@ git commit -m "feat: [phase description]"
 1. `QUICK_STATUS.md` - Current state (1 page)
 
 **For Current Session:**
-2. `Session2.md` - Detailed plan for Phases 6-8
+2. `Session[n].md` - Detailed plan for Phases 6-8
 
 **For Context:**
-3. `Session1_Summary.md` - What was completed
-4. `CHATBOT-INTEGRATION-GUIDE.md` - Complete guide
+3. `Session[n]_Summary.md` - What was completed
+4. `CHATBOT-INTEGRATION-GUIDE.md` - Complete guide and updated
+
+**For Next Session**
+5. `Session[n+1].md` - Created with next sessions plan and remaining tasks
 
 ---
 

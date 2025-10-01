@@ -20,4 +20,7 @@ export default async function HostDependent() {
   // This covers: app.strivetech.ai, localhost, and any other domains
   // Redirect to dashboard (middleware will handle auth → login if needed)
   redirect('/dashboard');
+
+  // This return is never reached (redirect throws), but satisfies TypeScript
+  return null;
 }

@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { useForm } from 'react-hook-form';
+import { useForm, type SubmitHandler } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import {
   Dialog,
@@ -55,7 +55,7 @@ export function CreateProjectDialog({
   const router = useRouter();
 
   const form = useForm<CreateProjectInput>({
-    resolver: zodResolver(createProjectSchema),
+    resolver: zodResolver(createProjectSchema) as any,
     defaultValues: {
       name: '',
       description: '',
@@ -65,7 +65,7 @@ export function CreateProjectDialog({
     },
   });
 
-  async function onSubmit(data: CreateProjectInput) {
+  const onSubmit: SubmitHandler<CreateProjectInput> = async (data) => {
     setIsSubmitting(true);
     try {
       await createProject(data);

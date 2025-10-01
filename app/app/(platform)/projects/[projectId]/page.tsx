@@ -19,6 +19,9 @@ import { TaskAttachments } from '@/components/features/tasks/task-attachments';
 import { ActivityTimeline } from '@/components/features/shared/activity-timeline';
 import { getAttachments } from '@/lib/modules/attachments';
 import type { OrganizationMember, TeamMember } from '@/lib/types/organization';
+import type { Task, Attachment, User as PrismaUser } from '@prisma/client';
+
+type AttachmentWithUser = Attachment & { uploadedBy: Pick<PrismaUser, 'id' | 'name' | 'email'> };
 
 export default async function ProjectDetailPage({
   params,
@@ -218,9 +221,11 @@ export default async function ProjectDetailPage({
             <CardContent>
               {tasks.length > 0 ? (
                 <TaskList
-                  tasks={tasks.map((task) => ({
+                  tasks={tasks.map((task: Task) => ({
                     ...task,
                     estimatedHours: task.estimatedHours ? Number(task.estimatedHours) : null,
+                    priority: task.priority as any,
+                    assignedTo: null,
                   }))}
                   projectId={project.id}
                   teamMembers={teamMembers}
@@ -246,7 +251,7 @@ export default async function ProjectDetailPage({
               <TaskAttachments
                 taskId={project.id}
                 projectId={project.id}
-                initialAttachments={attachments.map((att) => ({
+                initialAttachments={attachments.map((att: AttachmentWithUser) => ({
                   id: att.id,
                   fileName: att.fileName,
                   fileSize: att.fileSize,
@@ -343,7 +348,7 @@ export default async function ProjectDetailPage({
                 <DollarSign className="h-5 w-5 text-muted-foreground mt-0.5" />
                 <div className="flex-1">
                   <p className="text-sm font-medium">Budget</p>
-                  <p className="text-sm text-muted-foreground">{formatCurrency(project.budget)}</p>
+                  <p className="text-sm text-muted-foreground">{formatCurrency(project.budget ? Number(project.budget) : null)}</p>
                 </div>
               </div>
             </CardContent>

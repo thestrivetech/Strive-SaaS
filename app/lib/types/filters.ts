@@ -6,20 +6,20 @@ import type { CustomerStatus, CustomerSource, ProjectStatus, Priority, TaskStatu
 
 export interface CRMFilters {
   search?: string;
-  status?: CustomerStatus | string[];
-  source?: CustomerSource | string[];
+  status?: CustomerStatus;
+  source?: CustomerSource;
   assignedToId?: string;
   tags?: string[];
   createdFrom?: Date;
   createdTo?: Date;
-  limit?: number;
-  offset?: number;
+  limit: number;
+  offset: number;
 }
 
 export interface ProjectFilters {
   search?: string;
-  status?: ProjectStatus | string[];
-  priority?: Priority | string[];
+  status?: ProjectStatus;
+  priority?: Priority;
   customerId?: string;
   projectManagerId?: string;
   createdFrom?: Date;

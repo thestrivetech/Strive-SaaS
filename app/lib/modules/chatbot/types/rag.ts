@@ -106,7 +106,7 @@ export interface RAGContext {
   guidance: {
     suggestedApproach: string;
     keyPoints: string[];
-    avoidTopics: string[];
+    avoidTopics?: string[];
     urgencyLevel: 'low' | 'medium' | 'high';
   };
 }

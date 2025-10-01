@@ -97,10 +97,10 @@ async function ProjectListContent({
 
   // Add filter parameters
   if (searchParams.status) {
-    filters.status = searchParams.status.split(',');
+    filters.status = searchParams.status as ProjectStatus;
   }
   if (searchParams.priority) {
-    filters.priority = searchParams.priority.split(',');
+    filters.priority = searchParams.priority as Priority;
   }
   if (searchParams.manager && searchParams.manager !== '__none__') {
     filters.projectManagerId = searchParams.manager;
@@ -140,10 +140,10 @@ async function ProjectListContent({
     { key: 'name', label: 'Project Name' },
     { key: 'status', label: 'Status' },
     { key: 'priority', label: 'Priority' },
-    { key: 'startDate', label: 'Start Date', format: (value) => formatDateForCSV(value) },
-    { key: 'endDate', label: 'End Date', format: (value) => formatDateForCSV(value) },
+    { key: 'startDate', label: 'Start Date', format: (value) => formatDateForCSV(value as Date | string | null) },
+    { key: 'endDate', label: 'End Date', format: (value) => formatDateForCSV(value as Date | string | null) },
     { key: 'budget', label: 'Budget' },
-    { key: 'createdAt', label: 'Created Date', format: (value) => formatDateForCSV(value) },
+    { key: 'createdAt', label: 'Created Date', format: (value) => formatDateForCSV(value as Date | string | null) },
   ];
 
   const getStatusIcon = (status: string) => {

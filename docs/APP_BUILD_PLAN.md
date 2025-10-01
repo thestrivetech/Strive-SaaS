@@ -260,9 +260,12 @@ The `app/` directory contains multiple dashboard experiences within the applicat
 
 ### Backend
 - **API:** Next.js API Routes + Server Actions
-- **Database:** PostgreSQL via Supabase
-- **ORM:** Prisma
-- **Auth:** JWT validation from marketing site
+- **Database (HYBRID APPROACH - Both Required):**
+  - **Supabase** - PostgreSQL provider + Auth + Storage + Realtime
+  - **Prisma 6.16.2** - ORM that connects TO Supabase database
+  - **Prisma for:** Complex queries, transactions, Server Actions
+  - **Supabase for:** Auth, Realtime, file storage, presence
+  - See: [`database/PRISMA-SUPABASE-STRATEGY.md`](database/PRISMA-SUPABASE-STRATEGY.md)
 - **File Storage:** Supabase Storage
 
 ### Third-Party Services

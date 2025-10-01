@@ -1,6 +1,3 @@
-// Strive Tech SaaS Dashboard - Prisma Schema
-// Database: PostgreSQL via Supabase
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -11,86 +8,79 @@ datasource db {
   directUrl = env("DIRECT_URL")
 }
 
-// ==========================================
-// USER MANAGEMENT & AUTHENTICATION
-// ==========================================
-
 model User {
-  id            String   @id @default(uuid())
-  clerkUserId   String?  @unique @map("clerk_user_id")
-  email         String   @unique
-  name          String?
-  avatarUrl     String?  @map("avatar_url")
-  role          UserRole @default(EMPLOYEE)
-  subscriptionTier SubscriptionTier @default(FREE) @map("subscription_tier")
-  isActive      Boolean  @default(true) @map("is_active")
-  createdAt     DateTime @default(now()) @map("created_at")
-  updatedAt     DateTime @updatedAt @map("updated_at")
-
-  organizationMembers OrganizationMember[]
-  customers           Customer[] @relation("AssignedCustomers")
-  projects            Project[]  @relation("ProjectManager")
-  tasks               Task[]     @relation("AssignedTasks")
-  createdTasks        Task[]     @relation("CreatedTasks")
-  aiConversations     AIConversation[]
+  id                  String               @id @default(uuid())
+  clerkUserId         String?              @unique @map("clerk_user_id")
+  email               String               @unique
+  name                String?
+  avatarUrl           String?              @map("avatar_url")
+  role                UserRole             @default(EMPLOYEE)
+  subscriptionTier    SubscriptionTier     @default(FREE) @map("subscription_tier")
+  isActive            Boolean              @default(true) @map("is_active")
+  createdAt           DateTime             @default(now()) @map("created_at")
+  updatedAt           DateTime             @updatedAt @map("updated_at")
   activityLogs        ActivityLog[]
+  aiConversations     AIConversation[]
   appointments        Appointment[]
+  uploadedAttachments Attachment[]         @relation("UploadedAttachments")
   contentAuthored     Content[]
-  uploadedAttachments Attachment[] @relation("UploadedAttachments")
+  customers           Customer[]           @relation("AssignedCustomers")
+  notifications       Notification[]
+  organizationMembers OrganizationMember[]
+  projects            Project[]            @relation("ProjectManager")
+  tasks               Task[]               @relation("AssignedTasks")
+  createdTasks        Task[]               @relation("CreatedTasks")
 
   @@map("users")
 }
 
-enum UserRole {
-  ADMIN
-  MODERATOR
-  EMPLOYEE
-  CLIENT
-}
+model Notification {
+  id             String       @id @default(uuid())
+  userId         String       @map("user_id")
+  organizationId String       @map("organization_id")
+  type           NotificationType
+  title          String
+  message        String
+  actionUrl      String?      @map("action_url")
+  entityType     String?      @map("entity_type")
+  entityId       String?      @map("entity_id")
+  read           Boolean      @default(false)
+  createdAt      DateTime     @default(now()) @map("created_at")
+  updatedAt      DateTime     @updatedAt @map("updated_at")
+  user           User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
 
-enum SubscriptionTier {
-  FREE
-  BASIC
-  PRO
-  ENTERPRISE
+  @@index([userId])
+  @@index([organizationId])
+  @@index([read])
+  @@index([createdAt(sort: Desc)])
+  @@map("notifications")
 }
-
-// ==========================================
-// MULTI-TENANT ORGANIZATION MANAGEMENT
-// ==========================================
 
 model Organization {
-  id                 String              @id @default(uuid())
+  id                 String               @id @default(uuid())
   name               String
-  slug               String              @unique
+  slug               String               @unique
   description        String?
   settings           Json?
-  subscriptionStatus SubscriptionStatus  @default(TRIAL) @map("subscription_status")
-  billingEmail       String?             @map("billing_email")
-  createdAt          DateTime            @default(now()) @map("created_at")
-  updatedAt          DateTime            @updatedAt @map("updated_at")
-
-  members            OrganizationMember[]
-  customers          Customer[]
-  projects           Project[]
+  subscriptionStatus SubscriptionStatus   @default(TRIAL) @map("subscription_status")
+  billingEmail       String?              @map("billing_email")
+  createdAt          DateTime             @default(now()) @map("created_at")
+  updatedAt          DateTime             @updatedAt @map("updated_at")
+  activityLogs       ActivityLog[]
   aiConversations    AIConversation[]
+  appointments       Appointment[]
+  attachments        Attachment[]
+  content            Content[]
+  conversations      Conversation[]
+  customers          Customer[]
+  members            OrganizationMember[]
+  notifications      Notification[]
+  projects           Project[]
   subscription       Subscription?
   usageTracking      UsageTracking[]
-  appointments       Appointment[]
-  content            Content[]
-  activityLogs       ActivityLog[]
-  attachments        Attachment[]
-  conversations      Conversation[]
 
   @@map("organizations")
-}
-
-enum SubscriptionStatus {
-  ACTIVE
-  INACTIVE
-  TRIAL
-  PAST_DUE
-  CANCELLED
 }
 
 model OrganizationMember {
@@ -101,24 +91,12 @@ model OrganizationMember {
   permissions    Json?
   joinedAt       DateTime     @default(now()) @map("joined_at")
   createdAt      DateTime     @default(now()) @map("created_at")
-
-  user         User         @relation(fields: [userId], references: [id], onDelete: Cascade)
-  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  user           User         @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([userId, organizationId])
   @@map("organization_members")
 }
-
-enum OrgRole {
-  OWNER
-  ADMIN
-  MEMBER
-  VIEWER
-}
-
-// ==========================================
-// CRM SYSTEM
-// ==========================================
 
 model Customer {
   id             String         @id @default(uuid())
@@ -134,36 +112,16 @@ model Customer {
   assignedToId   String?        @map("assigned_to")
   createdAt      DateTime       @default(now()) @map("created_at")
   updatedAt      DateTime       @updatedAt @map("updated_at")
-
-  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
-  assignedTo   User?        @relation("AssignedCustomers", fields: [assignedToId], references: [id])
-  projects     Project[]
-  appointments Appointment[]
+  appointments   Appointment[]
+  assignedTo     User?          @relation("AssignedCustomers", fields: [assignedToId], references: [id])
+  organization   Organization   @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  projects       Project[]
 
   @@index([organizationId])
   @@index([email])
   @@index([status])
   @@map("customers")
 }
-
-enum CustomerStatus {
-  LEAD
-  PROSPECT
-  ACTIVE
-  CHURNED
-}
-
-enum CustomerSource {
-  WEBSITE
-  REFERRAL
-  SOCIAL
-  EMAIL
-  OTHER
-}
-
-// ==========================================
-// PROJECT & TASK MANAGEMENT
-// ==========================================
 
 model Project {
   id                 String        @id @default(uuid())
@@ -181,23 +139,14 @@ model Project {
   projectManagerId   String        @map("project_manager_id")
   createdAt          DateTime      @default(now()) @map("created_at")
   updatedAt          DateTime      @updatedAt @map("updated_at")
-
-  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
-  customer       Customer?    @relation(fields: [customerId], references: [id])
-  projectManager User         @relation("ProjectManager", fields: [projectManagerId], references: [id])
-  tasks          Task[]
+  customer           Customer?     @relation(fields: [customerId], references: [id])
+  organization       Organization  @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  projectManager     User          @relation("ProjectManager", fields: [projectManagerId], references: [id])
+  tasks              Task[]
 
   @@index([organizationId])
   @@index([status])
   @@map("projects")
-}
-
-enum ProjectStatus {
-  PLANNING
-  ACTIVE
-  ON_HOLD
-  COMPLETED
-  CANCELLED
 }
 
 model Task {
@@ -217,17 +166,405 @@ model Task {
   position       Int
   createdAt      DateTime   @default(now()) @map("created_at")
   updatedAt      DateTime   @updatedAt @map("updated_at")
-
-  project      Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
-  assignedTo   User?   @relation("AssignedTasks", fields: [assignedToId], references: [id])
-  createdBy    User    @relation("CreatedTasks", fields: [createdById], references: [id])
-  parentTask   Task?   @relation("Subtasks", fields: [parentTaskId], references: [id])
-  subtasks     Task[]  @relation("Subtasks")
+  assignedTo     User?      @relation("AssignedTasks", fields: [assignedToId], references: [id])
+  createdBy      User       @relation("CreatedTasks", fields: [createdById], references: [id])
+  parentTask     Task?      @relation("Subtasks", fields: [parentTaskId], references: [id])
+  subtasks       Task[]     @relation("Subtasks")
+  project        Project    @relation(fields: [projectId], references: [id], onDelete: Cascade)
 
   @@index([projectId])
   @@index([status])
   @@index([assignedToId])
   @@map("tasks")
+}
+
+model AIConversation {
+  id               String        @id @default(uuid())
+  userId           String        @map("user_id")
+  organizationId   String        @map("organization_id")
+  title            String?
+  contextType      AIContextType @default(GENERAL) @map("context_type")
+  contextId        String?       @map("context_id")
+  aiModel          AIModel       @default(OPENAI_GPT4) @map("ai_model")
+  conversationData Json          @map("conversation_data")
+  usageTokens      Int           @default(0) @map("usage_tokens")
+  isArchived       Boolean       @default(false) @map("is_archived")
+  createdAt        DateTime      @default(now()) @map("created_at")
+  updatedAt        DateTime      @updatedAt @map("updated_at")
+  organization     Organization  @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  user             User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([organizationId])
+  @@index([createdAt])
+  @@map("ai_conversations")
+}
+
+model AITool {
+  id            String           @id @default(uuid())
+  name          String
+  description   String?
+  toolType      ToolType
+  requiredTier  SubscriptionTier @map("required_tier")
+  configuration Json?
+  isActive      Boolean          @default(true) @map("is_active")
+  createdAt     DateTime         @default(now()) @map("created_at")
+  updatedAt     DateTime         @updatedAt @map("updated_at")
+
+  @@map("ai_tools")
+}
+
+model Subscription {
+  id                   String             @id @default(uuid())
+  organizationId       String             @unique @map("organization_id")
+  stripeSubscriptionId String?            @unique @map("stripe_subscription_id")
+  stripeCustomerId     String?            @map("stripe_customer_id")
+  status               SubscriptionStatus @default(TRIAL)
+  tier                 SubscriptionTier   @default(FREE)
+  currentPeriodStart   DateTime           @map("current_period_start")
+  currentPeriodEnd     DateTime           @map("current_period_end")
+  cancelAtPeriodEnd    Boolean            @default(false) @map("cancel_at_period_end")
+  metadata             Json?
+  createdAt            DateTime           @default(now()) @map("created_at")
+  updatedAt            DateTime           @updatedAt @map("updated_at")
+  organization         Organization       @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+
+  @@map("subscriptions")
+}
+
+model UsageTracking {
+  id             String       @id @default(uuid())
+  organizationId String       @map("organization_id")
+  userId         String       @map("user_id")
+  resourceType   ResourceType @map("resource_type")
+  resourceName   String       @map("resource_name")
+  usageAmount    Int          @map("usage_amount")
+  billingPeriod  DateTime     @map("billing_period")
+  metadata       Json?
+  createdAt      DateTime     @default(now()) @map("created_at")
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+
+  @@index([organizationId, billingPeriod])
+  @@map("usage_tracking")
+}
+
+model Appointment {
+  id             String            @id @default(uuid())
+  organizationId String            @map("organization_id")
+  customerId     String?           @map("customer_id")
+  assignedToId   String            @map("assigned_to")
+  title          String
+  description    String?
+  startTime      DateTime          @map("start_time")
+  endTime        DateTime          @map("end_time")
+  status         AppointmentStatus @default(SCHEDULED)
+  location       String?
+  meetingUrl     String?           @map("meeting_url")
+  remindersSent  Json?             @map("reminders_sent")
+  createdAt      DateTime          @default(now()) @map("created_at")
+  updatedAt      DateTime          @updatedAt @map("updated_at")
+  assignedTo     User              @relation(fields: [assignedToId], references: [id])
+  customer       Customer?         @relation(fields: [customerId], references: [id])
+  organization   Organization      @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+
+  @@index([organizationId])
+  @@index([startTime])
+  @@map("appointments")
+}
+
+model Content {
+  id             String        @id @default(uuid())
+  organizationId String        @map("organization_id")
+  title          String
+  slug           String
+  contentType    ContentType   @map("content_type")
+  content        String
+  excerpt        String?
+  status         ContentStatus @default(DRAFT)
+  authorId       String        @map("author_id")
+  publishedAt    DateTime?     @map("published_at")
+  seoMeta        Json?         @map("seo_meta")
+  createdAt      DateTime      @default(now()) @map("created_at")
+  updatedAt      DateTime      @updatedAt @map("updated_at")
+  author         User          @relation(fields: [authorId], references: [id])
+  organization   Organization  @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+
+  @@unique([organizationId, slug])
+  @@index([status])
+  @@map("content")
+}
+
+model ActivityLog {
+  id             String       @id @default(uuid())
+  organizationId String       @map("organization_id")
+  userId         String?      @map("user_id")
+  action         String
+  resourceType   String       @map("resource_type")
+  resourceId     String?      @map("resource_id")
+  oldData        Json?        @map("old_data")
+  newData        Json?        @map("new_data")
+  ipAddress      String?      @map("ip_address")
+  userAgent      String?      @map("user_agent")
+  createdAt      DateTime     @default(now()) @map("created_at")
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  user           User?        @relation(fields: [userId], references: [id])
+
+  @@index([organizationId, createdAt])
+  @@index([userId])
+  @@map("activity_logs")
+}
+
+model PageView {
+  id           String   @id @default(uuid())
+  source       String   @default("saas")
+  sessionId    String   @map("session_id")
+  userId       String?  @map("user_id")
+  url          String
+  path         String
+  title        String?
+  referrer     String?
+  userAgent    String?  @map("user_agent")
+  ipAddress    String?  @map("ip_address")
+  country      String?
+  city         String?
+  device       String?
+  browser      String?
+  os           String?
+  utmSource    String?  @map("utm_source")
+  utmMedium    String?  @map("utm_medium")
+  utmCampaign  String?  @map("utm_campaign")
+  viewDuration Int?     @map("view_duration")
+  timestamp    DateTime @default(now())
+
+  @@index([source])
+  @@index([sessionId])
+  @@index([timestamp])
+  @@index([path])
+  @@map("page_views")
+}
+
+model UserSession {
+  id        String    @id @default(uuid())
+  source    String    @default("saas")
+  sessionId String    @unique @map("session_id")
+  userId    String?   @map("user_id")
+  startTime DateTime  @default(now()) @map("start_time")
+  endTime   DateTime? @map("end_time")
+  duration  Int?
+  pageViews Int       @default(0) @map("page_views")
+  bounced   Boolean   @default(false)
+  converted Boolean   @default(false)
+  userAgent String?   @map("user_agent")
+  ipAddress String?   @map("ip_address")
+  country   String?
+  city      String?
+  device    String?
+  browser   String?
+  os        String?
+  referrer  String?
+  entryPage String?   @map("entry_page")
+  exitPage  String?   @map("exit_page")
+
+  @@index([source])
+  @@index([startTime])
+  @@map("user_sessions")
+}
+
+model AnalyticsEvent {
+  id           String   @id @default(uuid())
+  source       String   @default("saas")
+  sessionId    String   @map("session_id")
+  userId       String?  @map("user_id")
+  eventType    String   @map("event_type")
+  eventName    String   @map("event_name")
+  elementId    String?  @map("element_id")
+  elementClass String?  @map("element_class")
+  elementText  String?  @map("element_text")
+  url          String
+  path         String
+  xPosition    Int?     @map("x_position")
+  yPosition    Int?     @map("y_position")
+  scrollDepth  Int?     @map("scroll_depth")
+  properties   Json?
+  timestamp    DateTime @default(now())
+
+  @@index([source])
+  @@index([sessionId])
+  @@index([eventType])
+  @@index([timestamp])
+  @@map("analytics_events")
+}
+
+model WebVitalsMetric {
+  id             String   @id @default(uuid())
+  source         String   @default("saas")
+  sessionId      String   @map("session_id")
+  userId         String?  @map("user_id")
+  url            String
+  path           String
+  metricName     String   @map("metric_name")
+  metricValue    Float    @map("metric_value")
+  metricRating   String   @map("metric_rating")
+  metricId       String   @map("metric_id")
+  userAgent      String?  @map("user_agent")
+  device         String?
+  browser        String?
+  connectionType String?  @map("connection_type")
+  timestamp      DateTime @default(now())
+
+  @@index([source])
+  @@index([metricName])
+  @@index([timestamp])
+  @@map("web_vitals_metrics")
+}
+
+model AnalyticsGoal {
+  id          String           @id @default(uuid())
+  name        String
+  description String?
+  type        String
+  conditions  Json
+  value       Float?
+  isActive    Boolean          @default(true) @map("is_active")
+  createdAt   DateTime         @default(now()) @map("created_at")
+  updatedAt   DateTime         @updatedAt @map("updated_at")
+  conversions GoalConversion[]
+
+  @@map("analytics_goals")
+}
+
+model GoalConversion {
+  id        String        @id @default(uuid())
+  goalId    String        @map("goal_id")
+  sessionId String        @map("session_id")
+  userId    String?       @map("user_id")
+  value     Float?
+  url       String
+  path      String
+  timestamp DateTime      @default(now())
+  goal      AnalyticsGoal @relation(fields: [goalId], references: [id], onDelete: Cascade)
+
+  @@index([goalId])
+  @@index([timestamp])
+  @@map("goal_conversions")
+}
+
+model Attachment {
+  id             String       @id @default(uuid())
+  organizationId String       @map("organization_id")
+  entityType     String       @map("entity_type")
+  entityId       String       @map("entity_id")
+  fileName       String       @map("file_name")
+  fileSize       Int          @map("file_size")
+  mimeType       String       @map("mime_type")
+  filePath       String       @map("file_path")
+  uploadedById   String       @map("uploaded_by_id")
+  createdAt      DateTime     @default(now()) @map("created_at")
+  updatedAt      DateTime     @updatedAt @map("updated_at")
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  uploadedBy     User         @relation("UploadedAttachments", fields: [uploadedById], references: [id])
+
+  @@index([organizationId])
+  @@index([entityType, entityId])
+  @@map("attachments")
+}
+
+model Conversation {
+  id                String                 @id @default(uuid())
+  organizationId    String                 @map("organization_id")
+  industry          String                 @default("strive")
+  sessionId         String                 @map("session_id")
+  userMessage       String                 @map("user_message")
+  assistantResponse String                 @map("assistant_response")
+  problemDetected   String?                @map("problem_detected")
+  solutionPresented String?                @map("solution_presented")
+  conversationStage String                 @map("conversation_stage")
+  outcome           String?
+  conversionScore   Float?                 @map("conversion_score")
+  bookingCompleted  Boolean                @default(false) @map("booking_completed")
+  responseTimeMs    Int?                   @map("response_time_ms")
+  userSatisfaction  Int?                   @map("user_satisfaction")
+  createdAt         DateTime               @default(now()) @map("created_at")
+  updatedAt         DateTime               @updatedAt @map("updated_at")
+  embedding         Unsupported("vector")?
+  organization      Organization           @relation(fields: [organizationId], references: [id])
+
+  @@index([organizationId])
+  @@index([sessionId])
+  @@index([industry])
+  @@index([createdAt(sort: Desc)])
+  @@index([embedding])
+  @@index([sessionId], map: "conversations_session_idx")
+  @@map("conversations")
+}
+
+model example_conversations {
+  id                 String                 @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  industry           String                 @default("strive")
+  user_input         String
+  assistant_response String
+  problem_type       String?
+  solution_type      String?
+  outcome            String?
+  conversion_score   Float?
+  embedding          Unsupported("vector")?
+  created_at         DateTime?              @default(now()) @db.Timestamptz(6)
+  updated_at         DateTime?              @default(now()) @db.Timestamptz(6)
+
+  @@index([embedding])
+  @@index([industry])
+}
+
+enum UserRole {
+  ADMIN
+  MODERATOR
+  EMPLOYEE
+  CLIENT
+}
+
+enum SubscriptionTier {
+  FREE
+  BASIC
+  PRO
+  ENTERPRISE
+}
+
+enum SubscriptionStatus {
+  ACTIVE
+  INACTIVE
+  TRIAL
+  PAST_DUE
+  CANCELLED
+}
+
+enum OrgRole {
+  OWNER
+  ADMIN
+  MEMBER
+  VIEWER
+}
+
+enum CustomerStatus {
+  LEAD
+  PROSPECT
+  ACTIVE
+  CHURNED
+}
+
+enum CustomerSource {
+  WEBSITE
+  REFERRAL
+  SOCIAL
+  EMAIL
+  OTHER
+}
+
+enum ProjectStatus {
+  PLANNING
+  ACTIVE
+  ON_HOLD
+  COMPLETED
+  CANCELLED
 }
 
 enum TaskStatus {
@@ -245,33 +582,6 @@ enum Priority {
   CRITICAL
 }
 
-// ==========================================
-// AI ASSISTANT (SAI)
-// ==========================================
-
-model AIConversation {
-  id               String             @id @default(uuid())
-  userId           String             @map("user_id")
-  organizationId   String             @map("organization_id")
-  title            String?
-  contextType      AIContextType      @default(GENERAL) @map("context_type")
-  contextId        String?            @map("context_id")
-  aiModel          AIModel            @default(OPENAI_GPT4) @map("ai_model")
-  conversationData Json               @map("conversation_data")
-  usageTokens      Int                @default(0) @map("usage_tokens")
-  isArchived       Boolean            @default(false) @map("is_archived")
-  createdAt        DateTime           @default(now()) @map("created_at")
-  updatedAt        DateTime           @updatedAt @map("updated_at")
-
-  user         User         @relation(fields: [userId], references: [id], onDelete: Cascade)
-  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
-
-  @@index([userId])
-  @@index([organizationId])
-  @@index([createdAt])
-  @@map("ai_conversations")
-}
-
 enum AIContextType {
   GENERAL
   PROJECT
@@ -287,65 +597,11 @@ enum AIModel {
   KIMIK2
 }
 
-model AITool {
-  id              String   @id @default(uuid())
-  name            String
-  description     String?
-  toolType        ToolType
-  requiredTier    SubscriptionTier @map("required_tier")
-  configuration   Json?
-  isActive        Boolean  @default(true) @map("is_active")
-  createdAt       DateTime @default(now()) @map("created_at")
-  updatedAt       DateTime @updatedAt @map("updated_at")
-
-  @@map("ai_tools")
-}
-
 enum ToolType {
   CHATBOT
   ANALYSIS
   AUTOMATION
   INTEGRATION
-}
-
-// ==========================================
-// SUBSCRIPTION & BILLING
-// ==========================================
-
-model Subscription {
-  id                   String             @id @default(uuid())
-  organizationId       String             @unique @map("organization_id")
-  stripeSubscriptionId String?            @unique @map("stripe_subscription_id")
-  stripeCustomerId     String?            @map("stripe_customer_id")
-  status               SubscriptionStatus @default(TRIAL)
-  tier                 SubscriptionTier   @default(FREE)
-  currentPeriodStart   DateTime           @map("current_period_start")
-  currentPeriodEnd     DateTime           @map("current_period_end")
-  cancelAtPeriodEnd    Boolean            @default(false) @map("cancel_at_period_end")
-  metadata             Json?
-  createdAt            DateTime           @default(now()) @map("created_at")
-  updatedAt            DateTime           @updatedAt @map("updated_at")
-
-  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
-
-  @@map("subscriptions")
-}
-
-model UsageTracking {
-  id             String       @id @default(uuid())
-  organizationId String       @map("organization_id")
-  userId         String       @map("user_id")
-  resourceType   ResourceType @map("resource_type")
-  resourceName   String       @map("resource_name")
-  usageAmount    Int          @map("usage_amount")
-  billingPeriod  DateTime     @map("billing_period")
-  metadata       Json?
-  createdAt      DateTime     @default(now()) @map("created_at")
-
-  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
-
-  @@index([organizationId, billingPeriod])
-  @@map("usage_tracking")
 }
 
 enum ResourceType {
@@ -355,68 +611,12 @@ enum ResourceType {
   SEATS
 }
 
-// ==========================================
-// SCHEDULING & CALENDAR
-// ==========================================
-
-model Appointment {
-  id             String            @id @default(uuid())
-  organizationId String            @map("organization_id")
-  customerId     String?           @map("customer_id")
-  assignedToId   String            @map("assigned_to")
-  title          String
-  description    String?
-  startTime      DateTime          @map("start_time")
-  endTime        DateTime          @map("end_time")
-  status         AppointmentStatus @default(SCHEDULED)
-  location       String?
-  meetingUrl     String?           @map("meeting_url")
-  remindersSent  Json?             @map("reminders_sent")
-  createdAt      DateTime          @default(now()) @map("created_at")
-  updatedAt      DateTime          @updatedAt @map("updated_at")
-
-  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
-  customer     Customer?    @relation(fields: [customerId], references: [id])
-  assignedTo   User         @relation(fields: [assignedToId], references: [id])
-
-  @@index([organizationId])
-  @@index([startTime])
-  @@map("appointments")
-}
-
 enum AppointmentStatus {
   SCHEDULED
   CONFIRMED
   COMPLETED
   CANCELLED
   NO_SHOW
-}
-
-// ==========================================
-// CONTENT MANAGEMENT
-// ==========================================
-
-model Content {
-  id             String        @id @default(uuid())
-  organizationId String        @map("organization_id")
-  title          String
-  slug           String
-  contentType    ContentType   @map("content_type")
-  content        String
-  excerpt        String?
-  status         ContentStatus @default(DRAFT)
-  authorId       String        @map("author_id")
-  publishedAt    DateTime?     @map("published_at")
-  seoMeta        Json?         @map("seo_meta")
-  createdAt      DateTime      @default(now()) @map("created_at")
-  updatedAt      DateTime      @updatedAt @map("updated_at")
-
-  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
-  author       User         @relation(fields: [authorId], references: [id])
-
-  @@unique([organizationId, slug])
-  @@index([status])
-  @@map("content")
 }
 
 enum ContentType {
@@ -432,224 +632,9 @@ enum ContentStatus {
   ARCHIVED
 }
 
-// ==========================================
-// AUDIT LOGS
-// ==========================================
-
-model ActivityLog {
-  id             String   @id @default(uuid())
-  organizationId String   @map("organization_id")
-  userId         String?  @map("user_id")
-  action         String
-  resourceType   String   @map("resource_type")
-  resourceId     String?  @map("resource_id")
-  oldData        Json?    @map("old_data")
-  newData        Json?    @map("new_data")
-  ipAddress      String?  @map("ip_address")
-  userAgent      String?  @map("user_agent")
-  createdAt      DateTime @default(now()) @map("created_at")
-
-  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
-  user         User?        @relation(fields: [userId], references: [id])
-
-  @@index([organizationId, createdAt])
-  @@index([userId])
-  @@map("activity_logs")
-}
-
-// ==========================================
-// ANALYTICS & PERFORMANCE TRACKING
-// ==========================================
-
-model PageView {
-  id           String   @id @default(uuid())
-  source       String   @default("saas") // "website" or "saas"
-  sessionId    String   @map("session_id")
-  userId       String?  @map("user_id")
-  url          String
-  path         String
-  title        String?
-  referrer     String?
-  userAgent    String?  @map("user_agent")
-  ipAddress    String?  @map("ip_address")
-  country      String?
-  city         String?
-  device       String? // mobile, desktop, tablet
-  browser      String?
-  os           String?
-  utmSource    String?  @map("utm_source")
-  utmMedium    String?  @map("utm_medium")
-  utmCampaign  String?  @map("utm_campaign")
-  viewDuration Int?     @map("view_duration") // Time spent on page in seconds
-  timestamp    DateTime @default(now())
-
-  @@index([source])
-  @@index([sessionId])
-  @@index([timestamp])
-  @@index([path])
-  @@map("page_views")
-}
-
-model UserSession {
-  id         String    @id @default(uuid())
-  source     String    @default("saas") // "website" or "saas"
-  sessionId  String    @unique @map("session_id")
-  userId     String?   @map("user_id")
-  startTime  DateTime  @default(now()) @map("start_time")
-  endTime    DateTime? @map("end_time")
-  duration   Int?      // Session duration in seconds
-  pageViews  Int       @default(0) @map("page_views")
-  bounced    Boolean   @default(false) // Single page session
-  converted  Boolean   @default(false) // Goal completion
-  userAgent  String?   @map("user_agent")
-  ipAddress  String?   @map("ip_address")
-  country    String?
-  city       String?
-  device     String?
-  browser    String?
-  os         String?
-  referrer   String?
-  entryPage  String?   @map("entry_page")
-  exitPage   String?   @map("exit_page")
-
-  @@index([source])
-  @@index([startTime])
-  @@map("user_sessions")
-}
-
-model AnalyticsEvent {
-  id           String   @id @default(uuid())
-  source       String   @default("saas") // "website" or "saas"
-  sessionId    String   @map("session_id")
-  userId       String?  @map("user_id")
-  eventType    String   @map("event_type") // click, scroll, form_submit, etc.
-  eventName    String   @map("event_name")
-  elementId    String?  @map("element_id")
-  elementClass String?  @map("element_class")
-  elementText  String?  @map("element_text")
-  url          String
-  path         String
-  xPosition    Int?     @map("x_position")
-  yPosition    Int?     @map("y_position")
-  scrollDepth  Int?     @map("scroll_depth") // Percentage
-  properties   Json? // Additional event data
-  timestamp    DateTime @default(now())
-
-  @@index([source])
-  @@index([sessionId])
-  @@index([eventType])
-  @@index([timestamp])
-  @@map("analytics_events")
-}
-
-model WebVitalsMetric {
-  id             String   @id @default(uuid())
-  source         String   @default("saas") // "website" or "saas"
-  sessionId      String   @map("session_id")
-  userId         String?  @map("user_id")
-  url            String
-  path           String
-  metricName     String   @map("metric_name") // LCP, FID, CLS, FCP, TTFB
-  metricValue    Float    @map("metric_value")
-  metricRating   String   @map("metric_rating") // good, needs-improvement, poor
-  metricId       String   @map("metric_id")
-  userAgent      String?  @map("user_agent")
-  device         String?
-  browser        String?
-  connectionType String?  @map("connection_type") // 4g, wifi, etc.
-  timestamp      DateTime @default(now())
-
-  @@index([source])
-  @@index([metricName])
-  @@index([timestamp])
-  @@map("web_vitals_metrics")
-}
-
-model AnalyticsGoal {
-  id          String   @id @default(uuid())
-  name        String
-  description String?
-  type        String // page_view, event, duration
-  conditions  Json // Goal conditions as JSON
-  value       Float? // Monetary value of conversion
-  isActive    Boolean  @default(true) @map("is_active")
-  createdAt   DateTime @default(now()) @map("created_at")
-  updatedAt   DateTime @updatedAt @map("updated_at")
-
-  conversions GoalConversion[]
-
-  @@map("analytics_goals")
-}
-
-model GoalConversion {
-  id        String   @id @default(uuid())
-  goalId    String   @map("goal_id")
-  sessionId String   @map("session_id")
-  userId    String?  @map("user_id")
-  value     Float? // Conversion value
-  url       String
-  path      String
-  timestamp DateTime @default(now())
-
-  goal AnalyticsGoal @relation(fields: [goalId], references: [id], onDelete: Cascade)
-
-  @@index([goalId])
-  @@index([timestamp])
-  @@map("goal_conversions")
-}
-
-// ==========================================
-// FILE ATTACHMENTS
-// ==========================================
-
-model Attachment {
-  id             String   @id @default(uuid())
-  organizationId String   @map("organization_id")
-  entityType     String   @map("entity_type") // task, project, customer
-  entityId       String   @map("entity_id")
-  fileName       String   @map("file_name")
-  fileSize       Int      @map("file_size")
-  mimeType       String   @map("mime_type")
-  filePath       String   @map("file_path") // Supabase Storage path
-  uploadedById   String   @map("uploaded_by_id")
-  createdAt      DateTime @default(now()) @map("created_at")
-  updatedAt      DateTime @updatedAt @map("updated_at")
-
-  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
-  uploadedBy   User         @relation("UploadedAttachments", fields: [uploadedById], references: [id])
-
-  @@index([organizationId])
-  @@index([entityType, entityId])
-  @@map("attachments")
-}
-
-// ==========================================
-// CHATBOT CONVERSATIONS
-// ==========================================
-
-model Conversation {
-  id                   String   @id @default(uuid())
-  organizationId       String   @map("organization_id")
-  industry             String   @default("strive")
-  sessionId            String   @map("session_id")
-  userMessage          String   @map("user_message") @db.Text
-  assistantResponse    String   @map("assistant_response") @db.Text
-  embedding            Json?    // Store as JSON until pgvector setup
-  problemDetected      String?  @map("problem_detected")
-  solutionPresented    String?  @map("solution_presented")
-  conversationStage    String   @map("conversation_stage")
-  outcome              String?
-  conversionScore      Float?   @map("conversion_score")
-  bookingCompleted     Boolean  @default(false) @map("booking_completed")
-  responseTimeMs       Int?     @map("response_time_ms")
-  userSatisfaction     Int?     @map("user_satisfaction")
-  createdAt            DateTime @default(now()) @map("created_at")
-  updatedAt            DateTime @updatedAt @map("updated_at")
-
-  organization Organization @relation(fields: [organizationId], references: [id])
-
-  @@map("conversations")
-  @@index([organizationId])
-  @@index([sessionId])
-  @@index([industry])
+enum NotificationType {
+  INFO
+  SUCCESS
+  WARNING
+  ERROR
 }

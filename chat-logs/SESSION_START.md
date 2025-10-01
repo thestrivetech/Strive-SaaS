@@ -12,8 +12,8 @@
 # Must read in order (all files):
 1. CLAUDE.md                    # Dev rules (~1.8K tokens)
 2. docs/APP_BUILD_PLAN.md       # Project status (~2.8K tokens)
-3. docs/README.md               # Tech stack & architecture (~4.2K tokens)
-4. chat-logs/Session15.md    # Current session (~3K tokens)
+3. README.md               # Tech stack & architecture (~4.2K tokens)
+4. chat-logs/Session16.md    # Current session (~3K tokens)
 ```
 
 **From CLAUDE.md - Critical Rules:**
@@ -28,7 +28,7 @@
 - What's completed vs in-progress
 - Deferred tasks
 
-**From docs/README.md - Architecture:**
+**From README.md - Architecture:**
 - Tech stack (Next.js 15.5.4, React 19.1.0, Prisma 6.16.2)
 - Project structure (app/ directory layout)
 - Subscription tiers (Free, T1, T2, T3/Enterprise)
@@ -66,7 +66,7 @@ After reading all 4 files, confirm understanding:
 
 ## 3. Create Detailed To-Do List
 
-**Use TodoWrite tool to track all tasks from Session[15].md**
+**Use TodoWrite tool to track all tasks from Session[16].md**
 
 Break down today's goals into actionable tasks:
 - Each priority → Multiple specific tasks

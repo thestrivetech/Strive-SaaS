@@ -30,8 +30,11 @@ The Next.js App Router code lives in `platform/` to distinguish it from the main
 
 - **Framework:** Next.js 15 with App Router
 - **Language:** TypeScript 5.6+
-- **Database:** PostgreSQL via Supabase + Prisma ORM
-- **Auth:** JWT validation from marketing site (shared cookies)
+- **Database (HYBRID APPROACH):**
+  - **Supabase** - PostgreSQL provider + Auth + Storage + Realtime
+  - **Prisma 6.16.2** - ORM that connects TO Supabase database
+  - **They work TOGETHER, not as alternatives**
+- **Auth:** Supabase Auth (JWT in httpOnly cookies)
 - **UI:** shadcn/ui + Radix UI + Tailwind CSS
 - **State:** TanStack Query + Zustand
 - **Payments:** Stripe (Phase 3+)
@@ -39,6 +42,38 @@ The Next.js App Router code lives in `platform/` to distinguish it from the main
   - **OpenRouter** - Multi-model gateway (200+ models: GPT-4, Claude, Gemini, Llama, Mixtral)
   - **Groq** - Ultra-fast open-source inference (Llama 3.3, Mixtral, Gemma)
   - Strategy: Balance cost (open-source) with capability (proprietary)
+
+### 🔑 Database Strategy
+
+**Prisma** and **Supabase** work together:
+
+```
+Your Application
+    ├─► Prisma (ORM) ──────► Supabase PostgreSQL
+    │                        (Complex queries, transactions)
+    │
+    └─► Supabase Client ───► Supabase Services
+                             ├─► Auth
+                             ├─► Storage
+                             ├─► Realtime
+                             └─► Presence
+```
+
+**Use Prisma for:**
+- Complex queries with joins (CRM, projects, analytics)
+- Transactions (multi-step operations)
+- Server Actions and mutations
+- Schema migrations
+- AI conversation storage
+
+**Use Supabase for:**
+- Authentication (all auth operations)
+- Real-time notifications
+- File storage (avatars, documents)
+- Live presence ("who's online")
+- Typing indicators
+
+**Full guide:** [`../docs/database/PRISMA-SUPABASE-STRATEGY.md`](../docs/database/PRISMA-SUPABASE-STRATEGY.md)
 
 ---
 

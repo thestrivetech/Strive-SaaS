@@ -18,7 +18,13 @@
     "prisma:push": "prisma db push",
     "prisma:studio": "prisma studio",
     "db:init": "node scripts/init-database.js",
-    "db:reset": "prisma db push --force-reset && prisma generate"
+    "db:reset": "prisma db push --force-reset && prisma generate",
+    "chatbot:dev": "npm run dev",
+    "chatbot:test": "npm run type-check && npm run lint && npm run dev",
+    "chatbot:studio": "npx prisma studio",
+    "chatbot:setup-rag": "npx prisma db execute --file SUPABASE-RAG-SETUP-EXECUTE.sql --schema prisma/schema.prisma",
+    "chatbot:generate-embeddings": "npx tsx scripts/generate-embeddings.ts",
+    "chatbot:test-vector-search": "npx tsx scripts/test-vector-search.ts"
   },
   "dependencies": {
     "@heroicons/react": "^2.2.0",
@@ -54,8 +60,6 @@
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "cmdk": "^1.1.1",
-    "drizzle-orm": "^0.44.5",
-    "drizzle-zod": "^0.8.3",
     "embla-carousel-react": "^8.6.0",
     "express": "^5.1.0",
     "framer-motion": "^12.23.22",
