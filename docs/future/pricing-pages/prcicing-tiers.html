@@ -1,0 +1,488 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Real Estate Intelligence Platform - Pricing</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 60px 20px;
+            color: #333;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 60px;
+            color: white;
+        }
+        
+        .header h1 {
+            font-size: 48px;
+            font-weight: 700;
+            margin-bottom: 16px;
+        }
+        
+        .header p {
+            font-size: 22px;
+            opacity: 0.95;
+            max-width: 700px;
+            margin: 0 auto;
+        }
+        
+        .pricing-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+        
+        .pricing-card {
+            background: white;
+            border-radius: 20px;
+            padding: 40px 30px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.2);
+            position: relative;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .pricing-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 30px 80px rgba(0,0,0,0.3);
+        }
+        
+        .pricing-card.popular {
+            border: 3px solid #667eea;
+            transform: scale(1.05);
+        }
+        
+        .popular-badge {
+            position: absolute;
+            top: -15px;
+            right: 30px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 8px 20px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+        
+        .tier-name {
+            font-size: 28px;
+            font-weight: 700;
+            color: #1a1a1a;
+            margin-bottom: 8px;
+        }
+        
+        .tier-tagline {
+            color: #666;
+            font-size: 15px;
+            margin-bottom: 24px;
+            min-height: 40px;
+        }
+        
+        .price {
+            margin-bottom: 30px;
+        }
+        
+        .price-amount {
+            font-size: 52px;
+            font-weight: 700;
+            color: #667eea;
+        }
+        
+        .price-period {
+            color: #666;
+            font-size: 18px;
+        }
+        
+        .cta-button {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 16px 32px;
+            border-radius: 10px;
+            font-size: 18px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            margin-bottom: 30px;
+        }
+        
+        .cta-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.4);
+        }
+        
+        .cta-button.secondary {
+            background: white;
+            color: #667eea;
+            border: 2px solid #667eea;
+        }
+        
+        .features-list {
+            list-style: none;
+            flex-grow: 1;
+        }
+        
+        .features-list li {
+            padding: 12px 0;
+            border-bottom: 1px solid #f0f0f0;
+            display: flex;
+            align-items: start;
+            font-size: 15px;
+            color: #333;
+        }
+        
+        .features-list li:last-child {
+            border-bottom: none;
+        }
+        
+        .features-list li::before {
+            content: "✓";
+            color: #10b981;
+            font-weight: bold;
+            margin-right: 12px;
+            font-size: 18px;
+        }
+        
+        .section-header {
+            color: white;
+            font-size: 32px;
+            font-weight: 700;
+            text-align: center;
+            margin: 80px 0 40px 0;
+        }
+        
+        .comparison-table {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.2);
+            overflow-x: auto;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        
+        th, td {
+            padding: 16px;
+            text-align: left;
+            border-bottom: 1px solid #e5e5e5;
+        }
+        
+        th {
+            background: #f8f9fa;
+            font-weight: 600;
+            color: #1a1a1a;
+        }
+        
+        .check {
+            color: #10b981;
+            font-size: 20px;
+        }
+        
+        .dash {
+            color: #ddd;
+        }
+        
+        .footer-note {
+            text-align: center;
+            color: white;
+            margin-top: 60px;
+            font-size: 16px;
+        }
+        
+        .footer-note a {
+            color: white;
+            text-decoration: underline;
+            font-weight: 600;
+        }
+        
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 36px;
+            }
+            
+            .pricing-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .pricing-card.popular {
+                transform: scale(1);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Choose Your Real Estate Success Plan</h1>
+            <p>Complete operating system for agents, brokers, property managers, and investors</p>
+        </div>
+        
+        <div class="pricing-grid">
+            <!-- Tier 1: Essential -->
+            <div class="pricing-card">
+                <div class="tier-name">Essential</div>
+                <div class="tier-tagline">Perfect for solo agents and new teams getting started</div>
+                <div class="price">
+                    <span class="price-amount">$299</span>
+                    <span class="price-period">/month</span>
+                </div>
+                <button class="cta-button secondary">Start Free Trial</button>
+                <ul class="features-list">
+                    <li><strong>Smart Listings Hub</strong> - Centralized listing management with auto-syndication</li>
+                    <li><strong>Lead & Client CRM</strong> - Pipeline tracking and automated follow-ups</li>
+                    <li><strong>Document Fortress</strong> - Secure document storage with e-signatures</li>
+                    <li><strong>Basic Marketing Tools</strong> - Social media posting and email campaigns</li>
+                    <li><strong>Mobile App Access</strong> - iOS and Android apps included</li>
+                    <li>Up to 3 users</li>
+                    <li>500 active listings</li>
+                    <li>1,000 contacts</li>
+                    <li>Email support</li>
+                    <li>Access to Tool Marketplace</li>
+                </ul>
+            </div>
+            
+            <!-- Tier 2: Professional -->
+            <div class="pricing-card popular">
+                <div class="popular-badge">Most Popular</div>
+                <div class="tier-name">Professional</div>
+                <div class="tier-tagline">For established agents, teams, and growing brokerages</div>
+                <div class="price">
+                    <span class="price-amount">$699</span>
+                    <span class="price-period">/month</span>
+                </div>
+                <button class="cta-button">Start Free Trial</button>
+                <ul class="features-list">
+                    <li><strong>Everything in Essential, plus:</strong></li>
+                    <li><strong>Deal Command Center</strong> - Complete transaction management</li>
+                    <li><strong>Marketing ROI Engine</strong> - Multi-channel campaign tracking</li>
+                    <li><strong>Agent Performance Dashboard</strong> - Team metrics and coaching insights</li>
+                    <li><strong>Market Intelligence Hub</strong> - Predictive trends and analytics</li>
+                    <li><strong>AI-Powered Features</strong> - Lead scoring, description generation</li>
+                    <li>Up to 15 users</li>
+                    <li>Unlimited listings</li>
+                    <li>10,000 contacts</li>
+                    <li>Priority support (chat + email)</li>
+                    <li>Custom branding</li>
+                    <li>Advanced integrations (MLS, DocuSign, Zillow)</li>
+                </ul>
+            </div>
+            
+            <!-- Tier 3: Premium -->
+            <div class="pricing-card">
+                <div class="tier-name">Premium</div>
+                <div class="tier-tagline">Complete solution for brokerages and property management firms</div>
+                <div class="price">
+                    <span class="price-amount">$1,499</span>
+                    <span class="price-period">/month</span>
+                </div>
+                <button class="cta-button">Start Free Trial</button>
+                <ul class="features-list">
+                    <li><strong>Everything in Professional, plus:</strong></li>
+                    <li><strong>Property Operations Suite</strong> - Full property management tools</li>
+                    <li><strong>Financial Control Center</strong> - Property-level P&L and accounting</li>
+                    <li><strong>Tenant Screening Pro</strong> - Background checks and lease management</li>
+                    <li><strong>Maintenance Command</strong> - Work orders and vendor management</li>
+                    <li><strong>Investment Analyzer</strong> - Deal modeling and portfolio tracking</li>
+                    <li><strong>Compliance Shield</strong> - Regulatory monitoring and risk management</li>
+                    <li>Up to 50 users</li>
+                    <li>Unlimited everything</li>
+                    <li>White-label options</li>
+                    <li>Dedicated account manager</li>
+                    <li>24/7 phone support</li>
+                    <li>Custom workflows and automation</li>
+                </ul>
+            </div>
+            
+            <!-- Tier 4: Enterprise -->
+            <div class="pricing-card">
+                <div class="tier-name">Enterprise</div>
+                <div class="tier-tagline">Custom solutions for large organizations and institutional investors</div>
+                <div class="price">
+                    <span class="price-amount">Custom</span>
+                </div>
+                <button class="cta-button">Contact Sales</button>
+                <ul class="features-list">
+                    <li><strong>Everything in Premium, plus:</strong></li>
+                    <li><strong>Executive Mission Control</strong> - Strategic business intelligence</li>
+                    <li><strong>Owner Portal</strong> - Investor reporting and transparency</li>
+                    <li><strong>Custom Dashboard Development</strong> - Built to your specifications</li>
+                    <li><strong>API Access</strong> - Full platform integration capabilities</li>
+                    <li><strong>Dedicated Infrastructure</strong> - Private cloud deployment options</li>
+                    <li><strong>Custom SLA</strong> - Uptime guarantees</li>
+                    <li>Unlimited users</li>
+                    <li>Multi-entity management</li>
+                    <li>Enterprise SSO and security</li>
+                    <li>On-site training</li>
+                    <li>Quarterly business reviews</li>
+                    <li>Volume pricing available</li>
+                </ul>
+            </div>
+        </div>
+        
+        <h2 class="section-header">Full Feature Comparison</h2>
+        
+        <div class="comparison-table">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Dashboard / Feature</th>
+                        <th>Essential</th>
+                        <th>Professional</th>
+                        <th>Premium</th>
+                        <th>Enterprise</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>Smart Listings Hub</strong></td>
+                        <td class="check">✓</td>
+                        <td class="check">✓</td>
+                        <td class="check">✓</td>
+                        <td class="check">✓</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Lead & Client CRM</strong></td>
+                        <td class="check">✓</td>
+                        <td class="check">✓</td>
+                        <td class="check">✓</td>
+                        <td class="check">✓</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Document Fortress</strong></td>
+                        <td class="check">✓</td>
+                        <td class="check">✓</td>
+                        <td class="check">✓</td>
+                        <td class="check">✓</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Deal Command Center</strong></td>
+                        <td class="dash">—</td>
+                        <td class="check">✓</td>
+                        <td class="check">✓</td>
+                        <td class="check">✓</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Marketing ROI Engine</strong></td>
+                        <td>Basic</td>
+                        <td class="check">✓</td>
+                        <td class="check">✓</td>
+                        <td class="check">✓</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Agent Performance Dashboard</strong></td>
+                        <td class="dash">—</td>
+                        <td class="check">✓</td>
+                        <td class="check">✓</td>
+                        <td class="check">✓</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Market Intelligence Hub</strong></td>
+                        <td class="dash">—</td>
+                        <td class="check">✓</td>
+                        <td class="check">✓</td>
+                        <td class="check">✓</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Property Operations Suite</strong></td>
+                        <td class="dash">—</td>
+                        <td class="dash">—</td>
+                        <td class="check">✓</td>
+                        <td class="check">✓</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Financial Control Center</strong></td>
+                        <td class="dash">—</td>
+                        <td class="dash">—</td>
+                        <td class="check">✓</td>
+                        <td class="check">✓</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Tenant Screening Pro</strong></td>
+                        <td class="dash">—</td>
+                        <td class="dash">—</td>
+                        <td class="check">✓</td>
+                        <td class="check">✓</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Investment Analyzer</strong></td>
+                        <td class="dash">—</td>
+                        <td class="dash">—</td>
+                        <td class="check">✓</td>
+                        <td class="check">✓</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Compliance Shield</strong></td>
+                        <td class="dash">—</td>
+                        <td class="dash">—</td>
+                        <td class="check">✓</td>
+                        <td class="check">✓</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Executive Mission Control</strong></td>
+                        <td class="dash">—</td>
+                        <td class="dash">—</td>
+                        <td class="dash">—</td>
+                        <td class="check">✓</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Owner Portal</strong></td>
+                        <td class="dash">—</td>
+                        <td class="dash">—</td>
+                        <td class="dash">—</td>
+                        <td class="check">✓</td>
+                    </tr>
+                    <tr>
+                        <td><strong>AI-Powered Features</strong></td>
+                        <td>Limited</td>
+                        <td class="check">✓</td>
+                        <td>Advanced</td>
+                        <td>Full Suite</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Users Included</strong></td>
+                        <td>3</td>
+                        <td>15</td>
+                        <td>50</td>
+                        <td>Unlimited</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Support Level</strong></td>
+                        <td>Email</td>
+                        <td>Priority</td>
+                        <td>24/7 Phone</td>
+                        <td>Dedicated Team</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        
+        <div class="footer-note">
+            <p><strong>All plans include a 14-day free trial • No credit card required • Cancel anytime</strong></p>
+            <p style="margin-top: 20px;">Need additional tools? Browse our <a href="#marketplace">Tool Marketplace</a> to enhance any plan.</p>
+            <p style="margin-top: 10px;">Questions? <a href="mailto:sales@yourplatform.com">Contact our sales team</a> for a personalized demo.</p>
+        </div>
+    </div>
+</body>
+</html>

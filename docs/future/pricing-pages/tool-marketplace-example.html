@@ -1,0 +1,658 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tool Marketplace - Real Estate Intelligence Platform</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+            padding: 60px 20px;
+            color: #333;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 50px;
+            color: white;
+        }
+        
+        .header h1 {
+            font-size: 48px;
+            font-weight: 700;
+            margin-bottom: 16px;
+        }
+        
+        .header p {
+            font-size: 20px;
+            opacity: 0.95;
+            max-width: 800px;
+            margin: 0 auto 30px;
+        }
+        
+        .bundle-section {
+            background: white;
+            border-radius: 20px;
+            padding: 50px;
+            margin-bottom: 50px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.2);
+        }
+        
+        .bundle-title {
+            font-size: 32px;
+            font-weight: 700;
+            text-align: center;
+            margin-bottom: 40px;
+            color: #1a1a1a;
+        }
+        
+        .bundle-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+        
+        .bundle-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 40px 30px;
+            border-radius: 16px;
+            color: white;
+            text-align: center;
+            transition: transform 0.3s ease;
+        }
+        
+        .bundle-card:hover {
+            transform: translateY(-5px);
+        }
+        
+        .bundle-name {
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 12px;
+        }
+        
+        .bundle-price {
+            font-size: 48px;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+        
+        .bundle-save {
+            background: rgba(255,255,255,0.2);
+            display: inline-block;
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 20px;
+        }
+        
+        .bundle-details {
+            font-size: 15px;
+            opacity: 0.9;
+            margin-bottom: 24px;
+        }
+        
+        .bundle-button {
+            background: white;
+            color: #667eea;
+            border: none;
+            padding: 14px 32px;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s ease;
+            width: 100%;
+        }
+        
+        .bundle-button:hover {
+            transform: scale(1.05);
+        }
+        
+        .tier-section {
+            margin-bottom: 60px;
+        }
+        
+        .tier-header {
+            background: white;
+            padding: 30px;
+            border-radius: 16px 16px 0 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+        
+        .tier-info h2 {
+            font-size: 32px;
+            color: #1a1a1a;
+            margin-bottom: 8px;
+        }
+        
+        .tier-info p {
+            color: #666;
+            font-size: 16px;
+        }
+        
+        .tier-pricing {
+            text-align: right;
+        }
+        
+        .tier-price {
+            font-size: 42px;
+            font-weight: 700;
+            color: #11998e;
+        }
+        
+        .tier-period {
+            color: #666;
+            font-size: 16px;
+        }
+        
+        .tools-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 20px;
+            background: white;
+            padding: 30px;
+            border-radius: 0 0 16px 16px;
+        }
+        
+        .tool-card {
+            background: #f8f9fa;
+            padding: 24px;
+            border-radius: 12px;
+            border: 2px solid transparent;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+        
+        .tool-card:hover {
+            border-color: #11998e;
+            transform: translateY(-3px);
+            box-shadow: 0 8px 24px rgba(17, 153, 142, 0.15);
+        }
+        
+        .tool-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: start;
+            margin-bottom: 12px;
+        }
+        
+        .tool-name {
+            font-size: 18px;
+            font-weight: 600;
+            color: #1a1a1a;
+            flex: 1;
+        }
+        
+        .tool-badge {
+            background: #11998e;
+            color: white;
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+            white-space: nowrap;
+            margin-left: 10px;
+        }
+        
+        .tool-badge.ai {
+            background: #667eea;
+        }
+        
+        .tool-description {
+            color: #555;
+            font-size: 14px;
+            line-height: 1.5;
+            margin-bottom: 16px;
+        }
+        
+        .tool-add {
+            background: #11998e;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            width: 100%;
+            transition: background 0.2s ease;
+        }
+        
+        .tool-add:hover {
+            background: #0d7a6f;
+        }
+        
+        .usage-note {
+            background: rgba(255,255,255,0.95);
+            padding: 30px;
+            border-radius: 16px;
+            text-align: center;
+            margin-top: 40px;
+        }
+        
+        .usage-note h3 {
+            font-size: 24px;
+            margin-bottom: 12px;
+            color: #1a1a1a;
+        }
+        
+        .usage-note p {
+            color: #555;
+            font-size: 16px;
+        }
+        
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 36px;
+            }
+            
+            .tier-header {
+                text-align: center;
+            }
+            
+            .tier-pricing {
+                text-align: center;
+                width: 100%;
+            }
+            
+            .tools-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🛠️ Tool Marketplace</h1>
+            <p>Supercharge your subscription with powerful add-ons. Mix and match AI tools and real estate-specific features to create your perfect workflow.</p>
+            <p style="font-size: 16px; margin-top: 15px;"><strong>Available with any subscription tier • Cancel add-ons anytime</strong></p>
+        </div>
+        
+        <!-- Bundle Offers -->
+        <div class="bundle-section">
+            <div class="bundle-title">💰 Bundle & Save Big</div>
+            <div class="bundle-grid">
+                <div class="bundle-card">
+                    <div class="bundle-name">Starter Bundle</div>
+                    <div class="bundle-price">$500</div>
+                    <div class="bundle-save">Save $100/month</div>
+                    <div class="bundle-details">All 10 Tier 1 Tools<br>(Regular price: $600)</div>
+                    <button class="bundle-button">Add Bundle</button>
+                </div>
+                
+                <div class="bundle-card" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);">
+                    <div class="bundle-name">Professional Bundle</div>
+                    <div class="bundle-price">$1,000</div>
+                    <div class="bundle-save">Save $200/month</div>
+                    <div class="bundle-details">All 10 Tier 2 Tools<br>(Regular price: $1,200)</div>
+                    <button class="bundle-button">Add Bundle</button>
+                </div>
+                
+                <div class="bundle-card" style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);">
+                    <div class="bundle-name">Enterprise Bundle</div>
+                    <div class="bundle-price">$1,500</div>
+                    <div class="bundle-save">Save $300/month</div>
+                    <div class="bundle-details">All 10 Tier 3 Tools<br>(Regular price: $1,800)</div>
+                    <button class="bundle-button">Add Bundle</button>
+                </div>
+                
+                <div class="bundle-card" style="background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);">
+                    <div class="bundle-name">Complete Toolkit</div>
+                    <div class="bundle-price">$2,500</div>
+                    <div class="bundle-save">Save $600/month</div>
+                    <div class="bundle-details">All 30 Tools Included<br>(Regular price: $3,100)</div>
+                    <button class="bundle-button">Add Bundle</button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Tier 1 Tools: $100/month -->
+        <div class="tier-section">
+            <div class="tier-header">
+                <div class="tier-info">
+                    <h2>⚡ Tier 1 Tools</h2>
+                    <p>Essential productivity boosters for everyday tasks</p>
+                </div>
+                <div class="tier-pricing">
+                    <div class="tier-price">$100</div>
+                    <div class="tier-period">per tool/month</div>
+                </div>
+            </div>
+            <div class="tools-grid">
+                <div class="tool-card">
+                    <div class="tool-header">
+                        <div class="tool-name">Budget Calculator</div>
+                        <div class="tool-badge">Real Estate</div>
+                    </div>
+                    <div class="tool-description">Calculate client budgets based on debt-to-income ratios, down payment, and current interest rates. Instant affordability analysis.</div>
+                    <button class="tool-add">Add for $100/mo</button>
+                </div>
+                
+                <div class="tool-card">
+                    <div class="tool-header">
+                        <div class="tool-name">Property Alert System</div>
+                        <div class="tool-badge">Real Estate</div>
+                    </div>
+                    <div class="tool-description">Auto-notify clients when properties matching their criteria hit the market before they see them on Zillow. First-mover advantage.</div>
+                    <button class="tool-add">Add for $100/mo</button>
+                </div>
+                
+                <div class="tool-card">
+                    <div class="tool-header">
+                        <div class="tool-name">Communication Preference Tracker</div>
+                        <div class="tool-badge">Real Estate</div>
+                    </div>
+                    <div class="tool-description">Track how each client prefers to be contacted (text, email, call) and for what topics. Personalize every interaction.</div>
+                    <button class="tool-add">Add for $100/mo</button>
+                </div>
+                
+                <div class="tool-card">
+                    <div class="tool-header">
+                        <div class="tool-name">Marketing Assistant (Basic)</div>
+                        <div class="tool-badge">Real Estate</div>
+                    </div>
+                    <div class="tool-description">Auto-generate listing descriptions, social media posts, and email campaigns from property details. Save 5+ hours weekly.</div>
+                    <button class="tool-add">Add for $100/mo</button>
+                </div>
+                
+                <div class="tool-card">
+                    <div class="tool-header">
+                        <div class="tool-name">Document Processing AI</div>
+                        <div class="tool-badge ai">AI Tool</div>
+                    </div>
+                    <div class="tool-description">Extract key information from contracts, leases, and disclosures automatically. OCR and intelligent parsing included.</div>
+                    <button class="tool-add">Add for $100/mo</button>
+                </div>
+                
+                <div class="tool-card">
+                    <div class="tool-header">
+                        <div class="tool-name">AI Email Assistant</div>
+                        <div class="tool-badge ai">AI Tool</div>
+                    </div>
+                    <div class="tool-description">Draft professional emails, respond to inquiries, and schedule follow-ups using natural language. Smart templates included.</div>
+                    <button class="tool-add">Add for $100/mo</button>
+                </div>
+                
+                <div class="tool-card">
+                    <div class="tool-header">
+                        <div class="tool-name">AI Meeting Scheduler</div>
+                        <div class="tool-badge ai">AI Tool</div>
+                    </div>
+                    <div class="tool-description">Coordinate showings, closings, and meetings automatically. Syncs with your calendar and sends reminders to all parties.</div>
+                    <button class="tool-add">Add for $100/mo</button>
+                </div>
+                
+                <div class="tool-card">
+                    <div class="tool-header">
+                        <div class="tool-name">Booking Agent System</div>
+                        <div class="tool-badge">Real Estate</div>
+                    </div>
+                    <div class="tool-description">Allow clients to self-schedule property showings based on your availability. Automatic confirmation and reminder system.</div>
+                    <button class="tool-add">Add for $100/mo</button>
+                </div>
+                
+                <div class="tool-card">
+                    <div class="tool-header">
+                        <div class="tool-name">Voice Transcription</div>
+                        <div class="tool-badge ai">AI Tool</div>
+                    </div>
+                    <div class="tool-description">Transcribe client calls, property walkthroughs, and meetings. Searchable transcripts with action item extraction.</div>
+                    <button class="tool-add">Add for $100/mo</button>
+                </div>
+                
+                <div class="tool-card">
+                    <div class="tool-header">
+                        <div class="tool-name">Task Automation</div>
+                        <div class="tool-badge ai">AI Tool</div>
+                    </div>
+                    <div class="tool-description">Create custom workflows to automate repetitive tasks. If-then logic with no coding required.</div>
+                    <button class="tool-add">Add for $100/mo</button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Tier 2 Tools: $200/month -->
+        <div class="tier-section">
+            <div class="tier-header">
+                <div class="tier-info">
+                    <h2>🚀 Tier 2 Tools</h2>
+                    <p>Advanced features for competitive advantage</p>
+                </div>
+                <div class="tier-pricing">
+                    <div class="tier-price">$200</div>
+                    <div class="tier-period">per tool/month</div>
+                </div>
+            </div>
+            <div class="tools-grid">
+                <div class="tool-card">
+                    <div class="tool-header">
+                        <div class="tool-name">Client Prequalification Tool</div>
+                        <div class="tool-badge">Real Estate</div>
+                    </div>
+                    <div class="tool-description">Complete prequalification workflow with income verification, credit check integration, and approval likelihood scoring.</div>
+                    <button class="tool-add">Add for $200/mo</button>
+                </div>
+                
+                <div class="tool-card">
+                    <div class="tool-header">
+                        <div class="tool-name">Automated CMA Generator</div>
+                        <div class="tool-badge">Real Estate</div>
+                    </div>
+                    <div class="tool-description">Generate professional Comparative Market Analysis reports in 60 seconds. Pull recent sales, active listings, and market trends automatically.</div>
+                    <button class="tool-add">Add for $200/mo</button>
+                </div>
+                
+                <div class="tool-card">
+                    <div class="tool-header">
+                        <div class="tool-name">Virtual Tour Coordinator</div>
+                        <div class="tool-badge">Real Estate</div>
+                    </div>
+                    <div class="tool-description">Schedule and manage virtual showings with video conferencing, screen sharing, and recording capabilities for out-of-state buyers.</div>
+                    <button class="tool-add">Add for $200/mo</button>
+                </div>
+                
+                <div class="tool-card">
+                    <div class="tool-header">
+                        <div class="tool-name">Market Data Integration</div>
+                        <div class="tool-badge">Real Estate</div>
+                    </div>
+                    <div class="tool-description">Deep analytics on which markets and demographics to target. Track success rates by location, price point, and property type.</div>
+                    <button class="tool-add">Add for $200/mo</button>
+                </div>
+                
+                <div class="tool-card">
+                    <div class="tool-header">
+                        <div class="tool-name">Agent Performance Analytics</div>
+                        <div class="tool-badge">Real Estate</div>
+                    </div>
+                    <div class="tool-description">Advanced metrics, conversion funnels, and coaching recommendations. Identify top performers and replicate their strategies.</div>
+                    <button class="tool-add">Add for $200/mo</button>
+                </div>
+                
+                <div class="tool-card">
+                    <div class="tool-header">
+                        <div class="tool-name">Referral Network Manager</div>
+                        <div class="tool-badge">Real Estate</div>
+                    </div>
+                    <div class="tool-description">Track referrals given and received, automatic thank you workflows, referral fee calculations, and partnership management.</div>
+                    <button class="tool-add">Add for $200/mo</button>
+                </div>
+                
+                <div class="tool-card">
+                    <div class="tool-header">
+                        <div class="tool-name">AI Contract Review</div>
+                        <div class="tool-badge ai">AI Tool</div>
+                    </div>
+                    <div class="tool-description">Scan contracts for red flags, missing clauses, and unusual terms. Summarize key points in plain language.</div>
+                    <button class="tool-add">Add for $200/mo</button>
+                </div>
+                
+                <div class="tool-card">
+                    <div class="tool-header">
+                        <div class="tool-name">AI Social Media Manager</div>
+                        <div class="tool-badge ai">AI Tool</div>
+                    </div>
+                    <div class="tool-description">Generate months of social content, schedule posts across platforms, and respond to comments automatically. Brand voice learning included.</div>
+                    <button class="tool-add">Add for $200/mo</button>
+                </div>
+                
+                <div class="tool-card">
+                    <div class="tool-header">
+                        <div class="tool-name">AI Chatbot Builder</div>
+                        <div class="tool-badge ai">AI Tool</div>
+                    </div>
+                    <div class="tool-description">Deploy custom chatbots on your website to qualify leads, answer FAQs, and schedule showings 24/7.</div>
+                    <button class="tool-add">Add for $200/mo</button>
+                </div>
+                
+                <div class="tool-card">
+                    <div class="tool-header">
+                        <div class="tool-name">Transaction Milestone Tracker</div>
+                        <div class="tool-badge">Real Estate</div>
+                    </div>
+                    <div class="tool-description">Advanced deal tracking with sales goals, monthly quotas, and predictive close probability. Gamification features included.</div>
+                    <button class="tool-add">Add for $200/mo</button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Tier 3 Tools: $300/month -->
+        <div class="tier-section">
+            <div class="tier-header">
+                <div class="tier-info">
+                    <h2>💎 Tier 3 Tools</h2>
+                    <p>Premium intelligence for maximum performance</p>
+                </div>
+                <div class="tier-pricing">
+                    <div class="tier-price">$300</div>
+                    <div class="tier-period">per tool/month</div>
+                </div>
+            </div>
+            <div class="tools-grid">
+                <div class="tool-card">
+                    <div class="tool-header">
+                        <div class="tool-name">Rate Pricing Calculator</div>
+                        <div class="tool-badge">Real Estate</div>
+                    </div>
+                    <div class="tool-description">Real-time mortgage rate pricing for clients based on credit score, down payment, and loan type. Integrated with multiple lenders.</div>
+                    <button class="tool-add">Add for $300/mo</button>
+                </div>
+                
+                <div class="tool-card">
+                    <div class="tool-header">
+                        <div class="tool-name">AI House Shopping Assistant</div>
+                        <div class="tool-badge ai">AI Tool</div>
+                    </div>
+                    <div class="tool-description">Intelligent property recommendations based on client behavior, preferences, and historical data. Learns from every interaction.</div>
+                    <button class="tool-add">Add for $300/mo</button>
+                </div>
+                
+                <div class="tool-card">
+                    <div class="tool-header">
+                        <div class="tool-name">24/7 Lead Capture & Response</div>
+                        <div class="tool-badge">Real Estate</div>
+                    </div>
+                    <div class="tool-description">Never miss a lead. Instant responses to inquiries day or night with intelligent qualification and agent handoff.</div>
+                    <button class="tool-add">Add for $300/mo</button>
+                </div>
+                
+                <div class="tool-card">
+                    <div class="tool-header">
+                        <div class="tool-name">Mortgage Lender Integration</div>
+                        <div class="tool-badge">Real Estate</div>
+                    </div>
+                    <div class="tool-description">Real-time preapproval status updates, not just estimates. Connect directly with top lenders for accurate financing information.</div>
+                    <button class="tool-add">Add for $300/mo</button>
+                </div>
+                
+                <div class="tool-card">
+                    <div class="tool-header">
+                        <div class="tool-name">Advanced Marketing Suite</div>
+                        <div class="tool-badge">Real Estate</div>
+                    </div>
+                    <div class="tool-description">Complete marketing automation with video generation, 3D renderings, virtual staging, and multi-channel attribution.</div>
+                    <button class="tool-add">Add for $300/mo</button>
+                </div>
+                
+                <div class="tool-card">
+                    <div class="tool-header">
+                        <div class="tool-name">Advanced Lead Generation</div>
+                        <div class="tool-badge">Real Estate</div>
+                    </div>
+                    <div class="tool-description">Predictive lead targeting, lookalike audience generation, and automated ad optimization across Google, Facebook, and Zillow.</div>
+                    <button class="tool-add">Add for $300/mo</button>
+                </div>
+                
+                <div class="tool-card">
+                    <div class="tool-header">
+                        <div class="tool-name">CRM Enhancement Suite</div>
+                        <div class="tool-badge">Real Estate</div>
+                    </div>
+                    <div class="tool-description">Advanced segmentation, behavioral triggers, predictive churn analysis, and lifetime value forecasting for every contact.</div>
+                    <button class="tool-add">Add for $300/mo</button>
+                </div>
+                
+                <div class="tool-card">
+                    <div class="tool-header">
+                        <div class="tool-name">Voice Assistant for Real Estate</div>
+                        <div class="tool-badge ai">AI Tool</div>
+                    </div>
+                    <div class="tool-description">Conversational AI that handles client calls, schedules appointments, answers questions, and qualifies leads via phone.</div>
+                    <button class="tool-add">Add for $300/mo</button>
+                </div>
+                
+                <div class="tool-card">
+                    <div class="tool-header">
+                        <div class="tool-name">AI Data Insights & Predictive Analytics</div>
+                        <div class="tool-badge ai">AI Tool</div>
+                    </div>
+                    <div class="tool-description">Machine learning models that predict market trends, buyer behavior, property values, and optimal pricing strategies.</div>
+                    <button class="tool-add">Add for $300/mo</button>
+                </div>
+                
+                <div class="tool-card">
+                    <div class="tool-header">
+                        <div class="tool-name">AI Report Generator</div>
+                        <div class="tool-badge ai">AI Tool</div>
+                    </div>
+                    <div class="tool-description">Automatically create investor reports, market analyses, business reviews, and executive summaries from your data.</div>
+                    <button class="tool-add">Add for $300/mo</button>
+                </div>
+            </div>
+        </div>
+        
+        <div class="usage-note">
+            <h3>📊 Usage-Based Pricing Included</h3>
+            <p>All tools include built-in usage tracking. You'll always know exactly what you're using and what it costs.</p>
+            <p style="margin-top: 10px;"><strong>Example:</strong> API calls, AI computations, SMS messages, and data storage are tracked in real-time with transparent monthly billing.</p>
+        </div>
+        
+        <div style="text-align: center; color: white; margin-top: 50px;">
+            <p style="font-size: 18px;"><strong>Questions about which tools are right for you?</strong></p>
+            <p style="font-size: 16px; margin-top: 10px; opacity: 0.9;">Our team can help you build the perfect toolkit for your business.</p>
+            <button style="background: white; color: #11998e; border: none; padding: 16px 40px; border-radius: 10px; font-size: 18px; font-weight: 600; cursor: pointer; margin-top: 20px;">Talk to a Specialist</button>
+        </div>
+    </div>
+</body>
+</html>
