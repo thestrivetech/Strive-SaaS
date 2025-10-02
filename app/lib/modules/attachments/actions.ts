@@ -5,6 +5,7 @@ import { createServerClient } from '@supabase/ssr';
 import { cookies } from 'next/headers';
 import { prisma } from '@/lib/prisma';
 import { getCurrentUser } from '@/lib/auth/utils';
+import { getUserOrganizationId } from '@/lib/auth/user-helpers';
 import {
   uploadAttachmentSchema,
   deleteAttachmentSchema,
@@ -24,6 +25,7 @@ export async function uploadAttachment(formData: FormData) {
       return { success: false, error: 'Unauthorized' };
     }
 
+    const organizationId = getUserOrganizationId(user);
     const file = formData.get('file') as File;
     const entityType = formData.get('entityType') as string;
     const entityId = formData.get('entityId') as string;
@@ -39,7 +41,7 @@ export async function uploadAttachment(formData: FormData) {
       fileName: file.name,
       fileSize: file.size,
       mimeType: file.type,
-      organizationId: user.organizationId,
+      organizationId,
     });
 
     // Create Supabase client
@@ -57,7 +59,7 @@ export async function uploadAttachment(formData: FormData) {
     );
 
     // Upload to Supabase Storage
-    const filePath = `${user.organizationId}/${entityType}/${entityId}/${Date.now()}_${file.name}`;
+    const filePath = `${organizationId}/${entityType}/${entityId}/${Date.now()}_${file.name}`;
 
     const { data: uploadData, error: uploadError } = await supabase.storage
       .from('attachments')
@@ -80,7 +82,7 @@ export async function uploadAttachment(formData: FormData) {
         filePath: uploadData.path,
         entityType: validated.entityType,
         entityId: validated.entityId,
-        organizationId: user.organizationId,
+        organizationId,
         uploadedById: user.id,
       },
     });
@@ -89,7 +91,7 @@ export async function uploadAttachment(formData: FormData) {
     await prisma.activityLog.create({
       data: {
         userId: user.id,
-        organizationId: user.organizationId,
+        organizationId,
         action: 'CREATE',
         entityType: 'Attachment',
         entityId: attachment.id,
@@ -116,13 +118,14 @@ export async function deleteAttachment(input: unknown) {
       return { success: false, error: 'Unauthorized' };
     }
 
+    const organizationId = getUserOrganizationId(user);
     const validated = deleteAttachmentSchema.parse(input);
 
     // Verify ownership and get attachment details
     const attachment = await prisma.attachment.findFirst({
       where: {
         id: validated.attachmentId,
-        organizationId: user.organizationId,
+        organizationId,
       },
     });
 
@@ -162,7 +165,7 @@ export async function deleteAttachment(input: unknown) {
     await prisma.activityLog.create({
       data: {
         userId: user.id,
-        organizationId: user.organizationId,
+        organizationId,
         action: 'DELETE',
         entityType: 'Attachment',
         entityId: attachment.id,
@@ -189,11 +192,13 @@ export async function getAttachmentUrl(attachmentId: string) {
       return { success: false, error: 'Unauthorized' };
     }
 
+    const organizationId = getUserOrganizationId(user);
+
     // Verify ownership
     const attachment = await prisma.attachment.findFirst({
       where: {
         id: attachmentId,
-        organizationId: user.organizationId,
+        organizationId,
       },
     });
 
@@ -249,11 +254,12 @@ export async function getAttachments(input: unknown) {
       return { success: false, error: 'Unauthorized' };
     }
 
+    const organizationId = getUserOrganizationId(user);
     const validated = getAttachmentsSchema.parse(input);
 
     const attachments = await prisma.attachment.findMany({
       where: {
-        organizationId: user.organizationId,
+        organizationId,
         entityType: validated.entityType,
         entityId: validated.entityId,
       },

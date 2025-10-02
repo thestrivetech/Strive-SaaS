@@ -2,6 +2,7 @@
 
 import { prisma } from '@/lib/prisma';
 import { getCurrentUser } from '@/lib/auth/auth-helpers';
+import { getUserOrganizationId } from '@/lib/auth/user-helpers';
 import {
   CreateNotificationSchema,
   MarkNotificationReadSchema,
@@ -56,6 +57,7 @@ export async function markNotificationRead(input: unknown) {
       return { success: false, error: 'Unauthorized' };
     }
 
+    const organizationId = getUserOrganizationId(user);
     const validated = MarkNotificationReadSchema.parse(input);
 
     // Verify ownership
@@ -63,7 +65,7 @@ export async function markNotificationRead(input: unknown) {
       where: {
         id: validated.notificationId,
         userId: user.id,
-        organizationId: user.organizationId,
+        organizationId,
       },
     });
 
@@ -100,10 +102,12 @@ export async function markAllNotificationsRead() {
       return { success: false, error: 'Unauthorized' };
     }
 
+    const organizationId = getUserOrganizationId(user);
+
     const result = await prisma.notification.updateMany({
       where: {
         userId: user.id,
-        organizationId: user.organizationId,
+        organizationId,
         read: false,
       },
       data: { read: true },
@@ -136,6 +140,7 @@ export async function bulkMarkNotificationsRead(input: unknown) {
       return { success: false, error: 'Unauthorized' };
     }
 
+    const organizationId = getUserOrganizationId(user);
     const validated = BulkMarkReadSchema.parse(input);
 
     // Verify ownership of all notifications
@@ -143,7 +148,7 @@ export async function bulkMarkNotificationsRead(input: unknown) {
       where: {
         id: { in: validated.notificationIds },
         userId: user.id,
-        organizationId: user.organizationId,
+        organizationId,
       },
       select: { id: true },
     });
@@ -189,6 +194,7 @@ export async function deleteNotification(input: unknown) {
       return { success: false, error: 'Unauthorized' };
     }
 
+    const organizationId = getUserOrganizationId(user);
     const validated = DeleteNotificationSchema.parse(input);
 
     // Verify ownership
@@ -196,7 +202,7 @@ export async function deleteNotification(input: unknown) {
       where: {
         id: validated.notificationId,
         userId: user.id,
-        organizationId: user.organizationId,
+        organizationId,
       },
     });
 

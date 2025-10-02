@@ -3,6 +3,7 @@
 import { z } from 'zod';
 import { prisma } from '@/lib/prisma';
 import { getCurrentUser } from '@/lib/auth/auth-helpers';
+import { getUserOrganizationId } from '@/lib/auth/user-helpers';
 import type { Prisma } from '@prisma/client';
 
 const BulkUpdateStatusSchema = z.object({
@@ -21,7 +22,7 @@ const BulkDeleteTasksSchema = z.object({
 
 const BulkUpdatePrioritySchema = z.object({
   taskIds: z.array(z.string().uuid()).min(1).max(100),
-  priority: z.enum(['LOW', 'MEDIUM', 'HIGH', 'URGENT']),
+  priority: z.enum(['LOW', 'MEDIUM', 'HIGH', 'CRITICAL']),
 });
 
 /**
@@ -34,13 +35,14 @@ export async function bulkUpdateTaskStatus(input: unknown) {
       return { success: false, error: 'Unauthorized' };
     }
 
+    const organizationId = getUserOrganizationId(user);
     const validated = BulkUpdateStatusSchema.parse(input);
 
     // Verify user has access to all tasks (multi-tenancy check)
     const tasks = await prisma.task.findMany({
       where: {
         id: { in: validated.taskIds },
-        project: { organizationId: user.organizationId },
+        project: { organizationId },
       },
       select: { id: true },
     });
@@ -65,11 +67,11 @@ export async function bulkUpdateTaskStatus(input: unknown) {
     await prisma.activityLog.create({
       data: {
         userId: user.id,
-        organizationId: user.organizationId,
+        organizationId,
         action: 'BULK_UPDATE_STATUS',
-        entityType: 'Task',
         entityId: validated.taskIds.join(','),
         details: {
+          entityType: 'Task',
           status: validated.status,
           count: validated.taskIds.length,
         } as Prisma.JsonObject,
@@ -101,13 +103,14 @@ export async function bulkAssignTasks(input: unknown) {
       return { success: false, error: 'Unauthorized' };
     }
 
+    const organizationId = getUserOrganizationId(user);
     const validated = BulkAssignTasksSchema.parse(input);
 
     // Verify user has access to all tasks
     const tasks = await prisma.task.findMany({
       where: {
         id: { in: validated.taskIds },
-        project: { organizationId: user.organizationId },
+        project: { organizationId },
       },
       select: { id: true },
     });
@@ -123,7 +126,7 @@ export async function bulkAssignTasks(input: unknown) {
     const assignee = await prisma.organizationMember.findFirst({
       where: {
         userId: validated.assigneeId,
-        organizationId: user.organizationId,
+        organizationId,
       },
     });
 
@@ -138,7 +141,7 @@ export async function bulkAssignTasks(input: unknown) {
     const result = await prisma.task.updateMany({
       where: { id: { in: validated.taskIds } },
       data: {
-        assigneeId: validated.assigneeId,
+        assignedToId: validated.assigneeId,
         updatedAt: new Date(),
       },
     });
@@ -147,11 +150,11 @@ export async function bulkAssignTasks(input: unknown) {
     await prisma.activityLog.create({
       data: {
         userId: user.id,
-        organizationId: user.organizationId,
+        organizationId,
         action: 'BULK_ASSIGN',
-        entityType: 'Task',
         entityId: validated.taskIds.join(','),
         details: {
+          entityType: 'Task',
           assigneeId: validated.assigneeId,
           count: validated.taskIds.length,
         } as Prisma.JsonObject,
@@ -183,13 +186,14 @@ export async function bulkUpdateTaskPriority(input: unknown) {
       return { success: false, error: 'Unauthorized' };
     }
 
+    const organizationId = getUserOrganizationId(user);
     const validated = BulkUpdatePrioritySchema.parse(input);
 
     // Verify user has access to all tasks
     const tasks = await prisma.task.findMany({
       where: {
         id: { in: validated.taskIds },
-        project: { organizationId: user.organizationId },
+        project: { organizationId },
       },
       select: { id: true },
     });
@@ -214,11 +218,11 @@ export async function bulkUpdateTaskPriority(input: unknown) {
     await prisma.activityLog.create({
       data: {
         userId: user.id,
-        organizationId: user.organizationId,
+        organizationId,
         action: 'BULK_UPDATE_PRIORITY',
-        entityType: 'Task',
         entityId: validated.taskIds.join(','),
         details: {
+          entityType: 'Task',
           priority: validated.priority,
           count: validated.taskIds.length,
         } as Prisma.JsonObject,
@@ -250,13 +254,14 @@ export async function bulkDeleteTasks(input: unknown) {
       return { success: false, error: 'Unauthorized' };
     }
 
+    const organizationId = getUserOrganizationId(user);
     const validated = BulkDeleteTasksSchema.parse(input);
 
     // Verify user has access to all tasks
     const tasks = await prisma.task.findMany({
       where: {
         id: { in: validated.taskIds },
-        project: { organizationId: user.organizationId },
+        project: { organizationId },
       },
       select: { id: true, title: true },
     });
@@ -277,11 +282,11 @@ export async function bulkDeleteTasks(input: unknown) {
     await prisma.activityLog.create({
       data: {
         userId: user.id,
-        organizationId: user.organizationId,
+        organizationId,
         action: 'BULK_DELETE',
-        entityType: 'Task',
         entityId: validated.taskIds.join(','),
         details: {
+          entityType: 'Task',
           count: validated.taskIds.length,
           taskTitles: tasks.map((t) => t.title),
         } as Prisma.JsonObject,

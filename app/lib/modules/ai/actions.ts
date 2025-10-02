@@ -1,7 +1,8 @@
 'use server';
 
-import { prisma } from '@/lib/database/prisma';
+import { prisma } from '@/lib/prisma';
 import { getCurrentUser } from '@/lib/auth/auth-helpers';
+import { getUserOrganizationId } from '@/lib/auth/user-helpers';
 import { getAIService, type AIMessage } from '@/lib/ai/service';
 import { isModelAvailable, getRateLimitForTier, type SubscriptionTier } from '@/lib/ai/config';
 import { SendMessageSchema, CreateConversationSchema } from './schemas';
@@ -41,6 +42,8 @@ export async function sendMessage(input: unknown) {
       return { success: false, error: 'Unauthorized' };
     }
 
+    const organizationId = getUserOrganizationId(user);
+
     // Validate input
     const validated = SendMessageSchema.parse(input);
 
@@ -77,7 +80,7 @@ export async function sendMessage(input: unknown) {
         where: {
           id: validated.conversationId,
           userId: user.id,
-          organizationId: user.organizationId,
+          organizationId,
         },
       });
 
@@ -116,7 +119,7 @@ export async function sendMessage(input: unknown) {
         where: {
           id: conversationId,
           userId: user.id,
-          organizationId: user.organizationId,
+          organizationId,
         },
       });
 
@@ -139,7 +142,7 @@ export async function sendMessage(input: unknown) {
       const newConversation = await prisma.aIConversation.create({
         data: {
           userId: user.id,
-          organizationId: user.organizationId,
+          organizationId,
           messages: [
             { role: 'user', content: validated.message, timestamp: new Date().toISOString() },
             { role: 'assistant', content: response.content, timestamp: new Date().toISOString() },
@@ -155,7 +158,7 @@ export async function sendMessage(input: unknown) {
     await prisma.activityLog.create({
       data: {
         userId: user.id,
-        organizationId: user.organizationId,
+        organizationId,
         action: 'AI_MESSAGE',
         entityType: 'AIConversation',
         entityId: conversationId,
@@ -197,12 +200,13 @@ export async function createConversation(input: unknown) {
       return { success: false, error: 'Unauthorized' };
     }
 
+    const organizationId = getUserOrganizationId(user);
     const validated = CreateConversationSchema.parse(input);
 
     const conversation = await prisma.aIConversation.create({
       data: {
         userId: user.id,
-        organizationId: user.organizationId,
+        organizationId,
         messages: [] as Prisma.JsonArray,
         model: validated.model,
         provider: validated.provider,
