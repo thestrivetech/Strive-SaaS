@@ -1,0 +1,703 @@
+
+> dashboard@0.1.0 build
+> next build --turbopack
+
+ ⚠ Warning: Next.js inferred your workspace root, but it may not be correct.
+ We detected multiple lockfiles and selected the directory of /Users/grant/package-lock.json as the root directory.
+ To silence this warning, set `turbopack.root` in your Next.js config, or consider removing one of the lockfiles if it's not needed.
+   See https://nextjs.org/docs/app/api-reference/config/next-config-js/turbopack#root-directory for more information.
+ Detected additional lockfiles: 
+   * /Users/grant/Documents/GitHub/Strive-SaaS/app/package-lock.json
+
+   ▲ Next.js 15.6.0-canary.33 (Turbopack)
+   - Environments: .env.local
+
+   Creating an optimized production build ...
+ ✓ Compiled successfully in 6.6s
+   Linting and checking validity of types ...
+
+Failed to compile.
+
+./app/(platform)/ai/layout.tsx
+17:9  Warning: 'session' is assigned a value but never used.  @typescript-eslint/no-unused-vars
+
+./app/(platform)/ai/page.tsx
+17:16  Warning: Async function 'AIPage' has too many lines (121). Maximum allowed is 50.  max-lines-per-function
+
+./app/(platform)/crm/[customerId]/page.tsx
+16:16  Warning: Async function 'CustomerDetailPage' has too many lines (220). Maximum allowed is 50.  max-lines-per-function
+
+./app/(platform)/crm/layout.tsx
+17:9  Warning: 'session' is assigned a value but never used.  @typescript-eslint/no-unused-vars
+
+./app/(platform)/crm/page.tsx
+2:29  Warning: 'CardDescription' is defined but never used.  @typescript-eslint/no-unused-vars
+3:10  Warning: 'Button' is defined but never used.  @typescript-eslint/no-unused-vars
+4:10  Warning: 'Input' is defined but never used.  @typescript-eslint/no-unused-vars
+15:10  Warning: 'Plus' is defined but never used.  @typescript-eslint/no-unused-vars
+15:16  Warning: 'Search' is defined but never used.  @typescript-eslint/no-unused-vars
+15:24  Warning: 'Filter' is defined but never used.  @typescript-eslint/no-unused-vars
+28:15  Warning: 'CustomerStatus' is defined but never used.  @typescript-eslint/no-unused-vars
+28:31  Warning: 'CustomerSource' is defined but never used.  @typescript-eslint/no-unused-vars
+30:16  Warning: Async function 'CRMPage' has too many lines (61). Maximum allowed is 50.  max-lines-per-function
+68:18  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+100:1  Warning: Async function 'CustomerListContent' has too many lines (189). Maximum allowed is 50.  max-lines-per-function
+107:12  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+240:52  Error: `"` can be escaped with `&quot;`, `&ldquo;`, `&#34;`, `&rdquo;`.  react/no-unescaped-entities
+240:65  Error: `"` can be escaped with `&quot;`, `&ldquo;`, `&#34;`, `&rdquo;`.  react/no-unescaped-entities
+
+./app/(platform)/dashboard/layout.tsx
+17:9  Warning: 'session' is assigned a value but never used.  @typescript-eslint/no-unused-vars
+
+./app/(platform)/dashboard/page.tsx
+7:3  Warning: 'TrendingUp' is defined but never used.  @typescript-eslint/no-unused-vars
+12:3  Warning: 'Target' is defined but never used.  @typescript-eslint/no-unused-vars
+16:16  Warning: Async function 'DashboardPage' has too many lines (230). Maximum allowed is 50.  max-lines-per-function
+
+./app/(platform)/login/page.tsx
+3:20  Warning: 'useEffect' is defined but never used.  @typescript-eslint/no-unused-vars
+16:16  Warning: Function 'LoginPage' has too many lines (324). Maximum allowed is 50.  max-lines-per-function
+82:15  Warning: 'confirmPassword' is assigned a value but never used.  @typescript-eslint/no-unused-vars
+
+./app/(platform)/projects/[projectId]/page.tsx
+22:16  Warning: Async function 'ProjectDetailPage' has too many lines (319). Maximum allowed is 50.  max-lines-per-function
+54:47  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+103:35  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+220:43  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+248:59  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+
+./app/(platform)/projects/layout.tsx
+17:9  Warning: 'session' is assigned a value but never used.  @typescript-eslint/no-unused-vars
+
+./app/(platform)/projects/page.tsx
+3:10  Warning: 'Button' is defined but never used.  @typescript-eslint/no-unused-vars
+8:3  Warning: 'Plus' is defined but never used.  @typescript-eslint/no-unused-vars
+26:15  Warning: 'ProjectStatus' is defined but never used.  @typescript-eslint/no-unused-vars
+26:30  Warning: 'Priority' is defined but never used.  @typescript-eslint/no-unused-vars
+81:1  Warning: Async function 'ProjectListContent' has too many lines (245). Maximum allowed is 50.  max-lines-per-function
+90:17  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+92:18  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+264:25  Error: `"` can be escaped with `&quot;`, `&ldquo;`, `&#34;`, `&rdquo;`.  react/no-unescaped-entities
+264:37  Error: `"` can be escaped with `&quot;`, `&ldquo;`, `&#34;`, `&rdquo;`.  react/no-unescaped-entities
+270:24  Warning: Arrow function has too many lines (57). Maximum allowed is 50.  max-lines-per-function
+
+./app/(platform)/settings/layout.tsx
+17:9  Warning: 'session' is assigned a value but never used.  @typescript-eslint/no-unused-vars
+
+./app/(platform)/settings/page.tsx
+12:3  Warning: 'Building' is defined but never used.  @typescript-eslint/no-unused-vars
+14:3  Warning: 'Bell' is defined but never used.  @typescript-eslint/no-unused-vars
+15:3  Warning: 'Shield' is defined but never used.  @typescript-eslint/no-unused-vars
+17:3  Warning: 'Mail' is defined but never used.  @typescript-eslint/no-unused-vars
+18:3  Warning: 'Globe' is defined but never used.  @typescript-eslint/no-unused-vars
+19:3  Warning: 'Palette' is defined but never used.  @typescript-eslint/no-unused-vars
+23:16  Warning: Async function 'SettingsPage' has too many lines (320). Maximum allowed is 50.  max-lines-per-function
+
+./app/(platform)/settings/team/page.tsx
+26:16  Warning: Async function 'TeamPage' has too many lines (185). Maximum allowed is 50.  max-lines-per-function
+87:37  Error: `'` can be escaped with `&apos;`, `&lsquo;`, `&#39;`, `&rsquo;`.  react/no-unescaped-entities
+153:28  Warning: Arrow function has too many lines (60). Maximum allowed is 50.  max-lines-per-function
+
+./app/(platform)/tools/layout.tsx
+17:9  Warning: 'session' is assigned a value but never used.  @typescript-eslint/no-unused-vars
+
+./app/(platform)/tools/page.tsx
+21:16  Warning: Async function 'ToolsPage' has too many lines (248). Maximum allowed is 50.  max-lines-per-function
+
+./app/(web)/about/page.tsx
+3:30  Warning: 'CheckCircle' is defined but never used.  @typescript-eslint/no-unused-vars
+3:43  Warning: 'Calendar' is defined but never used.  @typescript-eslint/no-unused-vars
+3:53  Warning: 'Rocket' is defined but never used.  @typescript-eslint/no-unused-vars
+3:61  Warning: 'Zap' is defined but never used.  @typescript-eslint/no-unused-vars
+3:66  Warning: 'Users' is defined but never used.  @typescript-eslint/no-unused-vars
+5:8  Warning: 'TeamMember' is defined but never used.  @typescript-eslint/no-unused-vars
+6:10  Warning: 'Card' is defined but never used.  @typescript-eslint/no-unused-vars
+6:16  Warning: 'CardContent' is defined but never used.  @typescript-eslint/no-unused-vars
+14:17  Warning: Arrow function has too many lines (529). Maximum allowed is 50.  max-lines-per-function
+132:19  Error: `'` can be escaped with `&apos;`, `&lsquo;`, `&#39;`, `&rsquo;`.  react/no-unescaped-entities
+132:99  Error: `'` can be escaped with `&apos;`, `&lsquo;`, `&#39;`, `&rsquo;`.  react/no-unescaped-entities
+228:35  Error: `'` can be escaped with `&apos;`, `&lsquo;`, `&#39;`, `&rsquo;`.  react/no-unescaped-entities
+228:153  Error: `'` can be escaped with `&apos;`, `&lsquo;`, `&#39;`, `&rsquo;`.  react/no-unescaped-entities
+231:254  Error: `'` can be escaped with `&apos;`, `&lsquo;`, `&#39;`, `&rsquo;`.  react/no-unescaped-entities
+231:271  Error: `'` can be escaped with `&apos;`, `&lsquo;`, `&#39;`, `&rsquo;`.  react/no-unescaped-entities
+241:54  Error: `'` can be escaped with `&apos;`, `&lsquo;`, `&#39;`, `&rsquo;`.  react/no-unescaped-entities
+241:82  Error: `'` can be escaped with `&apos;`, `&lsquo;`, `&#39;`, `&rsquo;`.  react/no-unescaped-entities
+241:113  Error: `'` can be escaped with `&apos;`, `&lsquo;`, `&#39;`, `&rsquo;`.  react/no-unescaped-entities
+244:44  Error: `'` can be escaped with `&apos;`, `&lsquo;`, `&#39;`, `&rsquo;`.  react/no-unescaped-entities
+244:70  Error: `'` can be escaped with `&apos;`, `&lsquo;`, `&#39;`, `&rsquo;`.  react/no-unescaped-entities
+244:94  Error: `'` can be escaped with `&apos;`, `&lsquo;`, `&#39;`, `&rsquo;`.  react/no-unescaped-entities
+247:28  Error: `'` can be escaped with `&apos;`, `&lsquo;`, `&#39;`, `&rsquo;`.  react/no-unescaped-entities
+247:139  Error: `'` can be escaped with `&apos;`, `&lsquo;`, `&#39;`, `&rsquo;`.  react/no-unescaped-entities
+247:171  Error: `'` can be escaped with `&apos;`, `&lsquo;`, `&#39;`, `&rsquo;`.  react/no-unescaped-entities
+252:169  Error: `"` can be escaped with `&quot;`, `&ldquo;`, `&#34;`, `&rdquo;`.  react/no-unescaped-entities
+252:182  Error: `"` can be escaped with `&quot;`, `&ldquo;`, `&#34;`, `&rdquo;`.  react/no-unescaped-entities
+252:188  Error: `'` can be escaped with `&apos;`, `&lsquo;`, `&#39;`, `&rsquo;`.  react/no-unescaped-entities
+252:329  Error: `'` can be escaped with `&apos;`, `&lsquo;`, `&#39;`, `&rsquo;`.  react/no-unescaped-entities
+256:94  Error: `'` can be escaped with `&apos;`, `&lsquo;`, `&#39;`, `&rsquo;`.  react/no-unescaped-entities
+273:15  Warning: Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` or a custom image loader to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+539:1  Error: File has too many lines (541). Maximum allowed is 500.  max-lines
+
+./app/(web)/assessment/page.tsx
+10:10  Warning: 'CheckCircle' is defined but never used.  @typescript-eslint/no-unused-vars
+17:35  Warning: Arrow function has too many lines (86). Maximum allowed is 50.  max-lines-per-function
+20:17  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+117:20  Warning: Arrow function has too many lines (528). Maximum allowed is 50.  max-lines-per-function
+135:10  Warning: 'isSubmitted' is assigned a value but never used.  @typescript-eslint/no-unused-vars
+195:31  Warning: Async arrow function has too many lines (57). Maximum allowed is 50.  max-lines-per-function
+284:22  Warning: Arrow function has too many lines (309). Maximum allowed is 50.  max-lines-per-function
+565:1  Error: File has too many lines (629). Maximum allowed is 500.  max-lines
+600:20  Error: `'` can be escaped with `&apos;`, `&lsquo;`, `&#39;`, `&rsquo;`.  react/no-unescaped-entities
+616:35  Error: `'` can be escaped with `&apos;`, `&lsquo;`, `&#39;`, `&rsquo;`.  react/no-unescaped-entities
+619:73  Error: `'` can be escaped with `&apos;`, `&lsquo;`, `&#39;`, `&rsquo;`.  react/no-unescaped-entities
+
+./app/(web)/chatbot-sai/page.tsx
+4:10  Warning: 'Badge' is defined but never used.  @typescript-eslint/no-unused-vars
+5:29  Warning: 'CardHeader' is defined but never used.  @typescript-eslint/no-unused-vars
+8:8  Warning: 'chatbotManager' is defined but never used.  @typescript-eslint/no-unused-vars
+9:8  Warning: 'performanceMonitor' is defined but never used.  @typescript-eslint/no-unused-vars
+54:11  Warning: 'debugHeight' is assigned a value but never used.  @typescript-eslint/no-unused-vars
+56:11  Warning: 'infoCardsHeight' is assigned a value but never used.  @typescript-eslint/no-unused-vars
+81:20  Warning: Arrow function has too many lines (387). Maximum allowed is 50.  max-lines-per-function
+112:13  Warning: Arrow function has too many lines (60). Maximum allowed is 50.  max-lines-per-function
+196:6  Warning: React Hook useEffect has missing dependencies: 'handleChatbotError' and 'handleChatbotReady'. Either include them or remove the dependency array.  react-hooks/exhaustive-deps
+
+./app/(web)/contact/page.tsx
+4:48  Warning: 'Download' is defined but never used.  @typescript-eslint/no-unused-vars
+17:10  Warning: 'generatePDF' is defined but never used.  @typescript-eslint/no-unused-vars
+19:16  Warning: Function 'ContactPage' has too many lines (573). Maximum allowed is 50.  max-lines-per-function
+89:9  Warning: 'isPhoneValid' is assigned a value but never used.  @typescript-eslint/no-unused-vars
+157:24  Warning: Async arrow function has too many lines (87). Maximum allowed is 50.  max-lines-per-function
+318:49  Error: `'` can be escaped with `&apos;`, `&lsquo;`, `&#39;`, `&rsquo;`.  react/no-unescaped-entities
+318:166  Error: `'` can be escaped with `&apos;`, `&lsquo;`, `&#39;`, `&rsquo;`.  react/no-unescaped-entities
+555:1  Error: File has too many lines (588). Maximum allowed is 500.  max-lines
+
+./app/(web)/cookies/page.tsx
+1:17  Warning: Arrow function has too many lines (60). Maximum allowed is 50.  max-lines-per-function
+
+./app/(web)/onboarding/page.tsx
+9:29  Warning: 'CardHeader' is defined but never used.  @typescript-eslint/no-unused-vars
+9:41  Warning: 'CardTitle' is defined but never used.  @typescript-eslint/no-unused-vars
+10:35  Warning: 'Calendar' is defined but never used.  @typescript-eslint/no-unused-vars
+12:20  Warning: Arrow function has too many lines (432). Maximum allowed is 50.  max-lines-per-function
+75:22  Warning: Arrow function has too many lines (295). Maximum allowed is 50.  max-lines-per-function
+294:34  Error: `'` can be escaped with `&apos;`, `&lsquo;`, `&#39;`, `&rsquo;`.  react/no-unescaped-entities
+315:27  Error: `'` can be escaped with `&apos;`, `&lsquo;`, `&#39;`, `&rsquo;`.  react/no-unescaped-entities
+347:53  Error: `'` can be escaped with `&apos;`, `&lsquo;`, `&#39;`, `&rsquo;`.  react/no-unescaped-entities
+
+./app/(web)/portfolio/page.tsx
+6:100  Warning: 'Github' is defined but never used.  @typescript-eslint/no-unused-vars
+6:108  Warning: 'Monitor' is defined but never used.  @typescript-eslint/no-unused-vars
+6:117  Warning: 'Smartphone' is defined but never used.  @typescript-eslint/no-unused-vars
+6:129  Warning: 'ChevronRight' is defined but never used.  @typescript-eslint/no-unused-vars
+6:151  Warning: 'ChevronDown' is defined but never used.  @typescript-eslint/no-unused-vars
+13:60  Warning: 'SelectValue' is defined but never used.  @typescript-eslint/no-unused-vars
+21:19  Warning: Arrow function has too many lines (389). Maximum allowed is 50.  max-lines-per-function
+233:35  Warning: Arrow function has too many lines (88). Maximum allowed is 50.  max-lines-per-function
+244:21  Warning: Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` or a custom image loader to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+344:17  Warning: Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` or a custom image loader to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+
+./app/(web)/privacy/page.tsx
+1:17  Warning: Arrow function has too many lines (59). Maximum allowed is 50.  max-lines-per-function
+
+./app/(web)/request/page.tsx
+21:35  Warning: Arrow function has too many lines (90). Maximum allowed is 50.  max-lines-per-function
+28:13  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+125:17  Warning: Arrow function has too many lines (729). Maximum allowed is 50.  max-lines-per-function
+226:52  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+358:139  Error: `'` can be escaped with `&apos;`, `&lsquo;`, `&#39;`, `&rsquo;`.  react/no-unescaped-entities
+369:62  Error: `'` can be escaped with `&apos;`, `&lsquo;`, `&#39;`, `&rsquo;`.  react/no-unescaped-entities
+568:1  Error: File has too many lines (838). Maximum allowed is 500.  max-lines
+811:36  Error: `'` can be escaped with `&apos;`, `&lsquo;`, `&#39;`, `&rsquo;`.  react/no-unescaped-entities
+896:23  Error: `'` can be escaped with `&apos;`, `&lsquo;`, `&#39;`, `&rsquo;`.  react/no-unescaped-entities
+
+./app/(web)/resources/page.tsx
+12:60  Warning: 'SelectValue' is defined but never used.  @typescript-eslint/no-unused-vars
+19:16  Warning: 'QuizQuestion' is defined but never used.  @typescript-eslint/no-unused-vars
+28:19  Warning: Arrow function has too many lines (1600). Maximum allowed is 50.  max-lines-per-function
+124:6  Warning: React Hook useEffect has an unnecessary dependency: 'technologyCards'. Either exclude it or remove the dependency array. Outer scope values like 'technologyCards' aren't valid dependencies because mutating them doesn't re-render the component.  react-hooks/exhaustive-deps
+143:6  Warning: React Hook useEffect has a missing dependency: 'getSubFilterOptionsForActiveFilter'. Either include it or remove the dependency array. Outer scope values like 'resources' aren't valid dependencies because mutating them doesn't re-render the component.  react-hooks/exhaustive-deps
+187:46  Warning: Arrow function has too many lines (90). Maximum allowed is 50.  max-lines-per-function
+297:36  Warning: Arrow function has too many lines (111). Maximum allowed is 50.  max-lines-per-function
+355:32  Warning: Arrow function has too many lines (57). Maximum allowed is 50.  max-lines-per-function
+414:27  Warning: Arrow function has too many lines (145). Maximum allowed is 50.  max-lines-per-function
+510:34  Warning: Arrow function has too many lines (56). Maximum allowed is 50.  max-lines-per-function
+611:1  Error: File has too many lines (1622). Maximum allowed is 500.  max-lines
+797:20  Error: `'` can be escaped with `&apos;`, `&lsquo;`, `&#39;`, `&rsquo;`.  react/no-unescaped-entities
+825:21  Warning: Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` or a custom image loader to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+1074:38  Warning: Arrow function has too many lines (66). Maximum allowed is 50.  max-lines-per-function
+1152:40  Warning: Arrow function has too many lines (67). Maximum allowed is 50.  max-lines-per-function
+1232:38  Warning: Arrow function has too many lines (101). Maximum allowed is 50.  max-lines-per-function
+1250:23  Warning: Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` or a custom image loader to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+1436:17  Warning: Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` or a custom image loader to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+
+./app/(web)/solutions/ai-automation/page.tsx
+6:22  Warning: Arrow function has too many lines (85). Maximum allowed is 50.  max-lines-per-function
+
+./app/(web)/solutions/blockchain/page.tsx
+6:20  Warning: Arrow function has too many lines (85). Maximum allowed is 50.  max-lines-per-function
+
+./app/(web)/solutions/business-intelligence/page.tsx
+6:23  Warning: Arrow function has too many lines (85). Maximum allowed is 50.  max-lines-per-function
+
+./app/(web)/solutions/case-studies/healthcare/page.tsx
+6:29  Warning: Arrow function has too many lines (279). Maximum allowed is 50.  max-lines-per-function
+201:19  Error: `"` can be escaped with `&quot;`, `&ldquo;`, `&#34;`, `&rdquo;`.  react/no-unescaped-entities
+202:68  Error: `"` can be escaped with `&quot;`, `&ldquo;`, `&#34;`, `&rdquo;`.  react/no-unescaped-entities
+208:19  Error: `"` can be escaped with `&quot;`, `&ldquo;`, `&#34;`, `&rdquo;`.  react/no-unescaped-entities
+208:22  Error: `'` can be escaped with `&apos;`, `&lsquo;`, `&#39;`, `&rsquo;`.  react/no-unescaped-entities
+209:66  Error: `"` can be escaped with `&quot;`, `&ldquo;`, `&#34;`, `&rdquo;`.  react/no-unescaped-entities
+215:19  Error: `"` can be escaped with `&quot;`, `&ldquo;`, `&#34;`, `&rdquo;`.  react/no-unescaped-entities
+216:60  Error: `"` can be escaped with `&quot;`, `&ldquo;`, `&#34;`, `&rdquo;`.  react/no-unescaped-entities
+246:29  Error: `'` can be escaped with `&apos;`, `&lsquo;`, `&#39;`, `&rsquo;`.  react/no-unescaped-entities
+
+./app/(web)/solutions/computer-vision/page.tsx
+6:24  Warning: Arrow function has too many lines (85). Maximum allowed is 50.  max-lines-per-function
+
+./app/(web)/solutions/data-analytics/page.tsx
+6:23  Warning: Arrow function has too many lines (85). Maximum allowed is 50.  max-lines-per-function
+
+./app/(web)/solutions/education/page.tsx
+1:42  Warning: 'BarChart3' is defined but never used.  @typescript-eslint/no-unused-vars
+6:19  Warning: Arrow function has too many lines (79). Maximum allowed is 50.  max-lines-per-function
+
+./app/(web)/solutions/financial/page.tsx
+1:41  Warning: 'BarChart3' is defined but never used.  @typescript-eslint/no-unused-vars
+6:19  Warning: Arrow function has too many lines (79). Maximum allowed is 50.  max-lines-per-function
+
+./app/(web)/solutions/healthcare/page.tsx
+1:55  Warning: 'Users' is defined but never used.  @typescript-eslint/no-unused-vars
+6:20  Warning: Arrow function has too many lines (79). Maximum allowed is 50.  max-lines-per-function
+
+./app/(web)/solutions/manufacturing/page.tsx
+1:24  Warning: 'BarChart3' is defined but never used.  @typescript-eslint/no-unused-vars
+6:23  Warning: Arrow function has too many lines (79). Maximum allowed is 50.  max-lines-per-function
+
+./app/(web)/solutions/page.tsx
+5:22  Warning: 'Play' is defined but never used.  @typescript-eslint/no-unused-vars
+21:10  Warning: 'UnifiedFilterDropdown' is defined but never used.  @typescript-eslint/no-unused-vars
+24:10  Warning: 'industryOptions' is defined but never used.  @typescript-eslint/no-unused-vars
+25:10  Warning: 'solutionTypeOptions' is defined but never used.  @typescript-eslint/no-unused-vars
+26:10  Warning: 'getFilteredContent' is defined but never used.  @typescript-eslint/no-unused-vars
+26:30  Warning: 'isSolution' is defined but never used.  @typescript-eslint/no-unused-vars
+26:42  Warning: 'isIndustryCard' is defined but never used.  @typescript-eslint/no-unused-vars
+28:19  Warning: Arrow function has too many lines (1026). Maximum allowed is 50.  max-lines-per-function
+34:60  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+138:45  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+233:30  Warning: Arrow function has too many lines (55). Maximum allowed is 50.  max-lines-per-function
+234:23  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+322:6  Warning: React Hook useEffect has a missing dependency: 'industryOptions'. Either include it or remove the dependency array.  react-hooks/exhaustive-deps
+324:27  Warning: 'demoType' is defined but never used.  @typescript-eslint/no-unused-vars
+582:1  Error: File has too many lines (1050). Maximum allowed is 500.  max-lines
+672:35  Warning: 'correlations' is assigned a value but never used.  @typescript-eslint/no-unused-vars
+713:34  Warning: Arrow function has too many lines (189). Maximum allowed is 50.  max-lines-per-function
+
+./app/(web)/solutions/retail/page.tsx
+1:31  Warning: 'BarChart3' is defined but never used.  @typescript-eslint/no-unused-vars
+6:16  Warning: Arrow function has too many lines (79). Maximum allowed is 50.  max-lines-per-function
+
+./app/(web)/solutions/security-compliance/page.tsx
+6:28  Warning: Arrow function has too many lines (85). Maximum allowed is 50.  max-lines-per-function
+
+./app/(web)/solutions/smart-business/page.tsx
+6:23  Warning: Arrow function has too many lines (85). Maximum allowed is 50.  max-lines-per-function
+
+./app/(web)/solutions/technologies/ai-ml/page.tsx
+6:27  Warning: Arrow function has too many lines (229). Maximum allowed is 50.  max-lines-per-function
+
+./app/(web)/solutions/technologies/computer-vision/page.tsx
+6:37  Warning: Arrow function has too many lines (220). Maximum allowed is 50.  max-lines-per-function
+43:55  Error: `"` can be escaped with `&quot;`, `&ldquo;`, `&#34;`, `&rdquo;`.  react/no-unescaped-entities
+43:60  Error: `"` can be escaped with `&quot;`, `&ldquo;`, `&#34;`, `&rdquo;`.  react/no-unescaped-entities
+104:17  Warning: Image elements must have an alt prop, either with meaningful text, or an empty string for decorative images.  jsx-a11y/alt-text
+
+./app/(web)/solutions/technologies/nlp/page.tsx
+6:26  Warning: Arrow function has too many lines (252). Maximum allowed is 50.  max-lines-per-function
+
+./app/(web)/solutions/technology/page.tsx
+6:20  Warning: Arrow function has too many lines (133). Maximum allowed is 50.  max-lines-per-function
+
+./app/(web)/terms/page.tsx
+1:15  Warning: Arrow function has too many lines (65). Maximum allowed is 50.  max-lines-per-function
+19:48  Error: `'` can be escaped with `&apos;`, `&lsquo;`, `&#39;`, `&rsquo;`.  react/no-unescaped-entities
+
+./app/api/auth/login/route.ts
+15:8  Warning: Async function 'POST' has too many lines (81). Maximum allowed is 50.  max-lines-per-function
+21:71  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+32:53  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+35:41  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+
+./app/api/auth/signup/route.ts
+6:8  Warning: Async function 'POST' has too many lines (91). Maximum allowed is 50.  max-lines-per-function
+37:15  Warning: '_name' is defined but never used.  @typescript-eslint/no-unused-vars
+37:30  Warning: '_value' is defined but never used.  @typescript-eslint/no-unused-vars
+37:46  Warning: '_options' is defined but never used.  @typescript-eslint/no-unused-vars
+40:18  Warning: '_name' is defined but never used.  @typescript-eslint/no-unused-vars
+40:33  Warning: '_options' is defined but never used.  @typescript-eslint/no-unused-vars
+
+./components/analytics/consent-banner.tsx
+11:8  Warning: Function 'ConsentBanner' has too many lines (114). Maximum allowed is 50.  max-lines-per-function
+
+./components/analytics/heatmap.tsx
+14:3  Warning: 'Settings' is defined but never used.  @typescript-eslint/no-unused-vars
+31:8  Warning: Function 'Heatmap' has too many lines (314). Maximum allowed is 50.  max-lines-per-function
+35:9  Warning: 'canvasRef' is assigned a value but never used.  @typescript-eslint/no-unused-vars
+39:9  Warning: 'generateHeatmapGradient' is assigned a value but never used.  @typescript-eslint/no-unused-vars
+105:13  Warning: Arrow function has too many lines (82). Maximum allowed is 50.  max-lines-per-function
+271:85  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+392:8  Warning: Function 'HeatmapVisualization' has too many lines (97). Maximum allowed is 50.  max-lines-per-function
+408:83  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+
+./components/features/ai/ai-chat.tsx
+32:8  Warning: Function 'AIChat' has too many lines (167). Maximum allowed is 50.  max-lines-per-function
+
+./components/features/crm/create-customer-dialog.tsx
+19:3  Warning: 'FormDescription' is defined but never used.  @typescript-eslint/no-unused-vars
+46:8  Warning: Function 'CreateCustomerDialog' has too many lines (184). Maximum allowed is 50.  max-lines-per-function
+
+./components/features/crm/customer-actions-menu.tsx
+23:8  Warning: Function 'CustomerActionsMenu' has too many lines (58). Maximum allowed is 50.  max-lines-per-function
+
+./components/features/crm/customer-filters.tsx
+16:10  Warning: 'CustomerStatus' is defined but never used.  @typescript-eslint/no-unused-vars
+16:26  Warning: 'CustomerSource' is defined but never used.  @typescript-eslint/no-unused-vars
+21:8  Warning: Function 'CustomerFilters' has too many lines (127). Maximum allowed is 50.  max-lines-per-function
+
+./components/features/crm/customer-list-skeleton.tsx
+12:8  Warning: Function 'CustomerListSkeleton' has too many lines (87). Maximum allowed is 50.  max-lines-per-function
+
+./components/features/crm/delete-customer-dialog.tsx
+28:8  Warning: Function 'DeleteCustomerDialog' has too many lines (66). Maximum allowed is 50.  max-lines-per-function
+
+./components/features/crm/edit-customer-dialog.tsx
+45:8  Warning: Function 'EditCustomerDialog' has too many lines (186). Maximum allowed is 50.  max-lines-per-function
+
+./components/features/export/export-button.tsx
+15:54  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+22:8  Warning: Function 'ExportButton' has too many lines (55). Maximum allowed is 50.  max-lines-per-function
+22:55  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+
+./components/features/organization/create-organization-dialog.tsx
+38:8  Warning: Function 'CreateOrganizationDialog' has too many lines (158). Maximum allowed is 50.  max-lines-per-function
+72:13  Warning: 'org' is assigned a value but never used.  @typescript-eslint/no-unused-vars
+140:46  Error: `'` can be escaped with `&apos;`, `&lsquo;`, `&#39;`, `&rsquo;`.  react/no-unescaped-entities
+
+./components/features/organization/invite-member-dialog.tsx
+45:8  Warning: Function 'InviteMemberDialog' has too many lines (112). Maximum allowed is 50.  max-lines-per-function
+110:23  Error: `'` can be escaped with `&apos;`, `&lsquo;`, `&#39;`, `&rsquo;`.  react/no-unescaped-entities
+
+./components/features/organization/organization-switcher.tsx
+27:8  Warning: Function 'OrganizationSwitcher' has too many lines (87). Maximum allowed is 50.  max-lines-per-function
+29:10  Warning: 'showCreateDialog' is assigned a value but never used.  @typescript-eslint/no-unused-vars
+113:9  Error: Do not pass children as props. Instead, nest children between the opening and closing tags.  react/no-children-prop
+
+./components/features/projects/create-project-dialog.tsx
+47:8  Warning: Function 'CreateProjectDialog' has too many lines (266). Maximum allowed is 50.  max-lines-per-function
+
+./components/features/projects/delete-project-dialog.tsx
+28:8  Warning: Function 'DeleteProjectDialog' has too many lines (66). Maximum allowed is 50.  max-lines-per-function
+
+./components/features/projects/edit-project-dialog.tsx
+58:8  Warning: Function 'EditProjectDialog' has too many lines (274). Maximum allowed is 50.  max-lines-per-function
+
+./components/features/projects/project-filters.tsx
+26:10  Warning: 'ProjectStatus' is defined but never used.  @typescript-eslint/no-unused-vars
+26:25  Warning: 'Priority' is defined but never used.  @typescript-eslint/no-unused-vars
+33:8  Warning: Function 'ProjectFilters' has too many lines (215). Maximum allowed is 50.  max-lines-per-function
+
+./components/features/projects/project-list-skeleton.tsx
+4:8  Warning: Function 'ProjectListSkeleton' has too many lines (75). Maximum allowed is 50.  max-lines-per-function
+
+./components/features/shared/activity-timeline.tsx
+3:10  Warning: 'Card' is defined but never used.  @typescript-eslint/no-unused-vars
+3:16  Warning: 'CardContent' is defined but never used.  @typescript-eslint/no-unused-vars
+3:29  Warning: 'CardDescription' is defined but never used.  @typescript-eslint/no-unused-vars
+3:46  Warning: 'CardHeader' is defined but never used.  @typescript-eslint/no-unused-vars
+3:58  Warning: 'CardTitle' is defined but never used.  @typescript-eslint/no-unused-vars
+33:46  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+57:44  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+58:32  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+90:8  Warning: Async function 'ActivityTimeline' has too many lines (79). Maximum allowed is 50.  max-lines-per-function
+111:46  Warning: Arrow function has too many lines (58). Maximum allowed is 50.  max-lines-per-function
+115:33  Warning: Arrow function has too many lines (51). Maximum allowed is 50.  max-lines-per-function
+
+./components/features/tasks/create-task-dialog.tsx
+50:8  Warning: Function 'CreateTaskDialog' has too many lines (257). Maximum allowed is 50.  max-lines-per-function
+
+./components/features/tasks/edit-task-dialog.tsx
+62:8  Warning: Function 'EditTaskDialog' has too many lines (255). Maximum allowed is 50.  max-lines-per-function
+
+./components/features/tasks/task-attachments.tsx
+38:8  Warning: Function 'TaskAttachments' has too many lines (163). Maximum allowed is 50.  max-lines-per-function
+40:3  Warning: 'projectId' is defined but never used.  @typescript-eslint/no-unused-vars
+140:28  Warning: Arrow function has too many lines (59). Maximum allowed is 50.  max-lines-per-function
+
+./components/features/tasks/task-card.tsx
+53:8  Warning: Function 'TaskCard' has too many lines (65). Maximum allowed is 50.  max-lines-per-function
+
+./components/features/tasks/task-filters.tsx
+27:10  Warning: 'TaskStatus' is defined but never used.  @typescript-eslint/no-unused-vars
+27:22  Warning: 'Priority' is defined but never used.  @typescript-eslint/no-unused-vars
+33:8  Warning: Function 'TaskFilters' has too many lines (181). Maximum allowed is 50.  max-lines-per-function
+
+./components/features/tasks/task-list.tsx
+39:15  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+54:8  Warning: Function 'TaskList' has too many lines (328). Maximum allowed is 50.  max-lines-per-function
+61:31  Warning: 'setTasks' is assigned a value but never used.  @typescript-eslint/no-unused-vars
+71:10  Warning: 'isBulkProcessing' is assigned a value but never used.  @typescript-eslint/no-unused-vars
+115:28  Warning: Async arrow function has too many lines (52). Maximum allowed is 50.  max-lines-per-function
+205:26  Warning: Arrow function has too many lines (63). Maximum allowed is 50.  max-lines-per-function
+
+./components/filters/unified-filter-dropdown.tsx
+31:8  Warning: Function 'UnifiedFilterDropdown' has too many lines (280). Maximum allowed is 50.  max-lines-per-function
+
+./components/industry/industry-selector.tsx
+20:8  Warning: Function 'IndustrySelector' has too many lines (123). Maximum allowed is 50.  max-lines-per-function
+40:32  Warning: Arrow function has too many lines (66). Maximum allowed is 50.  max-lines-per-function
+
+./components/industry/industry-solutions-grid.tsx
+13:8  Warning: Function 'IndustrySolutionsGrid' has too many lines (65). Maximum allowed is 50.  max-lines-per-function
+
+./components/layouts/sidebar/main-sidebar.tsx
+69:8  Warning: Function 'MainSidebar' has too many lines (92). Maximum allowed is 50.  max-lines-per-function
+72:3  Warning: 'open' is defined but never used.  @typescript-eslint/no-unused-vars
+73:3  Warning: 'onOpenChange' is defined but never used.  @typescript-eslint/no-unused-vars
+
+./components/layouts/topbar/topbar.tsx
+36:8  Warning: Function 'Topbar' has too many lines (96). Maximum allowed is 50.  max-lines-per-function
+
+./components/resources/WhitepaperViewer.tsx
+14:66  Warning: Arrow function has too many lines (330). Maximum allowed is 50.  max-lines-per-function
+
+./components/seo/meta-tags.tsx
+9:50  Warning: Arrow function has too many lines (95). Maximum allowed is 50.  max-lines-per-function
+
+./components/shared/error-boundary.tsx
+46:3  Warning: Method 'render' has too many lines (56). Maximum allowed is 50.  max-lines-per-function
+
+./components/shared/navigation/notification-dropdown.tsx
+3:31  Warning: 'useCallback' is defined but never used.  @typescript-eslint/no-unused-vars
+8:10  Warning: 'Separator' is defined but never used.  @typescript-eslint/no-unused-vars
+12:3  Warning: 'DropdownMenuItem' is defined but never used.  @typescript-eslint/no-unused-vars
+34:8  Warning: Function 'NotificationDropdown' has too many lines (233). Maximum allowed is 50.  max-lines-per-function
+36:3  Warning: 'organizationId' is defined but never used.  @typescript-eslint/no-unused-vars
+200:34  Warning: Arrow function has too many lines (61). Maximum allowed is 50.  max-lines-per-function
+
+./components/ui/analytics-error-boundary.tsx
+51:55  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+52:20  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+58:14  Warning: 'e' is defined but never used.  @typescript-eslint/no-unused-vars
+
+./components/ui/bulk-selector.tsx
+33:8  Warning: Function 'BulkSelector' has too many lines (94). Maximum allowed is 50.  max-lines-per-function
+68:9  Warning: 'handleToggle' is assigned a value but never used.  @typescript-eslint/no-unused-vars
+
+./components/ui/calendar.tsx
+10:1  Warning: Function 'Calendar' has too many lines (56). Maximum allowed is 50.  max-lines-per-function
+
+./components/ui/calendly-fallback.tsx
+12:8  Warning: Function 'CalendlyFallback' has too many lines (217). Maximum allowed is 50.  max-lines-per-function
+176:21  Error: `'` can be escaped with `&apos;`, `&lsquo;`, `&#39;`, `&rsquo;`.  react/no-unescaped-entities
+177:47  Error: `'` can be escaped with `&apos;`, `&lsquo;`, `&#39;`, `&rsquo;`.  react/no-unescaped-entities
+
+./components/ui/carousel.tsx
+47:3  Warning: Arrow function has too many lines (90). Maximum allowed is 50.  max-lines-per-function
+
+./components/ui/chart.tsx
+116:3  Warning: Arrow function has too many lines (131). Maximum allowed is 50.  max-lines-per-function
+188:24  Warning: Arrow function has too many lines (63). Maximum allowed is 50.  max-lines-per-function
+
+./components/ui/date-range-picker.tsx
+18:8  Warning: Function 'DateRangePicker' has too many lines (150). Maximum allowed is 50.  max-lines-per-function
+
+./components/ui/file-upload.tsx
+4:31  Warning: 'Loader2' is defined but never used.  @typescript-eslint/no-unused-vars
+27:8  Warning: Function 'FileUpload' has too many lines (184). Maximum allowed is 50.  max-lines-per-function
+113:29  Warning: 'removed' is assigned a value but never used.  @typescript-eslint/no-unused-vars
+206:21  Warning: Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` or a custom image loader to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+
+./components/ui/floating-chat.tsx
+4:16  Warning: 'CardContent' is defined but never used.  @typescript-eslint/no-unused-vars
+9:22  Warning: Arrow function has too many lines (447). Maximum allowed is 50.  max-lines-per-function
+19:10  Warning: 'viewportHeight' is assigned a value but never used.  @typescript-eslint/no-unused-vars
+49:48  Warning: The ref value 'performanceId.current' will likely have changed by the time this effect cleanup function runs. If this ref points to a node rendered by React, copy 'performanceId.current' to a variable inside the effect, and use that variable in the cleanup function.  react-hooks/exhaustive-deps
+51:6  Warning: React Hook useEffect has missing dependencies: 'handleAnalytics', 'handleChatbotClose', 'handleChatbotError', 'handleChatbotMinimize', 'handleChatbotReady', and 'preconnectToChatbot'. Either include them or remove the dependency array.  react-hooks/exhaustive-deps
+153:49  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+164:49  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+179:46  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+245:9  Warning: 'renderErrorState' is assigned a value but never used.  @typescript-eslint/no-unused-vars
+245:28  Warning: Arrow function has too many lines (58). Maximum allowed is 50.  max-lines-per-function
+273:13  Error: `'` can be escaped with `&apos;`, `&lsquo;`, `&#39;`, `&rsquo;`.  react/no-unescaped-entities
+308:9  Warning: 'renderLoadingState' is assigned a value but never used.  @typescript-eslint/no-unused-vars
+
+./components/ui/hero-section.tsx
+1:20  Warning: 'useEffect' is defined but never used.  @typescript-eslint/no-unused-vars
+4:8  Warning: 'LazyImage' is defined but never used.  @typescript-eslint/no-unused-vars
+15:21  Warning: Arrow function has too many lines (111). Maximum allowed is 50.  max-lines-per-function
+16:3  Warning: 'title' is defined but never used.  @typescript-eslint/no-unused-vars
+23:10  Warning: 'isHovering' is assigned a value but never used.  @typescript-eslint/no-unused-vars
+
+./components/ui/iframe-error-boundary.tsx
+48:55  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+49:20  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+75:3  Warning: Method 'render' has too many lines (67). Maximum allowed is 50.  max-lines-per-function
+88:21  Error: `'` can be escaped with `&apos;`, `&lsquo;`, `&#39;`, `&rsquo;`.  react/no-unescaped-entities
+
+./components/ui/lazy-image.tsx
+18:24  Warning: Arrow function has too many lines (111). Maximum allowed is 50.  max-lines-per-function
+87:7  Warning: Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` or a custom image loader to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+
+./components/ui/multi-select.tsx
+4:10  Warning: 'Check' is defined but never used.  @typescript-eslint/no-unused-vars
+25:8  Warning: Function 'MultiSelect' has too many lines (130). Maximum allowed is 50.  max-lines-per-function
+
+./components/ui/optimized-image.tsx
+39:29  Warning: Arrow function has too many lines (128). Maximum allowed is 50.  max-lines-per-function
+169:57  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+
+./components/ui/pagination-controls.tsx
+21:8  Warning: Function 'PaginationControls' has too many lines (130). Maximum allowed is 50.  max-lines-per-function
+
+./components/ui/portfolio-card.tsx
+17:28  Warning: Arrow function has too many lines (70). Maximum allowed is 50.  max-lines-per-function
+
+./components/ui/professional-brochure.tsx
+18:3  Warning: 'Smartphone' is defined but never used.  @typescript-eslint/no-unused-vars
+31:67  Warning: Arrow function has too many lines (327). Maximum allowed is 50.  max-lines-per-function
+127:13  Warning: Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` or a custom image loader to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+
+./components/ui/resource-card.tsx
+16:27  Warning: Arrow function has too many lines (64). Maximum allowed is 50.  max-lines-per-function
+
+./components/ui/roi-calculator.tsx
+10:22  Warning: 'Leaf' is defined but never used.  @typescript-eslint/no-unused-vars
+10:34  Warning: 'Heart' is defined but never used.  @typescript-eslint/no-unused-vars
+10:59  Warning: 'Briefcase' is defined but never used.  @typescript-eslint/no-unused-vars
+52:23  Warning: Arrow function has too many lines (311). Maximum allowed is 50.  max-lines-per-function
+
+./components/ui/select.tsx
+5:10  Warning: 'Check' is defined but never used.  @typescript-eslint/no-unused-vars
+
+./components/ui/sidebar.tsx
+62:3  Warning: Arrow function has too many lines (83). Maximum allowed is 50.  max-lines-per-function
+171:3  Warning: Arrow function has too many lines (92). Maximum allowed is 50.  max-lines-per-function
+549:1  Error: File has too many lines (707). Maximum allowed is 500.  max-lines
+
+./components/ui/solution-ecosystem-3d.tsx
+4:29  Warning: Arrow function has too many lines (174). Maximum allowed is 50.  max-lines-per-function
+
+./components/ui/sub-filter-bar.tsx
+24:58  Warning: Arrow function has too many lines (123). Maximum allowed is 50.  max-lines-per-function
+37:27  Warning: React Hook useCallback received a function whose dependencies are unknown. Pass an inline function instead.  react-hooks/exhaustive-deps
+163:39  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+163:49  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+
+./components/web/footer.tsx
+42:16  Warning: Arrow function has too many lines (190). Maximum allowed is 50.  max-lines-per-function
+
+./components/web/navigation.tsx
+12:20  Warning: Arrow function has too many lines (280). Maximum allowed is 50.  max-lines-per-function
+30:9  Warning: 'navItems' is assigned a value but never used.  @typescript-eslint/no-unused-vars
+
+./lib/analytics/analytics-tracker.ts
+11:5  Error: 'isTrackingEnabled' is never reassigned. Use 'const' instead.  prefer-const
+78:58  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+119:39  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+127:54  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+161:16  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+215:20  Warning: 'os' is assigned a value but never used.  @typescript-eslint/no-unused-vars
+228:35  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+236:5  Error: 'scrollDepthMarkers' is never reassigned. Use 'const' instead.  prefer-const
+237:5  Error: 'trackedDepths' is never reassigned. Use 'const' instead.  prefer-const
+
+./lib/analytics/web-vitals.ts
+4:12  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+6:11  Error: A `require()` style import is forbidden.  @typescript-eslint/no-require-imports
+7:10  Warning: 'e' is defined but never used.  @typescript-eslint/no-unused-vars
+52:27  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+53:18  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+
+./lib/auth/rbac.ts
+123:32  Warning: 'role' is defined but never used.  @typescript-eslint/no-unused-vars
+
+./lib/browser-detection.ts
+86:8  Warning: Function 'getBrowserInfo' has too many lines (114). Maximum allowed is 50.  max-lines-per-function
+122:71  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+
+./lib/chatbot-iframe-communication.ts
+22:33  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+42:45  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+48:11  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+75:3  Warning: Method 'handleMessage' has too many lines (70). Maximum allowed is 50.  max-lines-per-function
+168:43  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+
+./lib/chatbot-performance-monitor.ts
+10:13  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+25:51  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+89:20  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+
+./lib/data-helpers.ts
+13:8  Warning: 'SolutionTypeOption' is defined but never used.  @typescript-eslint/no-unused-vars
+
+./lib/export/csv.ts
+1:32  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+4:20  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+10:32  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+28:54  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+43:20  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+
+./lib/modules/ai/actions.ts
+37:8  Warning: Async function 'sendMessage' has too many lines (126). Maximum allowed is 50.  max-lines-per-function
+86:40  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+
+./lib/modules/attachments/actions.ts
+12:8  Warning: 'UploadAttachmentInput' is defined but never used.  @typescript-eslint/no-unused-vars
+13:8  Warning: 'DeleteAttachmentInput' is defined but never used.  @typescript-eslint/no-unused-vars
+14:8  Warning: 'GetAttachmentsInput' is defined but never used.  @typescript-eslint/no-unused-vars
+20:8  Warning: Async function 'uploadAttachment' has too many lines (73). Maximum allowed is 50.  max-lines-per-function
+112:8  Warning: Async function 'deleteAttachment' has too many lines (55). Maximum allowed is 50.  max-lines-per-function
+
+./lib/modules/crm/actions.ts
+42:47  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+103:47  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+
+./lib/modules/crm/queries.ts
+2:25  Warning: 'CustomerStatus' is defined but never used.  @typescript-eslint/no-unused-vars
+2:41  Warning: 'CustomerSource' is defined but never used.  @typescript-eslint/no-unused-vars
+13:16  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+74:16  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+
+./lib/modules/dashboard/queries.ts
+3:8  Warning: Async function 'getDashboardStats' has too many lines (83). Maximum allowed is 50.  max-lines-per-function
+132:16  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+
+./lib/modules/notifications/queries.ts
+42:18  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+
+./lib/modules/projects/queries.ts
+13:8  Warning: Async function 'getProjects' has too many lines (71). Maximum allowed is 50.  max-lines-per-function
+17:16  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+100:16  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+
+./lib/modules/tasks/actions.ts
+18:8  Warning: Async function 'createTask' has too many lines (53). Maximum allowed is 50.  max-lines-per-function
+93:8  Warning: Async function 'updateTask' has too many lines (70). Maximum allowed is 50.  max-lines-per-function
+
+./lib/modules/tasks/bulk-actions.ts
+30:8  Warning: Async function 'bulkUpdateTaskStatus' has too many lines (52). Maximum allowed is 50.  max-lines-per-function
+97:8  Warning: Async function 'bulkAssignTasks' has too many lines (64). Maximum allowed is 50.  max-lines-per-function
+179:8  Warning: Async function 'bulkUpdateTaskPriority' has too many lines (52). Maximum allowed is 50.  max-lines-per-function
+
+./lib/modules/tasks/queries.ts
+3:22  Warning: 'Priority' is defined but never used.  @typescript-eslint/no-unused-vars
+254:8  Warning: Async function 'getUserTasks' has too many lines (55). Maximum allowed is 50.  max-lines-per-function
+
+./lib/pdf-generator.ts
+9:3  Warning: 'setPDFOpacity' is defined but never used.  @typescript-eslint/no-unused-vars
+10:3  Warning: 'resetPDFOpacity' is defined but never used.  @typescript-eslint/no-unused-vars
+21:28  Warning: Async arrow function has too many lines (61). Maximum allowed is 50.  max-lines-per-function
+104:37  Warning: Async arrow function has too many lines (73). Maximum allowed is 50.  max-lines-per-function
+105:11  Warning: 'filename' is assigned a value but never used.  @typescript-eslint/no-unused-vars
+219:48  Warning: Async arrow function has too many lines (222). Maximum allowed is 50.  max-lines-per-function
+400:13  Warning: 'techWidth' is assigned a value but never used.  @typescript-eslint/no-unused-vars
+
+info  - Need to disable some ESLint rules? Learn more here: https://nextjs.org/docs/app/api-reference/config/eslint#disabling-rules

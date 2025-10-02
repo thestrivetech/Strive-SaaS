@@ -33,16 +33,14 @@ Please read the following files in this order to understand
   the project context and session goals:
 
   1. Project Documentation:
-     - /Users/grant/Documents/GitHub/Strive-SaaS/CLAUDE.md
-     - /Users/grant/Documents/GitHub/Strive-SaaS/README.md
+     - `/Users/grant/Documents/GitHub/Strive-SaaS/CLAUDE.md`
+     - `/Users/grant/Documents/GitHub/Strive-SaaS/README.md`
 
   2. Current Session Plan:
-     - /Users/grant/Documents/GitHub/Strive-SaaS/chat-logs/NEW
-  -REVIEW-&-UPDATE/session-logs/Session[N].md
+     - `/Users/grant/Documents/GitHub/Strive-SaaS/chat-logs/NEW-REVIEW-&-UPDATE/session-logs/Session[6].md`
 
   3. Previous Session Summary (for context):
-     - /Users/grant/Documents/GitHub/Strive-SaaS/chat-logs/NEW
-  -REVIEW-&-UPDATE/session-logs/Session[N-1]-Summary.md
+     - `/Users/grant/Documents/GitHub/Strive-SaaS/chat-logs/NEW-REVIEW-&-UPDATE/session-logs/Session[N-1]-Summary.md`
 
   After reading all files, create a comprehensive todo list
   that covers all tasks from the current session plan
@@ -54,5 +52,5 @@ Please read the following files in this order to understand
   - Includes verification steps after major phases
   - Uses descriptive task names that match the session plan
 
-  Once the todo list is created, I'm ready to start executing 
-  Session [N].
+  Once the todo list is created, lets start executing 
+  Session [6].
