@@ -1,0 +1,625 @@
+STRIVE WEBSITE - DIRECTORY STRUCTURE MAP
+Generated: 2025-10-01T11:26:35.485Z
+Root Path: /Users/grant/Documents/GitHub/Strive-SaaS/app
+================================================================================
+
+└── 📁 app/
+    ├── 📁 .vercel/
+    │   ├── project.json (108 B)
+    │   └── README.txt (520 B)
+    ├── 📁 api/
+    │   └── 📁 chat/
+    │       └── route.ts (7.1 KB)
+    ├── 📁 app/
+    │   ├── 📁 (chatbot)/
+    │   │   ├── 📁 full/
+    │   │   │   └── page.tsx (1.9 KB)
+    │   │   ├── 📁 widget/
+    │   │   │   └── page.tsx (1.1 KB)
+    │   │   ├── layout.tsx (722 B)
+    │   │   ├── page.tsx (487 B)
+    │   │   └── placeholder.md (12 B)
+    │   ├── 📁 (platform)/
+    │   │   ├── 📁 ai/
+    │   │   │   ├── layout.tsx (1.5 KB)
+    │   │   │   └── page.tsx (4.6 KB)
+    │   │   ├── 📁 crm/
+    │   │   │   ├── 📁 [customerId]/
+    │   │   │   │   └── page.tsx (9.4 KB)
+    │   │   │   ├── layout.tsx (1.5 KB)
+    │   │   │   └── page.tsx (10.3 KB)
+    │   │   ├── 📁 dashboard/
+    │   │   │   ├── layout.tsx (1.3 KB)
+    │   │   │   └── page.tsx (9.2 KB)
+    │   │   ├── 📁 login/
+    │   │   │   ├── layout.tsx (987 B)
+    │   │   │   └── page.tsx (14.7 KB)
+    │   │   ├── 📁 projects/
+    │   │   │   ├── 📁 [projectId]/
+    │   │   │   │   └── page.tsx (13.7 KB)
+    │   │   │   ├── layout.tsx (1.5 KB)
+    │   │   │   └── page.tsx (12 KB)
+    │   │   ├── 📁 settings/
+    │   │   │   ├── 📁 team/
+    │   │   │   │   └── page.tsx (7.8 KB)
+    │   │   │   ├── layout.tsx (1.5 KB)
+    │   │   │   └── page.tsx (13.7 KB)
+    │   │   ├── 📁 tools/
+    │   │   │   ├── layout.tsx (1.5 KB)
+    │   │   │   └── page.tsx (8.6 KB)
+    │   │   ├── layout.tsx (485 B)
+    │   │   └── page.tsx (177 B)
+    │   ├── 📁 (web)/
+    │   │   ├── 📁 about/
+    │   │   │   └── page.tsx (29.5 KB)
+    │   │   ├── 📁 assessment/
+    │   │   │   └── page.tsx (30.9 KB)
+    │   │   ├── 📁 chatbot-sai/
+    │   │   │   └── page.tsx (22.4 KB)
+    │   │   ├── 📁 contact/
+    │   │   │   └── page.tsx (28 KB)
+    │   │   ├── 📁 cookies/
+    │   │   │   └── page.tsx (3.3 KB)
+    │   │   ├── 📁 onboarding/
+    │   │   │   └── page.tsx (18.7 KB)
+    │   │   ├── 📁 portfolio/
+    │   │   │   └── page.tsx (21.7 KB)
+    │   │   ├── 📁 privacy/
+    │   │   │   └── page.tsx (3.1 KB)
+    │   │   ├── 📁 request/
+    │   │   │   └── page.tsx (41.8 KB)
+    │   │   ├── 📁 resources/
+    │   │   │   └── page.tsx (85.3 KB)
+    │   │   ├── 📁 solutions/
+    │   │   │   ├── 📁 ai-automation/
+    │   │   │   │   └── page.tsx (4.3 KB)
+    │   │   │   ├── 📁 blockchain/
+    │   │   │   │   └── page.tsx (4.4 KB)
+    │   │   │   ├── 📁 business-intelligence/
+    │   │   │   │   └── page.tsx (4.3 KB)
+    │   │   │   ├── 📁 case-studies/
+    │   │   │   │   └── 📁 healthcare/
+    │   │   │   │       └── page.tsx (13.5 KB)
+    │   │   │   ├── 📁 computer-vision/
+    │   │   │   │   └── page.tsx (4.4 KB)
+    │   │   │   ├── 📁 data-analytics/
+    │   │   │   │   └── page.tsx (4.4 KB)
+    │   │   │   ├── 📁 education/
+    │   │   │   │   └── page.tsx (3.9 KB)
+    │   │   │   ├── 📁 financial/
+    │   │   │   │   └── page.tsx (4 KB)
+    │   │   │   ├── 📁 healthcare/
+    │   │   │   │   └── page.tsx (4 KB)
+    │   │   │   ├── 📁 manufacturing/
+    │   │   │   │   └── page.tsx (4 KB)
+    │   │   │   ├── 📁 retail/
+    │   │   │   │   └── page.tsx (4 KB)
+    │   │   │   ├── 📁 security-compliance/
+    │   │   │   │   └── page.tsx (4.4 KB)
+    │   │   │   ├── 📁 smart-business/
+    │   │   │   │   └── page.tsx (4.4 KB)
+    │   │   │   └── page.tsx (64.1 KB)
+    │   │   ├── 📁 terms/
+    │   │   │   └── page.tsx (3.3 KB)
+    │   │   ├── layout.tsx (654 B)
+    │   │   └── not-found.tsx (710 B)
+    │   ├── 📁 api/
+    │   │   └── 📁 auth/
+    │   │       ├── 📁 login/
+    │   │       │   └── route.ts (3 KB)
+    │   │       └── 📁 signup/
+    │   │           └── route.ts (3 KB)
+    │   ├── 📁 app/
+    │   │   ├── 📁 app/
+    │   │   │   └── 📁 (web)/
+    │   │   │       └── 📁 chatbot/
+    │   │   │           ├── 📁 full/
+    │   │   │           └── 📁 widget/
+    │   │   ├── 📁 components/
+    │   │   │   └── 📁 features/
+    │   │   │       └── 📁 chatbot/
+    │   │   └── 📁 lib/
+    │   │       └── 📁 modules/
+    │   │           └── 📁 chatbot/
+    │   │               ├── 📁 actions/
+    │   │               ├── 📁 config/
+    │   │               │   └── 📁 industries/
+    │   │               │       └── 📁 strive/
+    │   │               ├── 📁 constants/
+    │   │               ├── 📁 queries/
+    │   │               ├── 📁 schemas/
+    │   │               ├── 📁 services/
+    │   │               └── 📁 types/
+    │   ├── favicon.ico (25.3 KB)
+    │   ├── globals.css (4.4 KB)
+    │   ├── layout.tsx (562 B)
+    │   └── page.tsx (356 B)
+    ├── 📁 assets/
+    │   ├── 📁 email/
+    │   │   ├── email-footer.png (75.1 KB)
+    │   │   └── email-header.png (54.4 KB)
+    │   ├── 📁 optimized/
+    │   │   ├── Garrett-Headshot_1024w.avif (21.5 KB)
+    │   │   ├── Garrett-Headshot_1024w.webp (35.4 KB)
+    │   │   ├── Garrett-Headshot_320w.avif (4.6 KB)
+    │   │   ├── Garrett-Headshot_320w.webp (6.7 KB)
+    │   │   ├── Garrett-Headshot_640w.avif (11.1 KB)
+    │   │   ├── Garrett-Headshot_640w.webp (17.7 KB)
+    │   │   ├── Garrett-Headshot_blur.jpg (390 B)
+    │   │   ├── Grant-Headshot_1024w.avif (18.3 KB)
+    │   │   ├── Grant-Headshot_1024w.webp (31.2 KB)
+    │   │   ├── Grant-Headshot_320w.avif (4.7 KB)
+    │   │   ├── Grant-Headshot_320w.webp (6.7 KB)
+    │   │   ├── Grant-Headshot_640w.avif (10.3 KB)
+    │   │   ├── Grant-Headshot_640w.webp (16.7 KB)
+    │   │   ├── Grant-Headshot_blur.jpg (383 B)
+    │   │   ├── Jeff-Headshot_1024w.avif (18.3 KB)
+    │   │   ├── Jeff-Headshot_1024w.webp (28.4 KB)
+    │   │   ├── Jeff-Headshot_320w.avif (4.7 KB)
+    │   │   ├── Jeff-Headshot_320w.webp (6 KB)
+    │   │   ├── Jeff-Headshot_640w.avif (10.2 KB)
+    │   │   ├── Jeff-Headshot_640w.webp (14.6 KB)
+    │   │   └── Jeff-Headshot_blur.jpg (401 B)
+    │   ├── Garrett-Headshot.webp (230.9 KB)
+    │   ├── Grant-Headshot.webp (711.1 KB)
+    │   ├── Jeff-Headshot.webp (38.7 KB)
+    │   └── ST-Transparent.png (95.1 KB)
+    ├── 📁 components/
+    │   ├── 📁 analytics/
+    │   │   ├── consent-banner.tsx (6.6 KB)
+    │   │   └── heatmap.tsx (17.1 KB)
+    │   ├── 📁 features/
+    │   │   ├── 📁 ai/
+    │   │   │   ├── ai-chat.tsx (6.6 KB)
+    │   │   │   ├── message-bubble.tsx (1.2 KB)
+    │   │   │   └── typing-indicator.tsx (768 B)
+    │   │   ├── 📁 chatbot/
+    │   │   │   ├── avatars.tsx (8 KB)
+    │   │   │   ├── chat-container.tsx (18.7 KB)
+    │   │   │   ├── chat-input.tsx (14.1 KB)
+    │   │   │   └── chat-message.tsx (11.6 KB)
+    │   │   ├── 📁 crm/
+    │   │   │   ├── customer-actions-menu.tsx (2.7 KB)
+    │   │   │   ├── customer-filters.tsx (4.9 KB)
+    │   │   │   ├── customer-list-skeleton.tsx (3.3 KB)
+    │   │   │   └── customer-search.tsx (1.5 KB)
+    │   │   ├── 📁 export/
+    │   │   │   └── export-button.tsx (2.2 KB)
+    │   │   ├── 📁 organization/
+    │   │   │   └── organization-switcher.tsx (3.7 KB)
+    │   │   ├── 📁 projects/
+    │   │   │   ├── project-filters.tsx (8.2 KB)
+    │   │   │   └── project-list-skeleton.tsx (3 KB)
+    │   │   ├── 📁 shared/
+    │   │   │   └── activity-timeline.tsx (5.8 KB)
+    │   │   └── 📁 tasks/
+    │   │       ├── task-attachments.tsx (7.2 KB)
+    │   │       ├── task-card.tsx (4.1 KB)
+    │   │       ├── task-filters.tsx (7 KB)
+    │   │       ├── task-list-skeleton.tsx (2.3 KB)
+    │   │       └── task-list.tsx (14.1 KB)
+    │   ├── 📁 filters/
+    │   │   └── unified-filter-dropdown.tsx (13.4 KB)
+    │   ├── 📁 industry/
+    │   │   ├── industry-selector.tsx (5.3 KB)
+    │   │   └── industry-solutions-grid.tsx (2.6 KB)
+    │   ├── 📁 layouts/
+    │   │   ├── 📁 sidebar/
+    │   │   │   └── main-sidebar.tsx (4.7 KB)
+    │   │   ├── 📁 topbar/
+    │   │   │   └── topbar.tsx (4.6 KB)
+    │   │   └── dashboard-shell.tsx (1.5 KB)
+    │   ├── 📁 resources/
+    │   │   └── WhitepaperViewer.tsx (16.8 KB)
+    │   ├── 📁 seo/
+    │   │   └── meta-tags.tsx (4.8 KB)
+    │   ├── 📁 shared/
+    │   │   ├── 📁 navigation/
+    │   │   │   └── notification-dropdown.tsx (9.7 KB)
+    │   │   └── error-boundary.tsx (3.5 KB)
+    │   ├── 📁 ui/
+    │   │   ├── alert.tsx (1.5 KB)
+    │   │   ├── analytics-error-boundary.tsx (2.9 KB)
+    │   │   ├── avatar.tsx (1.4 KB)
+    │   │   ├── badge.tsx (1.1 KB)
+    │   │   ├── breadcrumb.tsx (2.6 KB)
+    │   │   ├── bulk-selector.tsx (4.3 KB)
+    │   │   ├── button.tsx (1.9 KB)
+    │   │   ├── calendar.tsx (2.6 KB)
+    │   │   ├── calendly-fallback.tsx (10.7 KB)
+    │   │   ├── card.tsx (1.8 KB)
+    │   │   ├── carousel.tsx (6.1 KB)
+    │   │   ├── chart.tsx (10.2 KB)
+    │   │   ├── checkbox.tsx (1 KB)
+    │   │   ├── collapsible.tsx (329 B)
+    │   │   ├── coming-soon-badge.tsx (1 KB)
+    │   │   ├── command.tsx (4.8 KB)
+    │   │   ├── date-range-picker.tsx (5 KB)
+    │   │   ├── drawer.tsx (3 KB)
+    │   │   ├── dropdown-menu.tsx (8.1 KB)
+    │   │   ├── error-boundary.tsx (1.4 KB)
+    │   │   ├── file-upload.tsx (7.3 KB)
+    │   │   ├── floating-chat.tsx (20.4 KB)
+    │   │   ├── form.tsx (4 KB)
+    │   │   ├── hero-section.tsx (6.8 KB)
+    │   │   ├── icons.tsx (139 B)
+    │   │   ├── iframe-error-boundary.tsx (5 KB)
+    │   │   ├── input-otp.tsx (2.1 KB)
+    │   │   ├── input.tsx (791 B)
+    │   │   ├── label.tsx (710 B)
+    │   │   ├── lazy-image.tsx (4 KB)
+    │   │   ├── multi-select.tsx (4.8 KB)
+    │   │   ├── optimized-image.tsx (7.4 KB)
+    │   │   ├── page-skeleton.tsx (1.3 KB)
+    │   │   ├── pagination-controls.tsx (4.7 KB)
+    │   │   ├── pagination.tsx (2.7 KB)
+    │   │   ├── popover.tsx (1.3 KB)
+    │   │   ├── portfolio-card.tsx (2.6 KB)
+    │   │   ├── prefetch-link.tsx (1.4 KB)
+    │   │   ├── professional-brochure.tsx (16.6 KB)
+    │   │   ├── progress.tsx (740 B)
+    │   │   ├── resizable.tsx (1.7 KB)
+    │   │   ├── resource-card.tsx (2.3 KB)
+    │   │   ├── roi-calculator.tsx (17.9 KB)
+    │   │   ├── scroll-area.tsx (1.6 KB)
+    │   │   ├── select.tsx (5.4 KB)
+    │   │   ├── separator.tsx (756 B)
+    │   │   ├── sheet.tsx (4.2 KB)
+    │   │   ├── sidebar.tsx (23 KB)
+    │   │   ├── skeleton-card.tsx (1.5 KB)
+    │   │   ├── skeleton.tsx (261 B)
+    │   │   ├── slider.tsx (1.1 KB)
+    │   │   ├── solution-card.tsx (1.5 KB)
+    │   │   ├── solution-ecosystem-3d.tsx (6.9 KB)
+    │   │   ├── sub-filter-bar.tsx (5.6 KB)
+    │   │   ├── switch.tsx (1.1 KB)
+    │   │   ├── table.tsx (2.7 KB)
+    │   │   ├── tabs.tsx (1.8 KB)
+    │   │   ├── team-member.tsx (1.3 KB)
+    │   │   ├── textarea.tsx (689 B)
+    │   │   ├── toast.tsx (4.7 KB)
+    │   │   ├── toaster.tsx (787 B)
+    │   │   ├── toggle-group.tsx (1.7 KB)
+    │   │   ├── toggle.tsx (1.5 KB)
+    │   │   └── tooltip.tsx (1.2 KB)
+    │   ├── 📁 web/
+    │   │   ├── footer.tsx (9.2 KB)
+    │   │   └── navigation.tsx (12.2 KB)
+    │   └── HostDependent.tsx (893 B)
+    ├── 📁 data/
+    │   ├── 📁 portfolio/
+    │   │   ├── 📁 projects/
+    │   │   │   ├── agentic-workflow-platform.ts (1.9 KB)
+    │   │   │   ├── computer-vision-analytics.ts (1.7 KB)
+    │   │   │   ├── index.ts (975 B)
+    │   │   │   ├── mcp-server-framework.ts (1.7 KB)
+    │   │   │   ├── neural-language-assistant.ts (1.8 KB)
+    │   │   │   ├── rag-knowledge-system.ts (1.7 KB)
+    │   │   │   └── smart-dashboard-ui-kit.ts (1.7 KB)
+    │   │   ├── index.ts (107 B)
+    │   │   └── types.ts (422 B)
+    │   ├── 📁 resources/
+    │   │   ├── 📁 case-studies/
+    │   │   │   ├── agriculture-precision-farming.ts (3.2 KB)
+    │   │   │   ├── automotive-connected-services.ts (3.1 KB)
+    │   │   │   ├── education-ai-transformation.ts (3.2 KB)
+    │   │   │   ├── elite-transportation-ai-solutions.ts (4.5 KB)
+    │   │   │   ├── energy-utilities-ai-transformation.ts (3.3 KB)
+    │   │   │   ├── esports-analytics-platform.ts (3.4 KB)
+    │   │   │   ├── financial-services-automation.ts (3.5 KB)
+    │   │   │   ├── gaming-ai-content-moderation.ts (3.5 KB)
+    │   │   │   ├── government-nhs-ai-transformation.ts (3.6 KB)
+    │   │   │   ├── healthcare-kaiser-permanente-ai.ts (3.7 KB)
+    │   │   │   ├── hospitality-tourism-marriott-ai.ts (3.9 KB)
+    │   │   │   ├── index.ts (4 KB)
+    │   │   │   ├── insurance-progressive-ai-claims.ts (3.9 KB)
+    │   │   │   ├── legal-wilson-associates-ai.ts (4 KB)
+    │   │   │   ├── logistics-supply-chain-dhl-ai.ts (3.9 KB)
+    │   │   │   ├── manufacturing-ai-transformation.ts (4.1 KB)
+    │   │   │   ├── media-entertainment-lionsgate-ai.ts (4 KB)
+    │   │   │   ├── microsoft-ai-transformation.ts (4.3 KB)
+    │   │   │   ├── non-profit-ai-transformation.ts (3.9 KB)
+    │   │   │   ├── real-estate-ai-transformation.ts (4 KB)
+    │   │   │   ├── retail-walmart-ai-implementation.ts (4.3 KB)
+    │   │   │   └── telcomax-5g-network-intelligence.ts (4.5 KB)
+    │   │   ├── 📁 featured/
+    │   │   │   ├── featured-whitepaper.ts (776 B)
+    │   │   │   └── index.ts (57 B)
+    │   │   ├── 📁 quizzes/
+    │   │   │   ├── ai-applications-daily-life.ts (3.1 KB)
+    │   │   │   ├── ai-basics-fundamentals.ts (3.1 KB)
+    │   │   │   ├── ai-ethics-applications.ts (3.1 KB)
+    │   │   │   ├── ai-model-architectures.ts (3 KB)
+    │   │   │   ├── computer-vision-basics.ts (3.1 KB)
+    │   │   │   ├── generative-ai-fundamentals.ts (3 KB)
+    │   │   │   ├── index.ts (2 KB)
+    │   │   │   ├── introduction-to-machine-learning.ts (3 KB)
+    │   │   │   ├── ml-fundamentals.ts (2.9 KB)
+    │   │   │   ├── natural-language-processing.ts (2.9 KB)
+    │   │   │   ├── neural-networks-deep-learning.ts (2.9 KB)
+    │   │   │   ├── rag-retrieval-augmented.ts (2.9 KB)
+    │   │   │   └── types.ts (590 B)
+    │   │   ├── 📁 whitepapers/
+    │   │   │   ├── ai-ml-complete-guide.ts (2.2 KB)
+    │   │   │   ├── cloud-security-best-practices.ts (2.2 KB)
+    │   │   │   ├── computer-vision-intelligence.ts (2.1 KB)
+    │   │   │   ├── ethical-ai-implementation.ts (79 KB)
+    │   │   │   ├── index.ts (940 B)
+    │   │   │   └── nlp-mastery.ts (2 KB)
+    │   │   ├── index.ts (822 B)
+    │   │   └── types.ts (889 B)
+    │   ├── index.ts (858 B)
+    │   ├── industries.tsx (23.6 KB)
+    │   ├── industry-cards.tsx (26.4 KB)
+    │   ├── industry-statistics.ts (8.7 KB)
+    │   ├── solutions-mapping.ts (2.4 KB)
+    │   └── solutions.tsx (35.4 KB)
+    ├── 📁 hooks/
+    │   ├── use-advanced-chat.ts (3.9 KB)
+    │   ├── use-chat-helpers.ts (4.7 KB)
+    │   ├── use-chat.ts (12.8 KB)
+    │   ├── use-debounce.ts (385 B)
+    │   ├── use-mobile.tsx (565 B)
+    │   ├── use-scroll-manager.ts (6 KB)
+    │   ├── use-seo.ts (2.6 KB)
+    │   ├── use-toast.ts (3.8 KB)
+    │   ├── useCalendlyIntegration.ts (9.2 KB)
+    │   ├── useDebounce.ts (1.4 KB)
+    │   ├── usePageTracking.ts (1.3 KB)
+    │   └── usePrefetch.ts (2.4 KB)
+    ├── 📁 lib/
+    │   ├── 📁 ai/
+    │   │   ├── config.ts (3.8 KB)
+    │   │   └── service.ts (3.5 KB)
+    │   ├── 📁 analytics/
+    │   │   ├── analytics-tracker.ts (11.6 KB)
+    │   │   └── web-vitals.ts (5.2 KB)
+    │   ├── 📁 auth/
+    │   │   ├── actions.ts (383 B)
+    │   │   ├── auth-helpers.ts (4 KB)
+    │   │   ├── constants.ts (2.1 KB)
+    │   │   ├── rbac.ts (3.6 KB)
+    │   │   ├── schemas.ts (2.4 KB)
+    │   │   └── utils.ts (279 B)
+    │   ├── 📁 database/
+    │   │   └── prisma.ts (400 B)
+    │   ├── 📁 export/
+    │   │   └── csv.ts (2.8 KB)
+    │   ├── 📁 modules/
+    │   │   ├── 📁 ai/
+    │   │   │   ├── actions.ts (6.2 KB)
+    │   │   │   ├── index.ts (324 B)
+    │   │   │   ├── queries.ts (1.1 KB)
+    │   │   │   └── schemas.ts (624 B)
+    │   │   ├── 📁 attachments/
+    │   │   │   ├── actions.ts (7.5 KB)
+    │   │   │   ├── index.ts (345 B)
+    │   │   │   └── schemas.ts (1.1 KB)
+    │   │   ├── 📁 chatbot/
+    │   │   │   ├── 📁 actions/
+    │   │   │   ├── 📁 config/
+    │   │   │   │   └── 📁 industries/
+    │   │   │   │       ├── 📁 strive/
+    │   │   │   │       │   ├── config.json (2.9 KB)
+    │   │   │   │       │   ├── conversation-flow.ts (1.3 KB)
+    │   │   │   │       │   ├── problem-patterns.ts (6.7 KB)
+    │   │   │   │       │   ├── solutions.ts (3.5 KB)
+    │   │   │   │       │   └── system-prompt.ts (8.8 KB)
+    │   │   │   │       └── index.ts (3.7 KB)
+    │   │   │   ├── 📁 constants/
+    │   │   │   │   └── index.ts (1.5 KB)
+    │   │   │   ├── 📁 queries/
+    │   │   │   ├── 📁 schemas/
+    │   │   │   │   └── chat-request.ts (590 B)
+    │   │   │   ├── 📁 services/
+    │   │   │   │   ├── cache-service.ts (2.6 KB)
+    │   │   │   │   └── rag-service.ts (10.6 KB)
+    │   │   │   ├── 📁 types/
+    │   │   │   │   ├── api.ts (555 B)
+    │   │   │   │   ├── conversation.ts (1.2 KB)
+    │   │   │   │   ├── industry.ts (2.4 KB)
+    │   │   │   │   └── rag.ts (3 KB)
+    │   │   │   └── index.ts (339 B)
+    │   │   ├── 📁 crm/
+    │   │   │   ├── actions.ts (4.6 KB)
+    │   │   │   ├── queries.ts (5.3 KB)
+    │   │   │   └── schemas.ts (1.3 KB)
+    │   │   ├── 📁 dashboard/
+    │   │   │   ├── actions.ts (1.5 KB)
+    │   │   │   ├── queries.ts (3.2 KB)
+    │   │   │   └── schemas.ts (264 B)
+    │   │   ├── 📁 notifications/
+    │   │   │   ├── actions.ts (5.3 KB)
+    │   │   │   ├── queries.ts (2.3 KB)
+    │   │   │   └── schemas.ts (1.7 KB)
+    │   │   ├── 📁 organization/
+    │   │   │   ├── actions.ts (5.5 KB)
+    │   │   │   ├── context.ts (2.1 KB)
+    │   │   │   ├── queries.ts (1.4 KB)
+    │   │   │   └── schemas.ts (1 KB)
+    │   │   ├── 📁 projects/
+    │   │   │   ├── actions.ts (4.6 KB)
+    │   │   │   ├── queries.ts (5.4 KB)
+    │   │   │   └── schemas.ts (1.6 KB)
+    │   │   └── 📁 tasks/
+    │   │       ├── actions.ts (9.3 KB)
+    │   │       ├── bulk-actions.ts (7.6 KB)
+    │   │       ├── index.ts (469 B)
+    │   │       ├── queries.ts (6.3 KB)
+    │   │       └── schemas.ts (1.8 KB)
+    │   ├── 📁 pdf/
+    │   │   ├── pdf-generator-legacy.ts (5.3 KB)
+    │   │   └── professional-brochure.tsx (16.3 KB)
+    │   ├── 📁 realtime/
+    │   │   ├── client.ts (3.5 KB)
+    │   │   └── use-realtime.ts (3.5 KB)
+    │   ├── 📁 types/
+    │   │   ├── analytics.ts (343 B)
+    │   │   ├── csv.ts (303 B)
+    │   │   ├── filters.ts (935 B)
+    │   │   └── organization.ts (271 B)
+    │   ├── 📁 utils/
+    │   │   ├── animation-utils.ts (4.6 KB)
+    │   │   └── parent-communication.ts (9.7 KB)
+    │   ├── browser-detection.ts (8 KB)
+    │   ├── chatbot-iframe-communication.ts (8.2 KB)
+    │   ├── chatbot-performance-monitor.ts (2.3 KB)
+    │   ├── data-helpers.ts (5.5 KB)
+    │   ├── pdf-generator-helpers.ts (6.9 KB)
+    │   ├── pdf-generator.ts (14.5 KB)
+    │   ├── prisma.ts (377 B)
+    │   ├── queryClient.ts (1.4 KB)
+    │   ├── rate-limit.ts (2.7 KB)
+    │   ├── seo-config.ts (11.8 KB)
+    │   ├── supabase-server.ts (1.7 KB)
+    │   ├── supabase.ts (720 B)
+    │   ├── utils.ts (166 B)
+    │   └── validation.ts (2.3 KB)
+    ├── 📁 platform-backup-OLD/
+    │   ├── auth-layout-backup.tsx (893 B)
+    │   └── platform-layout-backup.tsx (1 KB)
+    ├── 📁 prisma/
+    │   └── schema.prisma (19.2 KB)
+    ├── 📁 public/
+    │   ├── 📁 assets/
+    │   │   ├── 📁 email/
+    │   │   │   ├── email-footer.png (75.1 KB)
+    │   │   │   └── email-header.png (54.4 KB)
+    │   │   ├── 📁 email-templates/
+    │   │   │   ├── 📁 Email Header&Footer/
+    │   │   │   │   ├── Email Header.png (54.4 KB)
+    │   │   │   │   └── Email-footer.png (75.1 KB)
+    │   │   │   ├── 📁 Newletter Template & Assets/
+    │   │   │   │   ├── 2.png (538.6 KB)
+    │   │   │   │   ├── 3.png (226.1 KB)
+    │   │   │   │   ├── 4.png (9.7 KB)
+    │   │   │   │   ├── 5.png (7.9 KB)
+    │   │   │   │   ├── 6.png (7.2 KB)
+    │   │   │   │   ├── 7.png (11.9 KB)
+    │   │   │   │   └── Strive-Tech_Newsletter-Template.png (886.2 KB)
+    │   │   │   └── 📁 social-media-icons/
+    │   │   │       ├── 3.png (3.9 KB)
+    │   │   │       ├── 4.png (4.7 KB)
+    │   │   │       ├── 5.png (4.7 KB)
+    │   │   │       ├── 6.png (4.5 KB)
+    │   │   │       └── 7.png (4.7 KB)
+    │   │   ├── 📁 favicons/
+    │   │   │   ├── android-chrome-192x192.png (4.6 KB)
+    │   │   │   ├── android-chrome-512x512.png (11.3 KB)
+    │   │   │   ├── apple-touch-icon.png (4.2 KB)
+    │   │   │   ├── favicon-16x16.png (607 B)
+    │   │   │   ├── favicon-32x32.png (1.2 KB)
+    │   │   │   ├── favicon.ico (15 KB)
+    │   │   │   └── site.webmanifest (263 B)
+    │   │   ├── 📁 headshots/
+    │   │   │   ├── Garrett-Headshot.webp (230.9 KB)
+    │   │   │   ├── Grant-Headshot.webp (711.1 KB)
+    │   │   │   └── Jeff-Headshot.webp (38.7 KB)
+    │   │   ├── 📁 logos/
+    │   │   │   ├── ST-Transparent.png (95.1 KB)
+    │   │   │   └── STRIVE_Orange_Text_Transparent_1483 x 320px.webp (7.9 KB)
+    │   │   ├── 📁 optimized/
+    │   │   │   ├── Garrett-Headshot_1024w.avif (21.5 KB)
+    │   │   │   ├── Garrett-Headshot_1024w.webp (35.4 KB)
+    │   │   │   ├── Garrett-Headshot_320w.avif (4.6 KB)
+    │   │   │   ├── Garrett-Headshot_320w.webp (6.7 KB)
+    │   │   │   ├── Garrett-Headshot_640w.avif (11.1 KB)
+    │   │   │   ├── Garrett-Headshot_640w.webp (17.7 KB)
+    │   │   │   ├── Garrett-Headshot_blur.jpg (390 B)
+    │   │   │   ├── Grant-Headshot_1024w.avif (18.3 KB)
+    │   │   │   ├── Grant-Headshot_1024w.webp (31.2 KB)
+    │   │   │   ├── Grant-Headshot_320w.avif (4.7 KB)
+    │   │   │   ├── Grant-Headshot_320w.webp (6.7 KB)
+    │   │   │   ├── Grant-Headshot_640w.avif (10.3 KB)
+    │   │   │   ├── Grant-Headshot_640w.webp (16.7 KB)
+    │   │   │   ├── Grant-Headshot_blur.jpg (383 B)
+    │   │   │   ├── Jeff-Headshot_1024w.avif (18.3 KB)
+    │   │   │   ├── Jeff-Headshot_1024w.webp (28.4 KB)
+    │   │   │   ├── Jeff-Headshot_320w.avif (4.7 KB)
+    │   │   │   ├── Jeff-Headshot_320w.webp (6 KB)
+    │   │   │   ├── Jeff-Headshot_640w.avif (10.2 KB)
+    │   │   │   ├── Jeff-Headshot_640w.webp (14.6 KB)
+    │   │   │   └── Jeff-Headshot_blur.jpg (401 B)
+    │   │   ├── Garrett-Headshot.webp (230.9 KB)
+    │   │   ├── Grant-Headshot.webp (711.1 KB)
+    │   │   ├── Jeff-Headshot.webp (38.7 KB)
+    │   │   └── ST-Transparent.png (95.1 KB)
+    │   ├── 📁 images/
+    │   │   └── strive-wordmark.png (19.2 KB)
+    │   ├── file.svg (391 B)
+    │   ├── globe.svg (1 KB)
+    │   ├── next.svg (1.3 KB)
+    │   ├── robots.txt (1 KB)
+    │   ├── sitemap.xml (5 KB)
+    │   ├── vercel.svg (128 B)
+    │   └── window.svg (385 B)
+    ├── 📁 scripts/
+    │   ├── directory-mapper.ts (7 KB)
+    │   ├── generate-email-previews.ts (11.4 KB)
+    │   ├── image-optimization.ts (9.7 KB)
+    │   ├── init-database.js (3.6 KB)
+    │   ├── seed-chatbot-data.ts (12.6 KB)
+    │   ├── test-auth.js (7.2 KB)
+    │   └── validate-seo.ts (7.3 KB)
+    ├── .env.local.example (1.6 KB)
+    ├── .gitignore (504 B)
+    ├── build_output.txt (72.7 KB)
+    ├── build_output2.txt (52.7 KB)
+    ├── build-output.txt (51.1 KB)
+    ├── components.json (452 B)
+    ├── DEPLOYMENT_CHECKLIST.md (13.1 KB)
+    ├── DEPLOYMENT.md (15 KB)
+    ├── eslint.config.mjs (994 B)
+    ├── middleware.ts (8.3 KB)
+    ├── MIGRATION_SESSIONS.md (50 KB)
+    ├── next-env.d.ts (247 B)
+    ├── next.config.mjs (1.9 KB)
+    ├── package.json (3.2 KB)
+    ├── postcss.config.mjs (81 B)
+    ├── README.md (3.7 KB)
+    ├── session12_handoff.txt (1.8 KB)
+    ├── session12_progress.txt (1.8 KB)
+    ├── SINGLE_APP_MIGRATION_PLAN.md (52 KB)
+    ├── tailwind.config.ts (455 B)
+    ├── tsconfig.json (667 B)
+    └── tsconfig.tsbuildinfo (882.4 KB)
+
+
+================================================================================
+PROJECT DIRECTORY ANALYSIS SUMMARY
+================================================================================
+
+📊 STATISTICS:
+   Total Files: 431
+   Total Directories: 149
+
+📄 FILE TYPES:
+   .tsx: 159
+   .ts: 156
+   .webp: 28
+   .png: 27
+   .avif: 18
+   .txt: 7
+   .md: 6
+   .jpg: 6
+   .json: 5
+   .svg: 5
+   .mjs: 3
+   .ico: 2
+   .js: 2
+   .example: 1
+   [no extension]: 1
+
+📈 LARGEST FILES:
+   886.2 KB: public/assets/email-templates/Newletter Template & Assets/Strive-Tech_Newsletter-Template.png
+   882.4 KB: tsconfig.tsbuildinfo
+   711.1 KB: assets/Grant-Headshot.webp
+   711.1 KB: public/assets/Grant-Headshot.webp
+   711.1 KB: public/assets/headshots/Grant-Headshot.webp
+   538.6 KB: public/assets/email-templates/Newletter Template & Assets/2.png
+   230.9 KB: assets/Garrett-Headshot.webp
+   230.9 KB: public/assets/Garrett-Headshot.webp
+   230.9 KB: public/assets/headshots/Garrett-Headshot.webp
+   226.1 KB: public/assets/email-templates/Newletter Template & Assets/3.png
+
+================================================================================
