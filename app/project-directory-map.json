@@ -1,0 +1,3689 @@
+{
+  "generatedAt": "2025-10-01T11:26:35.487Z",
+  "rootPath": "/Users/grant/Documents/GitHub/Strive-SaaS/app",
+  "stats": {
+    "totalFiles": 431,
+    "totalDirectories": 149,
+    "fileTypes": {
+      ".example": 1,
+      "": 1,
+      ".txt": 7,
+      ".json": 5,
+      ".md": 6,
+      ".ts": 156,
+      ".tsx": 159,
+      ".ico": 2,
+      ".css": 1,
+      ".webp": 28,
+      ".png": 27,
+      ".avif": 18,
+      ".jpg": 6,
+      ".mjs": 3,
+      ".prisma": 1,
+      ".webmanifest": 1,
+      ".svg": 5,
+      ".xml": 1,
+      ".js": 2,
+      ".tsbuildinfo": 1
+    },
+    "largestFiles": [
+      {
+        "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/public/assets/email-templates/Newletter Template & Assets/Strive-Tech_Newsletter-Template.png",
+        "size": 907470
+      },
+      {
+        "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/tsconfig.tsbuildinfo",
+        "size": 903616
+      },
+      {
+        "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/assets/Grant-Headshot.webp",
+        "size": 728200
+      },
+      {
+        "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/public/assets/Grant-Headshot.webp",
+        "size": 728200
+      },
+      {
+        "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/public/assets/headshots/Grant-Headshot.webp",
+        "size": 728200
+      },
+      {
+        "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/public/assets/email-templates/Newletter Template & Assets/2.png",
+        "size": 551574
+      },
+      {
+        "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/assets/Garrett-Headshot.webp",
+        "size": 236476
+      },
+      {
+        "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/public/assets/Garrett-Headshot.webp",
+        "size": 236476
+      },
+      {
+        "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/public/assets/headshots/Garrett-Headshot.webp",
+        "size": 236476
+      },
+      {
+        "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/public/assets/email-templates/Newletter Template & Assets/3.png",
+        "size": 231534
+      }
+    ]
+  },
+  "structure": {
+    "name": "app",
+    "type": "directory",
+    "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app",
+    "children": [
+      {
+        "name": ".vercel",
+        "type": "directory",
+        "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/.vercel",
+        "children": [
+          {
+            "name": "project.json",
+            "type": "file",
+            "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/.vercel/project.json",
+            "size": 108
+          },
+          {
+            "name": "README.txt",
+            "type": "file",
+            "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/.vercel/README.txt",
+            "size": 520
+          }
+        ]
+      },
+      {
+        "name": "api",
+        "type": "directory",
+        "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/api",
+        "children": [
+          {
+            "name": "chat",
+            "type": "directory",
+            "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/api/chat",
+            "children": [
+              {
+                "name": "route.ts",
+                "type": "file",
+                "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/api/chat/route.ts",
+                "size": 7227
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "app",
+        "type": "directory",
+        "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/app",
+        "children": [
+          {
+            "name": "(chatbot)",
+            "type": "directory",
+            "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/app/(chatbot)",
+            "children": [
+              {
+                "name": "full",
+                "type": "directory",
+                "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/app/(chatbot)/full",
+                "children": [
+                  {
+                    "name": "page.tsx",
+                    "type": "file",
+                    "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/app/(chatbot)/full/page.tsx",
+                    "size": 1970
+                  }
+                ]
+              },
+              {
+                "name": "widget",
+                "type": "directory",
+                "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/app/(chatbot)/widget",
+                "children": [
+                  {
+                    "name": "page.tsx",
+                    "type": "file",
+                    "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/app/(chatbot)/widget/page.tsx",
+                    "size": 1133
+                  }
+                ]
+              },
+              {
+                "name": "layout.tsx",
+                "type": "file",
+                "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/app/(chatbot)/layout.tsx",
+                "size": 722
+              },
+              {
+                "name": "page.tsx",
+                "type": "file",
+                "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/app/(chatbot)/page.tsx",
+                "size": 487
+              },
+              {
+                "name": "placeholder.md",
+                "type": "file",
+                "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/app/(chatbot)/placeholder.md",
+                "size": 12
+              }
+            ]
+          },
+          {
+            "name": "(platform)",
+            "type": "directory",
+            "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/app/(platform)",
+            "children": [
+              {
+                "name": "ai",
+                "type": "directory",
+                "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/app/(platform)/ai",
+                "children": [
+                  {
+                    "name": "layout.tsx",
+                    "type": "file",
+                    "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/app/(platform)/ai/layout.tsx",
+                    "size": 1505
+                  },
+                  {
+                    "name": "page.tsx",
+                    "type": "file",
+                    "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/app/(platform)/ai/page.tsx",
+                    "size": 4755
+                  }
+                ]
+              },
+              {
+                "name": "crm",
+                "type": "directory",
+                "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/app/(platform)/crm",
+                "children": [
+                  {
+                    "name": "[customerId]",
+                    "type": "directory",
+                    "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/app/(platform)/crm/[customerId]",
+                    "children": [
+                      {
+                        "name": "page.tsx",
+                        "type": "file",
+                        "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/app/(platform)/crm/[customerId]/page.tsx",
+                        "size": 9598
+                      }
+                    ]
+                  },
+                  {
+                    "name": "layout.tsx",
+                    "type": "file",
+                    "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/app/(platform)/crm/layout.tsx",
+                    "size": 1508
+                  },
+                  {
+                    "name": "page.tsx",
+                    "type": "file",
+                    "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/app/(platform)/crm/page.tsx",
+                    "size": 10554
+                  }
+                ]
+              },
+              {
+                "name": "dashboard",
+                "type": "directory",
+                "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/app/(platform)/dashboard",
+                "children": [
+                  {
+                    "name": "layout.tsx",
+                    "type": "file",
+                    "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/app/(platform)/dashboard/layout.tsx",
+                    "size": 1361
+                  },
+                  {
+                    "name": "page.tsx",
+                    "type": "file",
+                    "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/app/(platform)/dashboard/page.tsx",
+                    "size": 9382
+                  }
+                ]
+              },
+              {
+                "name": "login",
+                "type": "directory",
+                "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/app/(platform)/login",
+                "children": [
+                  {
+                    "name": "layout.tsx",
+                    "type": "file",
+                    "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/app/(platform)/login/layout.tsx",
+                    "size": 987
+                  },
+                  {
+                    "name": "page.tsx",
+                    "type": "file",
+                    "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/app/(platform)/login/page.tsx",
+                    "size": 15073
+                  }
+                ]
+              },
+              {
+                "name": "projects",
+                "type": "directory",
+                "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/app/(platform)/projects",
+                "children": [
+                  {
+                    "name": "[projectId]",
+                    "type": "directory",
+                    "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/app/(platform)/projects/[projectId]",
+                    "children": [
+                      {
+                        "name": "page.tsx",
+                        "type": "file",
+                        "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/app/(platform)/projects/[projectId]/page.tsx",
+                        "size": 14054
+                      }
+                    ]
+                  },
+                  {
+                    "name": "layout.tsx",
+                    "type": "file",
+                    "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/app/(platform)/projects/layout.tsx",
+                    "size": 1523
+                  },
+                  {
+                    "name": "page.tsx",
+                    "type": "file",
+                    "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/app/(platform)/projects/page.tsx",
+                    "size": 12237
+                  }
+                ]
+              },
+              {
+                "name": "settings",
+                "type": "directory",
+                "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/app/(platform)/settings",
+                "children": [
+                  {
+                    "name": "team",
+                    "type": "directory",
+                    "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/app/(platform)/settings/team",
+                    "children": [
+                      {
+                        "name": "page.tsx",
+                        "type": "file",
+                        "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/app/(platform)/settings/team/page.tsx",
+                        "size": 7991
+                      }
+                    ]
+                  },
+                  {
+                    "name": "layout.tsx",
+                    "type": "file",
+                    "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/app/(platform)/settings/layout.tsx",
+                    "size": 1523
+                  },
+                  {
+                    "name": "page.tsx",
+                    "type": "file",
+                    "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/app/(platform)/settings/page.tsx",
+                    "size": 14055
+                  }
+                ]
+              },
+              {
+                "name": "tools",
+                "type": "directory",
+                "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/app/(platform)/tools",
+                "children": [
+                  {
+                    "name": "layout.tsx",
+                    "type": "file",
+                    "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/app/(platform)/tools/layout.tsx",
+                    "size": 1514
+                  },
+                  {
+                    "name": "page.tsx",
+                    "type": "file",
+                    "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/app/(platform)/tools/page.tsx",
+                    "size": 8843
+                  }
+                ]
+              },
+              {
+                "name": "layout.tsx",
+                "type": "file",
+                "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/app/(platform)/layout.tsx",
+                "size": 485
+              },
+              {
+                "name": "page.tsx",
+                "type": "file",
+                "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/app/(platform)/page.tsx",
+                "size": 177
+              }
+            ]
+          },
+          {
+            "name": "(web)",
+            "type": "directory",
+            "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/app/(web)",
+            "children": [
+              {
+                "name": "about",
+                "type": "directory",
+                "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/app/(web)/about",
+                "children": [
+                  {
+                    "name": "page.tsx",
+                    "type": "file",
+                    "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/app/(web)/about/page.tsx",
+                    "size": 30195
+                  }
+                ]
+              },
+              {
+                "name": "assessment",
+                "type": "directory",
+                "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/app/(web)/assessment",
+                "children": [
+                  {
+                    "name": "page.tsx",
+                    "type": "file",
+                    "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/app/(web)/assessment/page.tsx",
+                    "size": 31657
+                  }
+                ]
+              },
+              {
+                "name": "chatbot-sai",
+                "type": "directory",
+                "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/app/(web)/chatbot-sai",
+                "children": [
+                  {
+                    "name": "page.tsx",
+                    "type": "file",
+                    "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/app/(web)/chatbot-sai/page.tsx",
+                    "size": 22911
+                  }
+                ]
+              },
+              {
+                "name": "contact",
+                "type": "directory",
+                "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/app/(web)/contact",
+                "children": [
+                  {
+                    "name": "page.tsx",
+                    "type": "file",
+                    "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/app/(web)/contact/page.tsx",
+                    "size": 28692
+                  }
+                ]
+              },
+              {
+                "name": "cookies",
+                "type": "directory",
+                "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/app/(web)/cookies",
+                "children": [
+                  {
+                    "name": "page.tsx",
+                    "type": "file",
+                    "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/app/(web)/cookies/page.tsx",
+                    "size": 3335
+                  }
+                ]
+              },
+              {
+                "name": "onboarding",
+                "type": "directory",
+                "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/app/(web)/onboarding",
+                "children": [
+                  {
+                    "name": "page.tsx",
+                    "type": "file",
+                    "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/app/(web)/onboarding/page.tsx",
+                    "size": 19165
+                  }
+                ]
+              },
+              {
+                "name": "portfolio",
+                "type": "directory",
+                "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/app/(web)/portfolio",
+                "children": [
+                  {
+                    "name": "page.tsx",
+                    "type": "file",
+                    "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/app/(web)/portfolio/page.tsx",
+                    "size": 22223
+                  }
+                ]
+              },
+              {
+                "name": "privacy",
+                "type": "directory",
+                "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/app/(web)/privacy",
+                "children": [
+                  {
+                    "name": "page.tsx",
+                    "type": "file",
+                    "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/app/(web)/privacy/page.tsx",
+                    "size": 3125
+                  }
+                ]
+              },
+              {
+                "name": "request",
+                "type": "directory",
+                "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/app/(web)/request",
+                "children": [
+                  {
+                    "name": "page.tsx",
+                    "type": "file",
+                    "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/app/(web)/request/page.tsx",
+                    "size": 42831
+                  }
+                ]
+              },
+              {
+                "name": "resources",
+                "type": "directory",
+                "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/app/(web)/resources",
+                "children": [
+                  {
+                    "name": "page.tsx",
+                    "type": "file",
+                    "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/app/(web)/resources/page.tsx",
+                    "size": 87355
+                  }
+                ]
+              },
+              {
+                "name": "solutions",
+                "type": "directory",
+                "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/app/(web)/solutions",
+                "children": [
+                  {
+                    "name": "ai-automation",
+                    "type": "directory",
+                    "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/app/(web)/solutions/ai-automation",
+                    "children": [
+                      {
+                        "name": "page.tsx",
+                        "type": "file",
+                        "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/app/(web)/solutions/ai-automation/page.tsx",
+                        "size": 4450
+                      }
+                    ]
+                  },
+                  {
+                    "name": "blockchain",
+                    "type": "directory",
+                    "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/app/(web)/solutions/blockchain",
+                    "children": [
+                      {
+                        "name": "page.tsx",
+                        "type": "file",
+                        "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/app/(web)/solutions/blockchain/page.tsx",
+                        "size": 4466
+                      }
+                    ]
+                  },
+                  {
+                    "name": "business-intelligence",
+                    "type": "directory",
+                    "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/app/(web)/solutions/business-intelligence",
+                    "children": [
+                      {
+                        "name": "page.tsx",
+                        "type": "file",
+                        "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/app/(web)/solutions/business-intelligence/page.tsx",
+                        "size": 4431
+                      }
+                    ]
+                  },
+                  {
+                    "name": "case-studies",
+                    "type": "directory",
+                    "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/app/(web)/solutions/case-studies",
+                    "children": [
+                      {
+                        "name": "healthcare",
+                        "type": "directory",
+                        "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/app/(web)/solutions/case-studies/healthcare",
+                        "children": [
+                          {
+                            "name": "page.tsx",
+                            "type": "file",
+                            "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/app/(web)/solutions/case-studies/healthcare/page.tsx",
+                            "size": 13822
+                          }
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "name": "computer-vision",
+                    "type": "directory",
+                    "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/app/(web)/solutions/computer-vision",
+                    "children": [
+                      {
+                        "name": "page.tsx",
+                        "type": "file",
+                        "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/app/(web)/solutions/computer-vision/page.tsx",
+                        "size": 4474
+                      }
+                    ]
+                  },
+                  {
+                    "name": "data-analytics",
+                    "type": "directory",
+                    "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/app/(web)/solutions/data-analytics",
+                    "children": [
+                      {
+                        "name": "page.tsx",
+                        "type": "file",
+                        "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/app/(web)/solutions/data-analytics/page.tsx",
+                        "size": 4467
+                      }
+                    ]
+                  },
+                  {
+                    "name": "education",
+                    "type": "directory",
+                    "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/app/(web)/solutions/education",
+                    "children": [
+                      {
+                        "name": "page.tsx",
+                        "type": "file",
+                        "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/app/(web)/solutions/education/page.tsx",
+                        "size": 4023
+                      }
+                    ]
+                  },
+                  {
+                    "name": "financial",
+                    "type": "directory",
+                    "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/app/(web)/solutions/financial",
+                    "children": [
+                      {
+                        "name": "page.tsx",
+                        "type": "file",
+                        "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/app/(web)/solutions/financial/page.tsx",
+                        "size": 4083
+                      }
+                    ]
+                  },
+                  {
+                    "name": "healthcare",
+                    "type": "directory",
+                    "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/app/(web)/solutions/healthcare",
+                    "children": [
+                      {
+                        "name": "page.tsx",
+                        "type": "file",
+                        "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/app/(web)/solutions/healthcare/page.tsx",
+                        "size": 4077
+                      }
+                    ]
+                  },
+                  {
+                    "name": "manufacturing",
+                    "type": "directory",
+                    "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/app/(web)/solutions/manufacturing",
+                    "children": [
+                      {
+                        "name": "page.tsx",
+                        "type": "file",
+                        "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/app/(web)/solutions/manufacturing/page.tsx",
+                        "size": 4055
+                      }
+                    ]
+                  },
+                  {
+                    "name": "retail",
+                    "type": "directory",
+                    "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/app/(web)/solutions/retail",
+                    "children": [
+                      {
+                        "name": "page.tsx",
+                        "type": "file",
+                        "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/app/(web)/solutions/retail/page.tsx",
+                        "size": 4086
+                      }
+                    ]
+                  },
+                  {
+                    "name": "security-compliance",
+                    "type": "directory",
+                    "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/app/(web)/solutions/security-compliance",
+                    "children": [
+                      {
+                        "name": "page.tsx",
+                        "type": "file",
+                        "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/app/(web)/solutions/security-compliance/page.tsx",
+                        "size": 4543
+                      }
+                    ]
+                  },
+                  {
+                    "name": "smart-business",
+                    "type": "directory",
+                    "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/app/(web)/solutions/smart-business",
+                    "children": [
+                      {
+                        "name": "page.tsx",
+                        "type": "file",
+                        "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/app/(web)/solutions/smart-business/page.tsx",
+                        "size": 4481
+                      }
+                    ]
+                  },
+                  {
+                    "name": "page.tsx",
+                    "type": "file",
+                    "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/app/(web)/solutions/page.tsx",
+                    "size": 65673
+                  }
+                ]
+              },
+              {
+                "name": "terms",
+                "type": "directory",
+                "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/app/(web)/terms",
+                "children": [
+                  {
+                    "name": "page.tsx",
+                    "type": "file",
+                    "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/app/(web)/terms/page.tsx",
+                    "size": 3408
+                  }
+                ]
+              },
+              {
+                "name": "layout.tsx",
+                "type": "file",
+                "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/app/(web)/layout.tsx",
+                "size": 654
+              },
+              {
+                "name": "not-found.tsx",
+                "type": "file",
+                "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/app/(web)/not-found.tsx",
+                "size": 710
+              }
+            ]
+          },
+          {
+            "name": "api",
+            "type": "directory",
+            "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/app/api",
+            "children": [
+              {
+                "name": "auth",
+                "type": "directory",
+                "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/app/api/auth",
+                "children": [
+                  {
+                    "name": "login",
+                    "type": "directory",
+                    "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/app/api/auth/login",
+                    "children": [
+                      {
+                        "name": "route.ts",
+                        "type": "file",
+                        "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/app/api/auth/login/route.ts",
+                        "size": 3038
+                      }
+                    ]
+                  },
+                  {
+                    "name": "signup",
+                    "type": "directory",
+                    "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/app/api/auth/signup",
+                    "children": [
+                      {
+                        "name": "route.ts",
+                        "type": "file",
+                        "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/app/api/auth/signup/route.ts",
+                        "size": 3049
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "name": "app",
+            "type": "directory",
+            "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/app/app",
+            "children": [
+              {
+                "name": "app",
+                "type": "directory",
+                "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/app/app/app",
+                "children": [
+                  {
+                    "name": "(web)",
+                    "type": "directory",
+                    "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/app/app/app/(web)",
+                    "children": [
+                      {
+                        "name": "chatbot",
+                        "type": "directory",
+                        "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/app/app/app/(web)/chatbot",
+                        "children": [
+                          {
+                            "name": "full",
+                            "type": "directory",
+                            "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/app/app/app/(web)/chatbot/full",
+                            "children": []
+                          },
+                          {
+                            "name": "widget",
+                            "type": "directory",
+                            "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/app/app/app/(web)/chatbot/widget",
+                            "children": []
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "name": "components",
+                "type": "directory",
+                "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/app/app/components",
+                "children": [
+                  {
+                    "name": "features",
+                    "type": "directory",
+                    "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/app/app/components/features",
+                    "children": [
+                      {
+                        "name": "chatbot",
+                        "type": "directory",
+                        "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/app/app/components/features/chatbot",
+                        "children": []
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "name": "lib",
+                "type": "directory",
+                "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/app/app/lib",
+                "children": [
+                  {
+                    "name": "modules",
+                    "type": "directory",
+                    "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/app/app/lib/modules",
+                    "children": [
+                      {
+                        "name": "chatbot",
+                        "type": "directory",
+                        "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/app/app/lib/modules/chatbot",
+                        "children": [
+                          {
+                            "name": "actions",
+                            "type": "directory",
+                            "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/app/app/lib/modules/chatbot/actions",
+                            "children": []
+                          },
+                          {
+                            "name": "config",
+                            "type": "directory",
+                            "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/app/app/lib/modules/chatbot/config",
+                            "children": [
+                              {
+                                "name": "industries",
+                                "type": "directory",
+                                "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/app/app/lib/modules/chatbot/config/industries",
+                                "children": [
+                                  {
+                                    "name": "strive",
+                                    "type": "directory",
+                                    "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/app/app/lib/modules/chatbot/config/industries/strive",
+                                    "children": []
+                                  }
+                                ]
+                              }
+                            ]
+                          },
+                          {
+                            "name": "constants",
+                            "type": "directory",
+                            "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/app/app/lib/modules/chatbot/constants",
+                            "children": []
+                          },
+                          {
+                            "name": "queries",
+                            "type": "directory",
+                            "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/app/app/lib/modules/chatbot/queries",
+                            "children": []
+                          },
+                          {
+                            "name": "schemas",
+                            "type": "directory",
+                            "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/app/app/lib/modules/chatbot/schemas",
+                            "children": []
+                          },
+                          {
+                            "name": "services",
+                            "type": "directory",
+                            "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/app/app/lib/modules/chatbot/services",
+                            "children": []
+                          },
+                          {
+                            "name": "types",
+                            "type": "directory",
+                            "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/app/app/lib/modules/chatbot/types",
+                            "children": []
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "name": "favicon.ico",
+            "type": "file",
+            "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/app/favicon.ico",
+            "size": 25931
+          },
+          {
+            "name": "globals.css",
+            "type": "file",
+            "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/app/globals.css",
+            "size": 4502
+          },
+          {
+            "name": "layout.tsx",
+            "type": "file",
+            "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/app/layout.tsx",
+            "size": 562
+          },
+          {
+            "name": "page.tsx",
+            "type": "file",
+            "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/app/page.tsx",
+            "size": 356
+          }
+        ]
+      },
+      {
+        "name": "assets",
+        "type": "directory",
+        "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/assets",
+        "children": [
+          {
+            "name": "email",
+            "type": "directory",
+            "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/assets/email",
+            "children": [
+              {
+                "name": "email-footer.png",
+                "type": "file",
+                "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/assets/email/email-footer.png",
+                "size": 76895
+              },
+              {
+                "name": "email-header.png",
+                "type": "file",
+                "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/assets/email/email-header.png",
+                "size": 55721
+              }
+            ]
+          },
+          {
+            "name": "optimized",
+            "type": "directory",
+            "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/assets/optimized",
+            "children": [
+              {
+                "name": "Garrett-Headshot_1024w.avif",
+                "type": "file",
+                "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/assets/optimized/Garrett-Headshot_1024w.avif",
+                "size": 21982
+              },
+              {
+                "name": "Garrett-Headshot_1024w.webp",
+                "type": "file",
+                "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/assets/optimized/Garrett-Headshot_1024w.webp",
+                "size": 36202
+              },
+              {
+                "name": "Garrett-Headshot_320w.avif",
+                "type": "file",
+                "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/assets/optimized/Garrett-Headshot_320w.avif",
+                "size": 4677
+              },
+              {
+                "name": "Garrett-Headshot_320w.webp",
+                "type": "file",
+                "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/assets/optimized/Garrett-Headshot_320w.webp",
+                "size": 6870
+              },
+              {
+                "name": "Garrett-Headshot_640w.avif",
+                "type": "file",
+                "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/assets/optimized/Garrett-Headshot_640w.avif",
+                "size": 11351
+              },
+              {
+                "name": "Garrett-Headshot_640w.webp",
+                "type": "file",
+                "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/assets/optimized/Garrett-Headshot_640w.webp",
+                "size": 18164
+              },
+              {
+                "name": "Garrett-Headshot_blur.jpg",
+                "type": "file",
+                "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/assets/optimized/Garrett-Headshot_blur.jpg",
+                "size": 390
+              },
+              {
+                "name": "Grant-Headshot_1024w.avif",
+                "type": "file",
+                "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/assets/optimized/Grant-Headshot_1024w.avif",
+                "size": 18710
+              },
+              {
+                "name": "Grant-Headshot_1024w.webp",
+                "type": "file",
+                "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/assets/optimized/Grant-Headshot_1024w.webp",
+                "size": 31938
+              },
+              {
+                "name": "Grant-Headshot_320w.avif",
+                "type": "file",
+                "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/assets/optimized/Grant-Headshot_320w.avif",
+                "size": 4821
+              },
+              {
+                "name": "Grant-Headshot_320w.webp",
+                "type": "file",
+                "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/assets/optimized/Grant-Headshot_320w.webp",
+                "size": 6904
+              },
+              {
+                "name": "Grant-Headshot_640w.avif",
+                "type": "file",
+                "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/assets/optimized/Grant-Headshot_640w.avif",
+                "size": 10515
+              },
+              {
+                "name": "Grant-Headshot_640w.webp",
+                "type": "file",
+                "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/assets/optimized/Grant-Headshot_640w.webp",
+                "size": 17072
+              },
+              {
+                "name": "Grant-Headshot_blur.jpg",
+                "type": "file",
+                "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/assets/optimized/Grant-Headshot_blur.jpg",
+                "size": 383
+              },
+              {
+                "name": "Jeff-Headshot_1024w.avif",
+                "type": "file",
+                "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/assets/optimized/Jeff-Headshot_1024w.avif",
+                "size": 18727
+              },
+              {
+                "name": "Jeff-Headshot_1024w.webp",
+                "type": "file",
+                "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/assets/optimized/Jeff-Headshot_1024w.webp",
+                "size": 29096
+              },
+              {
+                "name": "Jeff-Headshot_320w.avif",
+                "type": "file",
+                "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/assets/optimized/Jeff-Headshot_320w.avif",
+                "size": 4833
+              },
+              {
+                "name": "Jeff-Headshot_320w.webp",
+                "type": "file",
+                "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/assets/optimized/Jeff-Headshot_320w.webp",
+                "size": 6176
+              },
+              {
+                "name": "Jeff-Headshot_640w.avif",
+                "type": "file",
+                "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/assets/optimized/Jeff-Headshot_640w.avif",
+                "size": 10424
+              },
+              {
+                "name": "Jeff-Headshot_640w.webp",
+                "type": "file",
+                "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/assets/optimized/Jeff-Headshot_640w.webp",
+                "size": 14910
+              },
+              {
+                "name": "Jeff-Headshot_blur.jpg",
+                "type": "file",
+                "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/assets/optimized/Jeff-Headshot_blur.jpg",
+                "size": 401
+              }
+            ]
+          },
+          {
+            "name": "Garrett-Headshot.webp",
+            "type": "file",
+            "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/assets/Garrett-Headshot.webp",
+            "size": 236476
+          },
+          {
+            "name": "Grant-Headshot.webp",
+            "type": "file",
+            "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/assets/Grant-Headshot.webp",
+            "size": 728200
+          },
+          {
+            "name": "Jeff-Headshot.webp",
+            "type": "file",
+            "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/assets/Jeff-Headshot.webp",
+            "size": 39652
+          },
+          {
+            "name": "ST-Transparent.png",
+            "type": "file",
+            "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/assets/ST-Transparent.png",
+            "size": 97344
+          }
+        ]
+      },
+      {
+        "name": "components",
+        "type": "directory",
+        "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/components",
+        "children": [
+          {
+            "name": "analytics",
+            "type": "directory",
+            "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/components/analytics",
+            "children": [
+              {
+                "name": "consent-banner.tsx",
+                "type": "file",
+                "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/components/analytics/consent-banner.tsx",
+                "size": 6801
+              },
+              {
+                "name": "heatmap.tsx",
+                "type": "file",
+                "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/components/analytics/heatmap.tsx",
+                "size": 17543
+              }
+            ]
+          },
+          {
+            "name": "features",
+            "type": "directory",
+            "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/components/features",
+            "children": [
+              {
+                "name": "ai",
+                "type": "directory",
+                "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/components/features/ai",
+                "children": [
+                  {
+                    "name": "ai-chat.tsx",
+                    "type": "file",
+                    "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/components/features/ai/ai-chat.tsx",
+                    "size": 6795
+                  },
+                  {
+                    "name": "message-bubble.tsx",
+                    "type": "file",
+                    "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/components/features/ai/message-bubble.tsx",
+                    "size": 1279
+                  },
+                  {
+                    "name": "typing-indicator.tsx",
+                    "type": "file",
+                    "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/components/features/ai/typing-indicator.tsx",
+                    "size": 768
+                  }
+                ]
+              },
+              {
+                "name": "chatbot",
+                "type": "directory",
+                "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/components/features/chatbot",
+                "children": [
+                  {
+                    "name": "avatars.tsx",
+                    "type": "file",
+                    "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/components/features/chatbot/avatars.tsx",
+                    "size": 8237
+                  },
+                  {
+                    "name": "chat-container.tsx",
+                    "type": "file",
+                    "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/components/features/chatbot/chat-container.tsx",
+                    "size": 19183
+                  },
+                  {
+                    "name": "chat-input.tsx",
+                    "type": "file",
+                    "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/components/features/chatbot/chat-input.tsx",
+                    "size": 14434
+                  },
+                  {
+                    "name": "chat-message.tsx",
+                    "type": "file",
+                    "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/components/features/chatbot/chat-message.tsx",
+                    "size": 11838
+                  }
+                ]
+              },
+              {
+                "name": "crm",
+                "type": "directory",
+                "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/components/features/crm",
+                "children": [
+                  {
+                    "name": "customer-actions-menu.tsx",
+                    "type": "file",
+                    "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/components/features/crm/customer-actions-menu.tsx",
+                    "size": 2731
+                  },
+                  {
+                    "name": "customer-filters.tsx",
+                    "type": "file",
+                    "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/components/features/crm/customer-filters.tsx",
+                    "size": 5010
+                  },
+                  {
+                    "name": "customer-list-skeleton.tsx",
+                    "type": "file",
+                    "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/components/features/crm/customer-list-skeleton.tsx",
+                    "size": 3334
+                  },
+                  {
+                    "name": "customer-search.tsx",
+                    "type": "file",
+                    "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/components/features/crm/customer-search.tsx",
+                    "size": 1487
+                  }
+                ]
+              },
+              {
+                "name": "export",
+                "type": "directory",
+                "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/components/features/export",
+                "children": [
+                  {
+                    "name": "export-button.tsx",
+                    "type": "file",
+                    "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/components/features/export/export-button.tsx",
+                    "size": 2254
+                  }
+                ]
+              },
+              {
+                "name": "organization",
+                "type": "directory",
+                "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/components/features/organization",
+                "children": [
+                  {
+                    "name": "organization-switcher.tsx",
+                    "type": "file",
+                    "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/components/features/organization/organization-switcher.tsx",
+                    "size": 3776
+                  }
+                ]
+              },
+              {
+                "name": "projects",
+                "type": "directory",
+                "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/components/features/projects",
+                "children": [
+                  {
+                    "name": "project-filters.tsx",
+                    "type": "file",
+                    "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/components/features/projects/project-filters.tsx",
+                    "size": 8447
+                  },
+                  {
+                    "name": "project-list-skeleton.tsx",
+                    "type": "file",
+                    "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/components/features/projects/project-list-skeleton.tsx",
+                    "size": 3026
+                  }
+                ]
+              },
+              {
+                "name": "shared",
+                "type": "directory",
+                "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/components/features/shared",
+                "children": [
+                  {
+                    "name": "activity-timeline.tsx",
+                    "type": "file",
+                    "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/components/features/shared/activity-timeline.tsx",
+                    "size": 5892
+                  }
+                ]
+              },
+              {
+                "name": "tasks",
+                "type": "directory",
+                "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/components/features/tasks",
+                "children": [
+                  {
+                    "name": "task-attachments.tsx",
+                    "type": "file",
+                    "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/components/features/tasks/task-attachments.tsx",
+                    "size": 7403
+                  },
+                  {
+                    "name": "task-card.tsx",
+                    "type": "file",
+                    "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/components/features/tasks/task-card.tsx",
+                    "size": 4148
+                  },
+                  {
+                    "name": "task-filters.tsx",
+                    "type": "file",
+                    "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/components/features/tasks/task-filters.tsx",
+                    "size": 7167
+                  },
+                  {
+                    "name": "task-list-skeleton.tsx",
+                    "type": "file",
+                    "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/components/features/tasks/task-list-skeleton.tsx",
+                    "size": 2352
+                  },
+                  {
+                    "name": "task-list.tsx",
+                    "type": "file",
+                    "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/components/features/tasks/task-list.tsx",
+                    "size": 14403
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "name": "filters",
+            "type": "directory",
+            "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/components/filters",
+            "children": [
+              {
+                "name": "unified-filter-dropdown.tsx",
+                "type": "file",
+                "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/components/filters/unified-filter-dropdown.tsx",
+                "size": 13701
+              }
+            ]
+          },
+          {
+            "name": "industry",
+            "type": "directory",
+            "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/components/industry",
+            "children": [
+              {
+                "name": "industry-selector.tsx",
+                "type": "file",
+                "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/components/industry/industry-selector.tsx",
+                "size": 5444
+              },
+              {
+                "name": "industry-solutions-grid.tsx",
+                "type": "file",
+                "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/components/industry/industry-solutions-grid.tsx",
+                "size": 2705
+              }
+            ]
+          },
+          {
+            "name": "layouts",
+            "type": "directory",
+            "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/components/layouts",
+            "children": [
+              {
+                "name": "sidebar",
+                "type": "directory",
+                "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/components/layouts/sidebar",
+                "children": [
+                  {
+                    "name": "main-sidebar.tsx",
+                    "type": "file",
+                    "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/components/layouts/sidebar/main-sidebar.tsx",
+                    "size": 4813
+                  }
+                ]
+              },
+              {
+                "name": "topbar",
+                "type": "directory",
+                "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/components/layouts/topbar",
+                "children": [
+                  {
+                    "name": "topbar.tsx",
+                    "type": "file",
+                    "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/components/layouts/topbar/topbar.tsx",
+                    "size": 4666
+                  }
+                ]
+              },
+              {
+                "name": "dashboard-shell.tsx",
+                "type": "file",
+                "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/components/layouts/dashboard-shell.tsx",
+                "size": 1534
+              }
+            ]
+          },
+          {
+            "name": "resources",
+            "type": "directory",
+            "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/components/resources",
+            "children": [
+              {
+                "name": "WhitepaperViewer.tsx",
+                "type": "file",
+                "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/components/resources/WhitepaperViewer.tsx",
+                "size": 17218
+              }
+            ]
+          },
+          {
+            "name": "seo",
+            "type": "directory",
+            "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/components/seo",
+            "children": [
+              {
+                "name": "meta-tags.tsx",
+                "type": "file",
+                "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/components/seo/meta-tags.tsx",
+                "size": 4873
+              }
+            ]
+          },
+          {
+            "name": "shared",
+            "type": "directory",
+            "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/components/shared",
+            "children": [
+              {
+                "name": "navigation",
+                "type": "directory",
+                "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/components/shared/navigation",
+                "children": [
+                  {
+                    "name": "notification-dropdown.tsx",
+                    "type": "file",
+                    "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/components/shared/navigation/notification-dropdown.tsx",
+                    "size": 9888
+                  }
+                ]
+              },
+              {
+                "name": "error-boundary.tsx",
+                "type": "file",
+                "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/components/shared/error-boundary.tsx",
+                "size": 3580
+              }
+            ]
+          },
+          {
+            "name": "ui",
+            "type": "directory",
+            "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/components/ui",
+            "children": [
+              {
+                "name": "alert.tsx",
+                "type": "file",
+                "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/components/ui/alert.tsx",
+                "size": 1584
+              },
+              {
+                "name": "analytics-error-boundary.tsx",
+                "type": "file",
+                "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/components/ui/analytics-error-boundary.tsx",
+                "size": 2992
+              },
+              {
+                "name": "avatar.tsx",
+                "type": "file",
+                "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/components/ui/avatar.tsx",
+                "size": 1419
+              },
+              {
+                "name": "badge.tsx",
+                "type": "file",
+                "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/components/ui/badge.tsx",
+                "size": 1128
+              },
+              {
+                "name": "breadcrumb.tsx",
+                "type": "file",
+                "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/components/ui/breadcrumb.tsx",
+                "size": 2712
+              },
+              {
+                "name": "bulk-selector.tsx",
+                "type": "file",
+                "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/components/ui/bulk-selector.tsx",
+                "size": 4431
+              },
+              {
+                "name": "button.tsx",
+                "type": "file",
+                "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/components/ui/button.tsx",
+                "size": 1901
+              },
+              {
+                "name": "calendar.tsx",
+                "type": "file",
+                "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/components/ui/calendar.tsx",
+                "size": 2695
+              },
+              {
+                "name": "calendly-fallback.tsx",
+                "type": "file",
+                "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/components/ui/calendly-fallback.tsx",
+                "size": 11005
+              },
+              {
+                "name": "card.tsx",
+                "type": "file",
+                "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/components/ui/card.tsx",
+                "size": 1858
+              },
+              {
+                "name": "carousel.tsx",
+                "type": "file",
+                "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/components/ui/carousel.tsx",
+                "size": 6210
+              },
+              {
+                "name": "chart.tsx",
+                "type": "file",
+                "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/components/ui/chart.tsx",
+                "size": 10474
+              },
+              {
+                "name": "checkbox.tsx",
+                "type": "file",
+                "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/components/ui/checkbox.tsx",
+                "size": 1056
+              },
+              {
+                "name": "collapsible.tsx",
+                "type": "file",
+                "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/components/ui/collapsible.tsx",
+                "size": 329
+              },
+              {
+                "name": "coming-soon-badge.tsx",
+                "type": "file",
+                "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/components/ui/coming-soon-badge.tsx",
+                "size": 1027
+              },
+              {
+                "name": "command.tsx",
+                "type": "file",
+                "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/components/ui/command.tsx",
+                "size": 4885
+              },
+              {
+                "name": "date-range-picker.tsx",
+                "type": "file",
+                "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/components/ui/date-range-picker.tsx",
+                "size": 5158
+              },
+              {
+                "name": "drawer.tsx",
+                "type": "file",
+                "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/components/ui/drawer.tsx",
+                "size": 3021
+              },
+              {
+                "name": "dropdown-menu.tsx",
+                "type": "file",
+                "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/components/ui/dropdown-menu.tsx",
+                "size": 8284
+              },
+              {
+                "name": "error-boundary.tsx",
+                "type": "file",
+                "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/components/ui/error-boundary.tsx",
+                "size": 1439
+              },
+              {
+                "name": "file-upload.tsx",
+                "type": "file",
+                "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/components/ui/file-upload.tsx",
+                "size": 7523
+              },
+              {
+                "name": "floating-chat.tsx",
+                "type": "file",
+                "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/components/ui/floating-chat.tsx",
+                "size": 20901
+              },
+              {
+                "name": "form.tsx",
+                "type": "file",
+                "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/components/ui/form.tsx",
+                "size": 4120
+              },
+              {
+                "name": "hero-section.tsx",
+                "type": "file",
+                "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/components/ui/hero-section.tsx",
+                "size": 6918
+              },
+              {
+                "name": "icons.tsx",
+                "type": "file",
+                "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/components/ui/icons.tsx",
+                "size": 139
+              },
+              {
+                "name": "iframe-error-boundary.tsx",
+                "type": "file",
+                "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/components/ui/iframe-error-boundary.tsx",
+                "size": 5125
+              },
+              {
+                "name": "input-otp.tsx",
+                "type": "file",
+                "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/components/ui/input-otp.tsx",
+                "size": 2154
+              },
+              {
+                "name": "input.tsx",
+                "type": "file",
+                "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/components/ui/input.tsx",
+                "size": 791
+              },
+              {
+                "name": "label.tsx",
+                "type": "file",
+                "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/components/ui/label.tsx",
+                "size": 710
+              },
+              {
+                "name": "lazy-image.tsx",
+                "type": "file",
+                "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/components/ui/lazy-image.tsx",
+                "size": 4126
+              },
+              {
+                "name": "multi-select.tsx",
+                "type": "file",
+                "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/components/ui/multi-select.tsx",
+                "size": 4873
+              },
+              {
+                "name": "optimized-image.tsx",
+                "type": "file",
+                "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/components/ui/optimized-image.tsx",
+                "size": 7602
+              },
+              {
+                "name": "page-skeleton.tsx",
+                "type": "file",
+                "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/components/ui/page-skeleton.tsx",
+                "size": 1326
+              },
+              {
+                "name": "pagination-controls.tsx",
+                "type": "file",
+                "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/components/ui/pagination-controls.tsx",
+                "size": 4812
+              },
+              {
+                "name": "pagination.tsx",
+                "type": "file",
+                "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/components/ui/pagination.tsx",
+                "size": 2751
+              },
+              {
+                "name": "popover.tsx",
+                "type": "file",
+                "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/components/ui/popover.tsx",
+                "size": 1280
+              },
+              {
+                "name": "portfolio-card.tsx",
+                "type": "file",
+                "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/components/ui/portfolio-card.tsx",
+                "size": 2627
+              },
+              {
+                "name": "prefetch-link.tsx",
+                "type": "file",
+                "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/components/ui/prefetch-link.tsx",
+                "size": 1468
+              },
+              {
+                "name": "professional-brochure.tsx",
+                "type": "file",
+                "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/components/ui/professional-brochure.tsx",
+                "size": 17046
+              },
+              {
+                "name": "progress.tsx",
+                "type": "file",
+                "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/components/ui/progress.tsx",
+                "size": 740
+              },
+              {
+                "name": "resizable.tsx",
+                "type": "file",
+                "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/components/ui/resizable.tsx",
+                "size": 1723
+              },
+              {
+                "name": "resource-card.tsx",
+                "type": "file",
+                "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/components/ui/resource-card.tsx",
+                "size": 2386
+              },
+              {
+                "name": "roi-calculator.tsx",
+                "type": "file",
+                "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/components/ui/roi-calculator.tsx",
+                "size": 18332
+              },
+              {
+                "name": "scroll-area.tsx",
+                "type": "file",
+                "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/components/ui/scroll-area.tsx",
+                "size": 1642
+              },
+              {
+                "name": "select.tsx",
+                "type": "file",
+                "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/components/ui/select.tsx",
+                "size": 5530
+              },
+              {
+                "name": "separator.tsx",
+                "type": "file",
+                "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/components/ui/separator.tsx",
+                "size": 756
+              },
+              {
+                "name": "sheet.tsx",
+                "type": "file",
+                "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/components/ui/sheet.tsx",
+                "size": 4281
+              },
+              {
+                "name": "sidebar.tsx",
+                "type": "file",
+                "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/components/ui/sidebar.tsx",
+                "size": 23567
+              },
+              {
+                "name": "skeleton-card.tsx",
+                "type": "file",
+                "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/components/ui/skeleton-card.tsx",
+                "size": 1584
+              },
+              {
+                "name": "skeleton.tsx",
+                "type": "file",
+                "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/components/ui/skeleton.tsx",
+                "size": 261
+              },
+              {
+                "name": "slider.tsx",
+                "type": "file",
+                "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/components/ui/slider.tsx",
+                "size": 1077
+              },
+              {
+                "name": "solution-card.tsx",
+                "type": "file",
+                "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/components/ui/solution-card.tsx",
+                "size": 1504
+              },
+              {
+                "name": "solution-ecosystem-3d.tsx",
+                "type": "file",
+                "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/components/ui/solution-ecosystem-3d.tsx",
+                "size": 7070
+              },
+              {
+                "name": "sub-filter-bar.tsx",
+                "type": "file",
+                "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/components/ui/sub-filter-bar.tsx",
+                "size": 5720
+              },
+              {
+                "name": "switch.tsx",
+                "type": "file",
+                "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/components/ui/switch.tsx",
+                "size": 1139
+              },
+              {
+                "name": "table.tsx",
+                "type": "file",
+                "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/components/ui/table.tsx",
+                "size": 2765
+              },
+              {
+                "name": "tabs.tsx",
+                "type": "file",
+                "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/components/ui/tabs.tsx",
+                "size": 1883
+              },
+              {
+                "name": "team-member.tsx",
+                "type": "file",
+                "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/components/ui/team-member.tsx",
+                "size": 1381
+              },
+              {
+                "name": "textarea.tsx",
+                "type": "file",
+                "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/components/ui/textarea.tsx",
+                "size": 689
+              },
+              {
+                "name": "toast.tsx",
+                "type": "file",
+                "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/components/ui/toast.tsx",
+                "size": 4845
+              },
+              {
+                "name": "toaster.tsx",
+                "type": "file",
+                "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/components/ui/toaster.tsx",
+                "size": 787
+              },
+              {
+                "name": "toggle-group.tsx",
+                "type": "file",
+                "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/components/ui/toggle-group.tsx",
+                "size": 1753
+              },
+              {
+                "name": "toggle.tsx",
+                "type": "file",
+                "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/components/ui/toggle.tsx",
+                "size": 1527
+              },
+              {
+                "name": "tooltip.tsx",
+                "type": "file",
+                "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/components/ui/tooltip.tsx",
+                "size": 1209
+              }
+            ]
+          },
+          {
+            "name": "web",
+            "type": "directory",
+            "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/components/web",
+            "children": [
+              {
+                "name": "footer.tsx",
+                "type": "file",
+                "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/components/web/footer.tsx",
+                "size": 9379
+              },
+              {
+                "name": "navigation.tsx",
+                "type": "file",
+                "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/components/web/navigation.tsx",
+                "size": 12455
+              }
+            ]
+          },
+          {
+            "name": "HostDependent.tsx",
+            "type": "file",
+            "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/components/HostDependent.tsx",
+            "size": 893
+          }
+        ]
+      },
+      {
+        "name": "data",
+        "type": "directory",
+        "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/data",
+        "children": [
+          {
+            "name": "portfolio",
+            "type": "directory",
+            "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/data/portfolio",
+            "children": [
+              {
+                "name": "projects",
+                "type": "directory",
+                "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/data/portfolio/projects",
+                "children": [
+                  {
+                    "name": "agentic-workflow-platform.ts",
+                    "type": "file",
+                    "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/data/portfolio/projects/agentic-workflow-platform.ts",
+                    "size": 1913
+                  },
+                  {
+                    "name": "computer-vision-analytics.ts",
+                    "type": "file",
+                    "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/data/portfolio/projects/computer-vision-analytics.ts",
+                    "size": 1753
+                  },
+                  {
+                    "name": "index.ts",
+                    "type": "file",
+                    "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/data/portfolio/projects/index.ts",
+                    "size": 975
+                  },
+                  {
+                    "name": "mcp-server-framework.ts",
+                    "type": "file",
+                    "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/data/portfolio/projects/mcp-server-framework.ts",
+                    "size": 1731
+                  },
+                  {
+                    "name": "neural-language-assistant.ts",
+                    "type": "file",
+                    "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/data/portfolio/projects/neural-language-assistant.ts",
+                    "size": 1849
+                  },
+                  {
+                    "name": "rag-knowledge-system.ts",
+                    "type": "file",
+                    "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/data/portfolio/projects/rag-knowledge-system.ts",
+                    "size": 1763
+                  },
+                  {
+                    "name": "smart-dashboard-ui-kit.ts",
+                    "type": "file",
+                    "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/data/portfolio/projects/smart-dashboard-ui-kit.ts",
+                    "size": 1720
+                  }
+                ]
+              },
+              {
+                "name": "index.ts",
+                "type": "file",
+                "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/data/portfolio/index.ts",
+                "size": 107
+              },
+              {
+                "name": "types.ts",
+                "type": "file",
+                "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/data/portfolio/types.ts",
+                "size": 422
+              }
+            ]
+          },
+          {
+            "name": "resources",
+            "type": "directory",
+            "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/data/resources",
+            "children": [
+              {
+                "name": "case-studies",
+                "type": "directory",
+                "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/data/resources/case-studies",
+                "children": [
+                  {
+                    "name": "agriculture-precision-farming.ts",
+                    "type": "file",
+                    "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/data/resources/case-studies/agriculture-precision-farming.ts",
+                    "size": 3307
+                  },
+                  {
+                    "name": "automotive-connected-services.ts",
+                    "type": "file",
+                    "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/data/resources/case-studies/automotive-connected-services.ts",
+                    "size": 3193
+                  },
+                  {
+                    "name": "education-ai-transformation.ts",
+                    "type": "file",
+                    "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/data/resources/case-studies/education-ai-transformation.ts",
+                    "size": 3321
+                  },
+                  {
+                    "name": "elite-transportation-ai-solutions.ts",
+                    "type": "file",
+                    "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/data/resources/case-studies/elite-transportation-ai-solutions.ts",
+                    "size": 4606
+                  },
+                  {
+                    "name": "energy-utilities-ai-transformation.ts",
+                    "type": "file",
+                    "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/data/resources/case-studies/energy-utilities-ai-transformation.ts",
+                    "size": 3409
+                  },
+                  {
+                    "name": "esports-analytics-platform.ts",
+                    "type": "file",
+                    "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/data/resources/case-studies/esports-analytics-platform.ts",
+                    "size": 3460
+                  },
+                  {
+                    "name": "financial-services-automation.ts",
+                    "type": "file",
+                    "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/data/resources/case-studies/financial-services-automation.ts",
+                    "size": 3633
+                  },
+                  {
+                    "name": "gaming-ai-content-moderation.ts",
+                    "type": "file",
+                    "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/data/resources/case-studies/gaming-ai-content-moderation.ts",
+                    "size": 3562
+                  },
+                  {
+                    "name": "government-nhs-ai-transformation.ts",
+                    "type": "file",
+                    "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/data/resources/case-studies/government-nhs-ai-transformation.ts",
+                    "size": 3673
+                  },
+                  {
+                    "name": "healthcare-kaiser-permanente-ai.ts",
+                    "type": "file",
+                    "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/data/resources/case-studies/healthcare-kaiser-permanente-ai.ts",
+                    "size": 3738
+                  },
+                  {
+                    "name": "hospitality-tourism-marriott-ai.ts",
+                    "type": "file",
+                    "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/data/resources/case-studies/hospitality-tourism-marriott-ai.ts",
+                    "size": 4038
+                  },
+                  {
+                    "name": "index.ts",
+                    "type": "file",
+                    "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/data/resources/case-studies/index.ts",
+                    "size": 4104
+                  },
+                  {
+                    "name": "insurance-progressive-ai-claims.ts",
+                    "type": "file",
+                    "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/data/resources/case-studies/insurance-progressive-ai-claims.ts",
+                    "size": 3965
+                  },
+                  {
+                    "name": "legal-wilson-associates-ai.ts",
+                    "type": "file",
+                    "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/data/resources/case-studies/legal-wilson-associates-ai.ts",
+                    "size": 4117
+                  },
+                  {
+                    "name": "logistics-supply-chain-dhl-ai.ts",
+                    "type": "file",
+                    "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/data/resources/case-studies/logistics-supply-chain-dhl-ai.ts",
+                    "size": 4019
+                  },
+                  {
+                    "name": "manufacturing-ai-transformation.ts",
+                    "type": "file",
+                    "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/data/resources/case-studies/manufacturing-ai-transformation.ts",
+                    "size": 4222
+                  },
+                  {
+                    "name": "media-entertainment-lionsgate-ai.ts",
+                    "type": "file",
+                    "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/data/resources/case-studies/media-entertainment-lionsgate-ai.ts",
+                    "size": 4127
+                  },
+                  {
+                    "name": "microsoft-ai-transformation.ts",
+                    "type": "file",
+                    "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/data/resources/case-studies/microsoft-ai-transformation.ts",
+                    "size": 4450
+                  },
+                  {
+                    "name": "non-profit-ai-transformation.ts",
+                    "type": "file",
+                    "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/data/resources/case-studies/non-profit-ai-transformation.ts",
+                    "size": 3975
+                  },
+                  {
+                    "name": "real-estate-ai-transformation.ts",
+                    "type": "file",
+                    "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/data/resources/case-studies/real-estate-ai-transformation.ts",
+                    "size": 4115
+                  },
+                  {
+                    "name": "retail-walmart-ai-implementation.ts",
+                    "type": "file",
+                    "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/data/resources/case-studies/retail-walmart-ai-implementation.ts",
+                    "size": 4405
+                  },
+                  {
+                    "name": "telcomax-5g-network-intelligence.ts",
+                    "type": "file",
+                    "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/data/resources/case-studies/telcomax-5g-network-intelligence.ts",
+                    "size": 4605
+                  }
+                ]
+              },
+              {
+                "name": "featured",
+                "type": "directory",
+                "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/data/resources/featured",
+                "children": [
+                  {
+                    "name": "featured-whitepaper.ts",
+                    "type": "file",
+                    "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/data/resources/featured/featured-whitepaper.ts",
+                    "size": 776
+                  },
+                  {
+                    "name": "index.ts",
+                    "type": "file",
+                    "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/data/resources/featured/index.ts",
+                    "size": 57
+                  }
+                ]
+              },
+              {
+                "name": "quizzes",
+                "type": "directory",
+                "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/data/resources/quizzes",
+                "children": [
+                  {
+                    "name": "ai-applications-daily-life.ts",
+                    "type": "file",
+                    "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/data/resources/quizzes/ai-applications-daily-life.ts",
+                    "size": 3156
+                  },
+                  {
+                    "name": "ai-basics-fundamentals.ts",
+                    "type": "file",
+                    "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/data/resources/quizzes/ai-basics-fundamentals.ts",
+                    "size": 3152
+                  },
+                  {
+                    "name": "ai-ethics-applications.ts",
+                    "type": "file",
+                    "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/data/resources/quizzes/ai-ethics-applications.ts",
+                    "size": 3177
+                  },
+                  {
+                    "name": "ai-model-architectures.ts",
+                    "type": "file",
+                    "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/data/resources/quizzes/ai-model-architectures.ts",
+                    "size": 3117
+                  },
+                  {
+                    "name": "computer-vision-basics.ts",
+                    "type": "file",
+                    "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/data/resources/quizzes/computer-vision-basics.ts",
+                    "size": 3203
+                  },
+                  {
+                    "name": "generative-ai-fundamentals.ts",
+                    "type": "file",
+                    "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/data/resources/quizzes/generative-ai-fundamentals.ts",
+                    "size": 3084
+                  },
+                  {
+                    "name": "index.ts",
+                    "type": "file",
+                    "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/data/resources/quizzes/index.ts",
+                    "size": 1998
+                  },
+                  {
+                    "name": "introduction-to-machine-learning.ts",
+                    "type": "file",
+                    "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/data/resources/quizzes/introduction-to-machine-learning.ts",
+                    "size": 3121
+                  },
+                  {
+                    "name": "ml-fundamentals.ts",
+                    "type": "file",
+                    "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/data/resources/quizzes/ml-fundamentals.ts",
+                    "size": 3001
+                  },
+                  {
+                    "name": "natural-language-processing.ts",
+                    "type": "file",
+                    "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/data/resources/quizzes/natural-language-processing.ts",
+                    "size": 3000
+                  },
+                  {
+                    "name": "neural-networks-deep-learning.ts",
+                    "type": "file",
+                    "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/data/resources/quizzes/neural-networks-deep-learning.ts",
+                    "size": 2999
+                  },
+                  {
+                    "name": "rag-retrieval-augmented.ts",
+                    "type": "file",
+                    "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/data/resources/quizzes/rag-retrieval-augmented.ts",
+                    "size": 2919
+                  },
+                  {
+                    "name": "types.ts",
+                    "type": "file",
+                    "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/data/resources/quizzes/types.ts",
+                    "size": 590
+                  }
+                ]
+              },
+              {
+                "name": "whitepapers",
+                "type": "directory",
+                "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/data/resources/whitepapers",
+                "children": [
+                  {
+                    "name": "ai-ml-complete-guide.ts",
+                    "type": "file",
+                    "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/data/resources/whitepapers/ai-ml-complete-guide.ts",
+                    "size": 2249
+                  },
+                  {
+                    "name": "cloud-security-best-practices.ts",
+                    "type": "file",
+                    "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/data/resources/whitepapers/cloud-security-best-practices.ts",
+                    "size": 2224
+                  },
+                  {
+                    "name": "computer-vision-intelligence.ts",
+                    "type": "file",
+                    "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/data/resources/whitepapers/computer-vision-intelligence.ts",
+                    "size": 2111
+                  },
+                  {
+                    "name": "ethical-ai-implementation.ts",
+                    "type": "file",
+                    "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/data/resources/whitepapers/ethical-ai-implementation.ts",
+                    "size": 80880
+                  },
+                  {
+                    "name": "index.ts",
+                    "type": "file",
+                    "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/data/resources/whitepapers/index.ts",
+                    "size": 940
+                  },
+                  {
+                    "name": "nlp-mastery.ts",
+                    "type": "file",
+                    "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/data/resources/whitepapers/nlp-mastery.ts",
+                    "size": 2021
+                  }
+                ]
+              },
+              {
+                "name": "index.ts",
+                "type": "file",
+                "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/data/resources/index.ts",
+                "size": 822
+              },
+              {
+                "name": "types.ts",
+                "type": "file",
+                "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/data/resources/types.ts",
+                "size": 889
+              }
+            ]
+          },
+          {
+            "name": "index.ts",
+            "type": "file",
+            "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/data/index.ts",
+            "size": 858
+          },
+          {
+            "name": "industries.tsx",
+            "type": "file",
+            "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/data/industries.tsx",
+            "size": 24211
+          },
+          {
+            "name": "industry-cards.tsx",
+            "type": "file",
+            "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/data/industry-cards.tsx",
+            "size": 27030
+          },
+          {
+            "name": "industry-statistics.ts",
+            "type": "file",
+            "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/data/industry-statistics.ts",
+            "size": 8921
+          },
+          {
+            "name": "solutions-mapping.ts",
+            "type": "file",
+            "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/data/solutions-mapping.ts",
+            "size": 2418
+          },
+          {
+            "name": "solutions.tsx",
+            "type": "file",
+            "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/data/solutions.tsx",
+            "size": 36241
+          }
+        ]
+      },
+      {
+        "name": "hooks",
+        "type": "directory",
+        "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/hooks",
+        "children": [
+          {
+            "name": "use-advanced-chat.ts",
+            "type": "file",
+            "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/hooks/use-advanced-chat.ts",
+            "size": 4036
+          },
+          {
+            "name": "use-chat-helpers.ts",
+            "type": "file",
+            "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/hooks/use-chat-helpers.ts",
+            "size": 4763
+          },
+          {
+            "name": "use-chat.ts",
+            "type": "file",
+            "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/hooks/use-chat.ts",
+            "size": 13123
+          },
+          {
+            "name": "use-debounce.ts",
+            "type": "file",
+            "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/hooks/use-debounce.ts",
+            "size": 385
+          },
+          {
+            "name": "use-mobile.tsx",
+            "type": "file",
+            "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/hooks/use-mobile.tsx",
+            "size": 565
+          },
+          {
+            "name": "use-scroll-manager.ts",
+            "type": "file",
+            "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/hooks/use-scroll-manager.ts",
+            "size": 6184
+          },
+          {
+            "name": "use-seo.ts",
+            "type": "file",
+            "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/hooks/use-seo.ts",
+            "size": 2664
+          },
+          {
+            "name": "use-toast.ts",
+            "type": "file",
+            "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/hooks/use-toast.ts",
+            "size": 3910
+          },
+          {
+            "name": "useCalendlyIntegration.ts",
+            "type": "file",
+            "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/hooks/useCalendlyIntegration.ts",
+            "size": 9390
+          },
+          {
+            "name": "useDebounce.ts",
+            "type": "file",
+            "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/hooks/useDebounce.ts",
+            "size": 1422
+          },
+          {
+            "name": "usePageTracking.ts",
+            "type": "file",
+            "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/hooks/usePageTracking.ts",
+            "size": 1296
+          },
+          {
+            "name": "usePrefetch.ts",
+            "type": "file",
+            "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/hooks/usePrefetch.ts",
+            "size": 2480
+          }
+        ]
+      },
+      {
+        "name": "lib",
+        "type": "directory",
+        "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/lib",
+        "children": [
+          {
+            "name": "ai",
+            "type": "directory",
+            "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/lib/ai",
+            "children": [
+              {
+                "name": "config.ts",
+                "type": "file",
+                "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/lib/ai/config.ts",
+                "size": 3893
+              },
+              {
+                "name": "service.ts",
+                "type": "file",
+                "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/lib/ai/service.ts",
+                "size": 3618
+              }
+            ]
+          },
+          {
+            "name": "analytics",
+            "type": "directory",
+            "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/lib/analytics",
+            "children": [
+              {
+                "name": "analytics-tracker.ts",
+                "type": "file",
+                "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/lib/analytics/analytics-tracker.ts",
+                "size": 11882
+              },
+              {
+                "name": "web-vitals.ts",
+                "type": "file",
+                "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/lib/analytics/web-vitals.ts",
+                "size": 5326
+              }
+            ]
+          },
+          {
+            "name": "auth",
+            "type": "directory",
+            "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/lib/auth",
+            "children": [
+              {
+                "name": "actions.ts",
+                "type": "file",
+                "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/lib/auth/actions.ts",
+                "size": 383
+              },
+              {
+                "name": "auth-helpers.ts",
+                "type": "file",
+                "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/lib/auth/auth-helpers.ts",
+                "size": 4101
+              },
+              {
+                "name": "constants.ts",
+                "type": "file",
+                "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/lib/auth/constants.ts",
+                "size": 2166
+              },
+              {
+                "name": "rbac.ts",
+                "type": "file",
+                "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/lib/auth/rbac.ts",
+                "size": 3735
+              },
+              {
+                "name": "schemas.ts",
+                "type": "file",
+                "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/lib/auth/schemas.ts",
+                "size": 2487
+              },
+              {
+                "name": "utils.ts",
+                "type": "file",
+                "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/lib/auth/utils.ts",
+                "size": 279
+              }
+            ]
+          },
+          {
+            "name": "database",
+            "type": "directory",
+            "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/lib/database",
+            "children": [
+              {
+                "name": "prisma.ts",
+                "type": "file",
+                "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/lib/database/prisma.ts",
+                "size": 400
+              }
+            ]
+          },
+          {
+            "name": "export",
+            "type": "directory",
+            "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/lib/export",
+            "children": [
+              {
+                "name": "csv.ts",
+                "type": "file",
+                "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/lib/export/csv.ts",
+                "size": 2823
+              }
+            ]
+          },
+          {
+            "name": "modules",
+            "type": "directory",
+            "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/lib/modules",
+            "children": [
+              {
+                "name": "ai",
+                "type": "directory",
+                "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/lib/modules/ai",
+                "children": [
+                  {
+                    "name": "actions.ts",
+                    "type": "file",
+                    "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/lib/modules/ai/actions.ts",
+                    "size": 6369
+                  },
+                  {
+                    "name": "index.ts",
+                    "type": "file",
+                    "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/lib/modules/ai/index.ts",
+                    "size": 324
+                  },
+                  {
+                    "name": "queries.ts",
+                    "type": "file",
+                    "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/lib/modules/ai/queries.ts",
+                    "size": 1110
+                  },
+                  {
+                    "name": "schemas.ts",
+                    "type": "file",
+                    "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/lib/modules/ai/schemas.ts",
+                    "size": 624
+                  }
+                ]
+              },
+              {
+                "name": "attachments",
+                "type": "directory",
+                "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/lib/modules/attachments",
+                "children": [
+                  {
+                    "name": "actions.ts",
+                    "type": "file",
+                    "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/lib/modules/attachments/actions.ts",
+                    "size": 7662
+                  },
+                  {
+                    "name": "index.ts",
+                    "type": "file",
+                    "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/lib/modules/attachments/index.ts",
+                    "size": 345
+                  },
+                  {
+                    "name": "schemas.ts",
+                    "type": "file",
+                    "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/lib/modules/attachments/schemas.ts",
+                    "size": 1139
+                  }
+                ]
+              },
+              {
+                "name": "chatbot",
+                "type": "directory",
+                "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/lib/modules/chatbot",
+                "children": [
+                  {
+                    "name": "actions",
+                    "type": "directory",
+                    "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/lib/modules/chatbot/actions",
+                    "children": []
+                  },
+                  {
+                    "name": "config",
+                    "type": "directory",
+                    "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/lib/modules/chatbot/config",
+                    "children": [
+                      {
+                        "name": "industries",
+                        "type": "directory",
+                        "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/lib/modules/chatbot/config/industries",
+                        "children": [
+                          {
+                            "name": "strive",
+                            "type": "directory",
+                            "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/lib/modules/chatbot/config/industries/strive",
+                            "children": [
+                              {
+                                "name": "config.json",
+                                "type": "file",
+                                "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/lib/modules/chatbot/config/industries/strive/config.json",
+                                "size": 2937
+                              },
+                              {
+                                "name": "conversation-flow.ts",
+                                "type": "file",
+                                "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/lib/modules/chatbot/config/industries/strive/conversation-flow.ts",
+                                "size": 1304
+                              },
+                              {
+                                "name": "problem-patterns.ts",
+                                "type": "file",
+                                "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/lib/modules/chatbot/config/industries/strive/problem-patterns.ts",
+                                "size": 6897
+                              },
+                              {
+                                "name": "solutions.ts",
+                                "type": "file",
+                                "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/lib/modules/chatbot/config/industries/strive/solutions.ts",
+                                "size": 3545
+                              },
+                              {
+                                "name": "system-prompt.ts",
+                                "type": "file",
+                                "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/lib/modules/chatbot/config/industries/strive/system-prompt.ts",
+                                "size": 9014
+                              }
+                            ]
+                          },
+                          {
+                            "name": "index.ts",
+                            "type": "file",
+                            "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/lib/modules/chatbot/config/industries/index.ts",
+                            "size": 3781
+                          }
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "name": "constants",
+                    "type": "directory",
+                    "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/lib/modules/chatbot/constants",
+                    "children": [
+                      {
+                        "name": "index.ts",
+                        "type": "file",
+                        "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/lib/modules/chatbot/constants/index.ts",
+                        "size": 1540
+                      }
+                    ]
+                  },
+                  {
+                    "name": "queries",
+                    "type": "directory",
+                    "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/lib/modules/chatbot/queries",
+                    "children": []
+                  },
+                  {
+                    "name": "schemas",
+                    "type": "directory",
+                    "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/lib/modules/chatbot/schemas",
+                    "children": [
+                      {
+                        "name": "chat-request.ts",
+                        "type": "file",
+                        "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/lib/modules/chatbot/schemas/chat-request.ts",
+                        "size": 590
+                      }
+                    ]
+                  },
+                  {
+                    "name": "services",
+                    "type": "directory",
+                    "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/lib/modules/chatbot/services",
+                    "children": [
+                      {
+                        "name": "cache-service.ts",
+                        "type": "file",
+                        "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/lib/modules/chatbot/services/cache-service.ts",
+                        "size": 2672
+                      },
+                      {
+                        "name": "rag-service.ts",
+                        "type": "file",
+                        "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/lib/modules/chatbot/services/rag-service.ts",
+                        "size": 10846
+                      }
+                    ]
+                  },
+                  {
+                    "name": "types",
+                    "type": "directory",
+                    "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/lib/modules/chatbot/types",
+                    "children": [
+                      {
+                        "name": "api.ts",
+                        "type": "file",
+                        "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/lib/modules/chatbot/types/api.ts",
+                        "size": 555
+                      },
+                      {
+                        "name": "conversation.ts",
+                        "type": "file",
+                        "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/lib/modules/chatbot/types/conversation.ts",
+                        "size": 1205
+                      },
+                      {
+                        "name": "industry.ts",
+                        "type": "file",
+                        "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/lib/modules/chatbot/types/industry.ts",
+                        "size": 2426
+                      },
+                      {
+                        "name": "rag.ts",
+                        "type": "file",
+                        "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/lib/modules/chatbot/types/rag.ts",
+                        "size": 3057
+                      }
+                    ]
+                  },
+                  {
+                    "name": "index.ts",
+                    "type": "file",
+                    "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/lib/modules/chatbot/index.ts",
+                    "size": 339
+                  }
+                ]
+              },
+              {
+                "name": "crm",
+                "type": "directory",
+                "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/lib/modules/crm",
+                "children": [
+                  {
+                    "name": "actions.ts",
+                    "type": "file",
+                    "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/lib/modules/crm/actions.ts",
+                    "size": 4686
+                  },
+                  {
+                    "name": "queries.ts",
+                    "type": "file",
+                    "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/lib/modules/crm/queries.ts",
+                    "size": 5452
+                  },
+                  {
+                    "name": "schemas.ts",
+                    "type": "file",
+                    "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/lib/modules/crm/schemas.ts",
+                    "size": 1326
+                  }
+                ]
+              },
+              {
+                "name": "dashboard",
+                "type": "directory",
+                "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/lib/modules/dashboard",
+                "children": [
+                  {
+                    "name": "actions.ts",
+                    "type": "file",
+                    "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/lib/modules/dashboard/actions.ts",
+                    "size": 1485
+                  },
+                  {
+                    "name": "queries.ts",
+                    "type": "file",
+                    "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/lib/modules/dashboard/queries.ts",
+                    "size": 3284
+                  },
+                  {
+                    "name": "schemas.ts",
+                    "type": "file",
+                    "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/lib/modules/dashboard/schemas.ts",
+                    "size": 264
+                  }
+                ]
+              },
+              {
+                "name": "notifications",
+                "type": "directory",
+                "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/lib/modules/notifications",
+                "children": [
+                  {
+                    "name": "actions.ts",
+                    "type": "file",
+                    "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/lib/modules/notifications/actions.ts",
+                    "size": 5462
+                  },
+                  {
+                    "name": "queries.ts",
+                    "type": "file",
+                    "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/lib/modules/notifications/queries.ts",
+                    "size": 2318
+                  },
+                  {
+                    "name": "schemas.ts",
+                    "type": "file",
+                    "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/lib/modules/notifications/schemas.ts",
+                    "size": 1705
+                  }
+                ]
+              },
+              {
+                "name": "organization",
+                "type": "directory",
+                "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/lib/modules/organization",
+                "children": [
+                  {
+                    "name": "actions.ts",
+                    "type": "file",
+                    "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/lib/modules/organization/actions.ts",
+                    "size": 5599
+                  },
+                  {
+                    "name": "context.ts",
+                    "type": "file",
+                    "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/lib/modules/organization/context.ts",
+                    "size": 2111
+                  },
+                  {
+                    "name": "queries.ts",
+                    "type": "file",
+                    "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/lib/modules/organization/queries.ts",
+                    "size": 1473
+                  },
+                  {
+                    "name": "schemas.ts",
+                    "type": "file",
+                    "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/lib/modules/organization/schemas.ts",
+                    "size": 1055
+                  }
+                ]
+              },
+              {
+                "name": "projects",
+                "type": "directory",
+                "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/lib/modules/projects",
+                "children": [
+                  {
+                    "name": "actions.ts",
+                    "type": "file",
+                    "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/lib/modules/projects/actions.ts",
+                    "size": 4716
+                  },
+                  {
+                    "name": "queries.ts",
+                    "type": "file",
+                    "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/lib/modules/projects/queries.ts",
+                    "size": 5564
+                  },
+                  {
+                    "name": "schemas.ts",
+                    "type": "file",
+                    "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/lib/modules/projects/schemas.ts",
+                    "size": 1637
+                  }
+                ]
+              },
+              {
+                "name": "tasks",
+                "type": "directory",
+                "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/lib/modules/tasks",
+                "children": [
+                  {
+                    "name": "actions.ts",
+                    "type": "file",
+                    "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/lib/modules/tasks/actions.ts",
+                    "size": 9507
+                  },
+                  {
+                    "name": "bulk-actions.ts",
+                    "type": "file",
+                    "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/lib/modules/tasks/bulk-actions.ts",
+                    "size": 7806
+                  },
+                  {
+                    "name": "index.ts",
+                    "type": "file",
+                    "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/lib/modules/tasks/index.ts",
+                    "size": 469
+                  },
+                  {
+                    "name": "queries.ts",
+                    "type": "file",
+                    "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/lib/modules/tasks/queries.ts",
+                    "size": 6401
+                  },
+                  {
+                    "name": "schemas.ts",
+                    "type": "file",
+                    "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/lib/modules/tasks/schemas.ts",
+                    "size": 1853
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "name": "pdf",
+            "type": "directory",
+            "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/lib/pdf",
+            "children": [
+              {
+                "name": "pdf-generator-legacy.ts",
+                "type": "file",
+                "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/lib/pdf/pdf-generator-legacy.ts",
+                "size": 5467
+              },
+              {
+                "name": "professional-brochure.tsx",
+                "type": "file",
+                "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/lib/pdf/professional-brochure.tsx",
+                "size": 16689
+              }
+            ]
+          },
+          {
+            "name": "realtime",
+            "type": "directory",
+            "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/lib/realtime",
+            "children": [
+              {
+                "name": "client.ts",
+                "type": "file",
+                "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/lib/realtime/client.ts",
+                "size": 3539
+              },
+              {
+                "name": "use-realtime.ts",
+                "type": "file",
+                "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/lib/realtime/use-realtime.ts",
+                "size": 3542
+              }
+            ]
+          },
+          {
+            "name": "types",
+            "type": "directory",
+            "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/lib/types",
+            "children": [
+              {
+                "name": "analytics.ts",
+                "type": "file",
+                "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/lib/types/analytics.ts",
+                "size": 343
+              },
+              {
+                "name": "csv.ts",
+                "type": "file",
+                "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/lib/types/csv.ts",
+                "size": 303
+              },
+              {
+                "name": "filters.ts",
+                "type": "file",
+                "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/lib/types/filters.ts",
+                "size": 935
+              },
+              {
+                "name": "organization.ts",
+                "type": "file",
+                "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/lib/types/organization.ts",
+                "size": 271
+              }
+            ]
+          },
+          {
+            "name": "utils",
+            "type": "directory",
+            "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/lib/utils",
+            "children": [
+              {
+                "name": "animation-utils.ts",
+                "type": "file",
+                "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/lib/utils/animation-utils.ts",
+                "size": 4743
+              },
+              {
+                "name": "parent-communication.ts",
+                "type": "file",
+                "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/lib/utils/parent-communication.ts",
+                "size": 9936
+              }
+            ]
+          },
+          {
+            "name": "browser-detection.ts",
+            "type": "file",
+            "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/lib/browser-detection.ts",
+            "size": 8210
+          },
+          {
+            "name": "chatbot-iframe-communication.ts",
+            "type": "file",
+            "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/lib/chatbot-iframe-communication.ts",
+            "size": 8407
+          },
+          {
+            "name": "chatbot-performance-monitor.ts",
+            "type": "file",
+            "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/lib/chatbot-performance-monitor.ts",
+            "size": 2325
+          },
+          {
+            "name": "data-helpers.ts",
+            "type": "file",
+            "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/lib/data-helpers.ts",
+            "size": 5663
+          },
+          {
+            "name": "pdf-generator-helpers.ts",
+            "type": "file",
+            "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/lib/pdf-generator-helpers.ts",
+            "size": 7089
+          },
+          {
+            "name": "pdf-generator.ts",
+            "type": "file",
+            "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/lib/pdf-generator.ts",
+            "size": 14887
+          },
+          {
+            "name": "prisma.ts",
+            "type": "file",
+            "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/lib/prisma.ts",
+            "size": 377
+          },
+          {
+            "name": "queryClient.ts",
+            "type": "file",
+            "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/lib/queryClient.ts",
+            "size": 1383
+          },
+          {
+            "name": "rate-limit.ts",
+            "type": "file",
+            "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/lib/rate-limit.ts",
+            "size": 2810
+          },
+          {
+            "name": "seo-config.ts",
+            "type": "file",
+            "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/lib/seo-config.ts",
+            "size": 12122
+          },
+          {
+            "name": "supabase-server.ts",
+            "type": "file",
+            "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/lib/supabase-server.ts",
+            "size": 1750
+          },
+          {
+            "name": "supabase.ts",
+            "type": "file",
+            "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/lib/supabase.ts",
+            "size": 720
+          },
+          {
+            "name": "utils.ts",
+            "type": "file",
+            "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/lib/utils.ts",
+            "size": 166
+          },
+          {
+            "name": "validation.ts",
+            "type": "file",
+            "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/lib/validation.ts",
+            "size": 2344
+          }
+        ]
+      },
+      {
+        "name": "platform-backup-OLD",
+        "type": "directory",
+        "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/platform-backup-OLD",
+        "children": [
+          {
+            "name": "auth-layout-backup.tsx",
+            "type": "file",
+            "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/platform-backup-OLD/auth-layout-backup.tsx",
+            "size": 893
+          },
+          {
+            "name": "platform-layout-backup.tsx",
+            "type": "file",
+            "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/platform-backup-OLD/platform-layout-backup.tsx",
+            "size": 1058
+          }
+        ]
+      },
+      {
+        "name": "prisma",
+        "type": "directory",
+        "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/prisma",
+        "children": [
+          {
+            "name": "schema.prisma",
+            "type": "file",
+            "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/prisma/schema.prisma",
+            "size": 19707
+          }
+        ]
+      },
+      {
+        "name": "public",
+        "type": "directory",
+        "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/public",
+        "children": [
+          {
+            "name": "assets",
+            "type": "directory",
+            "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/public/assets",
+            "children": [
+              {
+                "name": "email",
+                "type": "directory",
+                "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/public/assets/email",
+                "children": [
+                  {
+                    "name": "email-footer.png",
+                    "type": "file",
+                    "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/public/assets/email/email-footer.png",
+                    "size": 76895
+                  },
+                  {
+                    "name": "email-header.png",
+                    "type": "file",
+                    "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/public/assets/email/email-header.png",
+                    "size": 55721
+                  }
+                ]
+              },
+              {
+                "name": "email-templates",
+                "type": "directory",
+                "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/public/assets/email-templates",
+                "children": [
+                  {
+                    "name": "Email Header&Footer",
+                    "type": "directory",
+                    "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/public/assets/email-templates/Email Header&Footer",
+                    "children": [
+                      {
+                        "name": "Email Header.png",
+                        "type": "file",
+                        "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/public/assets/email-templates/Email Header&Footer/Email Header.png",
+                        "size": 55721
+                      },
+                      {
+                        "name": "Email-footer.png",
+                        "type": "file",
+                        "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/public/assets/email-templates/Email Header&Footer/Email-footer.png",
+                        "size": 76895
+                      }
+                    ]
+                  },
+                  {
+                    "name": "Newletter Template & Assets",
+                    "type": "directory",
+                    "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/public/assets/email-templates/Newletter Template & Assets",
+                    "children": [
+                      {
+                        "name": "2.png",
+                        "type": "file",
+                        "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/public/assets/email-templates/Newletter Template & Assets/2.png",
+                        "size": 551574
+                      },
+                      {
+                        "name": "3.png",
+                        "type": "file",
+                        "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/public/assets/email-templates/Newletter Template & Assets/3.png",
+                        "size": 231534
+                      },
+                      {
+                        "name": "4.png",
+                        "type": "file",
+                        "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/public/assets/email-templates/Newletter Template & Assets/4.png",
+                        "size": 9889
+                      },
+                      {
+                        "name": "5.png",
+                        "type": "file",
+                        "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/public/assets/email-templates/Newletter Template & Assets/5.png",
+                        "size": 8122
+                      },
+                      {
+                        "name": "6.png",
+                        "type": "file",
+                        "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/public/assets/email-templates/Newletter Template & Assets/6.png",
+                        "size": 7351
+                      },
+                      {
+                        "name": "7.png",
+                        "type": "file",
+                        "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/public/assets/email-templates/Newletter Template & Assets/7.png",
+                        "size": 12194
+                      },
+                      {
+                        "name": "Strive-Tech_Newsletter-Template.png",
+                        "type": "file",
+                        "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/public/assets/email-templates/Newletter Template & Assets/Strive-Tech_Newsletter-Template.png",
+                        "size": 907470
+                      }
+                    ]
+                  },
+                  {
+                    "name": "social-media-icons",
+                    "type": "directory",
+                    "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/public/assets/email-templates/social-media-icons",
+                    "children": [
+                      {
+                        "name": "3.png",
+                        "type": "file",
+                        "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/public/assets/email-templates/social-media-icons/3.png",
+                        "size": 3944
+                      },
+                      {
+                        "name": "4.png",
+                        "type": "file",
+                        "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/public/assets/email-templates/social-media-icons/4.png",
+                        "size": 4853
+                      },
+                      {
+                        "name": "5.png",
+                        "type": "file",
+                        "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/public/assets/email-templates/social-media-icons/5.png",
+                        "size": 4847
+                      },
+                      {
+                        "name": "6.png",
+                        "type": "file",
+                        "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/public/assets/email-templates/social-media-icons/6.png",
+                        "size": 4597
+                      },
+                      {
+                        "name": "7.png",
+                        "type": "file",
+                        "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/public/assets/email-templates/social-media-icons/7.png",
+                        "size": 4842
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "name": "favicons",
+                "type": "directory",
+                "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/public/assets/favicons",
+                "children": [
+                  {
+                    "name": "android-chrome-192x192.png",
+                    "type": "file",
+                    "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/public/assets/favicons/android-chrome-192x192.png",
+                    "size": 4717
+                  },
+                  {
+                    "name": "android-chrome-512x512.png",
+                    "type": "file",
+                    "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/public/assets/favicons/android-chrome-512x512.png",
+                    "size": 11602
+                  },
+                  {
+                    "name": "apple-touch-icon.png",
+                    "type": "file",
+                    "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/public/assets/favicons/apple-touch-icon.png",
+                    "size": 4251
+                  },
+                  {
+                    "name": "favicon-16x16.png",
+                    "type": "file",
+                    "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/public/assets/favicons/favicon-16x16.png",
+                    "size": 607
+                  },
+                  {
+                    "name": "favicon-32x32.png",
+                    "type": "file",
+                    "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/public/assets/favicons/favicon-32x32.png",
+                    "size": 1232
+                  },
+                  {
+                    "name": "favicon.ico",
+                    "type": "file",
+                    "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/public/assets/favicons/favicon.ico",
+                    "size": 15406
+                  },
+                  {
+                    "name": "site.webmanifest",
+                    "type": "file",
+                    "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/public/assets/favicons/site.webmanifest",
+                    "size": 263
+                  }
+                ]
+              },
+              {
+                "name": "headshots",
+                "type": "directory",
+                "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/public/assets/headshots",
+                "children": [
+                  {
+                    "name": "Garrett-Headshot.webp",
+                    "type": "file",
+                    "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/public/assets/headshots/Garrett-Headshot.webp",
+                    "size": 236476
+                  },
+                  {
+                    "name": "Grant-Headshot.webp",
+                    "type": "file",
+                    "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/public/assets/headshots/Grant-Headshot.webp",
+                    "size": 728200
+                  },
+                  {
+                    "name": "Jeff-Headshot.webp",
+                    "type": "file",
+                    "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/public/assets/headshots/Jeff-Headshot.webp",
+                    "size": 39652
+                  }
+                ]
+              },
+              {
+                "name": "logos",
+                "type": "directory",
+                "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/public/assets/logos",
+                "children": [
+                  {
+                    "name": "ST-Transparent.png",
+                    "type": "file",
+                    "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/public/assets/logos/ST-Transparent.png",
+                    "size": 97344
+                  },
+                  {
+                    "name": "STRIVE_Orange_Text_Transparent_1483 x 320px.webp",
+                    "type": "file",
+                    "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/public/assets/logos/STRIVE_Orange_Text_Transparent_1483 x 320px.webp",
+                    "size": 8122
+                  }
+                ]
+              },
+              {
+                "name": "optimized",
+                "type": "directory",
+                "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/public/assets/optimized",
+                "children": [
+                  {
+                    "name": "Garrett-Headshot_1024w.avif",
+                    "type": "file",
+                    "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/public/assets/optimized/Garrett-Headshot_1024w.avif",
+                    "size": 21982
+                  },
+                  {
+                    "name": "Garrett-Headshot_1024w.webp",
+                    "type": "file",
+                    "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/public/assets/optimized/Garrett-Headshot_1024w.webp",
+                    "size": 36202
+                  },
+                  {
+                    "name": "Garrett-Headshot_320w.avif",
+                    "type": "file",
+                    "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/public/assets/optimized/Garrett-Headshot_320w.avif",
+                    "size": 4677
+                  },
+                  {
+                    "name": "Garrett-Headshot_320w.webp",
+                    "type": "file",
+                    "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/public/assets/optimized/Garrett-Headshot_320w.webp",
+                    "size": 6870
+                  },
+                  {
+                    "name": "Garrett-Headshot_640w.avif",
+                    "type": "file",
+                    "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/public/assets/optimized/Garrett-Headshot_640w.avif",
+                    "size": 11351
+                  },
+                  {
+                    "name": "Garrett-Headshot_640w.webp",
+                    "type": "file",
+                    "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/public/assets/optimized/Garrett-Headshot_640w.webp",
+                    "size": 18164
+                  },
+                  {
+                    "name": "Garrett-Headshot_blur.jpg",
+                    "type": "file",
+                    "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/public/assets/optimized/Garrett-Headshot_blur.jpg",
+                    "size": 390
+                  },
+                  {
+                    "name": "Grant-Headshot_1024w.avif",
+                    "type": "file",
+                    "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/public/assets/optimized/Grant-Headshot_1024w.avif",
+                    "size": 18710
+                  },
+                  {
+                    "name": "Grant-Headshot_1024w.webp",
+                    "type": "file",
+                    "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/public/assets/optimized/Grant-Headshot_1024w.webp",
+                    "size": 31938
+                  },
+                  {
+                    "name": "Grant-Headshot_320w.avif",
+                    "type": "file",
+                    "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/public/assets/optimized/Grant-Headshot_320w.avif",
+                    "size": 4821
+                  },
+                  {
+                    "name": "Grant-Headshot_320w.webp",
+                    "type": "file",
+                    "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/public/assets/optimized/Grant-Headshot_320w.webp",
+                    "size": 6904
+                  },
+                  {
+                    "name": "Grant-Headshot_640w.avif",
+                    "type": "file",
+                    "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/public/assets/optimized/Grant-Headshot_640w.avif",
+                    "size": 10515
+                  },
+                  {
+                    "name": "Grant-Headshot_640w.webp",
+                    "type": "file",
+                    "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/public/assets/optimized/Grant-Headshot_640w.webp",
+                    "size": 17072
+                  },
+                  {
+                    "name": "Grant-Headshot_blur.jpg",
+                    "type": "file",
+                    "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/public/assets/optimized/Grant-Headshot_blur.jpg",
+                    "size": 383
+                  },
+                  {
+                    "name": "Jeff-Headshot_1024w.avif",
+                    "type": "file",
+                    "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/public/assets/optimized/Jeff-Headshot_1024w.avif",
+                    "size": 18727
+                  },
+                  {
+                    "name": "Jeff-Headshot_1024w.webp",
+                    "type": "file",
+                    "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/public/assets/optimized/Jeff-Headshot_1024w.webp",
+                    "size": 29096
+                  },
+                  {
+                    "name": "Jeff-Headshot_320w.avif",
+                    "type": "file",
+                    "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/public/assets/optimized/Jeff-Headshot_320w.avif",
+                    "size": 4833
+                  },
+                  {
+                    "name": "Jeff-Headshot_320w.webp",
+                    "type": "file",
+                    "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/public/assets/optimized/Jeff-Headshot_320w.webp",
+                    "size": 6176
+                  },
+                  {
+                    "name": "Jeff-Headshot_640w.avif",
+                    "type": "file",
+                    "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/public/assets/optimized/Jeff-Headshot_640w.avif",
+                    "size": 10424
+                  },
+                  {
+                    "name": "Jeff-Headshot_640w.webp",
+                    "type": "file",
+                    "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/public/assets/optimized/Jeff-Headshot_640w.webp",
+                    "size": 14910
+                  },
+                  {
+                    "name": "Jeff-Headshot_blur.jpg",
+                    "type": "file",
+                    "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/public/assets/optimized/Jeff-Headshot_blur.jpg",
+                    "size": 401
+                  }
+                ]
+              },
+              {
+                "name": "Garrett-Headshot.webp",
+                "type": "file",
+                "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/public/assets/Garrett-Headshot.webp",
+                "size": 236476
+              },
+              {
+                "name": "Grant-Headshot.webp",
+                "type": "file",
+                "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/public/assets/Grant-Headshot.webp",
+                "size": 728200
+              },
+              {
+                "name": "Jeff-Headshot.webp",
+                "type": "file",
+                "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/public/assets/Jeff-Headshot.webp",
+                "size": 39652
+              },
+              {
+                "name": "ST-Transparent.png",
+                "type": "file",
+                "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/public/assets/ST-Transparent.png",
+                "size": 97344
+              }
+            ]
+          },
+          {
+            "name": "images",
+            "type": "directory",
+            "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/public/images",
+            "children": [
+              {
+                "name": "strive-wordmark.png",
+                "type": "file",
+                "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/public/images/strive-wordmark.png",
+                "size": 19610
+              }
+            ]
+          },
+          {
+            "name": "file.svg",
+            "type": "file",
+            "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/public/file.svg",
+            "size": 391
+          },
+          {
+            "name": "globe.svg",
+            "type": "file",
+            "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/public/globe.svg",
+            "size": 1035
+          },
+          {
+            "name": "next.svg",
+            "type": "file",
+            "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/public/next.svg",
+            "size": 1375
+          },
+          {
+            "name": "robots.txt",
+            "type": "file",
+            "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/public/robots.txt",
+            "size": 1068
+          },
+          {
+            "name": "sitemap.xml",
+            "type": "file",
+            "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/public/sitemap.xml",
+            "size": 5113
+          },
+          {
+            "name": "vercel.svg",
+            "type": "file",
+            "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/public/vercel.svg",
+            "size": 128
+          },
+          {
+            "name": "window.svg",
+            "type": "file",
+            "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/public/window.svg",
+            "size": 385
+          }
+        ]
+      },
+      {
+        "name": "scripts",
+        "type": "directory",
+        "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/scripts",
+        "children": [
+          {
+            "name": "directory-mapper.ts",
+            "type": "file",
+            "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/scripts/directory-mapper.ts",
+            "size": 7150
+          },
+          {
+            "name": "generate-email-previews.ts",
+            "type": "file",
+            "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/scripts/generate-email-previews.ts",
+            "size": 11680
+          },
+          {
+            "name": "image-optimization.ts",
+            "type": "file",
+            "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/scripts/image-optimization.ts",
+            "size": 9970
+          },
+          {
+            "name": "init-database.js",
+            "type": "file",
+            "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/scripts/init-database.js",
+            "size": 3705
+          },
+          {
+            "name": "seed-chatbot-data.ts",
+            "type": "file",
+            "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/scripts/seed-chatbot-data.ts",
+            "size": 12852
+          },
+          {
+            "name": "test-auth.js",
+            "type": "file",
+            "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/scripts/test-auth.js",
+            "size": 7337
+          },
+          {
+            "name": "validate-seo.ts",
+            "type": "file",
+            "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/scripts/validate-seo.ts",
+            "size": 7490
+          }
+        ]
+      },
+      {
+        "name": ".env.local.example",
+        "type": "file",
+        "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/.env.local.example",
+        "size": 1594
+      },
+      {
+        "name": ".gitignore",
+        "type": "file",
+        "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/.gitignore",
+        "size": 504
+      },
+      {
+        "name": "build_output.txt",
+        "type": "file",
+        "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/build_output.txt",
+        "size": 74473
+      },
+      {
+        "name": "build_output2.txt",
+        "type": "file",
+        "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/build_output2.txt",
+        "size": 53942
+      },
+      {
+        "name": "build-output.txt",
+        "type": "file",
+        "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/build-output.txt",
+        "size": 52356
+      },
+      {
+        "name": "components.json",
+        "type": "file",
+        "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/components.json",
+        "size": 452
+      },
+      {
+        "name": "DEPLOYMENT_CHECKLIST.md",
+        "type": "file",
+        "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/DEPLOYMENT_CHECKLIST.md",
+        "size": 13376
+      },
+      {
+        "name": "DEPLOYMENT.md",
+        "type": "file",
+        "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/DEPLOYMENT.md",
+        "size": 15350
+      },
+      {
+        "name": "eslint.config.mjs",
+        "type": "file",
+        "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/eslint.config.mjs",
+        "size": 994
+      },
+      {
+        "name": "middleware.ts",
+        "type": "file",
+        "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/middleware.ts",
+        "size": 8534
+      },
+      {
+        "name": "MIGRATION_SESSIONS.md",
+        "type": "file",
+        "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/MIGRATION_SESSIONS.md",
+        "size": 51228
+      },
+      {
+        "name": "next-env.d.ts",
+        "type": "file",
+        "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/next-env.d.ts",
+        "size": 247
+      },
+      {
+        "name": "next.config.mjs",
+        "type": "file",
+        "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/next.config.mjs",
+        "size": 1992
+      },
+      {
+        "name": "package.json",
+        "type": "file",
+        "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/package.json",
+        "size": 3326
+      },
+      {
+        "name": "postcss.config.mjs",
+        "type": "file",
+        "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/postcss.config.mjs",
+        "size": 81
+      },
+      {
+        "name": "README.md",
+        "type": "file",
+        "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/README.md",
+        "size": 3798
+      },
+      {
+        "name": "session12_handoff.txt",
+        "type": "file",
+        "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/session12_handoff.txt",
+        "size": 1880
+      },
+      {
+        "name": "session12_progress.txt",
+        "type": "file",
+        "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/session12_progress.txt",
+        "size": 1884
+      },
+      {
+        "name": "SINGLE_APP_MIGRATION_PLAN.md",
+        "type": "file",
+        "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/SINGLE_APP_MIGRATION_PLAN.md",
+        "size": 53215
+      },
+      {
+        "name": "tailwind.config.ts",
+        "type": "file",
+        "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/tailwind.config.ts",
+        "size": 455
+      },
+      {
+        "name": "tsconfig.json",
+        "type": "file",
+        "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/tsconfig.json",
+        "size": 667
+      },
+      {
+        "name": "tsconfig.tsbuildinfo",
+        "type": "file",
+        "path": "/Users/grant/Documents/GitHub/Strive-SaaS/app/tsconfig.tsbuildinfo",
+        "size": 903616
+      }
+    ]
+  }
+}

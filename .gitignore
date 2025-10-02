@@ -69,3 +69,5 @@ Thumbs.db
 
 # Archives
 *.tar.gz
+app/.vercel/project.json
+archive/app-backup/.vercel/project.json
