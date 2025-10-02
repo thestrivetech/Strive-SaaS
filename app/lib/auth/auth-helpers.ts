@@ -3,6 +3,7 @@ import { cookies } from 'next/headers';
 import { redirect } from 'next/navigation';
 import { prisma } from '@/lib/prisma';
 import { AUTH_ROUTES, UserRole } from './constants';
+import type { UserWithOrganization } from './user-helpers';
 
 export const createSupabaseServerClient = async () => {
   const cookieStore = await cookies();
@@ -44,7 +45,7 @@ export const getSession = async () => {
   }
 };
 
-export const getCurrentUser = async () => {
+export const getCurrentUser = async (): Promise<UserWithOrganization | null> => {
   const session = await getSession();
 
   if (!session?.user) {
@@ -65,7 +66,7 @@ export const getCurrentUser = async () => {
       },
     });
 
-    return user;
+    return user as UserWithOrganization | null;
   } catch (error) {
     console.error('Error fetching user from database:', error);
     return null;
