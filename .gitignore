@@ -73,3 +73,4 @@ Thumbs.db
 *.tar.gz
 app/.vercel/project.json
 archive/app-backup/.vercel/project.json
+.vercel/package.json
