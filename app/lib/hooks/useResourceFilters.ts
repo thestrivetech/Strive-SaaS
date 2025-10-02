@@ -39,7 +39,7 @@ export function useResourceFilters(activeFilter: string) {
       case "Blog Posts":
         const blogCategories = new Set<string>();
         resourceList.forEach(resource => {
-          resource.tags.forEach(tag => {
+          resource.tags?.forEach(tag => {
             const tagLower = tag.toLowerCase();
             if (['ai', 'artificial intelligence', 'machine learning', 'ml', 'neural', 'deep learning', 'llm', 'gpt', 'ai model', 'claude', 'chatgpt', 'gemini', 'grok'].some(term => tagLower.includes(term))) {
               blogCategories.add('AI & Machine Learning');
@@ -67,7 +67,7 @@ export function useResourceFilters(activeFilter: string) {
       case "Tools & Tech":
         const techCategories = new Set<string>();
         technologyCards.forEach(card => {
-          card.tags.forEach(tag => {
+          card.tags?.forEach(tag => {
             const tagLower = tag.toLowerCase();
             if (['gpt-4', 'claude', 'gemini', 'grok', 'deepseek', 'nemotron', 'perplexity', 'ai assistant', 'llm'].some(term => tagLower.includes(term))) {
               techCategories.add('LLMs & AI Models');
