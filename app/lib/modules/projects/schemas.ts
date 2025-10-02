@@ -34,6 +34,10 @@ export const projectFiltersSchema = z.object({
   customerId: z.string().optional(),
   projectManagerId: z.string().optional(),
   search: z.string().optional(),
+  createdFrom: z.coerce.date().optional(),
+  createdTo: z.coerce.date().optional(),
+  dueFrom: z.coerce.date().optional(),
+  dueTo: z.coerce.date().optional(),
   limit: z.number().positive().max(100).optional(),
   offset: z.number().nonnegative().optional(),
 });

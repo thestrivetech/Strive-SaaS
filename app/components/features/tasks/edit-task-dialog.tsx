@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { useForm } from 'react-hook-form';
+import { useForm, type UseFormReturn, type Control, type SubmitHandler } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import {
   Dialog,
@@ -68,7 +68,7 @@ export function EditTaskDialog({
   const [isSubmitting, setIsSubmitting] = useState(false);
   const router = useRouter();
 
-  const form = useForm<UpdateTaskInput>({
+  const form: UseFormReturn<UpdateTaskInput> = useForm<UpdateTaskInput>({
     resolver: zodResolver(updateTaskSchema),
     defaultValues: {
       id: task.id,
@@ -96,7 +96,7 @@ export function EditTaskDialog({
     });
   }, [task, form]);
 
-  async function onSubmit(data: UpdateTaskInput) {
+  const onSubmit: SubmitHandler<UpdateTaskInput> = async (data) => {
     setIsSubmitting(true);
     try {
       await updateTask(data);

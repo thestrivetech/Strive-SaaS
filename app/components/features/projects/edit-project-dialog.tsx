@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { useForm } from 'react-hook-form';
+import { useForm, type UseFormReturn, type Control, type SubmitHandler } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import {
   Dialog,
@@ -65,7 +65,7 @@ export function EditProjectDialog({
   const [isSubmitting, setIsSubmitting] = useState(false);
   const router = useRouter();
 
-  const form = useForm<UpdateProjectInput>({
+  const form: UseFormReturn<UpdateProjectInput> = useForm<UpdateProjectInput>({
     resolver: zodResolver(updateProjectSchema),
     defaultValues: {
       id: project.id,
@@ -96,7 +96,7 @@ export function EditProjectDialog({
     });
   }, [project, form]);
 
-  async function onSubmit(data: UpdateProjectInput) {
+  const onSubmit: SubmitHandler<UpdateProjectInput> = async (data) => {
     setIsSubmitting(true);
     try {
       await updateProject(data);

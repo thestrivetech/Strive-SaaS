@@ -105,4 +105,5 @@ STRIVE_WEBSITE_INTEGRATION.md
 .env.vercel
 .env*.local
 .next/
-old-website-docs-.env
+.claude/settings.local.json
+.claude/settings.local.json

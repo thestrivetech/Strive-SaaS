@@ -24,6 +24,8 @@ export const customerFiltersSchema = z.object({
   assignedToId: z.string().uuid().optional(),
   search: z.string().optional(),
   tags: z.array(z.string()).optional(),
+  createdFrom: z.coerce.date().optional(),
+  createdTo: z.coerce.date().optional(),
   limit: z.number().int().positive().default(50),
   offset: z.number().int().nonnegative().default(0),
 });
