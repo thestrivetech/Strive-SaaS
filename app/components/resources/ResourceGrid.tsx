@@ -133,7 +133,7 @@ export function ResourceGrid({ resources, activeFilter, onResourceClick, onQuizS
 
                     <div className="mb-4 md:mb-6">
                       <div className="flex flex-wrap gap-1 justify-center md:justify-start">
-                        {tech.tags.slice(0, 2).map((tag, index) => (
+                        {tech.tags?.slice(0, 2).map((tag, index) => (
                           <Badge key={index} variant="secondary" className="text-xs bg-slate-700 text-slate-300 px-2 py-1">
                             {tag}
                           </Badge>
@@ -195,7 +195,7 @@ export function ResourceGrid({ resources, activeFilter, onResourceClick, onQuizS
             </p>
 
             <div className="flex flex-wrap gap-2 mb-4">
-              {resource.tags.slice(0, 3).map((tag, index) => (
+              {resource.tags?.slice(0, 3).map((tag, index) => (
                 <Badge key={index} variant="secondary" className="text-xs">
                   {tag}
                 </Badge>

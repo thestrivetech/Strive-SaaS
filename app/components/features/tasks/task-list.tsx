@@ -29,23 +29,10 @@ import {
 } from '@/components/ui/alert-dialog';
 import { BulkSelector, BulkSelectCheckbox, type BulkAction } from '@/components/ui/bulk-selector';
 import { useRealtimeTaskUpdates } from '@/lib/realtime/use-realtime';
+import type { TaskWithAssignee } from '@/lib/modules/tasks/queries';
 
 interface TaskListProps {
-  tasks: Array<{
-    id: string;
-    title: string;
-    description: string | null;
-    status: TaskStatus;
-    priority: any;
-    dueDate: Date | null;
-    estimatedHours: number | null;
-    assignedTo: {
-      id: string;
-      name: string | null;
-      email: string;
-      avatarUrl: string | null;
-    } | null;
-  }>;
+  tasks: TaskWithAssignee[];
   projectId: string;
   teamMembers?: Array<{ id: string; name: string | null }>;
   groupByStatus?: boolean;

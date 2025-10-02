@@ -1,5 +1,5 @@
 import { Prisma } from '@prisma/client';
-import prisma from '@/lib/database/prisma';
+import { prisma } from '@/lib/prisma';
 import { TaskStatus, Priority } from '@prisma/client';
 import { TaskFilters } from './schemas';
 

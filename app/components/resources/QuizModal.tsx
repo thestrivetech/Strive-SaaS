@@ -48,7 +48,6 @@ export function QuizModal({ selectedQuiz, isOpen, onClose }: QuizModalProps) {
       const timeSpent = Math.round((Date.now() - quizStartTime) / 60000);
 
       const result: QuizResult = {
-        quizId: selectedQuiz.id,
         score,
         correctAnswers,
         totalQuestions: selectedQuiz.questions.length,

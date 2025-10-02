@@ -1,5 +1,6 @@
 import { z } from 'zod';
 import { TaskStatus, Priority } from '@prisma/client';
+import { createDateSchema } from '@/lib/validation';
 
 /**
  * Schema for creating a new task
@@ -11,7 +12,7 @@ export const createTaskSchema = z.object({
   assignedToId: z.string().optional().nullable(),
   status: z.nativeEnum(TaskStatus),
   priority: z.nativeEnum(Priority),
-  dueDate: z.coerce.date().optional().nullable(),
+  dueDate: z.coerce.date().nullable().optional(),
   estimatedHours: z.number().positive('Estimated hours must be positive').optional().nullable(),
   tags: z.array(z.string()),
 });
@@ -28,7 +29,7 @@ export const updateTaskSchema = z.object({
   assignedToId: z.string().optional().nullable(),
   status: z.nativeEnum(TaskStatus).optional(),
   priority: z.nativeEnum(Priority).optional(),
-  dueDate: z.coerce.date().optional().nullable(),
+  dueDate: z.coerce.date().nullable().optional(),
   estimatedHours: z.number().positive('Estimated hours must be positive').optional().nullable(),
   tags: z.array(z.string()).optional(),
 });

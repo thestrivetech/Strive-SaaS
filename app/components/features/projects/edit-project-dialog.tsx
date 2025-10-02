@@ -194,7 +194,7 @@ export function EditProjectDialog({
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Project Manager</FormLabel>
-                    <Select onValueChange={field.onChange} value={field.value}>
+                    <Select onValueChange={field.onChange} value={field.value ?? undefined}>
                       <FormControl>
                         <SelectTrigger>
                           <SelectValue placeholder="Assign manager" />

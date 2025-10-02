@@ -200,7 +200,7 @@ export const WhitepaperViewer: React.FC<WhitepaperViewerProps> = ({ resource, on
                   <div className="mt-8 pt-6 border-t border-slate-200">
                     <h3 className="text-sm font-semibold text-slate-700 mb-3">Topics</h3>
                     <div className="flex flex-wrap gap-2">
-                      {resource.tags.slice(0, 5).map((tag, index) => (
+                      {resource.tags?.slice(0, 5).map((tag, index) => (
                         <Badge key={index} variant="secondary" className="text-xs">
                           {tag}
                         </Badge>
@@ -268,7 +268,7 @@ export const WhitepaperViewer: React.FC<WhitepaperViewerProps> = ({ resource, on
                       Key Highlights
                     </h2>
                     <ul className="space-y-2">
-                      {resource.content.keyPoints.map((point, index) => (
+                      {resource.content?.keyPoints.map((point, index) => (
                         <li key={index} className="flex items-start gap-3">
                           <div className="w-2 h-2 bg-blue-600 rounded-full mt-2 flex-shrink-0" />
                           <span className="text-slate-700">{point}</span>

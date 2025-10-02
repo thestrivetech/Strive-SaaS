@@ -2,10 +2,35 @@
  * Reusable validation utilities for form fields across the application
  */
 
+import { z } from 'zod';
+
 export interface ValidationResult {
   isValid: boolean;
   errorMessage?: string;
 }
+
+/**
+ * Creates a properly-typed Zod date schema that works with React Hook Form
+ * Uses a simpler approach that avoids type inference issues
+ *
+ * @param options.required - Whether the date field is required (default: false)
+ * @param options.nullable - Whether the date field can be null (default: false)
+ * @returns Zod schema with proper Date type inference
+ */
+export const createDateSchema = (options?: { required?: boolean; nullable?: boolean }) => {
+  if (options?.required) {
+    return z.date({
+      required_error: "Date is required",
+      invalid_type_error: "Invalid date"
+    });
+  }
+
+  if (options?.nullable) {
+    return z.date({ invalid_type_error: "Invalid date" }).nullable().optional();
+  }
+
+  return z.date({ invalid_type_error: "Invalid date" }).optional();
+};
 
 /**
  * Validates email addresses using a standard regex pattern

@@ -1,9 +1,10 @@
 import { AlertCircle, RefreshCw, Calendar, Phone, Mail } from "lucide-react";
 import { Button } from "./button";
 import { Card, CardContent } from "./card";
+import type { CalendlyStatus } from "@/hooks/useCalendlyIntegration";
 
 interface CalendlyFallbackProps {
-  status: 'loading' | 'error' | 'timeout' | 'network-error' | 'blocked';
+  status: CalendlyStatus;
   error?: string;
   onRetry: () => void;
   retryCount: number;

@@ -1,7 +1,7 @@
 'use server';
 
 import { z } from 'zod';
-import { prisma } from '@/lib/database/prisma';
+import { prisma } from '@/lib/prisma';
 import { getCurrentUser } from '@/lib/auth/auth-helpers';
 import type { Prisma } from '@prisma/client';
 

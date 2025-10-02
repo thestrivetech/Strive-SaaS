@@ -1,5 +1,6 @@
 import { z } from 'zod';
 import { ProjectStatus, Priority } from '@prisma/client';
+import { createDateSchema } from '@/lib/validation';
 
 export const createProjectSchema = z.object({
   name: z.string().min(1, 'Project name is required').max(255),
@@ -8,8 +9,8 @@ export const createProjectSchema = z.object({
   projectManagerId: z.string().optional(),
   status: z.nativeEnum(ProjectStatus),
   priority: z.nativeEnum(Priority),
-  startDate: z.coerce.date().optional(),
-  dueDate: z.coerce.date().optional(),
+  startDate: z.coerce.date().nullable().optional(),
+  dueDate: z.coerce.date().nullable().optional(),
   budget: z.number().positive().optional(),
   organizationId: z.string().min(1),
 });
@@ -22,8 +23,8 @@ export const updateProjectSchema = z.object({
   projectManagerId: z.string().optional().nullable(),
   status: z.nativeEnum(ProjectStatus).optional(),
   priority: z.nativeEnum(Priority).optional(),
-  startDate: z.coerce.date().optional().nullable(),
-  dueDate: z.coerce.date().optional().nullable(),
+  startDate: z.coerce.date().nullable().optional(),
+  dueDate: z.coerce.date().nullable().optional(),
   budget: z.number().positive().optional().nullable(),
 });
 
