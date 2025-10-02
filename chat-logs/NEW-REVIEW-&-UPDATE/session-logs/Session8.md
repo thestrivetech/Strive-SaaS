@@ -2,8 +2,8 @@
 
 **Status**: 🔵 Ready to Start
 **Prerequisites**: Session 7 Phase 1 completed ✅
-**Goal**: 85 errors → <30 errors (65%+ reduction)
-**Estimated Time**: 2.5-3 hours
+**Goal**: 85 errors → <30 errors (65%+ reduction) + organize types by domain
+**Estimated Time**: 3-3.5 hours
 
 ---
 
@@ -45,12 +45,14 @@
 2. **Resolve module resolution issues** → -9 errors
 3. **Fix type mismatches** → -19 to -22 errors
 4. **ESLint critical fixes** → -50+ ESLint errors
-5. **Achieve production build success**
+5. **Organize types by domain** → Improved architecture
+6. **Achieve production build success**
 
 ### Success Criteria
 - ✅ TypeScript errors reduced to <30 total
 - ✅ ActivityLog/AIConversation schema alignment complete
 - ✅ All module imports resolved
+- ✅ Types organized by domain (web/platform/chatbot/shared)
 - ✅ Production build succeeds
 - ✅ ESLint errors reduced to <150
 
@@ -651,9 +653,256 @@ npx eslint . --ext .ts,.tsx 2>&1 | tail -3
 
 ---
 
-### Phase 5: Final Verification & Build (20 mins) ✅
+### Phase 5: Type Organization by Domain (30 mins) 📁
 
-#### Task 5.1: Complete Type Check
+**Expected Impact**: Improved codebase organization, zero breaking changes
+
+**Motivation**: Align type organization with 3-domain architecture (web/platform/chatbot) to:
+- Prevent cross-domain coupling
+- Support future separation into packages
+- Match existing `lib/modules/chatbot/types/` pattern
+- Improve maintainability and scalability
+
+#### Task 5.1: Create Domain Folder Structure (2 mins)
+
+**Step 1**: Create subdirectories
+```bash
+cd app/lib/types
+mkdir -p shared web platform chatbot
+```
+
+**Verification**:
+```bash
+ls -la app/lib/types/
+# Expected: analytics.ts, csv.ts, filters.ts, organization.ts, shared/, web/, platform/, chatbot/
+```
+
+#### Task 5.2: Move & Organize Files (10 mins)
+
+**Current State**:
+```
+lib/types/
+├── analytics.ts      (1 export)  → web domain
+├── csv.ts           (4 exports) → shared utility
+├── filters.ts       (3 exports) → platform domain
+└── organization.ts  (2 exports) → platform domain
+```
+
+**Target State**:
+```
+lib/types/
+├── shared/
+│   ├── index.ts     (barrel export)
+│   └── csv.ts       (moved)
+├── web/
+│   ├── index.ts     (barrel export)
+│   └── analytics.ts (moved)
+├── platform/
+│   ├── index.ts     (barrel export)
+│   ├── filters.ts   (moved)
+│   └── organization.ts (moved)
+└── chatbot/
+    ├── index.ts     (barrel export)
+    └── iframe.ts    (extracted from chatbot-iframe-communication.ts)
+```
+
+**Step 1**: Move shared types
+```bash
+mv app/lib/types/csv.ts app/lib/types/shared/csv.ts
+```
+
+**Step 2**: Create shared barrel export
+```bash
+cat > app/lib/types/shared/index.ts << 'EOF'
+/**
+ * Shared utility types used across all domains
+ */
+export * from './csv';
+EOF
+```
+
+**Step 3**: Move web types
+```bash
+mv app/lib/types/analytics.ts app/lib/types/web/analytics.ts
+```
+
+**Step 4**: Create web barrel export
+```bash
+cat > app/lib/types/web/index.ts << 'EOF'
+/**
+ * Web/Marketing site types (strivetech.ai)
+ */
+export * from './analytics';
+EOF
+```
+
+**Step 5**: Move platform types
+```bash
+mv app/lib/types/filters.ts app/lib/types/platform/filters.ts
+mv app/lib/types/organization.ts app/lib/types/platform/organization.ts
+```
+
+**Step 6**: Create platform barrel export
+```bash
+cat > app/lib/types/platform/index.ts << 'EOF'
+/**
+ * Platform/SaaS types (app.strivetech.ai)
+ */
+export * from './filters';
+export * from './organization';
+EOF
+```
+
+**Step 7**: Extract chatbot iframe types (optional - can defer)
+```typescript
+// Create app/lib/types/chatbot/iframe.ts
+// Extract ChatbotMessage interface from lib/chatbot-iframe-communication.ts:4-38
+export interface ChatbotMessage {
+  type: 'resize' | 'navigate' | 'analytics' | 'ready' | 'close' | 'minimize' | 'error' | 'ping' | 'visibility' | 'mode';
+  data?: {
+    // ... (copy from chatbot-iframe-communication.ts)
+  };
+  timestamp: number;
+  source?: string;
+}
+```
+
+**Step 8**: Create chatbot barrel export
+```bash
+cat > app/lib/types/chatbot/index.ts << 'EOF'
+/**
+ * Chatbot-specific types (shared across chatbot modules)
+ */
+export * from './iframe';
+EOF
+```
+
+**Verification**:
+```bash
+# Check all files moved
+ls app/lib/types/shared/ app/lib/types/web/ app/lib/types/platform/ app/lib/types/chatbot/
+# Should show index.ts + type files in each
+
+# Verify old files removed
+ls app/lib/types/*.ts
+# Should only show potential remnants, not moved files
+```
+
+#### Task 5.3: Update Import Statements (15 mins)
+
+**Impact**: Only 4 files need updates (very low risk)
+
+**File 1**: `app/(platform)/crm/page.tsx`
+```typescript
+// Before
+import type { CRMFilters } from '@/lib/types/filters';
+
+// After
+import type { CRMFilters } from '@/lib/types/platform';
+```
+
+**File 2**: `app/(platform)/projects/page.tsx`
+```typescript
+// Before
+import type { ProjectFilters } from '@/lib/types/filters';
+
+// After
+import type { ProjectFilters } from '@/lib/types/platform';
+```
+
+**File 3**: `app/(platform)/projects/[projectId]/page.tsx`
+```typescript
+// Before
+import type { TaskFilters } from '@/lib/types/filters';
+
+// After
+import type { TaskFilters } from '@/lib/types/platform';
+```
+
+**File 4**: `lib/export/csv.ts`
+```typescript
+// Before
+import type { CSVColumn, CSVRow } from '@/lib/types/csv';
+
+// After
+import type { CSVColumn, CSVRow } from '@/lib/types/shared';
+```
+
+**Optional File 5**: `lib/chatbot-iframe-communication.ts`
+```typescript
+// Option A: Keep inline (if tightly coupled to implementation)
+export interface ChatbotMessage { /* ... */ }
+
+// Option B: Extract and import (cleaner, recommended)
+export type { ChatbotMessage } from '@/lib/types/chatbot';
+```
+
+**Automated Update** (optional, if comfortable with sed):
+```bash
+# Update platform imports
+find app -name "*.tsx" -o -name "*.ts" | xargs sed -i "s|@/lib/types/filters'|@/lib/types/platform'|g"
+
+# Update shared imports
+find app -name "*.tsx" -o -name "*.ts" | xargs sed -i "s|@/lib/types/csv'|@/lib/types/shared'|g"
+```
+
+**Manual Verification** (recommended):
+```bash
+# Search for old import patterns
+grep -r "@/lib/types/filters" app/
+grep -r "@/lib/types/csv" app/
+grep -r "@/lib/types/analytics" app/
+grep -r "@/lib/types/organization" app/
+
+# Should return 0 results after updates
+```
+
+#### Task 5.4: Cleanup & Verification (3 mins)
+
+**Step 1**: Remove old type files (if all moved successfully)
+```bash
+# Only run if confident all imports updated
+rm -f app/lib/types/analytics.ts
+rm -f app/lib/types/csv.ts
+rm -f app/lib/types/filters.ts
+rm -f app/lib/types/organization.ts
+```
+
+**Step 2**: Type check
+```bash
+npx tsc --noEmit 2>&1 | grep -c "error TS"
+# Should be same or fewer than before (target: ~40 from Phase 4)
+```
+
+**Step 3**: Check for missing imports
+```bash
+# Check specifically for TS2307 (cannot find module)
+npx tsc --noEmit 2>&1 | grep "error TS2307"
+# Should show 0 new module errors related to type imports
+```
+
+**Step 4**: Verify barrel exports work
+```bash
+# Test import resolution
+node -e "console.log(require.resolve('./app/lib/types/platform'))"
+node -e "console.log(require.resolve('./app/lib/types/shared'))"
+# Both should resolve without error
+```
+
+#### Benefits Achieved
+
+✅ **Domain Isolation**: Clear boundaries between web/platform/chatbot types
+✅ **Consistency**: Matches existing `lib/modules/chatbot/types/` pattern
+✅ **Scalability**: Easy to add new domain types or extract to packages
+✅ **Maintainability**: Developers know exactly where to find/add types
+✅ **Clean Imports**: `import { ... } from '@/lib/types/platform'` instead of individual files
+✅ **Future-Proof**: Supports monorepo or multi-package architecture
+
+---
+
+### Phase 6: Final Verification & Build (20 mins) ✅
+
+#### Task 6.1: Complete Type Check
 
 ```bash
 cd app
@@ -664,7 +913,7 @@ npx tsc --noEmit 2>&1 | grep "error TS" | wc -l
 # Target: <30 (stretch: <20)
 ```
 
-#### Task 5.2: Generate Error Analysis
+#### Task 6.2: Generate Error Analysis
 
 ```bash
 # Detailed error report
@@ -689,7 +938,7 @@ echo "=== Total Count ==="
 wc -l /tmp/session8-errors.txt
 ```
 
-#### Task 5.3: Test Production Build
+#### Task 6.3: Test Production Build
 
 ```bash
 cd app
@@ -709,7 +958,7 @@ echo $?  # Should be 0 for success
 2. Fix critical blocking errors
 3. Retry build
 
-#### Task 5.4: Run ESLint Check
+#### Task 6.4: Run ESLint Check
 
 ```bash
 npx eslint . --ext .ts,.tsx
@@ -719,7 +968,7 @@ npx eslint . --ext .ts,.tsx 2>&1 | grep "✖" | tail -1
 # Target: <500 total (from 608)
 ```
 
-#### Task 5.5: Document Final State
+#### Task 6.5: Document Final State
 
 **Create Summary Document**:
 - Starting errors: 85
@@ -740,13 +989,14 @@ npx eslint . --ext .ts,.tsx 2>&1 | grep "✖" | tail -1
 
 **After Critical Path**: 85 → ~44 errors ✅ On track for <30
 
-### High Priority (Should Complete) - 30 mins
+### High Priority (Should Complete) - 60 mins
 4. **Phase 4**: ESLint fixes (30 mins) → -50 ESLint errors
+5. **Phase 5**: Type organization (30 mins) → Improved architecture
 
 ### Verification (Must Complete) - 20 mins
-5. **Phase 5**: Build & verification (20 mins) → Confirm success
+6. **Phase 6**: Build & verification (20 mins) → Confirm success
 
-**Total Time**: ~2.5 hours for complete session
+**Total Time**: ~3 hours for complete session
 
 ---
 
@@ -803,6 +1053,7 @@ npx prisma generate
 - ✅ TypeScript errors <30 (from 85) → 65%+ reduction
 - ✅ Schema consistency achieved
 - ✅ Module resolution complete
+- ✅ Types organized by domain (web/platform/chatbot/shared)
 - ✅ Production build succeeds
 
 ### Should Achieve (Bonus Goals)
@@ -810,6 +1061,7 @@ npx prisma generate
 - ✅ ESLint errors <150
 - ✅ All test fixtures typed correctly
 - ✅ Zero `any` types in new code
+- ✅ Chatbot iframe types extracted
 
 ### Could Achieve (Stretch Goals)
 - ✅ TypeScript errors <20
@@ -868,7 +1120,7 @@ npx prisma migrate dev --name <description>
 
 ### During Session 8:
 
-1. ✅ Follow phases in order (1 → 2 → 3 → 4 → 5)
+1. ✅ Follow phases in order (1 → 2 → 3 → 4 → 5 → 6)
 2. ✅ Verify after each phase with `npx tsc --noEmit`
 3. ✅ Commit after each major phase completion
 4. ✅ Document any unexpected issues
@@ -892,6 +1144,7 @@ After Session 8 completion:
 ✅ TypeScript Errors: 85 → <30 (target) or <25 (stretch)
 ✅ Schema Consistency: All field names aligned
 ✅ Module Resolution: All imports working
+✅ Type Organization: Domain-based structure (web/platform/chatbot/shared)
 ✅ ESLint: <500 total problems (from 608)
 ✅ Build: Success with minimal warnings
 ✅ Ready for: Production deployment preparation
@@ -900,6 +1153,6 @@ After Session 8 completion:
 ---
 
 **Session 8 Ready** 🚀
-**Let's achieve <30 TypeScript errors and production build success!**
-**Estimated Time**: 2.5-3 hours
-**Expected Outcome**: 85 → <30 errors (65%+ reduction)
+**Let's achieve <30 TypeScript errors, organized types, and production build success!**
+**Estimated Time**: 3-3.5 hours
+**Expected Outcome**: 85 → <30 errors (65%+ reduction) + domain-organized types

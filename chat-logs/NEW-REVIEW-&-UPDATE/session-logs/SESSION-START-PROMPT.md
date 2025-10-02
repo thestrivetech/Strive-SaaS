@@ -37,7 +37,7 @@ Please read the following files in this order to understand
      - `/Users/grant/Documents/GitHub/Strive-SaaS/README.md`
 
   2. Current Session Plan:
-     - `/Users/grant/Documents/GitHub/Strive-SaaS/chat-logs/NEW-REVIEW-&-UPDATE/session-logs/Session[6].md`
+     - `/Users/grant/Documents/GitHub/Strive-SaaS/chat-logs/NEW-REVIEW-&-UPDATE/session-logs/Session[7].md`
 
   3. Previous Session Summary (for context):
      - `/Users/grant/Documents/GitHub/Strive-SaaS/chat-logs/NEW-REVIEW-&-UPDATE/session-logs/Session[N-1]-Summary.md`
@@ -53,4 +53,4 @@ Please read the following files in this order to understand
   - Uses descriptive task names that match the session plan
 
   Once the todo list is created, lets start executing 
-  Session [6].
+  Session [7].
