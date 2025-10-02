@@ -14,6 +14,12 @@ Intelligent Business HUB - AI-powered enterprise platform serving 21 industries 
 **Deployment:** `app.strivetech.ai` (SaaS platform) with `strivetech.ai` (marketing/auth portal)
 **Auth Flow:** Users sign up/login via `strivetech.ai` → redirected to `app.strivetech.ai`
 
+
+# Pricing Specifications - Specific Industry packages - (Tool Marketplace) Tools based on tiers
+## Dashboards - Strive Pays for hosting every month directly based off hosting and total number of users on the app using each dashboard, function, or feature
+- 
+## AI Tools - Separated by 3 different tiers of tool options
+- 
 ---
 
 ## 💎 Tier Structure & Pricing
