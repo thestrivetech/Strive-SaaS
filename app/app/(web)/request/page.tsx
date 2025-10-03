@@ -3,15 +3,15 @@
 import { useState, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import { ChevronRight, Zap } from "lucide-react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/(shared)/ui/card";
+import { Button } from "@/components/(shared)/ui/button";
 import { validateEmail, validatePhone } from "@/lib/validation";
 import { useCalendlyIntegration } from "@/hooks/useCalendlyIntegration";
-import { ContactStep } from "@/components/request/ContactStep";
-import { BusinessStep } from "@/components/request/BusinessStep";
-import { DemoStep } from "@/components/request/DemoStep";
-import { SuccessMessage } from "@/components/request/SuccessMessage";
-import { BenefitsSection } from "@/components/request/BenefitsSection";
+import { ContactStep } from "@/components/(web)/request/ContactStep";
+import { BusinessStep } from "@/components/(web)/request/BusinessStep";
+import { DemoStep } from "@/components/(web)/request/DemoStep";
+import { SuccessMessage } from "@/components/(web)/request/SuccessMessage";
+import { BenefitsSection } from "@/components/(web)/request/BenefitsSection";
 
 const Request = () => {
   const router = useRouter();

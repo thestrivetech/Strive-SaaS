@@ -3,7 +3,7 @@
 
 import { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
-import ChatContainer from '@/components/features/chatbot/chat-container';
+import ChatContainer from '@/components/(web)/features/chatbot/chat-container';
 import parentComm from '@/lib/utils/parent-communication';
 
 export default function FullPage() {

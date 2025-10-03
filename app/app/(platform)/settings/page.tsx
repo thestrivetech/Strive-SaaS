@@ -1,12 +1,12 @@
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Switch } from '@/components/ui/switch';
-import { Separator } from '@/components/ui/separator';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/(shared)/ui/card';
+import { Button } from '@/components/(shared)/ui/button';
+import { Input } from '@/components/(shared)/ui/input';
+import { Label } from '@/components/(shared)/ui/label';
+import { Switch } from '@/components/(shared)/ui/switch';
+import { Separator } from '@/components/(shared)/ui/separator';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/(shared)/ui/tabs';
 import { getCurrentUser } from '@/lib/auth/auth-helpers';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/(shared)/ui/avatar';
 import {
   User,
   Building,

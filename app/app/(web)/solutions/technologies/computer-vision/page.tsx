@@ -1,6 +1,6 @@
 import { ArrowLeft, Eye, Camera, Scan, Shield, Activity, Image } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
+import { Button } from "@/components/(shared)/ui/button";
+import { Card, CardContent } from "@/components/(shared)/ui/card";
 import Link from "next/link";
 
 const ComputerVisionDocumentation = () => {

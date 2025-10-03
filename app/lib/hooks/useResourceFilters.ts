@@ -1,6 +1,6 @@
 import { useState, useEffect, useMemo } from "react";
-import { Resource, technologyCards, resources } from "@/data/resources";
-import { allQuizzes, Quiz } from "@/data/resources/quizzes";
+import { Resource, technologyCards, resources } from "@/data/(web)/resources";
+import { allQuizzes, Quiz } from "@/data/(web)/resources/quizzes";
 
 interface SubFilter {
   category: string;

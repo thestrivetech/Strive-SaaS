@@ -214,11 +214,20 @@ app/
 ```
 
 **Architecture Notes:**
+- **Industry-as-plugin architecture**: Multi-industry platform with industry-specific customizations
+  - Core modules in `lib/modules/` (CRM, Projects, AI, Tasks)
+  - Industry implementations in `lib/industries/[industry]/` (features, tools, overrides)
+  - Shared tools in `lib/tools/shared/` (universal marketplace tools)
 - **Feature-first organization**: Each business feature is a self-contained module
 - **Role-Based Access Control (RBAC)**: Controls which modules users can access based on role and subscription tier
 - **Configurable dashboard**: Main dashboard at `/dashboard` shows widgets from enabled modules based on user's industry and subscription tier
 - **Modular components**: Each feature module has its own component directory
-- **Centralized business logic**: All data access and business logic in `lib/modules/`
+
+**📖 Architecture Documentation:**
+- Primary architecture: [`docs/structure/STRUCTURE-OVERVIEW-1.md`](docs/structure/STRUCTURE-OVERVIEW-1.md)
+- Future scaling: [`docs/structure/MULTI-INDUSTRY-ARCHITECTURE.md`](docs/structure/MULTI-INDUSTRY-ARCHITECTURE.md)
+- Type system: [`docs/structure/TYPES-GUIDE.md`](docs/structure/TYPES-GUIDE.md)
+- Tool system: [`docs/structure/tools-guide.md`](docs/structure/tools-guide.md)
 
 ---
 

@@ -3,18 +3,18 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { Filter, CheckCircle, ArrowRight } from "lucide-react";
-import { MetaTags } from "@/components/seo/meta-tags";
+import { MetaTags } from "@/components/(web)/seo/meta-tags";
 import { useSEO } from "@/hooks/use-seo";
-import { Dialog, DialogContent, DialogTitle, DialogDescription } from "@/components/ui/dialog";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { HeroSection } from "@/components/solutions/HeroSection";
-import { SolutionCard } from "@/components/solutions/SolutionCard";
-import { IndustryCard } from "@/components/solutions/IndustryCard";
-import { UnifiedFilterDropdown, type FilterSelection } from "@/components/filters/unified-filter-dropdown";
-import { solutions, type Solution, solutionTypeOptions } from "@/data/solutions";
-import { industryCards } from "@/data/industry-cards";
-import { industryOptions } from "@/data/industries";
+import { Dialog, DialogContent, DialogTitle, DialogDescription } from "@/components/(shared)/ui/dialog";
+import { Button } from "@/components/(shared)/ui/button";
+import { Badge } from "@/components/(shared)/ui/badge";
+import { HeroSection } from "@/components/(web)/solutions/HeroSection";
+import { SolutionCard } from "@/components/(web)/solutions/SolutionCard";
+import { IndustryCard } from "@/components/(web)/solutions/IndustryCard";
+import { UnifiedFilterDropdown, type FilterSelection } from "@/components/(web)/filters/unified-filter-dropdown";
+import { solutions, type Solution, solutionTypeOptions } from "@/data/(web)/solutions";
+import { industryCards } from "@/data/(web)/industry-cards";
+import { industryOptions } from "@/data/(web)/industries";
 
 const Solutions = () => {
   const router = useRouter();

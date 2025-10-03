@@ -62,6 +62,8 @@ model Organization {
   name               String
   slug               String               @unique
   description        String?
+  industry           Industry?            @map("industry")
+  industryConfig     Json?                @map("industry_config")
   settings           Json?
   subscriptionStatus SubscriptionStatus   @default(TRIAL) @map("subscription_status")
   billingEmail       String?              @map("billing_email")
@@ -221,7 +223,7 @@ model Subscription {
   stripeSubscriptionId String?            @unique @map("stripe_subscription_id")
   stripeCustomerId     String?            @map("stripe_customer_id")
   status               SubscriptionStatus @default(TRIAL)
-  tier                 SubscriptionTier   @default(FREE)
+  tier                 SubscriptionTier   @default(STARTER)
   currentPeriodStart   DateTime           @map("current_period_start")
   currentPeriodEnd     DateTime           @map("current_period_end")
   cancelAtPeriodEnd    Boolean            @default(false) @map("cancel_at_period_end")
@@ -641,6 +643,20 @@ enum NotificationType {
   ERROR
 }
 
+enum Industry {
+  SHARED
+  REAL_ESTATE
+  HEALTHCARE
+  FINTECH
+  MANUFACTURING
+  RETAIL
+  EDUCATION
+  LEGAL
+  HOSPITALITY
+  LOGISTICS
+  CONSTRUCTION
+}
+
 enum ToolImplementation {
   NEXTJS
   N8N
@@ -659,7 +675,7 @@ model OrganizationToolConfig {
   id             String             @id @default(uuid())
   organizationId String             @map("organization_id")
   toolId         String             @map("tool_id")
-  industry       String
+  industry       Industry
   enabled        Boolean            @default(false)
   settings       Json               @default("{}")
   enabledAt      DateTime?          @map("enabled_at")

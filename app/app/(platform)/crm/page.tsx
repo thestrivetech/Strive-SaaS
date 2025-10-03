@@ -1,9 +1,9 @@
 import { Suspense } from 'react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Badge } from '@/components/ui/badge';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/(shared)/ui/card';
+import { Button } from '@/components/(shared)/ui/button';
+import { Input } from '@/components/(shared)/ui/input';
+import { Badge } from '@/components/(shared)/ui/badge';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/(shared)/ui/avatar';
 import {
   Table,
   TableBody,
@@ -11,19 +11,19 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from '@/components/ui/table';
+} from '@/components/(shared)/ui/table';
 import { Plus, Search, Filter } from 'lucide-react';
 import { getCurrentUser } from '@/lib/auth/auth-helpers';
 import { getUserOrganizations } from '@/lib/modules/organization/queries';
 import { getCustomers, getCustomerStats } from '@/lib/modules/crm/queries';
-import { CreateCustomerDialog } from '@/components/features/crm/create-customer-dialog';
-import { CustomerActionsMenu } from '@/components/features/crm/customer-actions-menu';
-import { CustomerSearch } from '@/components/features/crm/customer-search';
-import { CustomerFilters } from '@/components/features/crm/customer-filters';
-import { CustomerListSkeleton } from '@/components/features/crm/customer-list-skeleton';
-import { PaginationControls } from '@/components/ui/pagination-controls';
+import { CreateCustomerDialog } from '@/components/(platform)/real-estate/crm/create-customer-dialog';
+import { CustomerActionsMenu } from '@/components/(platform)/real-estate/crm/customer-actions-menu';
+import { CustomerSearch } from '@/components/(platform)/real-estate/crm/customer-search';
+import { CustomerFilters } from '@/components/(platform)/real-estate/crm/customer-filters';
+import { CustomerListSkeleton } from '@/components/(platform)/real-estate/crm/customer-list-skeleton';
+import { PaginationControls } from '@/components/(shared)/ui/pagination-controls';
 import { getCustomersCount } from '@/lib/modules/crm/queries';
-import { ExportButton } from '@/components/features/export/export-button';
+import { ExportButton } from '@/components/(web)/features/export/export-button';
 import { formatDateForCSV, type CSVColumn } from '@/lib/export/csv';
 import type { CustomerStatus, CustomerSource, Customer } from '@prisma/client';
 import type { CRMFilters } from '@/lib/types/platform';

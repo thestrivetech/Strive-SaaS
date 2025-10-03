@@ -2,23 +2,23 @@
 
 import { useState, useEffect } from "react";
 import { BookOpen, FileText, BarChart3, Wrench, Filter, Globe, BrainCircuit } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Button } from "@/components/(shared)/ui/button";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/(shared)/ui/select";
 import { useRouter } from "next/navigation";
 
 // Import data
-import { Resource, resources } from "@/data/resources";
-import { Quiz, allQuizzes } from "@/data/resources/quizzes";
-import { featuredResource } from "@/data/resources/featured";
-import { ethicalAIImplementation } from "@/data/resources/whitepapers";
-import { SubFilterBar } from "@/components/ui/sub-filter-bar";
-import { WhitepaperViewer } from "@/components/resources/WhitepaperViewer";
+import { Resource, resources } from "@/data/(web)/resources";
+import { Quiz, allQuizzes } from "@/data/(web)/resources/quizzes";
+import { featuredResource } from "@/data/(web)/resources/featured";
+import { ethicalAIImplementation } from "@/data/(web)/resources/whitepapers";
+import { SubFilterBar } from "@/components/(shared)/ui/sub-filter-bar";
+import { WhitepaperViewer } from "@/components/(web)/resources/WhitepaperViewer";
 
 // Import new components
-import { QuizModal } from "@/components/resources/QuizModal";
-import { FeaturedResource } from "@/components/resources/FeaturedResource";
-import { NewsletterSection } from "@/components/resources/NewsletterSection";
-import { ResourceGrid } from "@/components/resources/ResourceGrid";
+import { QuizModal } from "@/components/(web)/resources/QuizModal";
+import { FeaturedResource } from "@/components/(web)/resources/FeaturedResource";
+import { NewsletterSection } from "@/components/(web)/resources/NewsletterSection";
+import { ResourceGrid } from "@/components/(web)/resources/ResourceGrid";
 import { useResourceFilters } from "@/lib/hooks/useResourceFilters";
 
 const Resources = () => {
