@@ -1,4 +1,4 @@
-// app/components/Chat/ChatMessage.tsx
+// app/components/features/chatbot/chat-message.tsx
 'use client';
 
 import React, { memo } from 'react';
@@ -6,6 +6,36 @@ import { User, AlertCircle, Clock, ExternalLink, Calendar } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { MessageSaiAvatar, UserAvatar } from '@/components/features/chatbot/avatars';
 import { URLS } from '@/lib/modules/chatbot/constants';
+
+// ✨ NEW: Import PropertyCard component (you need to create this separately)
+// Uncomment this line after you create the PropertyCard component:
+// import PropertyCard from './property-card';
+
+// ✨ NEW: Property Match interface
+interface PropertyMatch {
+  property: {
+    id: string;
+    address: string;
+    city: string;
+    state: string;
+    zipCode: string;
+    price: number;
+    bedrooms: number;
+    bathrooms: number;
+    sqft: number;
+    propertyType: string;
+    images: string[];
+    daysOnMarket: number;
+    schoolRatings?: {
+      elementary?: number;
+      middle?: number;
+      high?: number;
+    };
+  };
+  matchScore: number;
+  matchReasons: string[];
+  missingFeatures: string[];
+}
 
 interface ChatMessageProps {
   message: {
@@ -19,18 +49,27 @@ interface ChatMessageProps {
     isError?: boolean;
     isWelcome?: boolean;
     showCalendlyButton?: boolean;
+    propertyResults?: PropertyMatch[]; // ✨ NEW: Property results for real estate
   };
   isStreaming?: boolean;
   mode?: 'full' | 'widget';
   isFirst?: boolean;
+  onScheduleShowing?: (propertyId: string) => void; // ✨ NEW: Callback for showing
 }
 
-const ChatMessage: React.FC<ChatMessageProps> = memo(({ message, isStreaming = false, mode = 'full', isFirst = false }) => {
+const ChatMessage: React.FC<ChatMessageProps> = memo(({ 
+  message, 
+  isStreaming = false, 
+  mode = 'full', 
+  isFirst = false,
+  onScheduleShowing 
+}) => {
   const isUser = message.role === 'user';
   const isError = message.isError;
   const isPartial = message.isPartial;
   const isWelcome = message.isWelcome;
   const isThinking = message.isThinking;
+  const hasPropertyResults = message.propertyResults && message.propertyResults.length > 0; // ✨ NEW
   
   const actuallyStreaming = message.isStreaming !== undefined ? message.isStreaming : isStreaming;
   
@@ -62,6 +101,11 @@ const ChatMessage: React.FC<ChatMessageProps> = memo(({ message, isStreaming = f
       
       if (!trimmedLine) {
         return <div key={index} className="h-2" />;
+      }
+
+      // ✨ NEW: Filter out property_search tags from display
+      if (trimmedLine.includes('<property_search>') || trimmedLine.includes('</property_search>')) {
+        return null;
       }
       
       // Bold text formatting
@@ -260,6 +304,47 @@ const ChatMessage: React.FC<ChatMessageProps> = memo(({ message, isStreaming = f
                   </div>
                 </div>
               )}
+            </div>
+          </motion.div>
+        )}
+
+        {/* ✨ NEW: Property Results Grid */}
+        {hasPropertyResults && !isUser && (
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.3, duration: 0.5 }}
+            className="mt-4 w-full"
+          >
+            <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+              {/* 
+                TODO: Uncomment this after creating PropertyCard component
+                
+                {message.propertyResults!.map((match) => (
+                  <PropertyCard
+                    key={match.property.id}
+                    match={match}
+                    onScheduleShowing={onScheduleShowing || (() => {})}
+                  />
+                ))}
+              */}
+              
+              {/* Temporary placeholder - remove after PropertyCard is created */}
+              {message.propertyResults!.map((match) => (
+                <div 
+                  key={match.property.id}
+                  className="bg-white rounded-lg p-4 border-2 border-blue-200 shadow-md"
+                >
+                  <h3 className="font-bold text-gray-800">{match.property.address}</h3>
+                  <p className="text-gray-600">${match.property.price.toLocaleString()}</p>
+                  <p className="text-sm text-gray-500">
+                    {match.property.bedrooms} bed | {match.property.bathrooms} bath | {match.property.sqft} sqft
+                  </p>
+                  <p className="text-xs text-blue-600 mt-2">
+                    Match Score: {match.matchScore}
+                  </p>
+                </div>
+              ))}
             </div>
           </motion.div>
         )}

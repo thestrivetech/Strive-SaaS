@@ -1,4 +1,4 @@
-// lib/industries/index.ts
+// lib/modules/chatbot/config/industries/index.ts
 
 import { IndustryConfig, IndustryType } from '@/lib/modules/chatbot/types/industry';
 import { ClientConfig } from '@/lib/modules/chatbot/types/api';
@@ -9,6 +9,13 @@ import { striveSystemPrompt } from './strive/system-prompt';
 import { striveProblemPatterns } from './strive/problem-patterns';
 import { striveSolutions } from './strive/solutions';
 import { striveConversationFlow } from './strive/conversation-flow';
+
+// Import REAL ESTATE configuration
+import realEstateConfigJson from './real-estate/config.json';
+import { realEstateSystemPrompt } from './real-estate/system-prompt';
+import { realEstateProblemPatterns } from './real-estate/problem-patterns';
+import { realEstateSolutions } from './real-estate/solutions';
+import { realEstateConversationFlow } from './real-estate/conversation-flow';
 
 /**
  * Load complete industry configuration
@@ -33,9 +40,17 @@ export async function loadIndustryConfig(
       } as IndustryConfig;
       break;
 
-    // Future industries will go here
     case 'real-estate':
-      throw new Error('Real Estate industry not yet implemented');
+      config = {
+        ...realEstateConfigJson,
+        systemPrompt: realEstateSystemPrompt,
+        problemPatterns: realEstateProblemPatterns,
+        solutions: realEstateSolutions,
+        conversationFlow: realEstateConversationFlow,
+      } as IndustryConfig;
+      break;
+
+    // Future industries will go here
     case 'dental':
       throw new Error('Dental industry not yet implemented');
     case 'legal':
@@ -90,7 +105,7 @@ function applyClientOverrides(
  * Get list of available industries
  */
 export function getAvailableIndustries(): IndustryType[] {
-  return ['strive']; // Add more as they're implemented
+  return ['strive', 'real-estate']; // ✅ UPDATED: Added real-estate
 }
 
 /**
