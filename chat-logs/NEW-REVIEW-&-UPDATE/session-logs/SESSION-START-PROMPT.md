@@ -1,56 +1,42 @@
-Please read the following files in this order to understand
-  the project context and session goals:
+# Session 8.3 Start Prompt
 
-  1. Project Documentation:
-     - /Users/grant/Documents/GitHub/Strive-SaaS/CLAUDE.md
-     - /Users/grant/Documents/GitHub/Strive-SaaS/README.md
+## Context Files (Read in Order)
 
-  2. Current Session Plan:
-     - /Users/grant/Documents/GitHub/Strive-SaaS/chat-logs/NEW
-  -REVIEW-&-UPDATE/session-logs/Session5.md
+1. **Project Standards:**
+   - `C:\Users\zochr\Desktop\GitHub\Strive-SaaS\CLAUDE.md`
+   - `C:\Users\zochr\Desktop\GitHub\Strive-SaaS\README.md`
 
-  3. Previous Session Summary (for context):
-     - /Users/grant/Documents/GitHub/Strive-SaaS/chat-logs/NEW
-  -REVIEW-&-UPDATE/session-logs/Session4-Summary.md
+2. **Current Session:**
+   - `C:\Users\zochr\Desktop\GitHub\Strive-SaaS\chat-logs\NEW-REVIEW-&-UPDATE\session-logs\Session8.3.md`
 
-  After reading all files, create a comprehensive todo list
-  that covers all tasks from the current session plan
-  (Session5.md). Make sure the todo list:
-  - Follows the phase order from the session plan
-  - Includes all specific tasks with clear action items
-  - Marks phases as pending with one item as in_progress when 
-  ready to start
-  - Includes verification steps after major phases
-  - Uses descriptive task names that match the session plan
+## Current Status
 
-  Once the todo list is created, I'm ready to start executing 
-  Session 5.
+**TypeScript Errors:** 41 (Target: <30)
+**Progress:** 84 → 41 errors (51% reduction from Session 8 start)
 
 
-  # Generic Prompt for any session #
 
-  Please read the following files in this order to understand
-  the project context and session goals:
+## Instructions
 
-  1. Project Documentation:
-     - `/Users/grant/Documents/GitHub/Strive-SaaS/CLAUDE.md`
-     - `/Users/grant/Documents/GitHub/Strive-SaaS/README.md`
+1. Read Session8.2.md to see completed work and then this sessions chat log for remaining issues
+2. Verify current error count: `cd app && npx tsc --noEmit 2>&1 | grep -c "error TS"`
+3. Create todo list from priorities above
+4. Fix errors in priority order
+5. Verify each fix with TypeScript error count
+6. Update Session8.2.md with progress
 
-  2. Current Session Plan:
-     - `/Users/grant/Documents/GitHub/Strive-SaaS/chat-logs/NEW-REVIEW-&-UPDATE/session-logs/Session[7].md`
+**Estimated Time:** 30-45 minutes to reach <30 target
 
-  3. Previous Session Summary (for context):
-     - `/Users/grant/Documents/GitHub/Strive-SaaS/chat-logs/NEW-REVIEW-&-UPDATE/session-logs/Session[N-1]-Summary.md`
+---
 
-  After reading all files, create a comprehensive todo list
-  that covers all tasks from the current session plan
-  (Session[N].md). Make sure the todo list:
-  - Follows the phase order from the session plan
-  - Includes all specific tasks with clear action items
-  - Marks phases as pending with one item as in_progress when 
-  ready to start
-  - Includes verification steps after major phases
-  - Uses descriptive task names that match the session plan
+# Generic Template (For Future Sessions)
 
-  Once the todo list is created, lets start executing 
-  Session [7].
+Replace [N] with session number:
+
+```
+Read: CLAUDE.md, README.md, Session[N].md
+Current: [X] errors → Target: [Y] errors
+Goal: [Primary objective from session plan]
+
+Verify fixes: cd app && npx tsc --noEmit 2>&1 | grep -c "error TS"
+```

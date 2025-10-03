@@ -4,6 +4,7 @@ import { revalidatePath } from 'next/cache';
 import { createServerClient } from '@supabase/ssr';
 import { cookies } from 'next/headers';
 import { prisma } from '@/lib/prisma';
+import { Prisma } from '@prisma/client';
 import { getCurrentUser } from '@/lib/auth/utils';
 import { getUserOrganizationId } from '@/lib/auth/user-helpers';
 import {
@@ -85,6 +86,15 @@ export async function uploadAttachment(formData: FormData) {
         organizationId,
         uploadedById: user.id,
       },
+      include: {
+        uploadedBy: {
+          select: {
+            id: true,
+            name: true,
+            email: true,
+          },
+        },
+      },
     });
 
     // Log activity
@@ -93,9 +103,12 @@ export async function uploadAttachment(formData: FormData) {
         userId: user.id,
         organizationId,
         action: 'CREATE',
-        entityType: 'Attachment',
-        entityId: attachment.id,
-        description: `Uploaded file "${validated.fileName}" to ${entityType}`,
+        resourceType: 'Attachment',
+        resourceId: attachment.id,
+        newData: {
+          description: `Uploaded file "${validated.fileName}" to ${entityType}`,
+          fileName: validated.fileName,
+        } as Prisma.JsonObject,
       },
     });
 
@@ -167,9 +180,12 @@ export async function deleteAttachment(input: unknown) {
         userId: user.id,
         organizationId,
         action: 'DELETE',
-        entityType: 'Attachment',
-        entityId: attachment.id,
-        description: `Deleted file "${attachment.fileName}"`,
+        resourceType: 'Attachment',
+        resourceId: attachment.id,
+        oldData: {
+          description: `Deleted file "${attachment.fileName}"`,
+          fileName: attachment.fileName,
+        } as Prisma.JsonObject,
       },
     });
 

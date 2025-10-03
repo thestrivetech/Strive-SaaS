@@ -24,7 +24,7 @@ import { ProjectFilters } from '@/components/features/projects/project-filters';
 import { ExportButton } from '@/components/features/export/export-button';
 import { formatDateForCSV, type CSVColumn } from '@/lib/export/csv';
 import type { ProjectStatus, Priority, Project } from '@prisma/client';
-import type { ProjectFilters as ProjectFiltersType } from '@/lib/types/filters';
+import type { ProjectFilters as ProjectFiltersType } from '@/lib/types/platform';
 
 export default async function ProjectsPage({
   searchParams,

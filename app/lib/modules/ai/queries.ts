@@ -1,4 +1,4 @@
-import { prisma } from '@/lib/database/prisma';
+import { prisma } from '@/lib/prisma';
 
 /**
  * Get all conversations for a user
@@ -44,8 +44,7 @@ export async function getRecentConversations(userId: string, organizationId: str
     take: limit,
     select: {
       id: true,
-      model: true,
-      provider: true,
+      aiModel: true,
       createdAt: true,
       updatedAt: true,
     },

@@ -30,20 +30,24 @@ export async function createProject(input: CreateProjectInput) {
   }
 
   // Create project
-  const project = await prisma.project.create({
-    data: {
-      name: validated.name,
-      description: validated.description || null,
-      customerId: validated.customerId || null,
-      projectManagerId: validated.projectManagerId || null,
-      status: validated.status,
-      priority: validated.priority,
-      startDate: validated.startDate || null,
-      dueDate: validated.dueDate || null,
-      budget: validated.budget || null,
-      organizationId: validated.organizationId,
-    },
-  });
+  const data: any = {
+    name: validated.name,
+    description: validated.description || null,
+    customerId: validated.customerId || null,
+    status: validated.status,
+    priority: validated.priority,
+    startDate: validated.startDate || null,
+    dueDate: validated.dueDate || null,
+    budget: validated.budget || null,
+    organizationId: validated.organizationId,
+  };
+
+  // Only include projectManagerId if provided
+  if (validated.projectManagerId) {
+    data.projectManagerId = validated.projectManagerId;
+  }
+
+  const project = await prisma.project.create({ data });
 
   // Log activity
   await prisma.activityLog.create({
@@ -96,7 +100,7 @@ export async function updateProject(input: UpdateProjectInput) {
       name: validated.name,
       description: validated.description,
       customerId: validated.customerId,
-      projectManagerId: validated.projectManagerId,
+      projectManagerId: validated.projectManagerId ?? undefined,
       status: validated.status,
       priority: validated.priority,
       startDate: validated.startDate,

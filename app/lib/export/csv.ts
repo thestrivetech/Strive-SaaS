@@ -1,4 +1,4 @@
-import type { CSVColumn as CSVColumnType } from '@/lib/types/csv';
+import type { CSVColumn as CSVColumnType } from '@/lib/types/shared';
 
 export type CSVColumn<T = Record<string, unknown>> = CSVColumnType<T>;
 
@@ -44,7 +44,7 @@ export function generateCSV<T extends Record<string, unknown>>(
         if (typeof col.key === 'string' && col.key.includes('.')) {
           // Handle nested keys like "project.name"
           const keys = col.key.split('.');
-          value = keys.reduce((obj, key) => obj?.[key], item);
+          value = keys.reduce((obj: any, key) => obj?.[key], item as any);
         } else {
           value = item[col.key as keyof T];
         }

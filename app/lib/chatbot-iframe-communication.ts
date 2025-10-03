@@ -1,41 +1,10 @@
 // Chatbot Iframe Communication Utility
 // Handles secure postMessage communication between parent site and chatbot iframe
 
-export interface ChatbotMessage {
-  type: 'resize' | 'navigate' | 'analytics' | 'ready' | 'close' | 'minimize' | 'error' | 'ping' | 'visibility' | 'mode';
-  data?: {
-    // Ready event data
-    version?: string;
-    mode?: 'widget' | 'full';
-    capabilities?: string[];
-    
-    // Resize event data
-    height?: number;
-    width?: number;
-    
-    // Navigate event data
-    url?: string;
-    target?: '_blank' | '_self';
-    
-    // Analytics event data
-    event?: 'chat_opened' | 'message_sent' | 'chat_closed' | string;
-    properties?: Record<string, any>;
-    
-    // Error event data
-    error?: string;
-    code?: string;
-    recoverable?: boolean;
-    stack?: string;
-    
-    // Visibility/Mode control data
-    visible?: boolean;
-    
-    // General timestamp
-    timestamp?: number;
-  };
-  timestamp: number;
-  source?: string;
-}
+import type { ChatbotMessage } from '@/lib/types/chatbot';
+
+// Re-export for backward compatibility
+export type { ChatbotMessage };
 
 export class ChatbotIframeManager {
   private chatbotOrigin: string;
@@ -50,7 +19,7 @@ export class ChatbotIframeManager {
 
   constructor() {
     // Use environment variable or default to production
-    this.chatbotOrigin = import.meta.env.VITE_CHATBOT_URL || 'https://chatbot.strivetech.ai';
+    this.chatbotOrigin = process.env.NEXT_PUBLIC_CHATBOT_URL || 'https://chatbot.strivetech.ai';
 
     // Start listening immediately
     this.startListening();
@@ -86,7 +55,7 @@ export class ChatbotIframeManager {
     ];
 
     const isOriginAllowed = allowedOrigins.includes(event.origin);
-    const isDevelopment = import.meta.env.DEV;
+    const isDevelopment = process.env.NODE_ENV === 'development';
 
     if (!isOriginAllowed) {
       if (isDevelopment) {
@@ -111,7 +80,7 @@ export class ChatbotIframeManager {
     }
 
     // Log message for debugging
-    if (import.meta.env.DEV) {
+    if (process.env.NODE_ENV === 'development') {
       console.log('📨 Received message in iframe manager:', event.data);
       this.messageLog.push({
         time: new Date().toISOString(),
@@ -124,7 +93,7 @@ export class ChatbotIframeManager {
 
     // Optional source validation with logging
     if (source !== undefined && source !== 'sai-chatbot') {
-      if (import.meta.env.DEV) {
+      if (process.env.NODE_ENV === 'development') {
         console.warn('⚠️ Message has unexpected source (allowing in dev mode):', {
           receivedSource: source,
           expectedSource: 'sai-chatbot',
@@ -143,7 +112,7 @@ export class ChatbotIframeManager {
       }
     }
 
-    if (import.meta.env.DEV) {
+    if (process.env.NODE_ENV === 'development') {
       console.log('✅ Source validated:', source || 'undefined (accepted)');
     }
 

@@ -5,15 +5,15 @@ interface GState {
   opacity: number;
 }
 
-interface jsPDFWithGState extends jsPDF {
-  GState: new (state: GState) => unknown;
-}
-
 /**
  * Set PDF opacity (transparency) safely
  */
 export function setPDFOpacity(pdf: jsPDF, opacity: number): void {
-  const pdfWithGState = pdf as jsPDFWithGState;
+  // Access internal GState API (not fully typed in jsPDF)
+  const pdfWithGState = pdf as unknown as {
+    GState: new (state: GState) => unknown;
+    setGState: (state: unknown) => void;
+  };
   pdf.setGState(new pdfWithGState.GState({ opacity }));
 }
 

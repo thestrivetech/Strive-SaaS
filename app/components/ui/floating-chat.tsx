@@ -26,7 +26,7 @@ const FloatingChat = () => {
   const maxRetries = 3;
 
   // Chatbot URL - can be environment variable
-  const chatbotUrl = import.meta.env.VITE_CHATBOT_URL || 'https://chatbot.strivetech.ai';
+  const chatbotUrl = process.env.NEXT_PUBLIC_CHATBOT_URL || 'https://chatbot.strivetech.ai';
   const widgetUrl = `${chatbotUrl}/widget`;
 
   useEffect(() => {

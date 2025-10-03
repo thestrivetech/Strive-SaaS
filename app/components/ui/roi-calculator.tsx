@@ -22,7 +22,7 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { roiCalculator } from "@/lib/roi-calculator";
-import type { IndustryName } from "@/types/roi-calculator";
+import type { IndustryName } from "@/lib/types/roi-calculator";
 
 // Industry icon mapping for UI display
 const industryIcons: Record<IndustryName, React.ReactElement> = {

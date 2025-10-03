@@ -39,7 +39,7 @@ export const useKeyboardShortcuts = ({
 // Time-based greeting hook
 export const useTimeBasedGreeting = () => {
   const [greeting, setGreeting] = useState('');
-  const [timeOfDay, setTimeOfDay] = useState<'morning' | 'afternoon' | 'evening' | 'night'>('day');
+  const [timeOfDay, setTimeOfDay] = useState<'morning' | 'afternoon' | 'evening' | 'night'>('morning');
   
   useEffect(() => {
     const hour = new Date().getHours();

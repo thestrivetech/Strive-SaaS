@@ -21,7 +21,7 @@ export class RealtimeClient {
   /**
    * Subscribe to task updates for a specific project
    */
-  subscribeToTaskUpdates(projectId: string, callback: (payload: RealtimePayload) => void) {
+  subscribeToTaskUpdates<T = Record<string, unknown>>(projectId: string, callback: (payload: RealtimePayload<T>) => void) {
     const channel = this.supabase
       .channel(`project:${projectId}:tasks`)
       .on(
@@ -35,8 +35,8 @@ export class RealtimeClient {
         (payload: RealtimePostgresChangesPayload<Record<string, unknown>>) => {
           callback({
             eventType: payload.eventType as RealtimeEvent,
-            new: payload.new,
-            old: payload.old,
+            new: payload.new as T,
+            old: payload.old as T,
           });
         }
       )
@@ -50,7 +50,7 @@ export class RealtimeClient {
   /**
    * Subscribe to customer updates for an organization
    */
-  subscribeToCustomerUpdates(organizationId: string, callback: (payload: RealtimePayload) => void) {
+  subscribeToCustomerUpdates<T = Record<string, unknown>>(organizationId: string, callback: (payload: RealtimePayload<T>) => void) {
     const channel = this.supabase
       .channel(`org:${organizationId}:customers`)
       .on(
@@ -64,8 +64,8 @@ export class RealtimeClient {
         (payload: RealtimePostgresChangesPayload<Record<string, unknown>>) => {
           callback({
             eventType: payload.eventType as RealtimeEvent,
-            new: payload.new,
-            old: payload.old,
+            new: payload.new as T,
+            old: payload.old as T,
           });
         }
       )
@@ -79,7 +79,7 @@ export class RealtimeClient {
   /**
    * Subscribe to project updates for an organization
    */
-  subscribeToProjectUpdates(organizationId: string, callback: (payload: RealtimePayload) => void) {
+  subscribeToProjectUpdates<T = Record<string, unknown>>(organizationId: string, callback: (payload: RealtimePayload<T>) => void) {
     const channel = this.supabase
       .channel(`org:${organizationId}:projects`)
       .on(
@@ -93,8 +93,8 @@ export class RealtimeClient {
         (payload: RealtimePostgresChangesPayload<Record<string, unknown>>) => {
           callback({
             eventType: payload.eventType as RealtimeEvent,
-            new: payload.new,
-            old: payload.old,
+            new: payload.new as T,
+            old: payload.old as T,
           });
         }
       )
@@ -108,7 +108,7 @@ export class RealtimeClient {
   /**
    * Subscribe to notification updates for a user
    */
-  subscribeToNotificationUpdates(userId: string, callback: (payload: RealtimePayload) => void) {
+  subscribeToNotificationUpdates<T = Record<string, unknown>>(userId: string, callback: (payload: RealtimePayload<T>) => void) {
     const channel = this.supabase
       .channel(`user:${userId}:notifications`)
       .on(
@@ -122,8 +122,8 @@ export class RealtimeClient {
         (payload: RealtimePostgresChangesPayload<Record<string, unknown>>) => {
           callback({
             eventType: payload.eventType as RealtimeEvent,
-            new: payload.new,
-            old: payload.old,
+            new: payload.new as T,
+            old: payload.old as T,
           });
         }
       )
