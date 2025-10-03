@@ -2,9 +2,9 @@
 
 import '@/lib/types/analytics';
 import { Bot, Sparkles, AlertCircle, Loader2, MessageCircle, Clock } from "lucide-react";
-import { Badge } from "@/components/ui/badge";
-import { Card, CardContent, CardHeader } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/(shared)/ui/badge";
+import { Card, CardContent, CardHeader } from "@/components/(shared)/ui/card";
+import { Button } from "@/components/(shared)/ui/button";
 import { useState, useRef, useEffect } from "react";
 import chatbotManager from "@/lib/chatbot-iframe-communication";
 import performanceMonitor from "@/lib/chatbot-performance-monitor";

@@ -4,18 +4,18 @@ import {
   industryCorrelations,
   type IndustryOption,
   type IndustrySolution 
-} from "@/data/industries";
+} from "@/data/(web)/industries";
 import { 
   solutions, 
   solutionTypeOptions, 
   solutionCorrelations,
   type Solution,
   type SolutionTypeOption 
-} from "@/data/solutions";
+} from "@/data/(web)/solutions";
 import { 
   industryCards,
   type IndustryCard 
-} from "@/data/industry-cards";
+} from "@/data/(web)/industry-cards";
 
 // Industry helper functions
 export const getIndustryByValue = (value: string): IndustryOption | undefined => {

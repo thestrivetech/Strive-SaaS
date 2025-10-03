@@ -1,7 +1,7 @@
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/(shared)/ui/card';
+import { Button } from '@/components/(shared)/ui/button';
+import { Badge } from '@/components/(shared)/ui/badge';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/(shared)/ui/avatar';
 import {
   Table,
   TableBody,
@@ -9,7 +9,7 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from '@/components/ui/table';
+} from '@/components/(shared)/ui/table';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -17,11 +17,11 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
+} from '@/components/(shared)/ui/dropdown-menu';
 import { MoreHorizontal, Shield, UserCheck, Eye } from 'lucide-react';
 import { getCurrentUser } from '@/lib/auth/auth-helpers';
 import { getOrganizationMembers, getUserOrganizations } from '@/lib/modules/organization/queries';
-import { InviteMemberDialog } from '@/components/features/organization/invite-member-dialog';
+import { InviteMemberDialog } from '@/components/(platform)/projects/organization/invite-member-dialog';
 
 export default async function TeamPage() {
   const user = await getCurrentUser();

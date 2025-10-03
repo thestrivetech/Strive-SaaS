@@ -1,9 +1,9 @@
 import { Suspense } from 'react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { Progress } from '@/components/ui/progress';
-import { Avatar, AvatarFallback } from '@/components/ui/avatar';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/(shared)/ui/card';
+import { Button } from '@/components/(shared)/ui/button';
+import { Badge } from '@/components/(shared)/ui/badge';
+import { Progress } from '@/components/(shared)/ui/progress';
+import { Avatar, AvatarFallback } from '@/components/(shared)/ui/avatar';
 import {
   Plus,
   Calendar,
@@ -17,11 +17,11 @@ import { getCurrentUser } from '@/lib/auth/auth-helpers';
 import { getUserOrganizations, getOrganizationMembers } from '@/lib/modules/organization/queries';
 import { getProjects, getProjectStats, calculateProjectProgress, getProjectsCount } from '@/lib/modules/projects/queries';
 import { getCustomers } from '@/lib/modules/crm/queries';
-import { CreateProjectDialog } from '@/components/features/projects/create-project-dialog';
-import { ProjectListSkeleton } from '@/components/features/projects/project-list-skeleton';
-import { PaginationControls } from '@/components/ui/pagination-controls';
-import { ProjectFilters } from '@/components/features/projects/project-filters';
-import { ExportButton } from '@/components/features/export/export-button';
+import { CreateProjectDialog } from '@/components/(platform)/projects/create-project-dialog';
+import { ProjectListSkeleton } from '@/components/(platform)/projects/project-list-skeleton';
+import { PaginationControls } from '@/components/(shared)/ui/pagination-controls';
+import { ProjectFilters } from '@/components/(platform)/projects/project-filters';
+import { ExportButton } from '@/components/(web)/features/export/export-button';
 import { formatDateForCSV, type CSVColumn } from '@/lib/export/csv';
 import type { ProjectStatus, Priority, Project } from '@prisma/client';
 import type { ProjectFilters as ProjectFiltersType } from '@/lib/types/platform';

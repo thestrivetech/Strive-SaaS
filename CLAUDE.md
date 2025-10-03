@@ -14,7 +14,11 @@
 > 3. **UPDATE, DON'T CREATE** - Prefer editing existing files over creating new ones (99% of the time)
 > 4. **ASK IF UNCERTAIN** - When unsure if something exists, ask the user first
 >
-> **For comprehensive documentation:** See [`docs/README.md`](docs/README.md) for detailed architecture, complete command references, and expanded explanations.
+> **For comprehensive documentation:**
+> - Architecture: [`docs/structure/STRUCTURE-OVERVIEW-1.md`](docs/structure/STRUCTURE-OVERVIEW-1.md) - Industry-as-plugin architecture
+> - Future scaling: [`docs/structure/MULTI-INDUSTRY-ARCHITECTURE.md`](docs/structure/MULTI-INDUSTRY-ARCHITECTURE.md)
+> - Type system: [`docs/structure/TYPES-GUIDE.md`](docs/structure/TYPES-GUIDE.md)
+> - Tool system: [`docs/structure/tools-guide.md`](docs/structure/tools-guide.md)
 
 ---
 
@@ -423,9 +427,12 @@ export type { Customer } from '@prisma/client';
 - **Tiers:** 5 subscription levels - Starter | Growth | Elite | Custom | Enterprise (pricing & features TBD)
 - **Modules vs Tools:**
   - **Modules** = Core dashboards/pages (CRM Dashboard, Projects, AI, etc.) in `lib/modules/`
-  - **Tools** = Add-on utilities in `lib/tools/` that integrate into modules or work standalone
+  - **Tools** = Marketplace add-on utilities
+    - **Shared tools** → `lib/tools/shared/` (universal, cross-industry)
+    - **Industry-specific tools** → `lib/industries/[industry]/tools/` (co-located with industry)
+- **Industries:** Industry-specific implementations in `lib/industries/[industry]/` with features, tools, and module overrides
 - **Models:** User, Organization, Customer, Project, Task, AIConversation (13 total)
-- **Docs:** `CLAUDE.md` (full), `DASHBOARD_BUILD_PLAN.md`, `feature-&-tool-marketplace.md`
+- **Docs:** `CLAUDE.md` (full), `STRUCTURE-OVERVIEW-1.md`, `MULTI-INDUSTRY-ARCHITECTURE.md`
 
 ---
 

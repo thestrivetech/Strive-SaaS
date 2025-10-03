@@ -1,17 +1,17 @@
 import { notFound } from 'next/navigation';
 import { ArrowLeft, Mail, Phone, Building2, Calendar, User } from 'lucide-react';
 import Link from 'next/link';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { Separator } from '@/components/ui/separator';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/(shared)/ui/card';
+import { Badge } from '@/components/(shared)/ui/badge';
+import { Button } from '@/components/(shared)/ui/button';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/(shared)/ui/avatar';
+import { Separator } from '@/components/(shared)/ui/separator';
 import { getCurrentUser } from '@/lib/auth/auth-helpers';
 import { getUserOrganizations } from '@/lib/modules/organization/queries';
 import { getCustomerById } from '@/lib/modules/crm/queries';
-import { EditCustomerDialog } from '@/components/features/crm/edit-customer-dialog';
-import { DeleteCustomerDialog } from '@/components/features/crm/delete-customer-dialog';
-import { ActivityTimeline } from '@/components/features/shared/activity-timeline';
+import { EditCustomerDialog } from '@/components/(platform)/real-estate/crm/edit-customer-dialog';
+import { DeleteCustomerDialog } from '@/components/(platform)/real-estate/crm/delete-customer-dialog';
+import { ActivityTimeline } from '@/components/(web)/features/shared/activity-timeline';
 
 export default async function CustomerDetailPage({
   params,

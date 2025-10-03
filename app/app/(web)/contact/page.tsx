@@ -3,14 +3,14 @@
 import { useState, useEffect } from "react";
 import { FileText } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
-import { Card, CardContent } from "@/components/ui/card";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import ProfessionalBrochure from "@/components/ui/professional-brochure";
+import { Card, CardContent } from "@/components/(shared)/ui/card";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/(shared)/ui/dialog";
+import ProfessionalBrochure from "@/components/(shared)/ui/professional-brochure";
 import { generateProfessionalBrochurePDF } from "@/lib/pdf-generator";
-import { ContactForm } from "@/components/contact/ContactForm";
-import { ContactInfo } from "@/components/contact/ContactInfo";
-import { QuickActions } from "@/components/contact/QuickActions";
-import { FAQSection } from "@/components/contact/FAQSection";
+import { ContactForm } from "@/components/(web)/contact/ContactForm";
+import { ContactInfo } from "@/components/(web)/contact/ContactInfo";
+import { QuickActions } from "@/components/(web)/contact/QuickActions";
+import { FAQSection } from "@/components/(web)/contact/FAQSection";
 
 export default function ContactPage() {
   const { toast } = useToast();
