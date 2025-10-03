@@ -420,7 +420,10 @@ export type { Customer } from '@prisma/client';
 
 ## 🔗 QUICK REFS
 
-- **Tiers:** T0 (FREE) Low Request/Rate Limit with lower open source models | T1 ($299) 3 tools | T2 ($699) 10 tools | T3 (Custom) unlimited
+- **Tiers:** 5 subscription levels - Starter | Growth | Elite | Custom | Enterprise (pricing & features TBD)
+- **Modules vs Tools:**
+  - **Modules** = Core dashboards/pages (CRM Dashboard, Projects, AI, etc.) in `lib/modules/`
+  - **Tools** = Add-on utilities in `lib/tools/` that integrate into modules or work standalone
 - **Models:** User, Organization, Customer, Project, Task, AIConversation (13 total)
 - **Docs:** `CLAUDE.md` (full), `DASHBOARD_BUILD_PLAN.md`, `feature-&-tool-marketplace.md`
 

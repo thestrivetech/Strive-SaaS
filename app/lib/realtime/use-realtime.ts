@@ -6,17 +6,21 @@ import type { Task, Customer, Project } from '@prisma/client';
 
 /**
  * Hook for real-time task updates
+ * Generic to support Task types with relations (e.g., TaskWithAssignee)
  */
-export function useRealtimeTaskUpdates(projectId: string, initialTasks: Task[] = []) {
-  const [tasks, setTasks] = useState<Task[]>(initialTasks);
+export function useRealtimeTaskUpdates<T extends Task = Task>(
+  projectId: string,
+  initialTasks: T[] = []
+) {
+  const [tasks, setTasks] = useState<T[]>(initialTasks);
   const [isConnected, setIsConnected] = useState(false);
 
   const handleUpdate = useCallback((payload: RealtimePayload<Task>) => {
     if (payload.eventType === 'INSERT') {
-      setTasks((prev) => [...prev, payload.new]);
+      setTasks((prev) => [...prev, payload.new as T]);
     } else if (payload.eventType === 'UPDATE') {
       setTasks((prev) =>
-        prev.map((task) => (task.id === payload.new.id ? payload.new : task))
+        prev.map((task) => (task.id === payload.new.id ? { ...task, ...payload.new } as T : task))
       );
     } else if (payload.eventType === 'DELETE') {
       setTasks((prev) => prev.filter((task) => task.id !== payload.old.id));

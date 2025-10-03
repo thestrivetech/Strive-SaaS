@@ -11,4 +11,5 @@ export {
   signUp
 } from './auth-helpers';
 
-export { UserRole, AUTH_ROUTES } from './constants';
+export type { UserRole } from './constants';
+export { AUTH_ROUTES } from './constants';

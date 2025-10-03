@@ -6,23 +6,10 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Calendar, Clock, AlertCircle } from 'lucide-react';
 import { format, isPast } from 'date-fns';
 import { cn } from '@/lib/utils';
+import type { TaskWithAssignee } from '@/lib/modules/tasks/queries';
 
 interface TaskCardProps {
-  task: {
-    id: string;
-    title: string;
-    description: string | null;
-    status: TaskStatus;
-    priority: Priority;
-    dueDate: Date | null;
-    estimatedHours: number | null;
-    assignedTo: {
-      id: string;
-      name: string | null;
-      email: string;
-      avatarUrl: string | null;
-    } | null;
-  };
+  task: TaskWithAssignee;
   onClick?: () => void;
   className?: string;
 }
@@ -103,7 +90,7 @@ export function TaskCard({ task, onClick, className }: TaskCardProps) {
           {task.estimatedHours && (
             <div className="flex items-center gap-1">
               <Clock className="h-3 w-3" />
-              <span>{task.estimatedHours}h</span>
+              <span>{Number(task.estimatedHours)}h</span>
             </div>
           )}
         </div>

@@ -1,14 +1,7 @@
 import { useMemo } from 'react';
 import { useLocation } from 'wouter';
 import { getPageSEO } from '@/lib/seo-config';
-
-interface SEOConfig {
-  title: string;
-  description: string;
-  keywords?: string[];
-  ogImage?: string;
-  ogType?: string;
-}
+import type { SEOConfig } from '@/types/seo';
 
 interface UseSEOOptions {
   title?: string;
@@ -27,9 +20,9 @@ export const useSEO = (options: UseSEOOptions = {}) => {
   
   const seoConfig = useMemo(() => {
     const baseSEO = getPageSEO(location);
-    
+
     // Override with custom options
-    const customSEO: SEOConfig = {
+    const customSEO = {
       ...baseSEO,
       ...(options.title && { title: options.title }),
       ...(options.description && { description: options.description }),
@@ -40,8 +33,8 @@ export const useSEO = (options: UseSEOOptions = {}) => {
       ...(options.nofollow !== undefined && { nofollow: options.nofollow }),
       ...(options.structuredData && { structuredData: options.structuredData }),
       canonical: `https://strivetech.ai${location}`
-    };
-    
+    } as SEOConfig;
+
     return customSEO;
   }, [location, options]);
 

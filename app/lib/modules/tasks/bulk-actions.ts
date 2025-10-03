@@ -69,11 +69,12 @@ export async function bulkUpdateTaskStatus(input: unknown) {
         userId: user.id,
         organizationId,
         action: 'BULK_UPDATE_STATUS',
-        entityId: validated.taskIds.join(','),
-        details: {
-          entityType: 'Task',
+        resourceType: 'Task',
+        resourceId: validated.taskIds.join(','),
+        newData: {
           status: validated.status,
           count: validated.taskIds.length,
+          taskIds: validated.taskIds,
         } as Prisma.JsonObject,
       },
     });
@@ -152,11 +153,12 @@ export async function bulkAssignTasks(input: unknown) {
         userId: user.id,
         organizationId,
         action: 'BULK_ASSIGN',
-        entityId: validated.taskIds.join(','),
-        details: {
-          entityType: 'Task',
+        resourceType: 'Task',
+        resourceId: validated.taskIds.join(','),
+        newData: {
           assigneeId: validated.assigneeId,
           count: validated.taskIds.length,
+          taskIds: validated.taskIds,
         } as Prisma.JsonObject,
       },
     });
@@ -220,11 +222,12 @@ export async function bulkUpdateTaskPriority(input: unknown) {
         userId: user.id,
         organizationId,
         action: 'BULK_UPDATE_PRIORITY',
-        entityId: validated.taskIds.join(','),
-        details: {
-          entityType: 'Task',
+        resourceType: 'Task',
+        resourceId: validated.taskIds.join(','),
+        newData: {
           priority: validated.priority,
           count: validated.taskIds.length,
+          taskIds: validated.taskIds,
         } as Prisma.JsonObject,
       },
     });
@@ -284,10 +287,11 @@ export async function bulkDeleteTasks(input: unknown) {
         userId: user.id,
         organizationId,
         action: 'BULK_DELETE',
-        entityId: validated.taskIds.join(','),
-        details: {
-          entityType: 'Task',
+        resourceType: 'Task',
+        resourceId: validated.taskIds.join(','),
+        newData: {
           count: validated.taskIds.length,
+          taskIds: validated.taskIds,
           taskTitles: tasks.map((t) => t.title),
         } as Prisma.JsonObject,
       },

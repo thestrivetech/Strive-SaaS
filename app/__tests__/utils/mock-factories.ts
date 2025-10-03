@@ -12,7 +12,7 @@ import {
   NotificationType,
   ProjectStatus,
   TaskStatus,
-  TaskPriority,
+  Priority,
 } from '@prisma/client';
 
 /**
@@ -126,7 +126,7 @@ export function mockTask(overrides: Partial<any> = {}) {
     title: faker.lorem.sentence(),
     description: faker.lorem.paragraph(),
     status: faker.helpers.arrayElement(Object.values(TaskStatus)),
-    priority: faker.helpers.arrayElement(Object.values(TaskPriority)),
+    priority: faker.helpers.arrayElement(Object.values(Priority)),
     assignedToId: null,
     createdById: faker.string.uuid(),
     dueDate: faker.date.future(),

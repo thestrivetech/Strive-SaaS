@@ -24,4 +24,5 @@ export interface QuizResult {
   correctAnswers: number;
   timeSpent: number;
   passed: boolean;
+  completedAt?: string;
 }

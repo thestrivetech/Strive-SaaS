@@ -6,7 +6,7 @@ import { getUserOrganizationId } from '@/lib/auth/user-helpers';
 import { getAIService, type AIMessage } from '@/lib/ai/service';
 import { isModelAvailable, getRateLimitForTier, type SubscriptionTier } from '@/lib/ai/config';
 import { SendMessageSchema, CreateConversationSchema } from './schemas';
-import type { Prisma } from '@prisma/client';
+import type { Prisma, AIModel } from '@prisma/client';
 
 /**
  * Check rate limit for user
@@ -84,8 +84,8 @@ export async function sendMessage(input: unknown) {
         },
       });
 
-      if (conversation && conversation.messages) {
-        const previousMessages = conversation.messages as Prisma.JsonArray;
+      if (conversation && conversation.conversationData) {
+        const previousMessages = conversation.conversationData as Prisma.JsonArray;
         previousMessages.forEach((msg: any) => {
           if (msg.role && msg.content) {
             messages.push({
@@ -124,11 +124,11 @@ export async function sendMessage(input: unknown) {
       });
 
       if (conversation) {
-        const currentMessages = (conversation.messages as Prisma.JsonArray) || [];
+        const currentMessages = (conversation.conversationData as Prisma.JsonArray) || [];
         await prisma.aIConversation.update({
           where: { id: conversationId },
           data: {
-            messages: [
+            conversationData: [
               ...currentMessages,
               { role: 'user', content: validated.message, timestamp: new Date().toISOString() },
               { role: 'assistant', content: response.content, timestamp: new Date().toISOString() },
@@ -143,12 +143,11 @@ export async function sendMessage(input: unknown) {
         data: {
           userId: user.id,
           organizationId,
-          messages: [
+          conversationData: [
             { role: 'user', content: validated.message, timestamp: new Date().toISOString() },
             { role: 'assistant', content: response.content, timestamp: new Date().toISOString() },
           ] as Prisma.JsonArray,
-          model: validated.model,
-          provider: validated.provider,
+          aiModel: validated.model as AIModel,
         },
       });
       conversationId = newConversation.id;
@@ -160,9 +159,9 @@ export async function sendMessage(input: unknown) {
         userId: user.id,
         organizationId,
         action: 'AI_MESSAGE',
-        entityType: 'AIConversation',
-        entityId: conversationId,
-        details: {
+        resourceType: 'AIConversation',
+        resourceId: conversationId,
+        newData: {
           model: validated.model,
           provider: validated.provider,
           tokens: response.usage.totalTokens,
@@ -207,9 +206,8 @@ export async function createConversation(input: unknown) {
       data: {
         userId: user.id,
         organizationId,
-        messages: [] as Prisma.JsonArray,
-        model: validated.model,
-        provider: validated.provider,
+        conversationData: [] as Prisma.JsonArray,
+        aiModel: validated.model as AIModel,
       },
     });
 

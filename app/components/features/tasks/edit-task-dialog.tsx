@@ -39,23 +39,12 @@ import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover
 import { Calendar as CalendarComponent } from '@/components/ui/calendar';
 import { cn } from '@/lib/utils';
 import { format } from 'date-fns';
+import type { TaskWithAssignee } from '@/lib/modules/tasks/queries';
 
 interface EditTaskDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  task: {
-    id: string;
-    title: string;
-    description: string | null;
-    status: TaskStatus;
-    priority: Priority;
-    dueDate: Date | null;
-    estimatedHours: number | null;
-    assignedTo: {
-      id: string;
-      name: string | null;
-    } | null;
-  };
+  task: TaskWithAssignee;
   teamMembers?: Array<{ id: string; name: string | null }>;
 }
 

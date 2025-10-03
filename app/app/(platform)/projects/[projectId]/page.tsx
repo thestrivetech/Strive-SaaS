@@ -18,7 +18,7 @@ import { CreateTaskDialog } from '@/components/features/tasks/create-task-dialog
 import { TaskAttachments } from '@/components/features/tasks/task-attachments';
 import { ActivityTimeline } from '@/components/features/shared/activity-timeline';
 import { getAttachments } from '@/lib/modules/attachments';
-import type { OrganizationMember, TeamMember } from '@/lib/types/organization';
+import type { OrganizationMember, TeamMember } from '@/lib/types/platform';
 import type { Task, Attachment, User as PrismaUser } from '@prisma/client';
 
 type AttachmentWithUser = Attachment & { uploadedBy: Pick<PrismaUser, 'id' | 'name' | 'email'> };
@@ -48,7 +48,7 @@ export default async function ProjectDetailPage({
     getAttachments({ entityType: 'project', entityId: params.projectId }),
   ]);
 
-  const attachments = attachmentsResult.success ? attachmentsResult.data : [];
+  const attachments = (attachmentsResult.success ? attachmentsResult.data : []) || [];
 
   if (!project) {
     return notFound();
@@ -221,12 +221,11 @@ export default async function ProjectDetailPage({
             <CardContent>
               {tasks.length > 0 ? (
                 <TaskList
-                  tasks={tasks.map((task: Task) => ({
+                  tasks={tasks.map((task) => ({
                     ...task,
                     estimatedHours: task.estimatedHours ? Number(task.estimatedHours) : null,
                     priority: task.priority as any,
-                    assignedTo: null,
-                  }))}
+                  })) as any}
                   projectId={project.id}
                   teamMembers={teamMembers}
                   groupByStatus={true}

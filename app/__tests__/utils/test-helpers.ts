@@ -137,6 +137,7 @@ export async function createTestCustomer(
     email: string;
     phone: string;
     company: string;
+    status: any;
   }> = {}
 ) {
   const timestamp = Date.now();
@@ -147,6 +148,7 @@ export async function createTestCustomer(
       email: overrides.email || `customer-${timestamp}@example.com`,
       phone: overrides.phone || '+1234567890',
       company: overrides.company || `Test Company ${timestamp}`,
+      ...(overrides.status && { status: overrides.status }),
     },
   });
 }

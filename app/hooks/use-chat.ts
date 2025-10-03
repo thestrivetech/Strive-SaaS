@@ -57,8 +57,9 @@ export const useChat = (industry: string = 'strive') => {
   const abortControllerRef = useRef<AbortController | null>(null);
   const conversationIdRef = useRef(`conv-${Date.now()}`);
   const streamingIdRef = useRef<string | null>(null);
-  const sessionIdRef = useRef<string>(() => {
-    // Generate session ID once
+
+  // Generate session ID once - invoke function immediately
+  const getSessionId = () => {
     if (typeof window !== 'undefined') {
       const stored = sessionStorage.getItem('strive-session-id');
       if (stored) return stored;
@@ -67,7 +68,8 @@ export const useChat = (industry: string = 'strive') => {
       return newId;
     }
     return `session-${Date.now()}`;
-  });
+  };
+  const sessionIdRef = useRef<string>(getSessionId());
 
   // Load saved chat on mount
   useEffect(() => {
