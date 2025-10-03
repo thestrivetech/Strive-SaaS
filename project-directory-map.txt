@@ -1,6 +1,1025 @@
-STRIVE SAAS - PROJECT DIRECTORY STRUCTURE
+STRIVE TECH SAAS PLATFORM - COMPREHENSIVE DIRECTORY & ARCHITECTURE GUIDE
 Generated: 2025-10-03T04:27:28.437Z
 Root Path: C:\Users\zochr\Desktop\GitHub\Strive-SaaS
+================================================================================
+
+################################################################################
+#                                                                              #
+#                      PROJECT OVERVIEW & ARCHITECTURE                         #
+#                                                                              #
+################################################################################
+
+================================================================================
+1. PLATFORM OVERVIEW
+================================================================================
+
+**Project Name:** Strive Tech SaaS Platform
+**Platform URL:** app.strivetech.ai
+**Type:** Enterprise B2B Multi-tenant SaaS Platform
+**Industry Focus:** AI-Powered Business Solutions across multiple industries
+
+**Vision:**
+A comprehensive enterprise platform that combines:
+- Core business management tools (CRM, Projects, AI, Tasks)
+- Industry-specific marketplace add-on tools
+- AI-powered automation and intelligence
+- Multi-tenant architecture with robust security
+
+**Current Status:** Production-ready platform actively used by Strive Tech
+employees and clients.
+
+================================================================================
+2. TECHNOLOGY STACK
+================================================================================
+
+CORE FRAMEWORK
+--------------
+• Next.js 15.5.4 (App Router) - Server-first React framework
+• React 19.1.0 - UI library with concurrent features
+• TypeScript 5.6+ - Type-safe development
+• Tailwind CSS 4.0 - Utility-first styling
+• shadcn/ui - High-quality UI component library
+
+DATABASE & BACKEND (HYBRID APPROACH)
+------------------------------------
+**CRITICAL: Supabase and Prisma work TOGETHER, not as alternatives**
+
+• Supabase - Database provider + Services
+  - PostgreSQL Database Hosting
+  - Authentication (JWT in httpOnly cookies)
+  - Storage (File uploads)
+  - Realtime (Live updates, presence tracking)
+  - Row Level Security (RLS for data isolation)
+
+• Prisma 6.16.2 - ORM Tool (connects TO Supabase)
+  - Complex queries and aggregations
+  - Type-safe database access
+  - Migrations management
+  - Schema management
+
+**How They Work Together:**
+  Your Code → Prisma Client (ORM) → Supabase PostgreSQL
+           → Supabase Auth (Auth)
+           → Supabase Storage (Files)
+           → Supabase Realtime (Live updates)
+
+STATE MANAGEMENT
+----------------
+• Server State: TanStack Query (React Query)
+• Client State: Zustand (when absolutely necessary)
+• Forms: React Hook Form + Zod validation
+
+AI & AUTOMATION
+---------------
+• Providers: OpenRouter + Groq
+• Models: GPT-4, Claude 3.5, Llama 3.3
+• RAG System: Supabase Vector (pgvector) for semantic search
+• Embeddings: text-embedding-3-small
+
+PAYMENTS & BILLING
+------------------
+• Provider: Stripe
+• Integration: Webhook-based event handling
+• Features: Subscriptions, usage billing, marketplace payments
+
+TESTING & QUALITY
+-----------------
+• Unit/Integration: Jest + React Testing Library
+• E2E: Playwright
+• Coverage Requirement: 80% minimum (enforced)
+• TDD Approach: Tests written before implementation
+
+MONITORING & ANALYTICS
+----------------------
+• Analytics: Vercel Analytics
+• Errors: Sentry
+• Logs: Structured JSON logging
+• Performance: Web Vitals tracking
+
+================================================================================
+3. ARCHITECTURE PATTERNS & DESIGN PRINCIPLES
+================================================================================
+
+3.1 SERVER-FIRST ARCHITECTURE
+------------------------------
+**Default: Server Components (no "use client" directive needed)**
+
+Server Components (Default):
+  ✓ Direct database access via Prisma
+  ✓ Faster initial page loads
+  ✓ Reduced client JavaScript bundle
+  ✓ Better SEO and performance
+  ✓ Automatic code splitting
+
+Client Components (Explicit "use client"):
+  ✓ Interactive UI (onClick, onChange, etc.)
+  ✓ React hooks (useState, useEffect, etc.)
+  ✓ Browser APIs (window, document, etc.)
+  ✓ Third-party client libraries
+
+**Pattern:**
+  Server Component → Fetch data → Pass to Client Component for interactivity
+
+
+3.2 MODULE SYSTEM (CRITICAL DISTINCTION)
+-----------------------------------------
+**MODULES vs TOOLS - NOT interchangeable**
+
+MODULES = Core Platform Functionality (lib/modules/)
+  • Location: lib/modules/
+  • Purpose: Core business features (dashboards/pages)
+  • Always included based on subscription tier
+  • SOME ARE sold separately within certain tiers or as add-ons 
+  • Examples:
+    - lib/modules/crm/         → CRM Dashboard
+    - lib/modules/projects/    → Project Management
+    - lib/modules/ai/          → AI Chat & Automation
+    - lib/modules/tasks/       → Task Management
+    - lib/modules/chatbot/     → Customer Chatbot System
+  • Pattern: Self-contained with actions/, queries/, schemas/
+
+TOOLS = Marketplace Add-on Utilities (lib/tools/)
+  • Location: lib/tools/
+  • Purpose: Add-on utilities (purchasable separately)
+  • Can integrate INTO modules or work standalone
+  • Industry-specific or general purpose
+  • Examples:
+    - lib/tools/shared/roi-calculator/      → ROI Calculator
+    - lib/tools/real-estate/property-alerts/  → Property Alerts
+    - lib/tools/shared/invoice-generator/    → Invoice Generator
+  • Pattern: Tool metadata + actions + queries + configuration
+
+
+3.3 SUBSCRIPTION TIER SYSTEM (5 TIERS)
+---------------------------------------
+IMPORTANT: All pricing and feature allocations are PLACEHOLDERS (TBD)
+
+Tier Hierarchy:
+  1. STARTER   → Entry level (basic features)
+  2. GROWTH    → Growing businesses (expanded limits)
+  3. ELITE     → Advanced features (premium tools)
+  4. CUSTOM    → Tailored solutions (custom integrations)
+  5. ENTERPRISE → Full enterprise suite (unlimited)
+
+Access Control:
+  • Platform Modules: Always included based on tier
+  • Marketplace Tools: Can be purchased separately or included in tier
+  • Limits: Users, storage, API calls, tool count (all TBD)
+
+Database Field: SubscriptionTier enum in Prisma schema
+
+
+3.4 MULTI-TENANCY & DATA ISOLATION
+-----------------------------------
+Organization-Based Multi-tenancy:
+  • Each organization is a separate tenant
+  • All data scoped to organizationId
+  • Supabase Row Level Security (RLS) enforces isolation
+  • Middleware checks organization membership
+
+RLS Policy Pattern:
+  CREATE POLICY "org_isolation" ON table_name
+    USING (organization_id = current_user_org());
+
+User Access Flow:
+  1. User logs in → Supabase Auth creates session
+  2. Middleware extracts user from JWT
+  3. User selects organization (if member of multiple)
+  4. All queries automatically filtered by organizationId via RLS
+
+
+3.5 TYPE SAFETY THROUGHOUT
+---------------------------
+Multiple layers of type safety:
+  1. Prisma Client → Generated types from schema
+  2. Zod Schemas → Runtime validation + type inference
+  3. TypeScript → Compile-time type checking
+  4. lib/types/ → Domain-specific type definitions
+
+Type Organization:
+  lib/types/
+    ├── platform/   → Platform-specific types
+    ├── chatbot/    → Chatbot-specific types
+    ├── shared/     → Shared across platform
+    └── index.ts    → Central export
+
+Pattern: Zod schema → infer type → use throughout codebase
+
+================================================================================
+4. DIRECTORY STRUCTURE EXPLAINED
+================================================================================
+
+ROOT STRUCTURE
+--------------
+Strive-SaaS/
+├── app/              → Next.js project root (PRIMARY CODEBASE)
+├── archive/          → Backup copies (not active)
+├── chat-logs/        → Development session logs & decisions
+├── docs/             → Project documentation
+├── scripts/          → Root-level utility scripts
+└── [config files]    → .env.example, CLAUDE.md, README.md, etc.
+
+4.1 app/ DIRECTORY (Next.js Root - 600 FILES)
+----------------------------------------------
+**Primary application codebase - all active development happens here**
+
+app/
+├── __tests__/           → Test files and fixtures
+│   ├── fixtures/        → Mock data for testing
+│   ├── unit/            → Unit tests (co-located with code too)
+│   └── utils/           → Test helpers and factories
+│
+├── api/                 → API Routes (WEBHOOKS ONLY)
+│   └── chat/            → AI chat endpoint
+│   **NOTE:** NOT for internal data fetching (use Server Actions)
+│
+├── app/                 → Next.js App Router directory
+│   ├── (chatbot)/       → Chatbot embed routes (standalone)
+│   │   ├── full/        → Full-page chatbot
+│   │   └── widget/      → Embeddable widget
+│   │
+│   ├── (platform)/      → Protected dashboard routes (requires login)
+│   │   ├── dashboard/   → Main dashboard page
+│   │   ├── crm/         → CRM module pages
+│   │   ├── projects/    → Project management pages
+│   │   ├── ai/          → AI chat interface
+│   │   ├── tools/       → Marketplace tools page
+│   │   ├── settings/    → User & org settings
+│   │   └── login/       → Login page
+│   │
+│   ├── (web)/           → Legacy marketing site routes
+│   │   ├── about/       → About page
+│   │   ├── solutions/   → Solutions showcase
+│   │   ├── portfolio/   → Portfolio showcase
+│   │   └── [others]     → Various marketing pages
+│   │   **NOTE:** Minimal changes - being replaced
+│   │
+│   ├── api/             → Next.js API routes (auth endpoints)
+│   │   └── auth/        → Login/signup API routes
+│   │
+│   ├── globals.css      → Global styles
+│   ├── layout.tsx       → Root layout (applies to all pages)
+│   └── page.tsx         → Root page (redirects to dashboard)
+│
+├── assets/              → Static assets for app
+│   ├── email/           → Email template images
+│   └── optimized/       → Optimized images (multiple sizes)
+│
+├── components/          → React components (135 files)
+│   ├── ui/              → shadcn UI primitives (66 files)
+│   │   ├── button.tsx   → Button component
+│   │   ├── card.tsx     → Card component
+│   │   ├── dialog.tsx   → Dialog/Modal component
+│   │   └── [others]     → Form elements, layouts, etc.
+│   │
+│   ├── features/        → Feature-specific components
+│   │   ├── ai/          → AI chat components
+│   │   ├── chatbot/     → Chatbot UI components
+│   │   ├── crm/         → CRM-specific components
+│   │   ├── projects/    → Project management components
+│   │   ├── tasks/       → Task components
+│   │   └── [others]     → Export, organization, etc.
+│   │
+│   ├── shared/          → Shared across features
+│   │   ├── navigation/  → Navigation components
+│   │   └── error-boundary.tsx
+│   │
+│   ├── layouts/         → Layout components
+│   │   ├── sidebar/     → Main sidebar navigation
+│   │   └── topbar/      → Top navigation bar
+│   │
+│   └── [domain-specific]/ → About, contact, resources, etc.
+│
+├── data/                → Static data files (107 files)
+│   ├── portfolio/       → Portfolio project data
+│   └── resources/       → Blog posts, case studies, quizzes
+│       ├── blog-posts/  → Blog post content
+│       ├── case-studies/→ Case study content
+│       └── quizzes/     → Quiz questions and answers
+│
+├── lib/                 → Core business logic (118 files)
+│   ├── ai/              → AI service configuration
+│   │   ├── config.ts    → AI provider settings
+│   │   └── service.ts   → AI service wrapper
+│   │
+│   ├── analytics/       → Analytics tracking
+│   │   ├── analytics-tracker.ts  → Event tracking
+│   │   └── web-vitals.ts         → Performance metrics
+│   │
+│   ├── auth/            → Authentication utilities
+│   │   ├── actions.ts   → Auth server actions
+│   │   ├── auth-helpers.ts → Helper functions
+│   │   ├── rbac.ts      → Role-based access control
+│   │   ├── schemas.ts   → Zod validation schemas
+│   │   └── utils.ts     → Auth utilities
+│   │
+│   ├── export/          → Data export functionality
+│   │   └── csv.ts       → CSV export utilities
+│   │
+│   ├── hooks/           → Custom React hooks
+│   │   ├── useChatbotViewport.ts
+│   │   └── useResourceFilters.ts
+│   │
+│   ├── middleware/      → Middleware utilities (extracted for cleanliness)
+│   │   ├── auth.ts      → Auth middleware logic
+│   │   ├── cors.ts      → CORS handling
+│   │   └── routing.ts   → Routing logic
+│   │
+│   ├── modules/         → **CORE PLATFORM MODULES** (44 files)
+│   │   │
+│   │   ├── ai/          → AI Module
+│   │   │   ├── actions.ts   → Server actions (mutations)
+│   │   │   ├── queries.ts   → Data fetching
+│   │   │   ├── schemas.ts   → Zod validation
+│   │   │   └── index.ts     → Public API exports
+│   │   │
+│   │   ├── attachments/ → File attachment handling
+│   │   │   ├── actions.ts
+│   │   │   ├── schemas.ts
+│   │   │   └── index.ts
+│   │   │
+│   │   ├── chatbot/     → Customer chatbot module
+│   │   │   ├── config/
+│   │   │   │   └── industries/  → Industry-specific configs
+│   │   │   ├── constants/
+│   │   │   ├── schemas/
+│   │   │   ├── services/
+│   │   │   │   ├── cache-service.ts
+│   │   │   │   └── rag-service.ts  → RAG implementation
+│   │   │   └── actions.ts, queries.ts, types.ts
+│   │   │
+│   │   ├── crm/         → CRM Module
+│   │   │   ├── actions.ts   → Customer CRUD operations
+│   │   │   ├── queries.ts   → Customer data fetching
+│   │   │   ├── schemas.ts   → Validation schemas
+│   │   │   └── index.ts
+│   │   │
+│   │   ├── notifications/ → Notification system
+│   │   │   ├── actions.ts
+│   │   │   ├── queries.ts
+│   │   │   ├── schemas.ts
+│   │   │   └── types.ts
+│   │   │
+│   │   ├── organization/ → Organization management
+│   │   │   ├── actions.ts   → Org CRUD, invites
+│   │   │   ├── queries.ts
+│   │   │   └── schemas.ts
+│   │   │
+│   │   ├── projects/    → Project Management Module
+│   │   │   ├── actions.ts   → Project operations
+│   │   │   ├── queries.ts
+│   │   │   ├── schemas.ts
+│   │   │   └── index.ts
+│   │   │
+│   │   └── tasks/       → Task Management Module
+│   │       ├── actions.ts
+│   │       ├── bulk-actions.ts  → Bulk operations
+│   │       ├── queries.ts
+│   │       ├── schemas.ts
+│   │       └── index.ts
+│   │
+│   │   **Module Pattern:**
+│   │   Each module is self-contained with:
+│   │   - actions.ts: Server Actions (mutations, form submissions)
+│   │   - queries.ts: Data fetching functions
+│   │   - schemas.ts: Zod validation schemas
+│   │   - index.ts: Public API exports
+│   │   - types.ts (optional): TypeScript types
+│   │   - NO cross-module imports (use Prisma types for data sharing)
+│   │
+│   ├── tools/           → **MARKETPLACE TOOLS** (separate from modules)
+│   │   ├── types.ts     → Tool system type definitions
+│   │   ├── constants.ts → Tool system constants
+│   │   ├── manager.ts   → Tool registry manager
+│   │   ├── index.ts     → Public API
+│   │   ├── registry/    → Tool registry by industry
+│   │   └── shared/      → Cross-industry tools
+│   │       ├── roi-calculator/
+│   │       └── crm-basic/  → Example marketplace tool
+│   │
+│   ├── types/           → TypeScript type definitions
+│   │   ├── platform/    → Platform-specific types
+│   │   ├── chatbot/     → Chatbot types
+│   │   ├── shared/      → Shared types
+│   │   ├── web/         → Web/marketing types
+│   │   └── index.ts     → Central export
+│   │
+│   ├── chatbot-iframe-communication.ts  → Iframe messaging
+│   ├── prisma.ts        → Prisma client singleton
+│   ├── realtime/        → Supabase Realtime utilities
+│   │   ├── client.ts
+│   │   └── use-realtime.ts
+│   ├── roi-calculator.ts
+│   ├── analytics-tracker.ts
+│   └── supabase/        → Supabase client configurations
+│       ├── client.ts    → Client-side Supabase
+│       └── server.ts    → Server-side Supabase
+│
+├── prisma/              → Prisma ORM configuration
+│   └── schema.prisma    → Database schema (connects to Supabase)
+│       **Models:** User, Organization, Customer, Project, Task,
+│                   AIConversation, Notification, etc. (13 total)
+│
+├── public/              → Static assets served at /
+│   ├── assets/          → Images and media
+│   ├── robots.txt
+│   ├── sitemap.xml
+│   └── [svg icons]
+│
+├── scripts/             → Utility scripts (16 files)
+│   ├── directory-mapper.ts      → Generate directory maps
+│   ├── generate-embeddings.ts   → Create vector embeddings
+│   ├── seed-chatbot-data.ts     → Seed chatbot knowledge base
+│   ├── test-*.ts                → Database/feature testing scripts
+│   ├── image-optimization.ts    → Optimize images
+│   └── README.md                → Scripts documentation
+│
+├── types/               → Additional TypeScript types
+│   ├── seo.ts
+│   └── supabase.ts      → Supabase-generated types
+│
+├── middleware.ts        → Next.js middleware (auth + routing)
+├── next.config.mjs      → Next.js configuration
+├── tailwind.config.ts   → Tailwind CSS configuration
+├── tsconfig.json        → TypeScript configuration
+├── jest.config.ts       → Jest testing configuration
+├── package.json         → Dependencies and scripts
+├── prisma/schema.prisma → Database schema
+└── [config files]       → ESLint, PostCSS, etc.
+
+4.2 docs/ DIRECTORY (Project Documentation - 72 FILES)
+-------------------------------------------------------
+Comprehensive project documentation organized by topic
+
+docs/
+├── chatbot/             → Chatbot integration guides
+│   ├── chatbot-direct-integration-quick-guide.md
+│   ├── CHATBOT-INTEGRATION-GUIDE.md
+│   └── CLAUDE-CHATBOT-ANALYSIS.md
+│
+├── file-size&line-limit/ → Code quality standards
+│   ├── 500-line-limit-implementation-summary.md
+│   ├── content-management-strategy.md
+│   └── file-size-limits-analysis.md
+│
+├── future/              → Future planning documents
+│   ├── pricing-pages/   → Pricing structure planning
+│   ├── tools/           → Tool development plans
+│   │   └── real-estate/ → Real estate tool strategies
+│   ├── feature-&-tool-marketplace.md
+│   ├── internal-dashboard-types.md
+│   └── user-dashboard-types.md
+│
+├── next.js_integration/ → Next.js migration plans
+│   └── perplexity-plan/ → Migration strategy documents
+│
+└── [other docs]         → Various architectural docs
+
+4.3 chat-logs/ DIRECTORY (Development Logs - 151 FILES)
+--------------------------------------------------------
+Development session logs, architectural decisions, and implementation summaries
+
+chat-logs/
+├── chatbot/             → Chatbot development sessions
+│   ├── Session1_Summary.md
+│   ├── Session2_Summary.md
+│   └── Session3_Summary.md
+│
+├── database/            → Database architecture decisions
+│   ├── original-docs/
+│   │   ├── DATABASE_AUDIT_REPORT.md
+│   │   ├── MIGRATION_GUIDE.md
+│   │   └── PRISMA-SUPABASE-STRATEGY.md
+│   └── session-logs/    → Database session logs
+│
+├── NEW-REVIEW-&-UPDATE/ → Recent architectural updates
+│   ├── session-logs/
+│   │   ├── TYPES-GUIDE.md  → Comprehensive type guide
+│   │   ├── Session8.*.md   → Recent development sessions
+│   │   └── Types-Reorganization-Summary.md
+│   └── [planning docs]
+│
+└── structure/           → Project structure documentation
+    ├── tools/           → Tool system documentation
+    │   ├── CRITICAL-DISTINCTIONS.md  → Modules vs Tools
+    │   ├── TIER-UPDATE-SUMMARY.md
+    │   └── NEXT-SESSION-PROMPT.md
+    └── types/           → Type system documentation
+        └── TYPES-GUIDE.md
+
+4.4 scripts/ DIRECTORY (Root Level - 3 FILES)
+----------------------------------------------
+**Note:** Different from app/scripts/ (inside Next.js project)
+
+scripts/
+├── generate-directory-map.js  → THIS script (creates this file!)
+├── README.md                  → Scripts documentation
+└── USAGE.md                   → Usage guide
+
+================================================================================
+5. DATA FLOW & ARCHITECTURE PATTERNS
+================================================================================
+
+5.1 REQUEST FLOW (Server Components)
+-------------------------------------
+1. User navigates to page (e.g., /platform/crm)
+2. Next.js renders Server Component (app/app/(platform)/crm/page.tsx)
+3. Server Component calls data function:
+   - import { getCustomers } from '@/lib/modules/crm/queries'
+   - const customers = await getCustomers()
+4. Query function uses Prisma:
+   - const customers = await prisma.customer.findMany({
+       where: { organizationId }
+     })
+5. Supabase RLS automatically filters by organization
+6. Data returned, component renders
+7. HTML streamed to client
+8. Client hydrates interactive components only
+
+**No API route needed! Direct database access in Server Components.**
+
+
+5.2 MUTATION FLOW (Server Actions)
+-----------------------------------
+1. User interacts with form (Client Component)
+2. Form calls Server Action:
+   - import { createCustomer } from '@/lib/modules/crm/actions'
+   - const result = await createCustomer(formData)
+3. Server Action validates with Zod:
+   - const validated = CustomerSchema.parse(data)
+4. Server Action performs database operation:
+   - const customer = await prisma.customer.create({ data: validated })
+5. Server Action revalidates Next.js cache:
+   - revalidatePath('/platform/crm')
+6. Result returned to client
+7. UI automatically updates with fresh data
+
+**Progressive Enhancement: Works without JavaScript!**
+
+
+5.3 REALTIME UPDATES FLOW
+--------------------------
+1. Component subscribes to Supabase Realtime channel
+2. Database change occurs (INSERT, UPDATE, DELETE)
+3. Supabase Realtime broadcasts event to subscribers
+4. Component receives event and updates UI
+5. Uses optimistic updates for instant feedback
+
+Example: Task board automatically updates when another user creates a task
+
+
+5.4 AUTHENTICATION FLOW
+------------------------
+1. User submits login form
+2. Server Action calls Supabase Auth:
+   - const { data } = await supabase.auth.signInWithPassword({
+       email, password
+     })
+3. Supabase returns JWT token
+4. Token stored in httpOnly cookie (secure)
+5. Subsequent requests include cookie automatically
+6. Middleware extracts user from JWT:
+   - const { data: { user } } = await supabase.auth.getUser()
+7. Middleware checks organization membership
+8. Request proceeds if authorized, redirects if not
+
+
+5.5 RBAC (Role-Based Access Control) FLOW
+------------------------------------------
+1. Middleware extracts user from session
+2. Looks up organization membership:
+   - const member = await prisma.organizationMember.findUnique({
+       where: { userId_organizationId }
+     })
+3. Checks user role: owner | admin | manager | member | guest
+4. Compares against required permission for route
+5. Allows or denies access
+6. In components, use: `const { hasPermission } = usePermissions()`
+
+
+5.6 FILE UPLOAD FLOW
+--------------------
+1. User selects file in Client Component
+2. File uploaded to Supabase Storage:
+   - const { data } = await supabase.storage
+       .from('bucket')
+       .upload('path', file)
+3. URL returned: https://[project].supabase.co/storage/v1/object/public/...
+4. URL saved to database via Server Action
+5. File served with RLS policies enforcing access control
+
+
+5.7 AI CHAT FLOW
+----------------
+1. User sends message (Client Component)
+2. Server Action receives message
+3. Retrieves conversation history from database
+4. Optionally performs RAG search:
+   - Query vector database for relevant context
+   - Use pgvector similarity search in Supabase
+5. Constructs prompt with context
+6. Calls AI provider (OpenRouter/Groq):
+   - Streams response back to client
+7. Saves message and response to database
+8. Returns streaming response to UI
+
+================================================================================
+6. KEY ARCHITECTURAL DECISIONS
+================================================================================
+
+6.1 WHY PRISMA + SUPABASE (NOT EITHER/OR)
+------------------------------------------
+**Decision:** Use both Prisma and Supabase together
+
+**Rationale:**
+• Supabase provides:
+  - Database hosting (PostgreSQL)
+  - Authentication (pre-built, secure)
+  - Storage (file management)
+  - Realtime (live updates)
+  - RLS (data isolation)
+
+• Prisma provides:
+  - Type-safe database queries
+  - Complex aggregations and transactions
+  - Schema migrations
+  - Better TypeScript integration
+  - Easier testing (mock Prisma client)
+
+**Pattern:**
+  All database queries go through Prisma → Supabase PostgreSQL
+  Auth, Storage, Realtime go through Supabase SDK directly
+
+**Files:**
+  - lib/supabase/client.ts - Supabase client-side SDK
+  - lib/supabase/server.ts - Supabase server-side SDK
+  - lib/prisma.ts - Prisma client singleton
+
+
+6.2 WHY SERVER-FIRST (NOT CLIENT-HEAVY SPA)
+--------------------------------------------
+**Decision:** Default to Server Components, minimize client JavaScript
+
+**Rationale:**
+• Better initial page load (no JS needed for static content)
+• Improved SEO (fully rendered HTML)
+• Reduced bundle size (code runs on server)
+• Direct database access (no API layer needed)
+• Better security (credentials never exposed)
+• Automatic code splitting
+• Progressive enhancement (works without JS)
+
+**Trade-off:** Slightly more complex mental model, but much better UX
+
+
+6.3 WHY MODULE ISOLATION (NO CROSS-MODULE IMPORTS)
+---------------------------------------------------
+**Decision:** Modules cannot import from other modules
+
+**Rationale:**
+• Prevents circular dependencies
+• Enforces clear boundaries
+• Makes modules easier to understand
+• Allows independent development
+• Facilitates future extraction (if needed)
+
+**Data Sharing:**
+  Use Prisma-generated types from @prisma/client
+  Example: import type { Customer } from '@prisma/client'
+
+
+6.4 WHY 500-LINE FILE LIMIT
+----------------------------
+**Decision:** Hard limit of 500 lines per file (enforced by ESLint)
+
+**Rationale:**
+• Forces decomposition and modularity
+• Improves readability
+• Makes testing easier
+• Encourages reusable components
+• Prevents "God objects"
+
+**Targets:**
+  - UI Components: 200 lines
+  - Server Components: 250 lines
+  - Services/Logic: 300 lines
+  - API Routes: 150 lines
+
+**Enforcement:** ESLint blocks commits if exceeded
+
+
+6.5 WHY TDD (TEST-DRIVEN DEVELOPMENT)
+--------------------------------------
+**Decision:** Write tests BEFORE implementation
+
+**Rationale:**
+• Better API design (think about usage first)
+• Higher code coverage (80% minimum enforced)
+• Fewer bugs in production
+• Living documentation
+• Confidence when refactoring
+• Faster debugging
+
+**Requirement:** All Server Actions and API routes MUST have tests
+
+================================================================================
+7. DEVELOPMENT WORKFLOW
+================================================================================
+
+7.1 READ-BEFORE-EDIT MANDATE
+-----------------------------
+**CRITICAL: Follow these steps BEFORE any code change:**
+
+1. **READ FIRST** - Use Read tool on any file before editing
+2. **SEARCH FOR EXISTING** - Use Glob/Grep to check if similar code exists
+   - Don't create duplicate test files
+   - Don't recreate existing utilities
+   - Don't duplicate components
+3. **UPDATE, DON'T CREATE** - Prefer editing over creating (99% of time)
+4. **ASK IF UNCERTAIN** - When unsure, ask before proceeding
+
+**Rationale:** Prevents code duplication, maintains consistency
+
+
+7.2 FEATURE DEVELOPMENT WORKFLOW
+---------------------------------
+1. **Write tests first** (TDD)
+   - Create test file: feature.test.ts
+   - Write failing tests
+   - Run: npm test
+
+2. **Implement feature**
+   - Create Server Action if mutation needed
+   - Create query function if data fetching needed
+   - Create Zod schema for validation
+   - Create UI component
+
+3. **Make tests pass**
+   - Run: npm test -- --watch
+   - Iterate until green
+
+4. **Verify quality**
+   - Run: npm run lint
+   - Run: npx tsc --noEmit
+   - Check coverage: npm test -- --coverage
+   - Must be 80%+ or blocked
+
+5. **Commit**
+   - All checks must pass before commit
+   - Commit message: Conventional Commits format
+
+
+7.3 DATABASE CHANGES WORKFLOW
+------------------------------
+1. **Update Prisma schema**
+   - Edit: prisma/schema.prisma
+   - Add/modify models
+
+2. **Create migration**
+   - Run: npx prisma migrate dev --name description
+   - Migration file created in prisma/migrations/
+
+3. **Generate Prisma client**
+   - Run: npx prisma generate
+   - Types automatically updated
+
+4. **Update code to use new schema**
+   - TypeScript will show errors for old usage
+   - Update queries to match new schema
+
+5. **Update tests**
+   - Update fixtures
+   - Update test expectations
+
+
+7.4 COMPONENT CREATION WORKFLOW
+--------------------------------
+1. **Check if similar component exists**
+   - Search: components/ directory
+   - Don't duplicate
+
+2. **Choose component type**
+   - UI primitive: components/ui/
+   - Feature-specific: components/features/[module]/
+   - Shared: components/shared/
+
+3. **Determine if Server or Client Component**
+   - Need interactivity (clicks, state)? → Client ("use client")
+   - Just rendering? → Server (default, no directive)
+
+4. **Create component file**
+   - Use TypeScript
+   - Add prop types interface
+   - Export default or named export
+
+5. **Test component**
+   - Create component.test.tsx
+   - Test user interactions
+   - Test edge cases
+
+
+7.5 PRE-COMMIT CHECKS (MANDATORY)
+----------------------------------
+**ALL of these must pass before committing:**
+
+```bash
+# 1. Linting (zero warnings)
+npm run lint
+
+# 2. Type checking (zero errors)
+npx tsc --noEmit
+
+# 3. Tests (80%+ coverage)
+npm test -- --coverage
+```
+
+**Blockers:**
+  - Lint warnings → Commit blocked
+  - TypeScript errors → Commit blocked
+  - Tests failing → Commit blocked
+  - Coverage < 80% → Commit blocked
+
+**Git hooks:** Consider setting up pre-commit hooks to enforce
+
+================================================================================
+8. QUICK REFERENCE MAP
+================================================================================
+
+8.1 WHERE TO FIND...
+--------------------
+**Features & Business Logic:**
+  - Core modules: lib/modules/[module]/
+  - Marketplace tools: lib/tools/[category]/
+  - AI services: lib/ai/
+
+**UI Components:**
+  - Primitives: components/ui/
+  - Feature-specific: components/features/[module]/
+  - Layouts: components/layouts/
+
+**Pages & Routes:**
+  - Platform pages: app/app/(platform)/[route]/
+  - Marketing pages: app/app/(web)/[route]/
+  - API routes: app/app/api/[route]/
+
+**Types:**
+  - Prisma-generated: @prisma/client
+  - Domain types: lib/types/[domain]/
+  - Component props: inline in component files
+
+**Tests:**
+  - Unit tests: app/__tests__/unit/
+  - Fixtures: app/__tests__/fixtures/
+  - Test utilities: app/__tests__/utils/
+
+**Documentation:**
+  - Project docs: docs/
+  - Session logs: chat-logs/
+  - README: README.md, CLAUDE.md
+  - This file: project-directory-map.txt
+
+
+8.2 COMMON TASKS
+----------------
+**Add a new feature:**
+  1. Create module in lib/modules/[feature]/
+  2. Add actions.ts, queries.ts, schemas.ts
+  3. Create UI components in components/features/[feature]/
+  4. Add page in app/app/(platform)/[feature]/
+  5. Write tests first!
+
+**Create a UI component:**
+  1. Determine if Server or Client Component
+  2. Create in appropriate directory
+  3. Add TypeScript types
+  4. Create test file
+  5. Import and use
+
+**Make a database change:**
+  1. Edit prisma/schema.prisma
+  2. Run: npx prisma migrate dev --name change-description
+  3. Run: npx prisma generate
+  4. Update code to use new schema
+
+**Add a test:**
+  1. Create [feature].test.ts next to feature file
+  2. Import test utilities from __tests__/utils/
+  3. Use fixtures from __tests__/fixtures/
+  4. Run: npm test -- --watch
+  5. Ensure 80%+ coverage
+
+**Debug an issue:**
+  1. Check browser console (client errors)
+  2. Check terminal (server errors)
+  3. Check Supabase logs (database/auth errors)
+  4. Add console.log in Server Components
+  5. Use React DevTools for Client Components
+  6. Check Prisma Studio for data: npx prisma studio
+
+**Deploy changes:**
+  1. Ensure all tests pass
+  2. Commit changes
+  3. Push to GitHub
+  4. Vercel auto-deploys from main branch
+  5. Monitor deployment in Vercel dashboard
+
+================================================================================
+9. IMPORTANT FILES & CONFIGURATIONS
+================================================================================
+
+**Project Configuration:**
+  - CLAUDE.md - Concise development rules (v3.0)
+  - README.md - Project overview
+  - package.json - Dependencies and scripts
+  - tsconfig.json - TypeScript configuration
+  - next.config.mjs - Next.js configuration
+  - tailwind.config.ts - Tailwind CSS configuration
+
+**Database:**
+  - prisma/schema.prisma - Database schema (13 models)
+  - .env.local - Environment variables (not in repo)
+  - .env.example - Example environment variables
+
+**Testing:**
+  - jest.config.ts - Jest configuration
+  - jest.setup.ts - Jest test setup
+  - __tests__/ - Test files
+
+**Code Quality:**
+  - eslint.config.mjs - ESLint rules
+  - .prettierrc (if exists) - Prettier formatting
+
+**Deployment:**
+  - vercel.json (if exists) - Vercel configuration
+  - .vercelignore - Files to exclude from deployment
+
+================================================================================
+10. TECHNOLOGY DOCUMENTATION LINKS
+================================================================================
+
+**Framework & Core:**
+  - Next.js: https://nextjs.org/docs
+  - React: https://react.dev
+  - TypeScript: https://www.typescriptlang.org/docs
+
+**Database & Backend:**
+  - Prisma: https://www.prisma.io/docs
+  - Supabase: https://supabase.com/docs
+  - PostgreSQL: https://www.postgresql.org/docs
+
+**UI & Styling:**
+  - Tailwind CSS: https://tailwindcss.com/docs
+  - shadcn/ui: https://ui.shadcn.com
+  - Radix UI: https://www.radix-ui.com
+
+**State & Forms:**
+  - TanStack Query: https://tanstack.com/query/latest/docs/react
+  - Zustand: https://docs.pmnd.rs/zustand
+  - React Hook Form: https://react-hook-form.com
+  - Zod: https://zod.dev
+
+**Testing:**
+  - Jest: https://jestjs.io/docs
+  - React Testing Library: https://testing-library.com/react
+  - Playwright: https://playwright.dev/docs
+
+================================================================================
+11. STATISTICS & METADATA
+================================================================================
+
+**Project Scale:**
+  - Total Files: 1,170
+  - Total Directories: 354
+  - Total Size: 25.6 MB
+
+**Primary Codebase (app/):**
+  - Files: 600
+  - Components: 135
+  - Modules: 7 core modules
+  - Tests: 80%+ coverage required
+
+**Tech Stack:**
+  - Languages: TypeScript, JavaScript, SQL, CSS
+  - Frameworks: Next.js, React, Tailwind
+  - Database: PostgreSQL (via Supabase)
+  - ORM: Prisma
+  - Testing: Jest, React Testing Library, Playwright
+
+**Last Generated:** 2025-10-03T04:27:28.437Z
+**Generated By:** scripts/generate-directory-map.js
+
+================================================================================
+
+################################################################################
+#                                                                              #
+#                   END OF ARCHITECTURE DOCUMENTATION                          #
+#                                                                              #
+#              DIRECTORY TREE STRUCTURE FOLLOWS BELOW                          #
+#                                                                              #
+################################################################################
+
+================================================================================
+DIRECTORY TREE STRUCTURE
 ================================================================================
 
 ├── 📁 app/ (600 files)
