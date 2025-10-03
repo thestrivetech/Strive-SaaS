@@ -5,6 +5,7 @@ import Groq from 'groq-sdk';
 import { z } from 'zod';
 import { loadIndustryConfig } from '@/lib/modules/chatbot/config/industries';
 import { RAGService } from '@/lib/modules/chatbot/services/rag-service';
+import { RentCastService, PropertySearchParams } from '@/lib/modules/real-estate/services/rentcast-service';
 import { IndustryType } from '@/lib/modules/chatbot/types/industry';
 import { Message } from '@/lib/modules/chatbot/types/conversation';
 import { ChatRequestSchema } from '@/lib/modules/chatbot/schemas/chat-request';
@@ -75,10 +76,10 @@ export async function POST(req: NextRequest) {
 
     // Stream response from Groq
     const stream = await groq.chat.completions.create({
-      model: 'llama-3.3-70b-versatile', // or 'mixtral-8x7b-32768'
+      model: 'llama-3.3-70b-versatile',
       messages: groqMessages,
       temperature: 0.7,
-      max_tokens: 1024,
+      max_tokens: 2000, // Increased for property results
       stream: true,
     });
 
@@ -89,6 +90,7 @@ export async function POST(req: NextRequest) {
     const readableStream = new ReadableStream({
       async start(controller) {
         try {
+          // Stream LLM response
           for await (const chunk of stream) {
             const content = chunk.choices[0]?.delta?.content || '';
             fullResponse += content;
@@ -96,6 +98,43 @@ export async function POST(req: NextRequest) {
             controller.enqueue(
               encoder.encode(`data: ${JSON.stringify({ content })}\n\n`)
             );
+          }
+
+          // 🏠 PROPERTY SEARCH: Check if response contains property search request
+          if (industry === 'real-estate' && fullResponse.includes('<property_search>')) {
+            try {
+              console.log('🏠 Property search detected in response');
+              
+              // Extract search parameters from LLM response
+              const searchMatch = fullResponse.match(/<property_search>([\s\S]*?)<\/property_search>/);
+              
+              if (searchMatch) {
+                const searchParams: PropertySearchParams = JSON.parse(searchMatch[1]);
+                console.log('🔍 Searching properties with params:', searchParams);
+
+                // Fetch properties from RentCast
+                const properties = await RentCastService.searchProperties(searchParams);
+                console.log(`✅ Found ${properties.length} properties`);
+
+                // Match and score properties
+                const matches = RentCastService.matchProperties(properties, searchParams);
+                console.log(`🎯 Top ${matches.length} matches selected`);
+
+                // Send property results to client
+                const propertyData = JSON.stringify({
+                  type: 'property_results',
+                  properties: matches,
+                });
+                controller.enqueue(encoder.encode(`data: ${propertyData}\n\n`));
+              }
+            } catch (propertyError) {
+              console.error('❌ Property search error:', propertyError);
+              const errorData = JSON.stringify({
+                type: 'property_search_error',
+                error: 'Failed to search properties. Please try again.',
+              });
+              controller.enqueue(encoder.encode(`data: ${errorData}\n\n`));
+            }
           }
 
           // 🔥 STORE CONVERSATION: Save for future learning
@@ -112,10 +151,11 @@ export async function POST(req: NextRequest) {
             solutionPresented: ragContext.searchResults.recommendedSolutions[0],
           });
 
+          // Send completion signal
           controller.enqueue(encoder.encode('data: [DONE]\n\n'));
           controller.close();
         } catch (error) {
-          console.error('Streaming error:', error);
+          console.error('❌ Streaming error:', error);
           controller.error(error);
         }
       },
@@ -144,7 +184,7 @@ export async function POST(req: NextRequest) {
     }
 
     // Handle other errors
-    console.error('Chat API error:', error);
+    console.error('❌ Chat API error:', error);
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }
@@ -231,6 +271,15 @@ function extractProblemsDiscussed(messages: Message[]): string[] {
     'fraud',
     'maintenance',
     'inventory',
+    // Real estate specific
+    'looking for',
+    'buy',
+    'sell',
+    'property',
+    'home',
+    'budget',
+    'prequalified',
+    'market',
   ];
 
   messages.forEach(message => {
