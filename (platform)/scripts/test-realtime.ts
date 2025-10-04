@@ -36,7 +36,7 @@ async function testRealtime() {
     const project = await prisma.projects.findFirst({
       include: {
         tasks: true,
-        organization: true
+        organizations: true
       }
     });
 
@@ -47,7 +47,7 @@ async function testRealtime() {
     }
 
     console.log(`✅ Using project: ${project.name}`);
-    console.log(`✅ Organization: ${project.organization.name}`);
+    console.log(`✅ Organization: ${project.organizations.name}`);
 
     // Test 1: Subscribe to task updates
     console.log('\n🧪 Test 1: Task Updates Subscription');
@@ -94,9 +94,10 @@ async function testRealtime() {
               description: 'This task tests realtime subscriptions',
               status: 'TODO',
               priority: 'MEDIUM',
-              projectId: project.id,
-              assignedTo: user.id,
-              createdBy: user.id,
+              project_id: project.id,
+              assigned_to: user.id,
+              created_by: user.id,
+              position: 0,
             }
           });
 
@@ -153,7 +154,7 @@ async function testRealtime() {
             event: '*',
             schema: 'public',
             table: 'customers',
-            filter: `organization_id=eq.${customer.organizationId}`
+            filter: `organization_id=eq.${customer.organization_id}`
           },
           (payload) => {
             console.log('✅ Customer event received!');
@@ -179,11 +180,11 @@ async function testRealtime() {
 
     const user = await prisma.users.findFirst({
       include: {
-        organizationMembers: true
+        organization_members: true
       }
     });
 
-    if (user && user.organizationMembers[0]) {
+    if (user && user.organization_members[0]) {
       let notificationEventReceived = false;
 
       const notificationChannel = supabase
@@ -213,8 +214,8 @@ async function testRealtime() {
             console.log('\n   Creating test notification to trigger event...');
             const testNotif = await prisma.notifications.create({
               data: {
-                userId: user.id,
-                organizationId: user.organizationMembers[0].organizationId,
+                user_id: user.id,
+                organization_id: user.organization_members[0].organization_id,
                 type: 'INFO',
                 title: 'Realtime Test Notification',
                 message: 'Testing realtime notifications',

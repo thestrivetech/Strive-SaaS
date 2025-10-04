@@ -92,7 +92,7 @@ export default async function CustomerDetailPage({
             <CardContent className="space-y-4">
               <div className="flex items-center gap-3">
                 <Avatar className="h-16 w-16">
-                  <AvatarImage src={customer.assignedTo?.avatarUrl || undefined} />
+                  <AvatarImage src={customer.users?.avatar_url || undefined} />
                   <AvatarFallback className="text-lg">
                     {customer.name.substring(0, 2).toUpperCase()}
                   </AvatarFallback>
@@ -146,7 +146,7 @@ export default async function CustomerDetailPage({
                   <User className="h-4 w-4 text-muted-foreground" />
                   <div>
                     <p className="text-sm text-muted-foreground">Assigned To</p>
-                    <p className="text-sm font-medium">{customer.assignedTo?.name || 'Unassigned'}</p>
+                    <p className="text-sm font-medium">{customer.users?.name || 'Unassigned'}</p>
                   </div>
                 </div>
               </div>

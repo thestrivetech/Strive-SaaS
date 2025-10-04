@@ -12,13 +12,13 @@ export {
   createDynamicWithSkeleton,
   createDynamicPage,
   preloadComponent,
-  DynamicChart,
-  DynamicDataTable,
-  DynamicModal,
-  DynamicEditor,
-  DynamicCalendar,
-  DynamicCodeEditor,
-} from './dynamic-imports.tsx';
+  // DynamicChart, // Commented out - no default export
+  // DynamicDataTable, // Commented out - component doesn't exist
+  // DynamicModal, // Commented out - no default export
+  // DynamicEditor, // Commented out - component doesn't exist
+  // DynamicCalendar, // Commented out - no default export
+  // DynamicCodeEditor, // Commented out - component doesn't exist
+} from './dynamic-imports';
 
 // Caching utilities
 export {

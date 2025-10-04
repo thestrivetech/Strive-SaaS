@@ -70,7 +70,7 @@ export default async function ProjectsPage({
   return (
     <Suspense fallback={<ProjectListSkeleton />}>
       <ProjectListContent
-        organizationId={currentOrg.organizationId}
+        organizationId={currentOrg.organization_id}
         currentPage={currentPage}
         pageSize={pageSize}
         searchParams={searchParams}
@@ -131,8 +131,8 @@ async function ProjectListContent({
 
   // Map organization members to team members format
   const teamMembers = orgMembers.map((member) => ({
-    id: member.user.id,
-    name: member.user.name || member.user.email,
+    id: member.users.id,
+    name: member.users.name || member.users.email,
   }));
 
   // CSV Export columns
@@ -278,7 +278,7 @@ async function ProjectListContent({
                     <div className="space-y-1">
                       <CardTitle className="text-lg">{project.name}</CardTitle>
                       <CardDescription>
-                        {project.customer?.name || 'No customer'}
+                        {project.customers?.name || 'No customer'}
                       </CardDescription>
                     </div>
                   </div>
@@ -305,7 +305,7 @@ async function ProjectListContent({
                   <div className="flex items-center gap-4 text-sm text-muted-foreground">
                     <div className="flex items-center gap-1">
                       <Calendar className="h-3 w-3" />
-                      {formatDate(project.dueDate)}
+                      {formatDate(project.due_date)}
                     </div>
                     <div className="flex items-center gap-1">
                       <FolderKanban className="h-3 w-3" />
@@ -313,15 +313,15 @@ async function ProjectListContent({
                     </div>
                   </div>
 
-                  {project.projectManager && (
+                  {project.users && (
                     <div className="flex items-center gap-2 pt-2 border-t">
                       <Avatar className="h-6 w-6">
                         <AvatarFallback className="text-xs">
-                          {(project.projectManager.name || 'PM').substring(0, 2).toUpperCase()}
+                          {(project.users.name || 'PM').substring(0, 2).toUpperCase()}
                         </AvatarFallback>
                       </Avatar>
                       <span className="text-sm text-muted-foreground">
-                        {project.projectManager.name || 'Project Manager'}
+                        {project.users.name || 'Project Manager'}
                       </span>
                     </div>
                   )}

@@ -18,7 +18,7 @@ import { TaskFilters } from './schemas';
  */
 export type TaskWithAssignee = Prisma.tasksGetPayload<{
   include: {
-    assignedTo: {
+    users_tasks_assigned_toTousers: {
       select: {
         id: true;
         name: true;
@@ -34,20 +34,20 @@ export type TaskWithAssignee = Prisma.tasksGetPayload<{
  */
 export type TaskWithDetails = Prisma.tasksGetPayload<{
   include: {
-    assignedTo: {
+    users_tasks_assigned_toTousers: {
       select: {
         id: true;
         name: true;
         email: true;
-        avatarUrl: true;
+        avatar_url: true;
       };
     };
-    project: {
+    projects: {
       select: {
         id: true;
         name: true;
-        organizationId: true;
-        customer: {
+        organization_id: true;
+        customers: {
           select: {
             id: true;
             name: true;
@@ -63,15 +63,15 @@ export type TaskWithDetails = Prisma.tasksGetPayload<{
  */
 export type TaskWithProject = Prisma.tasksGetPayload<{
   include: {
-    assignedTo: {
+    users_tasks_assigned_toTousers: {
       select: {
         id: true;
         name: true;
         email: true;
-        avatarUrl: true;
+        avatar_url: true;
       };
     };
-    project: {
+    projects: {
       select: {
         id: true;
         name: true;
@@ -93,8 +93,8 @@ export async function getTasks(
   filters?: TaskFilters
 ): Promise<TaskWithAssignee[]> {
   return withTenantContext(async () => {
-    const where: Prisma.TaskWhereInput = {
-      projectId,
+    const where: Prisma.tasksWhereInput = {
+      project_id: projectId,
     };
 
     // Apply optional filters
@@ -107,7 +107,7 @@ export async function getTasks(
     }
 
     if (filters?.assignedToId) {
-      where.assignedToId = filters.assignedToId;
+      where.assigned_to = filters.assignedToId;
     }
 
     if (filters?.search) {
@@ -117,22 +117,22 @@ export async function getTasks(
       ];
     }
 
-    const tasks = await prisma.taskss.findMany({
+    const tasks = await prisma.tasks.findMany({
       where,
       include: {
-        assignedTo: {
+        users_tasks_assigned_toTousers: {
           select: {
             id: true,
             name: true,
             email: true,
-            avatarUrl: true,
+            avatar_url: true,
           },
         },
       },
       orderBy: [
         { status: 'asc' }, // Group by status
         { position: 'asc' }, // Then by position
-        { createdAt: 'desc' }, // Then by creation date
+        { created_at: 'desc' }, // Then by creation date
       ],
       take: filters?.limit || 50,
       skip: filters?.offset || 0,
@@ -154,8 +154,8 @@ export async function getTasksCount(
   filters?: TaskFilters
 ): Promise<number> {
   return withTenantContext(async () => {
-    const where: Prisma.TaskWhereInput = {
-      projectId,
+    const where: Prisma.tasksWhereInput = {
+      project_id: projectId,
     };
 
     // Apply optional filters
@@ -168,7 +168,7 @@ export async function getTasksCount(
     }
 
     if (filters?.assignedToId) {
-      where.assignedToId = filters.assignedToId;
+      where.assigned_to = filters.assignedToId;
     }
 
     if (filters?.search) {
@@ -178,7 +178,7 @@ export async function getTasksCount(
       ];
     }
 
-    return await prisma.taskss.count({ where });
+    return await prisma.tasks.count({ where });
   });
 }
 
@@ -192,25 +192,25 @@ export async function getTaskById(
   taskId: string
 ): Promise<TaskWithDetails | null> {
   return withTenantContext(async () => {
-    const task = await prisma.taskss.findFirst({
+    const task = await prisma.tasks.findFirst({
       where: {
         id: taskId,
       },
       include: {
-        assignedTo: {
+        users_tasks_assigned_toTousers: {
           select: {
             id: true,
             name: true,
             email: true,
-            avatarUrl: true,
+            avatar_url: true,
           },
         },
-        project: {
+        projects: {
           select: {
             id: true,
             name: true,
-            organizationId: true,
-            customer: {
+            organization_id: true,
+            customers: {
               select: {
                 id: true,
                 name: true,
@@ -236,31 +236,31 @@ export async function getTaskStats(projectId: string) {
     const [totalTasks, todoTasks, inProgressTasks, reviewTasks, doneTasks, overdueTasks] =
       await Promise.all([
         // Total tasks
-        prisma.taskss.count({
-          where: { projectId },
+        prisma.tasks.count({
+          where: { project_id: projectId },
         }),
         // TODO tasks
-        prisma.taskss.count({
-          where: { projectId, status: TaskStatus.TODO },
+        prisma.tasks.count({
+          where: { project_id: projectId, status: TaskStatus.TODO },
         }),
         // In Progress tasks
-        prisma.taskss.count({
-          where: { projectId, status: TaskStatus.IN_PROGRESS },
+        prisma.tasks.count({
+          where: { project_id: projectId, status: TaskStatus.IN_PROGRESS },
         }),
         // In Review tasks
-        prisma.taskss.count({
-          where: { projectId, status: TaskStatus.REVIEW },
+        prisma.tasks.count({
+          where: { project_id: projectId, status: TaskStatus.REVIEW },
         }),
         // Done tasks
-        prisma.taskss.count({
-          where: { projectId, status: TaskStatus.DONE },
+        prisma.tasks.count({
+          where: { project_id: projectId, status: TaskStatus.DONE },
         }),
         // Overdue tasks (not done and due date in the past)
-        prisma.taskss.count({
+        prisma.tasks.count({
           where: {
-            projectId,
+            project_id: projectId,
             status: { notIn: [TaskStatus.DONE, TaskStatus.CANCELLED] },
-            dueDate: { lt: new Date() },
+            due_date: { lt: new Date() },
           },
         }),
       ]);
@@ -288,8 +288,8 @@ export async function getUserTasks(
   filters?: TaskFilters
 ): Promise<TaskWithProject[]> {
   return withTenantContext(async () => {
-    const where: Prisma.TaskWhereInput = {
-      assignedToId: userId,
+    const where: Prisma.tasksWhereInput = {
+      assigned_to: userId,
     };
 
     // Apply optional filters
@@ -302,7 +302,7 @@ export async function getUserTasks(
     }
 
     if (filters?.projectId) {
-      where.projectId = filters.projectId;
+      where.project_id = filters.projectId;
     }
 
     if (filters?.search) {
@@ -312,18 +312,18 @@ export async function getUserTasks(
       ];
     }
 
-    const tasks = await prisma.taskss.findMany({
+    const tasks = await prisma.tasks.findMany({
       where,
       include: {
-        assignedTo: {
+        users_tasks_assigned_toTousers: {
           select: {
             id: true,
             name: true,
             email: true,
-            avatarUrl: true,
+            avatar_url: true,
           },
         },
-        project: {
+        projects: {
           select: {
             id: true,
             name: true,
@@ -333,7 +333,7 @@ export async function getUserTasks(
       },
       orderBy: [
         { status: 'asc' },
-        { dueDate: 'asc' },
+        { due_date: 'asc' },
         { priority: 'desc' },
       ],
       take: filters?.limit || 50,

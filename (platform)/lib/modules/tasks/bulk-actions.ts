@@ -42,7 +42,7 @@ export async function bulkUpdateTaskStatus(input: unknown) {
     const tasks = await prisma.tasks.findMany({
       where: {
         id: { in: validated.taskIds },
-        project: { organizationId },
+        projects: { organization_id: organizationId },
       },
       select: { id: true },
     });
@@ -59,19 +59,19 @@ export async function bulkUpdateTaskStatus(input: unknown) {
       where: { id: { in: validated.taskIds } },
       data: {
         status: validated.status,
-        updatedAt: new Date(),
+        updated_at: new Date(),
       },
     });
 
     // Log activity
-    await prisma.activityLog.create({
+    await prisma.activity_logs.create({
       data: {
-        userId: user.id,
-        organizationId,
+        user_id: user.id,
+        organization_id: organizationId,
         action: 'BULK_UPDATE_STATUS',
-        resourceType: 'Task',
-        resourceId: validated.taskIds.join(','),
-        newData: {
+        resource_type: 'Task',
+        resource_id: validated.taskIds.join(','),
+        new_data: {
           status: validated.status,
           count: validated.taskIds.length,
           taskIds: validated.taskIds,
@@ -111,7 +111,7 @@ export async function bulkAssignTasks(input: unknown) {
     const tasks = await prisma.tasks.findMany({
       where: {
         id: { in: validated.taskIds },
-        project: { organizationId },
+        projects: { organization_id: organizationId },
       },
       select: { id: true },
     });
@@ -124,10 +124,10 @@ export async function bulkAssignTasks(input: unknown) {
     }
 
     // Verify assignee is in the same organization
-    const assignee = await prisma.organizationMember.findFirst({
+    const assignee = await prisma.organization_members.findFirst({
       where: {
-        userId: validated.assigneeId,
-        organizationId,
+        user_id: validated.assigneeId,
+        organization_id: organizationId,
       },
     });
 
@@ -142,20 +142,20 @@ export async function bulkAssignTasks(input: unknown) {
     const result = await prisma.tasks.updateMany({
       where: { id: { in: validated.taskIds } },
       data: {
-        assignedToId: validated.assigneeId,
-        updatedAt: new Date(),
+        assigned_to: validated.assigneeId,
+        updated_at: new Date(),
       },
     });
 
     // Log activity
-    await prisma.activityLog.create({
+    await prisma.activity_logs.create({
       data: {
-        userId: user.id,
-        organizationId,
+        user_id: user.id,
+        organization_id: organizationId,
         action: 'BULK_ASSIGN',
-        resourceType: 'Task',
-        resourceId: validated.taskIds.join(','),
-        newData: {
+        resource_type: 'Task',
+        resource_id: validated.taskIds.join(','),
+        new_data: {
           assigneeId: validated.assigneeId,
           count: validated.taskIds.length,
           taskIds: validated.taskIds,
@@ -195,7 +195,7 @@ export async function bulkUpdateTaskPriority(input: unknown) {
     const tasks = await prisma.tasks.findMany({
       where: {
         id: { in: validated.taskIds },
-        project: { organizationId },
+        projects: { organization_id: organizationId },
       },
       select: { id: true },
     });
@@ -212,19 +212,19 @@ export async function bulkUpdateTaskPriority(input: unknown) {
       where: { id: { in: validated.taskIds } },
       data: {
         priority: validated.priority,
-        updatedAt: new Date(),
+        updated_at: new Date(),
       },
     });
 
     // Log activity
-    await prisma.activityLog.create({
+    await prisma.activity_logs.create({
       data: {
-        userId: user.id,
-        organizationId,
+        user_id: user.id,
+        organization_id: organizationId,
         action: 'BULK_UPDATE_PRIORITY',
-        resourceType: 'Task',
-        resourceId: validated.taskIds.join(','),
-        newData: {
+        resource_type: 'Task',
+        resource_id: validated.taskIds.join(','),
+        new_data: {
           priority: validated.priority,
           count: validated.taskIds.length,
           taskIds: validated.taskIds,
@@ -264,7 +264,7 @@ export async function bulkDeleteTasks(input: unknown) {
     const tasks = await prisma.tasks.findMany({
       where: {
         id: { in: validated.taskIds },
-        project: { organizationId },
+        projects: { organization_id: organizationId },
       },
       select: { id: true, title: true },
     });
@@ -282,14 +282,14 @@ export async function bulkDeleteTasks(input: unknown) {
     });
 
     // Log activity
-    await prisma.activityLog.create({
+    await prisma.activity_logs.create({
       data: {
-        userId: user.id,
-        organizationId,
+        user_id: user.id,
+        organization_id: organizationId,
         action: 'BULK_DELETE',
-        resourceType: 'Task',
-        resourceId: validated.taskIds.join(','),
-        newData: {
+        resource_type: 'Task',
+        resource_id: validated.taskIds.join(','),
+        new_data: {
           count: validated.taskIds.length,
           taskIds: validated.taskIds,
           taskTitles: tasks.map((t) => t.title),

@@ -26,9 +26,9 @@ async function testRLS() {
     const organizations = await prisma.organizations.findMany({
       take: 2,
       include: {
-        members: {
+        organization_members: {
           include: {
-            user: true
+            users: true
           }
         }
       }
@@ -51,13 +51,13 @@ async function testRLS() {
 
     const org1Customers = await prisma.customers.findMany({
       where: {
-        organizationId: org1.id
+        organization_id: org1.id
       }
     });
 
     const org2Customers = await prisma.customers.findMany({
       where: {
-        organizationId: org2.id
+        organization_id: org2.id
       }
     });
 
@@ -80,13 +80,13 @@ async function testRLS() {
 
     const org1Projects = await prisma.projects.findMany({
       where: {
-        organizationId: org1.id
+        organization_id: org1.id
       }
     });
 
     const org2Projects = await prisma.projects.findMany({
       where: {
-        organizationId: org2.id
+        organization_id: org2.id
       }
     });
 
@@ -109,7 +109,7 @@ async function testRLS() {
     if (org1Projects.length > 0 && org2Projects.length > 0) {
       const org1Tasks = await prisma.tasks.findMany({
         where: {
-          projectId: {
+          project_id: {
             in: org1Projects.map(p => p.id)
           }
         }
@@ -117,7 +117,7 @@ async function testRLS() {
 
       const org2Tasks = await prisma.tasks.findMany({
         where: {
-          projectId: {
+          project_id: {
             in: org2Projects.map(p => p.id)
           }
         }
@@ -175,13 +175,13 @@ async function testRLS() {
     if (allUsers.length >= 2) {
       const user1Convos = await prisma.ai_conversations.findMany({
         where: {
-          userId: allUsers[0].id
+          user_id: allUsers[0].id
         }
       });
 
       const user2Convos = await prisma.ai_conversations.findMany({
         where: {
-          userId: allUsers[1].id
+          user_id: allUsers[1].id
         }
       });
 
@@ -204,15 +204,15 @@ async function testRLS() {
     console.log('\n🧪 Test 6: Organization Member Isolation');
     console.log('-'.repeat(60));
 
-    const org1Members = await prisma.organizationsMember.findMany({
+    const org1Members = await prisma.organization_members.findMany({
       where: {
-        organizationId: org1.id
+        organization_id: org1.id
       }
     });
 
-    const org2Members = await prisma.organizationsMember.findMany({
+    const org2Members = await prisma.organization_members.findMany({
       where: {
-        organizationId: org2.id
+        organization_id: org2.id
       }
     });
 
@@ -223,23 +223,23 @@ async function testRLS() {
     console.log('\n🧪 Test 7: Attachment Isolation');
     console.log('-'.repeat(60));
 
-    const org1Attachments = await prisma.attachment.findMany({
+    const org1Attachments = await prisma.attachments.findMany({
       where: {
-        organizationId: org1.id
+        organization_id: org1.id
       }
     });
 
-    const org2Attachments = await prisma.attachment.findMany({
+    const org2Attachments = await prisma.attachments.findMany({
       where: {
-        organizationId: org2.id
+        organization_id: org2.id
       }
     });
 
     console.log(`✅ Organization 1 has ${org1Attachments.length} attachment(s)`);
     console.log(`✅ Organization 2 has ${org2Attachments.length} attachment(s)`);
 
-    const org1AttachmentIds = new Set(org1Attachments.map(a => a.id));
-    const attachmentOverlap = org2Attachments.filter(a => org1AttachmentIds.has(a.id));
+    const org1AttachmentIds = new Set(org1Attachments.map((a: any) => a.id));
+    const attachmentOverlap = org2Attachments.filter((a: any) => org1AttachmentIds.has(a.id));
 
     if (attachmentOverlap.length === 0) {
       console.log('✅ No attachment overlap between organizations (isolation confirmed)');

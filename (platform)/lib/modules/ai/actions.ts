@@ -48,7 +48,7 @@ export async function sendMessage(input: unknown) {
     const validated = SendMessageSchema.parse(input);
 
     // Check if model is available for user's tier
-    const tier = (user.subscriptionTier || 'FREE') as SubscriptionTier;
+    const tier = (user.subscription_tier || 'FREE') as SubscriptionTier;
     if (!isModelAvailable(tier, validated.model)) {
       return {
         success: false,

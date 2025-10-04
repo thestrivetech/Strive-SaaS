@@ -151,7 +151,7 @@ Enterprise B2B multi-tenant SaaS platform with AI-powered tools for business man
 - 🤖 **AI assistant (Sai)** - embedded chatbot
 - 🛠️ **Tool marketplace** with shared & industry tools
 - 🏭 **Multi-industry support** with plugin architecture
-- 💳 **4-tier subscriptions** (Free, Starter, Growth, Enterprise)
+- 💳 **4-tier subscriptions** (Starter, Growth, Elite, & Custom -> Last option is Enterprise which is requires a sales call and will be fully custom solutions dependant on clients needs)
 
 ### Tech Stack
 

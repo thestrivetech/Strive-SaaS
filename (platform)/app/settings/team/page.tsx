@@ -46,7 +46,7 @@ export default async function TeamPage() {
     );
   }
 
-  const members = await getOrganizationMembers(currentOrg.organizationId);
+  const members = await getOrganizationMembers(currentOrg.organization_id);
 
   const getRoleIcon = (role: string) => {
     switch (role) {
@@ -87,7 +87,7 @@ export default async function TeamPage() {
             Manage your organization&apos;s team members and their roles
           </p>
         </div>
-        <InviteMemberDialog organizationId={currentOrg.organizationId} />
+        <InviteMemberDialog organizationId={currentOrg.organization_id} />
       </div>
 
       <div className="grid gap-4 md:grid-cols-3">
@@ -121,7 +121,7 @@ export default async function TeamPage() {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">
-              {members.filter((m) => m.user.isActive).length}
+              {members.filter((m) => m.users.is_active).length}
             </div>
             <p className="text-xs text-muted-foreground">
               Currently active
@@ -134,7 +134,7 @@ export default async function TeamPage() {
         <CardHeader>
           <CardTitle>Team Members</CardTitle>
           <CardDescription>
-            All members of {currentOrg.organization.name}
+            All members of {currentOrg.organizations.name}
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -155,20 +155,20 @@ export default async function TeamPage() {
                   <TableCell>
                     <div className="flex items-center gap-3">
                       <Avatar className="h-8 w-8">
-                        <AvatarImage src={member.user.avatarUrl || undefined} />
+                        <AvatarImage src={member.users.avatar_url || undefined} />
                         <AvatarFallback className="text-xs">
-                          {member.user.name?.substring(0, 2).toUpperCase() || member.user.email.substring(0, 2).toUpperCase()}
+                          {member.users.name?.substring(0, 2).toUpperCase() || member.users.email.substring(0, 2).toUpperCase()}
                         </AvatarFallback>
                       </Avatar>
                       <div>
-                        <p className="font-medium">{member.user.name || 'Unnamed User'}</p>
+                        <p className="font-medium">{member.users.name || 'Unnamed User'}</p>
                         <p className="text-sm text-muted-foreground">
-                          {member.user.id === user.id ? '(You)' : ''}
+                          {member.users.id === user.id ? '(You)' : ''}
                         </p>
                       </div>
                     </div>
                   </TableCell>
-                  <TableCell>{member.user.email}</TableCell>
+                  <TableCell>{member.users.email}</TableCell>
                   <TableCell>
                     <Badge variant="outline" className={getRoleBadgeColor(member.role)}>
                       <span className="mr-1">{getRoleIcon(member.role)}</span>
@@ -176,15 +176,15 @@ export default async function TeamPage() {
                     </Badge>
                   </TableCell>
                   <TableCell className="text-muted-foreground">
-                    {new Date(member.joinedAt).toLocaleDateString('en-US', {
+                    {new Date(member.joined_at).toLocaleDateString('en-US', {
                       year: 'numeric',
                       month: 'short',
                       day: 'numeric',
                     })}
                   </TableCell>
                   <TableCell>
-                    <Badge variant={member.user.isActive ? 'default' : 'secondary'}>
-                      {member.user.isActive ? 'Active' : 'Inactive'}
+                    <Badge variant={member.users.is_active ? 'default' : 'secondary'}>
+                      {member.users.is_active ? 'Active' : 'Inactive'}
                     </Badge>
                   </TableCell>
                   <TableCell>

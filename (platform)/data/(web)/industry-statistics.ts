@@ -11,3 +11,9 @@ export type IndustryStatistic = {
 };
 
 export const industryStatistics: IndustryStatistic[] = [];
+
+export const roiMethodology = {
+  methodology: 'Industry-specific ROI calculations based on standard business metrics',
+  validation: 'Industry benchmarks and historical data',
+  disclaimer: 'Results are estimates and may vary based on specific business conditions',
+};

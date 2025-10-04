@@ -2,7 +2,7 @@
 
 import { useEffect, useState, useCallback } from 'react';
 import { RealtimeClient, type RealtimePayload } from './client';
-import type { Task, Customer, Project } from '@prisma/client';
+import type { tasks as Task, customers as Customer, projects as Project } from '@prisma/client';
 
 /**
  * Hook for real-time task updates

@@ -33,7 +33,7 @@ export async function fetchDashboardData() {
   }
 
   // Get stats for the first organization (or the selected one from context)
-  const primaryOrg = organizations[0].organization;
+  const primaryOrg = organizations[0].organizations;
   const stats = await getDashboardStats(primaryOrg.id);
 
   return {
@@ -55,6 +55,6 @@ export async function fetchActivityFeed(limit: number = 20) {
     return [];
   }
 
-  const primaryOrg = organizations[0].organization;
+  const primaryOrg = organizations[0].organizations;
   return getActivityFeed(primaryOrg.id, limit);
 }

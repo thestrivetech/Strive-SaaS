@@ -89,7 +89,7 @@ export default async function CRMPage({
   return (
     <Suspense fallback={<CustomerListSkeleton />}>
       <CustomerListContent
-        organizationId={currentOrg.organizationId}
+        organizationId={currentOrg.organization_id}
         filters={filters}
         currentPage={currentPage}
         pageSize={pageSize}
@@ -248,7 +248,7 @@ async function CustomerListContent({
                     <TableCell>
                       <div className="flex items-center gap-3">
                         <Avatar className="h-8 w-8">
-                          <AvatarImage src={customer.assignedTo?.avatar_url || undefined} />
+                          <AvatarImage src={customer.users?.avatar_url || undefined} />
                           <AvatarFallback className="text-xs">
                             {customer.name.substring(0, 2).toUpperCase()}
                           </AvatarFallback>
@@ -271,7 +271,7 @@ async function CustomerListContent({
                       </Badge>
                     </TableCell>
                     <TableCell className="font-medium">
-                      {customer.assignedTo?.name || 'Unassigned'}
+                      {customer.users?.name || 'Unassigned'}
                     </TableCell>
                     <TableCell className="text-muted-foreground">
                       {formatTimeAgo(new Date(customer.created_at))}

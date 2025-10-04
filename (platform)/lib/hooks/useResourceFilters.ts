@@ -66,8 +66,8 @@ export function useResourceFilters(activeFilter: string) {
 
       case "Tools & Tech":
         const techCategories = new Set<string>();
-        technologyCards.forEach(card => {
-          card.tags?.forEach(tag => {
+        technologyCards.forEach((card: Resource) => {
+          card.tags?.forEach((tag: string) => {
             const tagLower = tag.toLowerCase();
             if (['gpt-4', 'claude', 'gemini', 'grok', 'deepseek', 'nemotron', 'perplexity', 'ai assistant', 'llm'].some(term => tagLower.includes(term))) {
               techCategories.add('LLMs & AI Models');
@@ -88,7 +88,7 @@ export function useResourceFilters(activeFilter: string) {
         break;
 
       case "Quizzes":
-        categories = Array.from(new Set(allQuizzes.map(quiz => quiz.difficulty))).sort();
+        categories = Array.from(new Set(allQuizzes.map((quiz: Quiz) => quiz.difficulty))).sort();
         break;
 
       default:
@@ -108,8 +108,8 @@ export function useResourceFilters(activeFilter: string) {
   }, [activeFilter]);
 
   // Apply filters to resources
-  const filteredResources = useMemo(() => {
-    let filtered: Resource[] | Quiz[] = [];
+  const filteredResources = useMemo((): (Resource | Quiz)[] => {
+    let filtered: (Resource | Quiz)[] = [];
 
     // Filter by main category
     if (activeFilter === "All") {
@@ -126,7 +126,7 @@ export function useResourceFilters(activeFilter: string) {
 
     // Apply sub-category filter
     if (subFilter.category !== 'all' && activeFilter !== "All") {
-      filtered = filtered.filter(item => {
+      filtered = filtered.filter((item: Resource | Quiz) => {
         const tags = (item as Resource).tags || [];
         const categoryLower = subFilter.category;
 
@@ -134,8 +134,8 @@ export function useResourceFilters(activeFilter: string) {
           // Tech card filtering logic
           return matchesTechCategory(tags, categoryLower);
         } else if (activeFilter === "Quizzes") {
-          const quiz = item as unknown as Quiz;
-          return quiz.difficulty.toLowerCase().replace(/\s+/g, '-') === categoryLower;
+          const quiz = item as Quiz;
+          return quiz.difficulty?.toLowerCase().replace(/\s+/g, '-') === categoryLower;
         } else {
           return matchesBlogCategory(tags, categoryLower);
         }
@@ -145,18 +145,20 @@ export function useResourceFilters(activeFilter: string) {
     // Apply search filter
     if (subFilter.searchTerm.trim()) {
       const searchTerm = subFilter.searchTerm.toLowerCase();
-      filtered = filtered.filter(item => {
-        const title = (item as Resource).title?.toLowerCase() || '';
-        const description = ((item as Resource).description || (item as unknown as Quiz).description)?.toLowerCase() || '';
-        const tags = (item as Resource).tags || [];
+      filtered = filtered.filter((item: Resource | Quiz) => {
+        const resource = item as Resource;
+        const quiz = item as Quiz;
+        const title = resource.title?.toLowerCase() || '';
+        const description = (resource.description || quiz.description)?.toLowerCase() || '';
+        const tags = resource.tags || [];
 
         return title.includes(searchTerm) ||
                description.includes(searchTerm) ||
-               tags.some(tag => tag.toLowerCase().includes(searchTerm));
+               tags.some((tag: string) => tag.toLowerCase().includes(searchTerm));
       });
     }
 
-    return filtered as Resource[];
+    return filtered;
   }, [activeFilter, subFilter]);
 
   return {

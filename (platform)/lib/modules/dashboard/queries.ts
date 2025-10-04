@@ -31,7 +31,7 @@ export async function getDashboardStats(organizationId: string) {
     // Total tasks
     prisma.tasks.count({
       where: {
-        project: {
+        projects: {
           organization_id: organizationId,
         },
       },
@@ -40,7 +40,7 @@ export async function getDashboardStats(organizationId: string) {
     // Completed tasks
     prisma.tasks.count({
       where: {
-        project: {
+        projects: {
           organization_id: organizationId,
         },
         status: 'DONE',
@@ -73,12 +73,12 @@ export async function getDashboardStats(organizationId: string) {
   const organization = await prisma.organizations.findUnique({
     where: { id: organizationId },
     include: {
-      subscription: true,
+      subscriptions: true,
     },
   });
 
   let monthlyRevenue = 0;
-  if (organization?.subscription) {
+  if (organization?.subscriptions) {
     // This is simplified - in reality you'd calculate based on actual subscription data
     const tierPricing: Record<string, number> = {
       FREE: 0,
@@ -86,7 +86,7 @@ export async function getDashboardStats(organizationId: string) {
       PRO: 699,
       ENTERPRISE: 1499,
     };
-    monthlyRevenue = tierPricing[organization.subscription.tier] || 0;
+    monthlyRevenue = tierPricing[organization.subscriptions.tier] || 0;
   }
 
   return {

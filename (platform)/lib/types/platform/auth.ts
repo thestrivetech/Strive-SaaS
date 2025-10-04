@@ -3,7 +3,7 @@
  * Centralized auth types for consistent use across the application
  */
 
-import type { User, Organization, OrganizationMember } from '@prisma/client';
+import type { users as User, organizations as Organization, organization_members as OrganizationMember } from '@prisma/client';
 
 /**
  * User type with loaded organization member relationship

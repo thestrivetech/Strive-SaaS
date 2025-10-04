@@ -26,25 +26,25 @@ async function testNotifications() {
     console.log('\n📋 Setup: Finding test user and organization...');
     const user = await prisma.users.findFirst({
       include: {
-        organizationMembers: {
+        organization_members: {
           include: {
-            organization: true
+            organizations: true
           }
         }
       }
     });
 
-    if (!user || !user.organizationMembers[0]) {
+    if (!user || !user.organization_members[0]) {
       console.log('❌ No test user with organization found');
       console.log('   Please create a user and organization first');
       process.exit(1);
     }
 
     const userId = user.id;
-    const organizationId = user.organizationMembers[0].organizationId;
+    const organizationId = user.organization_members[0].organization_id;
 
     console.log(`✅ Using user: ${user.email}`);
-    console.log(`✅ Using organization: ${user.organizationMembers[0].organization.name}`);
+    console.log(`✅ Using organization: ${user.organization_members[0].organizations.name}`);
 
     // Test 1: Create notification
     console.log('\n🧪 Test 1: Create Notification');
@@ -52,8 +52,8 @@ async function testNotifications() {
 
     const notification = await prisma.notifications.create({
       data: {
-        userId,
-        organizationId,
+        user_id: userId,
+        organization_id: organizationId,
         type: 'INFO',
         title: 'Test Notification',
         message: 'This is a test notification from Session 3 testing',
@@ -73,10 +73,10 @@ async function testNotifications() {
 
     const unread = await prisma.notifications.findMany({
       where: {
-        userId,
+        user_id: userId,
         read: false,
       },
-      orderBy: { createdAt: 'desc' },
+      orderBy: { created_at: 'desc' },
       take: 5,
     });
 
@@ -117,22 +117,22 @@ async function testNotifications() {
 
     const richNotification = await prisma.notifications.create({
       data: {
-        userId,
-        organizationId,
+        user_id: userId,
+        organization_id: organizationId,
         type: 'SUCCESS',
         title: 'Task Completed',
         message: 'Your task "Test Task" has been marked as complete',
-        actionUrl: '/tasks/123',
-        entityType: 'TASK',
-        entityId: '123',
+        action_url: '/tasks/123',
+        entity_type: 'TASK',
+        entity_id: '123',
         read: false,
       },
     });
 
     console.log('✅ Created notification with metadata:');
-    console.log('   Action URL:', richNotification.actionUrl);
-    console.log('   Entity Type:', richNotification.entityType);
-    console.log('   Entity ID:', richNotification.entityId);
+    console.log('   Action URL:', richNotification.action_url);
+    console.log('   Entity Type:', richNotification.entity_type);
+    console.log('   Entity ID:', richNotification.entity_id);
 
     // Test 6: Query by type
     console.log('\n🧪 Test 6: Query Notifications by Type');
@@ -140,7 +140,7 @@ async function testNotifications() {
 
     const infoNotifications = await prisma.notifications.findMany({
       where: {
-        userId,
+        user_id: userId,
         type: 'INFO',
       },
     });
@@ -149,7 +149,7 @@ async function testNotifications() {
 
     const successNotifications = await prisma.notifications.findMany({
       where: {
-        userId,
+        user_id: userId,
         type: 'SUCCESS',
       },
     });

@@ -87,7 +87,7 @@ export async function uploadAttachment(formData: FormData) {
         uploaded_by_id: user.id,
       },
       include: {
-        uploaded_by: {
+        users: {
           select: {
             id: true,
             name: true,
@@ -280,7 +280,7 @@ export async function getAttachments(input: unknown) {
         entity_id: validated.entityId,
       },
       include: {
-        uploaded_by: {
+        users: {
           select: {
             id: true,
             name: true,

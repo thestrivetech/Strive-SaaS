@@ -27,15 +27,14 @@ async function main() {
   // Seed 1: Default System Organization (Optional)
   console.log('📦 Seeding default organization...');
 
-  const defaultOrg = await prisma.organization.upsert({
+  const defaultOrg = await prisma.organizations.upsert({
     where: { id: 'system-default' },
     update: {}, // Don't update if exists
     create: {
       id: 'system-default',
       name: 'Strive Tech',
-      industry: 'SHARED',
-      subscriptionTier: 'ENTERPRISE',
-      subscriptionStatus: 'ACTIVE',
+      slug: 'strive-tech',
+      subscription_status: 'ACTIVE',
       description: 'System default organization for Strive Tech platform',
       // Add other required fields based on your schema
     },
@@ -99,31 +98,34 @@ async function main() {
 
   const tools = [
     {
+      id: 'tool-doc-gen',
       name: 'Document Generator',
       description: 'Generate professional documents using AI',
-      category: 'PRODUCTIVITY',
-      isActive: true,
-      isPremium: false,
+      toolType: 'AUTOMATION' as const,
+      is_active: true,
+      required_tier: 'FREE' as const,
     },
     {
+      id: 'tool-data-analyzer',
       name: 'Data Analyzer',
       description: 'Analyze and visualize data with AI insights',
-      category: 'ANALYTICS',
-      isActive: true,
-      isPremium: true,
+      toolType: 'ANALYSIS' as const,
+      is_active: true,
+      required_tier: 'PRO' as const,
     },
     {
+      id: 'tool-email-assistant',
       name: 'Email Assistant',
       description: 'Draft professional emails with AI',
-      category: 'COMMUNICATION',
-      isActive: true,
-      isPremium: false,
+      toolType: 'CHATBOT' as const,
+      is_active: true,
+      required_tier: 'FREE' as const,
     },
   ];
 
   for (const tool of tools) {
-    await prisma.aITool.upsert({
-      where: { name: tool.name },
+    await prisma.ai_tools.upsert({
+      where: { id: tool.id },
       update: {}, // Don't update if exists
       create: tool,
     });
