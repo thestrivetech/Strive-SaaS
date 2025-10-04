@@ -1,4 +1,4 @@
-// hooks/useChat.ts
+// hooks/use-chat.ts
 'use client';
 
 import { useState, useCallback, useRef, useEffect } from 'react';
@@ -10,6 +10,32 @@ import {
   determineConversationStage,
   getCurrentDateContext
 } from './use-chat-helpers';
+
+// ✨ NEW: Property Match interface for real estate
+interface PropertyMatch {
+  property: {
+    id: string;
+    address: string;
+    city: string;
+    state: string;
+    zipCode: string;
+    price: number;
+    bedrooms: number;
+    bathrooms: number;
+    sqft: number;
+    propertyType: string;
+    images: string[];
+    daysOnMarket: number;
+    schoolRatings?: {
+      elementary?: number;
+      middle?: number;
+      high?: number;
+    };
+  };
+  matchScore: number;
+  matchReasons: string[];
+  missingFeatures: string[];
+}
 
 interface Message {
   id: string;
@@ -23,6 +49,7 @@ interface Message {
   isError?: boolean;
   isWelcome?: boolean;
   showCalendlyButton?: boolean;
+  propertyResults?: PropertyMatch[]; // ✨ NEW: For real estate property results
 }
 
 interface ProblemDetection {
@@ -204,9 +231,9 @@ export const useChat = (industry: string = 'strive') => {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          messages: messagesWithContext, // ✅ CHANGED: includes date context
-          industry, // For multi-industry RAG
-          sessionId: sessionIdRef.current, // For conversation tracking
+          messages: messagesWithContext,
+          industry,
+          sessionId: sessionIdRef.current,
           conversationStage: newStage,
           detectedProblems: [...identifiedProblems, ...detectedProblems].map(p => p.key),
         }),
@@ -220,6 +247,7 @@ export const useChat = (industry: string = 'strive') => {
       const reader = response.body?.getReader();
       const decoder = new TextDecoder();
       let accumulatedResponse = '';
+      let propertyResults: PropertyMatch[] | undefined; // ✨ NEW: Store property results
 
       if (!reader) {
         throw new Error('No response body');
@@ -245,7 +273,8 @@ export const useChat = (industry: string = 'strive') => {
               msg.id === assistantMessageId 
                 ? { 
                     ...msg, 
-                    content: checkedResponse, 
+                    content: checkedResponse,
+                    propertyResults, // ✨ NEW: Attach property results
                     isStreaming: false, 
                     isThinking: false
                   }
@@ -259,10 +288,10 @@ export const useChat = (industry: string = 'strive') => {
           if (data) {
             try {
               const parsed = JSON.parse(data);
-              const content = parsed.content;
               
-              if (content) {
-                accumulatedResponse += content;
+              // ✨ NEW: Handle regular content
+              if (parsed.content) {
+                accumulatedResponse += parsed.content;
                 
                 // Update streaming message in real-time
                 setMessages(prev => prev.map(msg => 
@@ -270,6 +299,24 @@ export const useChat = (industry: string = 'strive') => {
                     ? { ...msg, content: accumulatedResponse, isThinking: false }
                     : msg
                 ));
+              }
+
+              // ✨ NEW: Handle property results
+              if (parsed.type === 'property_results') {
+                propertyResults = parsed.properties;
+                console.log('🏠 Received property results:', propertyResults);
+
+                // Update message with property results immediately
+                setMessages(prev => prev.map(msg => 
+                  msg.id === assistantMessageId 
+                    ? { ...msg, propertyResults }
+                    : msg
+                ));
+              }
+
+              // ✨ NEW: Handle property search errors
+              if (parsed.type === 'property_search_error') {
+                toast.error(parsed.error || 'Failed to search properties');
               }
             } catch (parseError) {
               console.warn('Failed to parse SSE data:', data);
