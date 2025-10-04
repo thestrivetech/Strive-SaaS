@@ -1,6 +1,6 @@
 // lib/modules/chatbot/config/industries/real-estate/solutions.ts
 
-import { Solution } from '@/app/chatbot/types/industry';
+import { Solution } from '@/app/(chatbot)/types/industry';
 
 export const realEstateSolutions: Record<string, Solution> = {
   property_search: {

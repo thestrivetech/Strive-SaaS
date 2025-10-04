@@ -4,8 +4,8 @@
 import React, { memo } from 'react';
 import { User, AlertCircle, Clock, ExternalLink, Calendar } from 'lucide-react';
 import { motion } from 'framer-motion';
-import { MessageSaiAvatar, UserAvatar } from '@/app/chatbot/features/avatars';
-import { URLS } from '@/app/chatbot/constants';
+import { MessageSaiAvatar, UserAvatar } from '@/app/(chatbot)/features/avatars';
+import { URLS } from '@/app/(chatbot)/constants';
 
 // ✨ NEW: Import PropertyCard component (you need to create this separately)
 // Uncomment this line after you create the PropertyCard component:

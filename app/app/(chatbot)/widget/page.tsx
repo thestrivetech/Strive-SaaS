@@ -2,7 +2,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import ChatContainer from '@/app/chatbot/features/chat-container';
+import ChatContainer from '@/app/(chatbot)/features/chat-container';
 import parentComm from '@/lib/utils/parent-communication';
 
 export default function WidgetPage() {

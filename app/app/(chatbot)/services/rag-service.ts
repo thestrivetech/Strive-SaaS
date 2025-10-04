@@ -9,7 +9,7 @@ import {
   SimilarConversation,
   RAGContext,
   ConversationEmbedding,
-} from '@/app/chatbot/types/rag';
+} from '@/app/(chatbot)/types/rag';
 
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
