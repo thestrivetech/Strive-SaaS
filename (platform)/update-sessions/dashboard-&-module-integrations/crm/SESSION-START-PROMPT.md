@@ -7,7 +7,7 @@ Use this prompt at the beginning of each session. Simply replace `{SESSION_NUMBE
 ## 📋 Session Start Prompt
 
 ```
-I'm starting Session {SESSION_NUMBER} of the CRM integration project.
+I'm starting Session {1} of the CRM integration project.
 
 Please follow these steps to begin:
 
@@ -17,7 +17,7 @@ Please follow these steps to begin:
    - Understand and follow all development rules, security requirements, and architectural patterns
 
 2. **Read Session Plan:**
-   - Read the session plan file at: C:\Users\zochr\Desktop\GitHub\Strive-SaaS\(platform)\update-sessions\dashboard-&-module-integrations\crm\session{SESSION_NUMBER}.plan.md
+   - Read the session plan file at: C:\Users\zochr\Desktop\GitHub\Strive-SaaS\(platform)\update-sessions\dashboard-&-module-integrations\crm\session{1}.plan.md
    - Understand the objectives, requirements, and implementation steps
    - Note all dependencies and prerequisites
 
@@ -53,7 +53,7 @@ Please follow these steps to begin:
 
 6. **Session End Requirements:**
    When the session is complete, create a session summary file:
-   - File path: C:\Users\zochr\Desktop\GitHub\Strive-SaaS\(platform)\update-sessions\dashboard-&-module-integrations\crm\session{SESSION_NUMBER}-summary.md
+   - File path: C:\Users\zochr\Desktop\GitHub\Strive-SaaS\(platform)\update-sessions\dashboard-&-module-integrations\crm\session{1}-summary.md
    - Include:
      * Session objectives (completed/partial/not started)
      * Files created (full list with paths)
@@ -64,7 +64,7 @@ Please follow these steps to begin:
      * Next steps / what's ready for next session
      * Overall progress percentage for the entire CRM integration
 
-Let's begin Session {SESSION_NUMBER}!
+Let's begin Session {1}!
 ```
 
 ---
