@@ -4,13 +4,13 @@ import { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter, useSearchParams } from 'next/navigation';
-import { Button } from "@/components/(shared)/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/(shared)/ui/card";
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/(shared)/ui/form";
-import { Input } from "@/components/(shared)/ui/input";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/(shared)/ui/tabs";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useToast } from "@/hooks/use-toast";
-import { ComingSoonBadge } from "@/components/(shared)/ui/coming-soon-badge";
+import { ComingSoonBadge } from "@/components/ui/coming-soon-badge";
 import { loginSchema, signupSchema, type LoginFormData, type SignupFormData } from "@/lib/auth/schemas";
 
 export default function LoginPage() {

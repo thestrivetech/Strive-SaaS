@@ -3,8 +3,8 @@
 import { useState, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import { ChevronRight, Zap } from "lucide-react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/(shared)/ui/card";
-import { Button } from "@/components/(shared)/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
 import { validateEmail, validatePhone } from "@/lib/validation";
 import { useCalendlyIntegration } from "@/hooks/useCalendlyIntegration";
 import { ContactStep } from "@/components/(web)/request/ContactStep";

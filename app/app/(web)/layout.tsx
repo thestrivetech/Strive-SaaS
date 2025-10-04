@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Navigation from "@/components/(web)/web/navigation";
 import Footer from "@/components/(web)/web/footer";
-import { Toaster } from "@/components/(shared)/ui/toaster";
+import { Toaster } from "@/components/ui/toaster";
 
 export const metadata: Metadata = {
   title: "Strive Tech - AI & Innovation Solutions",

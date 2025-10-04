@@ -1,12 +1,12 @@
 import { notFound } from 'next/navigation';
 import { ArrowLeft, Calendar, DollarSign, User, Building2, Target } from 'lucide-react';
 import Link from 'next/link';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/(shared)/ui/card';
-import { Badge } from '@/components/(shared)/ui/badge';
-import { Button } from '@/components/(shared)/ui/button';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/(shared)/ui/avatar';
-import { Separator } from '@/components/(shared)/ui/separator';
-import { Progress } from '@/components/(shared)/ui/progress';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { Separator } from '@/components/ui/separator';
+import { Progress } from '@/components/ui/progress';
 import { getCurrentUser } from '@/lib/auth/auth-helpers';
 import { getUserOrganizations, getOrganizationMembers } from '@/lib/modules/organization/queries';
 import { getProjectById, calculateProjectProgress } from '@/lib/modules/projects/queries';

@@ -12,7 +12,7 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from '@/components/(shared)/ui/dialog';
+} from '@/components/ui/dialog';
 import {
   Form,
   FormControl,
@@ -21,16 +21,16 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from '@/components/(shared)/ui/form';
+} from '@/components/ui/form';
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/components/(shared)/ui/select';
-import { Input } from '@/components/(shared)/ui/input';
-import { Button } from '@/components/(shared)/ui/button';
+} from '@/components/ui/select';
+import { Input } from '@/components/ui/input';
+import { Button } from '@/components/ui/button';
 import { createCustomer } from '@/lib/modules/crm/actions';
 import { createCustomerSchema, type CreateCustomerInput } from '@/lib/modules/crm/schemas';
 import { CustomerStatus, CustomerSource } from '@prisma/client';

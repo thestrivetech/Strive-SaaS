@@ -12,7 +12,7 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from '@/components/(shared)/ui/dialog';
+} from '@/components/ui/dialog';
 import {
   Form,
   FormControl,
@@ -21,10 +21,10 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from '@/components/(shared)/ui/form';
-import { Input } from '@/components/(shared)/ui/input';
-import { Textarea } from '@/components/(shared)/ui/textarea';
-import { Button } from '@/components/(shared)/ui/button';
+} from '@/components/ui/form';
+import { Input } from '@/components/ui/input';
+import { Textarea } from '@/components/ui/textarea';
+import { Button } from '@/components/ui/button';
 import { createOrganization } from '@/lib/modules/organization/actions';
 import { createOrganizationSchema, type CreateOrganizationInput } from '@/lib/modules/organization/schemas';
 import { Plus, Loader2 } from 'lucide-react';

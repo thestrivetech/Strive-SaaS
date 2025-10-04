@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { ChevronDown, ChevronUp } from "lucide-react";
-import { Card } from "@/components/(shared)/ui/card";
+import { Card } from "@/components/ui/card";
 
 export function FAQSection() {
   const [expandedFaq, setExpandedFaq] = useState<number | null>(null);

@@ -1,6 +1,6 @@
 "use client";
 
-import { Button } from "@/components/(shared)/ui/button";
+import { Button } from "@/components/ui/button";
 
 export function CompanyStory() {
   return (

@@ -2,8 +2,8 @@
 
 import { useState, useEffect } from "react";
 import { BookOpen, FileText, BarChart3, Wrench, Filter, Globe, BrainCircuit } from "lucide-react";
-import { Button } from "@/components/(shared)/ui/button";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/(shared)/ui/select";
+import { Button } from "@/components/ui/button";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useRouter } from "next/navigation";
 
 // Import data
@@ -11,7 +11,7 @@ import { Resource, resources } from "@/data/(web)/resources";
 import { Quiz, allQuizzes } from "@/data/(web)/resources/quizzes";
 import { featuredResource } from "@/data/(web)/resources/featured";
 import { ethicalAIImplementation } from "@/data/(web)/resources/whitepapers";
-import { SubFilterBar } from "@/components/(shared)/ui/sub-filter-bar";
+import { SubFilterBar } from "@/components/ui/sub-filter-bar";
 import { WhitepaperViewer } from "@/components/(web)/resources/WhitepaperViewer";
 
 // Import new components

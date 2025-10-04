@@ -1,8 +1,8 @@
 import { useState } from "react";
 import { ChevronDown } from "lucide-react";
-import { Button } from "@/components/(shared)/ui/button";
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/(shared)/ui/popover";
-import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "@/components/(shared)/ui/command";
+import { Button } from "@/components/ui/button";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "@/components/ui/command";
 import { cn } from "@/lib/utils";
 import { homePageIndustries, industryIcons } from "@/data/(web)/industries";
 import type { IndustryOption } from "@/data/(web)/industries";

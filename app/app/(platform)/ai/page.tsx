@@ -1,6 +1,6 @@
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/(shared)/ui/card';
-import { Button } from '@/components/(shared)/ui/button';
-import { Badge } from '@/components/(shared)/ui/badge';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
 import { getCurrentUser } from '@/lib/auth/auth-helpers';
 import { AIChat } from '@/components/(web)/features/ai/ai-chat';
 import { getModelsForTier, type SubscriptionTier } from '@/lib/ai/config';

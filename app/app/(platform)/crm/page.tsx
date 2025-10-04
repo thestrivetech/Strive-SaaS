@@ -1,9 +1,9 @@
 import { Suspense } from 'react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/(shared)/ui/card';
-import { Button } from '@/components/(shared)/ui/button';
-import { Input } from '@/components/(shared)/ui/input';
-import { Badge } from '@/components/(shared)/ui/badge';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/(shared)/ui/avatar';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Badge } from '@/components/ui/badge';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import {
   Table,
   TableBody,
@@ -11,7 +11,7 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from '@/components/(shared)/ui/table';
+} from '@/components/ui/table';
 import { Plus, Search, Filter } from 'lucide-react';
 import { getCurrentUser } from '@/lib/auth/auth-helpers';
 import { getUserOrganizations } from '@/lib/modules/organization/queries';
@@ -21,7 +21,7 @@ import { CustomerActionsMenu } from '@/components/(platform)/real-estate/crm/cus
 import { CustomerSearch } from '@/components/(platform)/real-estate/crm/customer-search';
 import { CustomerFilters } from '@/components/(platform)/real-estate/crm/customer-filters';
 import { CustomerListSkeleton } from '@/components/(platform)/real-estate/crm/customer-list-skeleton';
-import { PaginationControls } from '@/components/(shared)/ui/pagination-controls';
+import { PaginationControls } from '@/components/ui/pagination-controls';
 import { getCustomersCount } from '@/lib/modules/crm/queries';
 import { ExportButton } from '@/components/(web)/features/export/export-button';
 import { formatDateForCSV, type CSVColumn } from '@/lib/export/csv';

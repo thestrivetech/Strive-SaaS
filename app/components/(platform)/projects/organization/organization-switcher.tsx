@@ -10,8 +10,8 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from '@/components/(shared)/ui/dropdown-menu';
-import { Button } from '@/components/(shared)/ui/button';
+} from '@/components/ui/dropdown-menu';
+import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import type { Organization, OrganizationMember } from '@prisma/client';
 import { CreateOrganizationDialog } from './create-organization-dialog';

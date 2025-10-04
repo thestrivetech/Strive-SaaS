@@ -1,8 +1,8 @@
 'use client';
 
 import { TaskStatus, Priority } from '@prisma/client';
-import { Badge } from '@/components/(shared)/ui/badge';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/(shared)/ui/avatar';
+import { Badge } from '@/components/ui/badge';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Calendar, Clock, AlertCircle } from 'lucide-react';
 import { format, isPast } from 'date-fns';
 import { cn } from '@/lib/utils';

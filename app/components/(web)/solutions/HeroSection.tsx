@@ -1,7 +1,7 @@
 "use client";
 
 import { Lightbulb } from "lucide-react";
-import { Button } from "@/components/(shared)/ui/button";
+import { Button } from "@/components/ui/button";
 
 interface HeroSectionProps {
   onGetCustomSolution: () => void;

@@ -1,6 +1,6 @@
 "use client";
 
-import { Card, CardContent } from "@/components/(shared)/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { Target, Clock, Users } from "lucide-react";
 
 export function BenefitsSection() {

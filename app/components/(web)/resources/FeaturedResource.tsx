@@ -1,7 +1,7 @@
 "use client";
 
 import { Download, Sparkles } from "lucide-react";
-import { Button } from "@/components/(shared)/ui/button";
+import { Button } from "@/components/ui/button";
 import { Resource } from "@/data/(web)/resources";
 
 interface FeaturedResourceProps {

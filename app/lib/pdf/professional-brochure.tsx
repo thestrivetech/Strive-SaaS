@@ -21,7 +21,7 @@ import {
   Award,
   CheckCircle
 } from 'lucide-react';
-import { Button } from '@/components/(shared)/ui/button';
+import { Button } from '@/components/ui/button';
 
 // Logo path - updated for Next.js public directory (Session 16)
 const STLogo = '/assets/logos/ST-Transparent.png';

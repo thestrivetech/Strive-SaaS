@@ -1,5 +1,5 @@
 import { ExternalLink } from "lucide-react";
-import { Card, CardContent } from "@/components/(shared)/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { getIndustrySolutions, getIndustryLabel } from "@/lib/data-helpers";
 import type { IndustrySolution } from "@/data/(web)/industries";
 

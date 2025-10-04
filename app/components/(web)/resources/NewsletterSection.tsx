@@ -2,8 +2,8 @@
 
 import { useState } from "react";
 import { Mail, CheckCircle } from "lucide-react";
-import { Button } from "@/components/(shared)/ui/button";
-import { Input } from "@/components/(shared)/ui/input";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import { useToast } from "@/hooks/use-toast";
 
 export function NewsletterSection() {

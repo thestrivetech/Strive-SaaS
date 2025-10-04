@@ -1,6 +1,6 @@
 import { getActivityLogs } from '@/lib/modules/dashboard/queries';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/(shared)/ui/avatar';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/(shared)/ui/card';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { formatDistanceToNow } from 'date-fns';
 import { Activity } from 'lucide-react';
 

@@ -1,7 +1,7 @@
 "use client";
 
 import { MapPin, Phone, Mail, Clock } from "lucide-react";
-import { Card, CardContent } from "@/components/(shared)/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 
 export function ContactInfo() {
   const contactInfo = [

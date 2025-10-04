@@ -1,9 +1,9 @@
 "use client";
 
 import { Eye, Download, Clock, User, Calendar, Play, Trophy, Target, BrainCircuit, Wrench, ExternalLink } from "lucide-react";
-import { Button } from "@/components/(shared)/ui/button";
-import { Badge } from "@/components/(shared)/ui/badge";
-import { Card, CardContent } from "@/components/(shared)/ui/card";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { Card, CardContent } from "@/components/ui/card";
 import { Resource } from "@/data/(web)/resources";
 import { Quiz } from "@/data/(web)/resources/quizzes";
 

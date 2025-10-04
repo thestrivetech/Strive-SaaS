@@ -1,9 +1,9 @@
 "use client";
 
 import React, { useState, useCallback, useEffect } from "react";
-import { CardContent, CardHeader, CardTitle } from "@/components/(shared)/ui/card";
+import { CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Calendar, Clock, Users, Target, AlertCircle, Video, Phone, MapPin } from "lucide-react";
-import { CalendlyFallback } from "@/components/(shared)/ui/calendly-fallback";
+import { CalendlyFallback } from "@/components/ui/calendly-fallback";
 import type { CalendlyStatus } from "@/hooks/useCalendlyIntegration";
 
 interface CalendlyStepProps {

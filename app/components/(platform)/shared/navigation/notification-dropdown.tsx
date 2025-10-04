@@ -2,10 +2,10 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import { Bell, Check, CheckCheck, Trash2, ExternalLink } from 'lucide-react';
-import { Button } from '@/components/(shared)/ui/button';
-import { Badge } from '@/components/(shared)/ui/badge';
-import { ScrollArea } from '@/components/(shared)/ui/scroll-area';
-import { Separator } from '@/components/(shared)/ui/separator';
+import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
+import { ScrollArea } from '@/components/ui/scroll-area';
+import { Separator } from '@/components/ui/separator';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -13,7 +13,7 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from '@/components/(shared)/ui/dropdown-menu';
+} from '@/components/ui/dropdown-menu';
 import {
   markNotificationRead,
   markAllNotificationsRead,

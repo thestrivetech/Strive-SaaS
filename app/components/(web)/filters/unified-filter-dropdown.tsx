@@ -1,9 +1,9 @@
 import { useState } from "react";
 import { ChevronDown, Filter, Search, Check } from "lucide-react";
-import { Button } from "@/components/(shared)/ui/button";
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/(shared)/ui/popover";
-import { Badge } from "@/components/(shared)/ui/badge";
-import { Input } from "@/components/(shared)/ui/input";
+import { Button } from "@/components/ui/button";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { Badge } from "@/components/ui/badge";
+import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
 import { industryOptions } from "@/data/(web)/industries";
 import { solutionTypeOptions } from "@/data/(web)/solutions";

@@ -4,13 +4,13 @@ import { useState } from "react";
 import React from "react";
 import { useRouter } from "next/navigation";
 import { Bot, Code, Blocks, Brain, BrainCircuit, Database, Globe, Zap, Eye, Play, ExternalLink, X, Github, Monitor, Smartphone, ChevronRight, Filter, ChevronDown } from "lucide-react";
-import { Card, CardContent } from "@/components/(shared)/ui/card";
-import { Button } from "@/components/(shared)/ui/button";
-import { Dialog, DialogTitle, DialogDescription } from "@/components/(shared)/ui/dialog";
+import { Card, CardContent } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Dialog, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import * as DialogPrimitive from "@radix-ui/react-dialog";
 import { cn } from "@/lib/utils";
-import { Badge } from "@/components/(shared)/ui/badge";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/(shared)/ui/select";
+import { Badge } from "@/components/ui/badge";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 // Import data from new modular structure
 import { Project, projects } from "@/data/(web)/portfolio";
