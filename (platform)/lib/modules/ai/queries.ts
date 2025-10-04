@@ -1,52 +1,82 @@
-import { prisma } from '@/lib/prisma';
+import 'server-only';
+
+import { prisma } from '@/lib/database/prisma';
+import { withTenantContext } from '@/lib/database/utils';
 
 /**
- * Get all conversations for a user
+ * AI Module - Query Functions
+ *
+ * SECURITY: All queries automatically filtered by organizationId and userId via tenant middleware.
+ * AI conversations are user-scoped within organizations.
  */
-export async function getConversations(userId: string, organizationId: string) {
-  return await prisma.aIConversation.findMany({
-    where: {
-      userId,
-      organizationId,
-    },
-    orderBy: {
-      updatedAt: 'desc',
-    },
-    take: 50,
+
+/**
+ * Get all AI conversations for the current user
+ *
+ * @param userId - User ID
+ * @returns Array of AI conversations
+ */
+export async function getConversations(userId: string) {
+  return withTenantContext(async () => {
+    return await prisma.ai_conversations.findMany({
+      where: {
+        userId,
+      },
+      orderBy: {
+        updated_at: 'desc',
+      },
+      take: 50,
+    });
   });
 }
 
 /**
- * Get a specific conversation with messages
+ * Get a specific AI conversation with messages
+ *
+ * @param conversationId - Conversation ID
+ * @param userId - User ID
+ * @returns AI conversation or null
  */
-export async function getConversation(conversationId: string, userId: string, organizationId: string) {
-  return await prisma.aIConversation.findFirst({
-    where: {
-      id: conversationId,
-      userId,
-      organizationId,
-    },
+export async function getConversation(
+  conversationId: string,
+  userId: string
+) {
+  return withTenantContext(async () => {
+    return await prisma.ai_conversations.findFirst({
+      where: {
+        id: conversationId,
+        userId,
+      },
+    });
   });
 }
 
 /**
- * Get conversation history (last N conversations)
+ * Get recent AI conversation history
+ *
+ * @param userId - User ID
+ * @param limit - Number of conversations to fetch (default: 10)
+ * @returns Array of recent AI conversations
  */
-export async function getRecentConversations(userId: string, organizationId: string, limit: number = 10) {
-  return await prisma.aIConversation.findMany({
-    where: {
-      userId,
-      organizationId,
-    },
-    orderBy: {
-      updatedAt: 'desc',
-    },
-    take: limit,
-    select: {
-      id: true,
-      aiModel: true,
-      createdAt: true,
-      updatedAt: true,
-    },
+export async function getRecentConversations(
+  userId: string,
+  limit: number = 10
+) {
+  return withTenantContext(async () => {
+    return await prisma.ai_conversations.findMany({
+      where: {
+        userId,
+      },
+      orderBy: {
+        updated_at: 'desc',
+      },
+      take: limit,
+      select: {
+        id: true,
+        ai_model: true,
+        created_at: true,
+        updated_at: true,
+      },
+    });
   });
 }

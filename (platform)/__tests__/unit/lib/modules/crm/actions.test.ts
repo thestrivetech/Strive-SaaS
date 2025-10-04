@@ -84,7 +84,7 @@ describe('CRM Actions', () => {
       expect(customer.tags).toEqual(['vip', 'enterprise']);
 
       // Verify customer exists in database
-      const dbCustomer = await testPrisma.customer.findUnique({
+      const dbCustomer = await testPrisma.customers.findUnique({
         where: { id: customer.id },
       });
       expect(dbCustomer).toBeDefined();
@@ -169,16 +169,16 @@ describe('CRM Actions', () => {
       const customer = await createCustomer(input);
 
       // Check activity log was created
-      const activityLog = await testPrisma.activityLog.findFirst({
+      const activityLog = await testPrisma.activity_logs.findFirst({
         where: {
-          resourceType: 'customer',
-          resourceId: customer.id,
+          resource_type: 'customer',
+          resource_id: customer.id,
           action: 'created_customer',
         },
       });
 
       expect(activityLog).toBeDefined();
-      expect(activityLog?.userId).toBe(user.id);
+      expect(activityLog?.user_id).toBe(user.id);
     });
   });
 
@@ -207,7 +207,7 @@ describe('CRM Actions', () => {
       expect(updated.status).toBe(CustomerStatus.ACTIVE);
 
       // Verify in database
-      const dbCustomer = await testPrisma.customer.findUnique({
+      const dbCustomer = await testPrisma.customers.findUnique({
         where: { id: customer.id },
       });
       expect(dbCustomer?.name).toBe('Updated Name');
@@ -257,7 +257,7 @@ describe('CRM Actions', () => {
       expect(result.success).toBe(true);
 
       // Verify customer is deleted
-      const dbCustomer = await testPrisma.customer.findUnique({
+      const dbCustomer = await testPrisma.customers.findUnique({
         where: { id: customer.id },
       });
       expect(dbCustomer).toBeNull();
@@ -304,10 +304,10 @@ describe('CRM Actions', () => {
       await deleteCustomer(customer.id);
 
       // Check activity log
-      const activityLog = await testPrisma.activityLog.findFirst({
+      const activityLog = await testPrisma.activity_logs.findFirst({
         where: {
-          resourceType: 'customer',
-          resourceId: customer.id,
+          resource_type: 'customer',
+          resource_id: customer.id,
           action: 'deleted_customer',
         },
       });

@@ -1,35 +1,52 @@
-import { prisma } from '@/lib/prisma';
+import 'server-only';
+
+import { prisma } from '@/lib/database/prisma';
+import { withTenantContext } from '@/lib/database/utils';
 
 /**
- * Get unread notifications for a user
+ * Notifications Module - Query Functions
+ *
+ * SECURITY: All queries automatically filtered by organizationId and userId via tenant middleware.
+ * Notifications are user-scoped within organizations.
+ */
+
+/**
+ * Get unread notifications for the current user
+ *
+ * @param userId - User ID
+ * @param limit - Number of notifications to fetch (default: 10)
+ * @returns Array of unread notifications
  */
 export async function getUnreadNotifications(
   userId: string,
-  organizationId: string,
   limit: number = 10
 ) {
-  try {
-    return await prisma.notification.findMany({
-      where: {
-        userId,
-        organizationId,
-        read: false,
-      },
-      orderBy: { createdAt: 'desc' },
-      take: limit,
-    });
-  } catch (error) {
-    console.error('Error fetching unread notifications:', error);
-    throw new Error('Failed to fetch unread notifications');
-  }
+  return withTenantContext(async () => {
+    try {
+      return await prisma.notifications.findMany({
+        where: {
+          userId,
+          read: false,
+        },
+        orderBy: { createdAt: 'desc' },
+        take: limit,
+      });
+    } catch (error) {
+      console.error('[Notifications] Error fetching unread:', error);
+      throw new Error('Failed to fetch unread notifications');
+    }
+  });
 }
 
 /**
- * Get all notifications with pagination
+ * Get all notifications for the current user with pagination
+ *
+ * @param userId - User ID
+ * @param options - Pagination and filter options
+ * @returns Paginated notifications with metadata
  */
 export async function getNotifications(
   userId: string,
-  organizationId: string,
   options: {
     limit?: number;
     offset?: number;
@@ -38,70 +55,84 @@ export async function getNotifications(
 ) {
   const { limit = 25, offset = 0, readFilter = 'all' } = options;
 
-  try {
-    const where: any = {
-      userId,
-      organizationId,
-    };
+  return withTenantContext(async () => {
+    try {
+      const where: any = {
+        userId,
+      };
 
-    if (readFilter === 'read') {
-      where.read = true;
-    } else if (readFilter === 'unread') {
-      where.read = false;
+      if (readFilter === 'read') {
+        where.read = true;
+      } else if (readFilter === 'unread') {
+        where.read = false;
+      }
+
+      const [notifications, count] = await Promise.all([
+        prisma.notifications.findMany({
+          where,
+          orderBy: { createdAt: 'desc' },
+          take: limit,
+          skip: offset,
+        }),
+        prisma.notifications.count({ where }),
+      ]);
+
+      return {
+        notifications,
+        count,
+        hasMore: offset + notifications.length < count,
+      };
+    } catch (error) {
+      console.error('[Notifications] Error fetching:', error);
+      throw new Error('Failed to fetch notifications');
     }
-
-    const [notifications, count] = await Promise.all([
-      prisma.notification.findMany({
-        where,
-        orderBy: { createdAt: 'desc' },
-        take: limit,
-        skip: offset,
-      }),
-      prisma.notification.count({ where }),
-    ]);
-
-    return {
-      notifications,
-      count,
-      hasMore: offset + notifications.length < count,
-    };
-  } catch (error) {
-    console.error('Error fetching notifications:', error);
-    throw new Error('Failed to fetch notifications');
-  }
+  });
 }
 
 /**
- * Get unread notification count
+ * Get unread notification count for the current user
+ *
+ * @param userId - User ID
+ * @returns Number of unread notifications
  */
-export async function getUnreadCount(userId: string, organizationId: string) {
-  try {
-    return await prisma.notification.count({
-      where: {
-        userId,
-        organizationId,
-        read: false,
-      },
-    });
-  } catch (error) {
-    console.error('Error fetching unread count:', error);
-    return 0;
-  }
+export async function getUnreadCount(userId: string) {
+  return withTenantContext(async () => {
+    try {
+      return await prisma.notifications.count({
+        where: {
+          userId,
+          read: false,
+        },
+      });
+    } catch (error) {
+      console.error('[Notifications] Error fetching unread count:', error);
+      return 0;
+    }
+  });
 }
 
 /**
- * Get a single notification by ID
+ * Get a single notification by ID for the current user
+ *
+ * @param notificationId - Notification ID
+ * @param userId - User ID
+ * @returns Notification or null
  */
-export async function getNotificationById(notificationId: string, userId: string) {
-  try {
-    return await prisma.notification.findFirst({
-      where: {
-        id: notificationId,
-        userId,
-      },
-    });
-  } catch (error) {
-    console.error('Error fetching notification:', error);
-    return null;
-  }
+export async function getNotificationById(
+  notificationId: string,
+  userId: string
+) {
+  return withTenantContext(async () => {
+    try {
+      return await prisma.notifications.findFirst({
+        where: {
+          id: notificationId,
+          userId,
+        },
+      });
+    } catch (error) {
+      console.error('[Notifications] Error fetching notification:', error);
+      return null;
+    }
+  });
 }

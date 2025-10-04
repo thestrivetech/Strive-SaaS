@@ -65,7 +65,7 @@ describe('Notification Actions', () => {
       expect(result.data?.read).toBe(false);
 
       // Verify in database
-      const dbNotification = await testPrisma.notification.findUnique({
+      const dbNotification = await testPrisma.notifications.findUnique({
         where: { id: result.data?.id },
       });
       expect(dbNotification).toBeDefined();
@@ -137,14 +137,16 @@ describe('Notification Actions', () => {
       const { organization, user } = await createTestOrgWithUser();
 
       // Create notification
-      const notification = await testPrisma.notification.create({
+      const notification = await testPrisma.notifications.create({
         data: {
-          userId: user.id,
-          organizationId: organization.id,
+          id: `notif-${Date.now()}`,
+          user_id: user.id,
+          organization_id: organization.id,
           type: NotificationType.INFO,
           title: 'Test',
           message: 'Test',
           read: false,
+          updated_at: new Date(),
         },
       });
 
@@ -162,7 +164,7 @@ describe('Notification Actions', () => {
       expect(result.success).toBe(true);
 
       // Verify in database
-      const updated = await testPrisma.notification.findUnique({
+      const updated = await testPrisma.notifications.findUnique({
         where: { id: notification.id },
       });
       expect(updated?.read).toBe(true);
@@ -171,14 +173,16 @@ describe('Notification Actions', () => {
     it('should be idempotent (can mark read multiple times)', async () => {
       const { organization, user } = await createTestOrgWithUser();
 
-      const notification = await testPrisma.notification.create({
+      const notification = await testPrisma.notifications.create({
         data: {
-          userId: user.id,
-          organizationId: organization.id,
+          id: `notif-${Date.now()}-2`,
+          user_id: user.id,
+          organization_id: organization.id,
           type: NotificationType.INFO,
           title: 'Test',
           message: 'Test',
           read: false,
+          updated_at: new Date(),
         },
       });
 
@@ -217,14 +221,16 @@ describe('Notification Actions', () => {
       const { user: otherUser } = await createTestOrgWithUser();
 
       // Create notification for user1
-      const notification = await testPrisma.notification.create({
+      const notification = await testPrisma.notifications.create({
         data: {
-          userId: user.id,
-          organizationId: organization.id,
+          id: `notif-${Date.now()}-3`,
+          user_id: user.id,
+          organization_id: organization.id,
           type: NotificationType.INFO,
           title: 'Test',
           message: 'Test',
           read: false,
+          updated_at: new Date(),
         },
       });
 
@@ -249,31 +255,37 @@ describe('Notification Actions', () => {
       const { organization, user } = await createTestOrgWithUser();
 
       // Create multiple unread notifications
-      await testPrisma.notification.createMany({
+      await testPrisma.notifications.createMany({
         data: [
           {
-            userId: user.id,
-            organizationId: organization.id,
+            id: `notif-${Date.now()}-1`,
+            user_id: user.id,
+            organization_id: organization.id,
             type: NotificationType.INFO,
             title: 'Notification 1',
             message: 'Message 1',
             read: false,
+            updated_at: new Date(),
           },
           {
-            userId: user.id,
-            organizationId: organization.id,
+            id: `notif-${Date.now()}-2`,
+            user_id: user.id,
+            organization_id: organization.id,
             type: NotificationType.SUCCESS,
             title: 'Notification 2',
             message: 'Message 2',
             read: false,
+            updated_at: new Date(),
           },
           {
-            userId: user.id,
-            organizationId: organization.id,
+            id: `notif-${Date.now()}-3`,
+            user_id: user.id,
+            organization_id: organization.id,
             type: NotificationType.WARNING,
             title: 'Notification 3',
             message: 'Message 3',
             read: false,
+            updated_at: new Date(),
           },
         ],
       });
@@ -290,9 +302,9 @@ describe('Notification Actions', () => {
       expect(result.data?.count).toBe(3);
 
       // Verify all marked as read
-      const unreadCount = await testPrisma.notification.count({
+      const unreadCount = await testPrisma.notifications.count({
         where: {
-          userId: user.id,
+          user_id: user.id,
           read: false,
         },
       });
@@ -304,25 +316,29 @@ describe('Notification Actions', () => {
       const { user: user2 } = await createTestOrgWithUser();
 
       // Create notifications for both users
-      await testPrisma.notification.create({
+      await testPrisma.notifications.create({
         data: {
-          userId: user1.id,
-          organizationId: organization.id,
+          id: `notif-${Date.now()}-1`,
+          user_id: user1.id,
+          organization_id: organization.id,
           type: NotificationType.INFO,
           title: 'User 1 notification',
           message: 'Message',
           read: false,
+          updated_at: new Date(),
         },
       });
 
-      await testPrisma.notification.create({
+      await testPrisma.notifications.create({
         data: {
-          userId: user2.id,
-          organizationId: organization.id,
+          id: `notif-${Date.now()}-2`,
+          user_id: user2.id,
+          organization_id: organization.id,
           type: NotificationType.INFO,
           title: 'User 2 notification',
           message: 'Message',
           read: false,
+          updated_at: new Date(),
         },
       });
 
@@ -339,9 +355,9 @@ describe('Notification Actions', () => {
       expect(result.data?.count).toBe(1);
 
       // User2's notification should still be unread
-      const user2Unread = await testPrisma.notification.count({
+      const user2Unread = await testPrisma.notifications.count({
         where: {
-          userId: user2.id,
+          user_id: user2.id,
           read: false,
         },
       });
@@ -354,25 +370,29 @@ describe('Notification Actions', () => {
       const { organization, user } = await createTestOrgWithUser();
 
       // Create notifications
-      const n1 = await testPrisma.notification.create({
+      const n1 = await testPrisma.notifications.create({
         data: {
-          userId: user.id,
-          organizationId: organization.id,
+          id: `notif-${Date.now()}-n1`,
+          user_id: user.id,
+          organization_id: organization.id,
           type: NotificationType.INFO,
           title: 'N1',
           message: 'Message',
           read: false,
+          updated_at: new Date(),
         },
       });
 
-      const n2 = await testPrisma.notification.create({
+      const n2 = await testPrisma.notifications.create({
         data: {
-          userId: user.id,
-          organizationId: organization.id,
+          id: `notif-${Date.now()}-n2`,
+          user_id: user.id,
+          organization_id: organization.id,
           type: NotificationType.INFO,
           title: 'N2',
           message: 'Message',
           read: false,
+          updated_at: new Date(),
         },
       });
 
@@ -394,25 +414,29 @@ describe('Notification Actions', () => {
       const { organization, user: user1 } = await createTestOrgWithUser();
       const { user: user2 } = await createTestOrgWithUser();
 
-      const n1 = await testPrisma.notification.create({
+      const n1 = await testPrisma.notifications.create({
         data: {
-          userId: user1.id,
-          organizationId: organization.id,
+          id: `notif-${Date.now()}-n1-user1`,
+          user_id: user1.id,
+          organization_id: organization.id,
           type: NotificationType.INFO,
           title: 'N1',
           message: 'Message',
           read: false,
+          updated_at: new Date(),
         },
       });
 
-      const n2 = await testPrisma.notification.create({
+      const n2 = await testPrisma.notifications.create({
         data: {
-          userId: user2.id,
-          organizationId: organization.id,
+          id: `notif-${Date.now()}-n2-user2`,
+          user_id: user2.id,
+          organization_id: organization.id,
           type: NotificationType.INFO,
           title: 'N2',
           message: 'Message',
           read: false,
+          updated_at: new Date(),
         },
       });
 
@@ -435,14 +459,16 @@ describe('Notification Actions', () => {
     it('should delete notification', async () => {
       const { organization, user } = await createTestOrgWithUser();
 
-      const notification = await testPrisma.notification.create({
+      const notification = await testPrisma.notifications.create({
         data: {
-          userId: user.id,
-          organizationId: organization.id,
+          id: `notif-${Date.now()}-delete`,
+          user_id: user.id,
+          organization_id: organization.id,
           type: NotificationType.INFO,
           title: 'Test',
           message: 'Test',
           read: false,
+          updated_at: new Date(),
         },
       });
 
@@ -459,7 +485,7 @@ describe('Notification Actions', () => {
       expect(result.success).toBe(true);
 
       // Verify deleted
-      const deleted = await testPrisma.notification.findUnique({
+      const deleted = await testPrisma.notifications.findUnique({
         where: { id: notification.id },
       });
       expect(deleted).toBeNull();
@@ -469,14 +495,16 @@ describe('Notification Actions', () => {
       const { organization, user: user1 } = await createTestOrgWithUser();
       const { user: user2 } = await createTestOrgWithUser();
 
-      const notification = await testPrisma.notification.create({
+      const notification = await testPrisma.notifications.create({
         data: {
-          userId: user1.id,
-          organizationId: organization.id,
+          id: `notif-${Date.now()}-delete-reject`,
+          user_id: user1.id,
+          organization_id: organization.id,
           type: NotificationType.INFO,
           title: 'Test',
           message: 'Test',
           read: false,
+          updated_at: new Date(),
         },
       });
 
@@ -494,7 +522,7 @@ describe('Notification Actions', () => {
       expect(result.error).toBe('Notification not found');
 
       // Verify not deleted
-      const stillExists = await testPrisma.notification.findUnique({
+      const stillExists = await testPrisma.notifications.findUnique({
         where: { id: notification.id },
       });
       expect(stillExists).toBeDefined();

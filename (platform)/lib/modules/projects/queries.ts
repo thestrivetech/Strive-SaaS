@@ -1,20 +1,34 @@
-import { prisma } from '@/lib/prisma';
+import 'server-only';
+
+import { prisma } from '@/lib/database/prisma';
+import { withTenantContext } from '@/lib/database/utils';
 import type { Prisma } from '@prisma/client';
 import type { ProjectFilters } from './schemas';
 
-type ProjectWithRelations = Prisma.ProjectGetPayload<{
-  include: {
-    customer: { select: { id: true; name: true; email: true } };
-    projectManager: { select: { id: true; name: true; email: true; avatarUrl: true } };
-    tasks: { select: { id: true; status: true } };
-  };
-}>;
+/**
+ * Projects Module - Query Functions
+ *
+ * SECURITY: All queries automatically filtered by organizationId via tenant middleware.
+ * No need to pass organizationId manually - it's injected automatically!
+ */
 
+type ProjectWithRelations = Prisma.projects & {
+  customers: { id: string; name: string; email: string | null } | null;
+  users: { id: string; name: string | null; email: string; avatarUrl: string | null };
+  tasks: { id: string; status: string }[];
+};
+
+/**
+ * Get all projects for the current organization
+ *
+ * @param filters - Optional filters for projects
+ * @returns Array of projects with related data
+ */
 export async function getProjects(
-  organizationId: string,
   filters?: ProjectFilters
 ): Promise<ProjectWithRelations[]> {
-  const where: any = { organizationId };
+  return withTenantContext(async () => {
+    const where: any = {};
 
   if (filters?.status) {
     // Support array of statuses (OR logic)
@@ -27,11 +41,11 @@ export async function getProjects(
   }
 
   if (filters?.customerId) {
-    where.customerId = filters.customerId;
+    where.customer_id = filters.customerId;
   }
 
   if (filters?.projectManagerId) {
-    where.projectManagerId = filters.projectManagerId;
+    where.project_manager_id = filters.projectManagerId;
   }
 
   if (filters?.search) {
@@ -43,61 +57,68 @@ export async function getProjects(
 
   // Date range filters
   if (filters?.createdFrom || filters?.createdTo) {
-    where.createdAt = {};
+    where.created_at = {};
     if (filters.createdFrom) {
-      where.createdAt.gte = filters.createdFrom;
+      where.created_at.gte = filters.createdFrom;
     }
     if (filters.createdTo) {
-      where.createdAt.lte = filters.createdTo;
+      where.created_at.lte = filters.createdTo;
     }
   }
 
   if (filters?.dueFrom || filters?.dueTo) {
-    where.dueDate = {};
+    where.due_date = {};
     if (filters.dueFrom) {
-      where.dueDate.gte = filters.dueFrom;
+      where.due_date.gte = filters.dueFrom;
     }
     if (filters.dueTo) {
-      where.dueDate.lte = filters.dueTo;
+      where.due_date.lte = filters.dueTo;
     }
   }
 
-  return prisma.project.findMany({
-    where,
-    include: {
-      customer: {
-        select: {
-          id: true,
-          name: true,
-          email: true,
+    return await prisma.projects.findMany({
+      where,
+      include: {
+        customers: {
+          select: {
+            id: true,
+            name: true,
+            email: true,
+          },
+        },
+        users: {
+          select: {
+            id: true,
+            name: true,
+            email: true,
+            avatarUrl: true,
+          },
+        },
+        tasks: {
+          select: {
+            id: true,
+            status: true,
+          },
         },
       },
-      projectManager: {
-        select: {
-          id: true,
-          name: true,
-          email: true,
-          avatarUrl: true,
-        },
-      },
-      tasks: {
-        select: {
-          id: true,
-          status: true,
-        },
-      },
-    },
-    orderBy: { createdAt: 'desc' },
-    take: filters?.limit || 50,
-    skip: filters?.offset || 0,
+      orderBy: { created_at: 'desc' },
+      take: filters?.limit || 50,
+      skip: filters?.offset || 0,
+    });
   });
 }
 
+/**
+ * Get count of projects matching filters
+ *
+ * @param filters - Optional filters for projects
+ * @returns Number of matching projects
+ */
 export async function getProjectsCount(
-  organizationId: string,
   filters?: ProjectFilters
 ): Promise<number> {
-  const where: any = { organizationId };
+  return withTenantContext(async () => {
+    const where: any = {};
 
   if (filters?.status) {
     // Support array of statuses (OR logic)
@@ -110,11 +131,11 @@ export async function getProjectsCount(
   }
 
   if (filters?.customerId) {
-    where.customerId = filters.customerId;
+    where.customer_id = filters.customerId;
   }
 
   if (filters?.projectManagerId) {
-    where.projectManagerId = filters.projectManagerId;
+    where.project_manager_id = filters.projectManagerId;
   }
 
   if (filters?.search) {
@@ -126,39 +147,45 @@ export async function getProjectsCount(
 
   // Date range filters
   if (filters?.createdFrom || filters?.createdTo) {
-    where.createdAt = {};
+    where.created_at = {};
     if (filters.createdFrom) {
-      where.createdAt.gte = filters.createdFrom;
+      where.created_at.gte = filters.createdFrom;
     }
     if (filters.createdTo) {
-      where.createdAt.lte = filters.createdTo;
+      where.created_at.lte = filters.createdTo;
     }
   }
 
   if (filters?.dueFrom || filters?.dueTo) {
-    where.dueDate = {};
+    where.due_date = {};
     if (filters.dueFrom) {
-      where.dueDate.gte = filters.dueFrom;
+      where.due_date.gte = filters.dueFrom;
     }
     if (filters.dueTo) {
-      where.dueDate.lte = filters.dueTo;
+      where.due_date.lte = filters.dueTo;
     }
   }
 
-  return prisma.project.count({ where });
+    return await prisma.projects.count({ where });
+  });
 }
 
+/**
+ * Get a single project by ID
+ *
+ * @param projectId - Project ID
+ * @returns Project with related data or null
+ */
 export async function getProjectById(
-  projectId: string,
-  organizationId: string
+  projectId: string
 ) {
-  return prisma.project.findFirst({
-    where: {
-      id: projectId,
-      organizationId,
-    },
+  return withTenantContext(async () => {
+    return await prisma.projects.findFirst({
+      where: {
+        id: projectId,
+      },
     include: {
-      customer: {
+      customers: {
         select: {
           id: true,
           name: true,
@@ -166,7 +193,7 @@ export async function getProjectById(
           phone: true,
         },
       },
-      projectManager: {
+      users: {
         select: {
           id: true,
           name: true,
@@ -176,7 +203,7 @@ export async function getProjectById(
       },
       tasks: {
         include: {
-          assignedTo: {
+          users_tasks_assigned_toTousers: {
             select: {
               id: true,
               name: true,
@@ -184,41 +211,48 @@ export async function getProjectById(
             },
           },
         },
-        orderBy: { createdAt: 'desc' },
+        orderBy: { created_at: 'desc' },
       },
-    },
+      },
+    });
   });
 }
 
-export async function getProjectStats(organizationId: string) {
-  const [totalProjects, activeProjects, completedProjects, onHoldProjects] = await Promise.all([
-    prisma.project.count({ where: { organizationId } }),
-    prisma.project.count({
-      where: { organizationId, status: 'ACTIVE' },
-    }),
-    prisma.project.count({
-      where: { organizationId, status: 'COMPLETED' },
-    }),
-    prisma.project.count({
-      where: { organizationId, status: 'ON_HOLD' },
-    }),
-  ]);
+/**
+ * Get project statistics for the current organization
+ *
+ * @returns Project statistics including counts by status and total budget
+ */
+export async function getProjectStats() {
+  return withTenantContext(async () => {
+    const [totalProjects, activeProjects, completedProjects, onHoldProjects] = await Promise.all([
+      prisma.projects.count(),
+      prisma.projects.count({
+        where: { status: 'ACTIVE' },
+      }),
+      prisma.projects.count({
+        where: { status: 'COMPLETED' },
+      }),
+      prisma.projects.count({
+        where: { status: 'ON_HOLD' },
+      }),
+    ]);
 
-  // Calculate total budget
-  const budgetResult = await prisma.project.aggregate({
-    where: { organizationId },
-    _sum: {
-      budget: true,
-    },
+    // Calculate total budget
+    const budgetResult = await prisma.projects.aggregate({
+      _sum: {
+        budget: true,
+      },
+    });
+
+    return {
+      totalProjects,
+      activeProjects,
+      completedProjects,
+      onHoldProjects,
+      totalBudget: budgetResult._sum.budget || 0,
+    };
   });
-
-  return {
-    totalProjects,
-    activeProjects,
-    completedProjects,
-    onHoldProjects,
-    totalBudget: budgetResult._sum.budget || 0,
-  };
 }
 
 export function calculateProjectProgress(tasks: { status: string }[]): number {
