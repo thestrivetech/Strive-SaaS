@@ -14,7 +14,7 @@ import type { ProjectFilters } from './schemas';
 
 type ProjectWithRelations = Prisma.projects & {
   customers: { id: string; name: string; email: string | null } | null;
-  users: { id: string; name: string | null; email: string; avatarUrl: string | null };
+  users: { id: string; name: string | null; email: string; avatar_url: string | null };
   tasks: { id: string; status: string }[];
 };
 
@@ -91,7 +91,7 @@ export async function getProjects(
             id: true,
             name: true,
             email: true,
-            avatarUrl: true,
+            avatar_url: true,
           },
         },
         tasks: {
@@ -184,35 +184,35 @@ export async function getProjectById(
       where: {
         id: projectId,
       },
-    include: {
-      customers: {
-        select: {
-          id: true,
-          name: true,
-          email: true,
-          phone: true,
-        },
-      },
-      users: {
-        select: {
-          id: true,
-          name: true,
-          email: true,
-          avatarUrl: true,
-        },
-      },
-      tasks: {
-        include: {
-          users_tasks_assigned_toTousers: {
-            select: {
-              id: true,
-              name: true,
-              email: true,
-            },
+      include: {
+        customers: {
+          select: {
+            id: true,
+            name: true,
+            email: true,
+            phone: true,
           },
         },
-        orderBy: { created_at: 'desc' },
-      },
+        users: {
+          select: {
+            id: true,
+            name: true,
+            email: true,
+            avatar_url: true,
+          },
+        },
+        tasks: {
+          include: {
+            users_tasks_assigned_toTousers: {
+              select: {
+                id: true,
+                name: true,
+                email: true,
+              },
+            },
+          },
+          orderBy: { created_at: 'desc' },
+        },
       },
     });
   });

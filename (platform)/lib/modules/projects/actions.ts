@@ -47,7 +47,7 @@ export async function createProject(input: CreateProjectInput) {
     data.projectManagerId = validated.projectManagerId;
   }
 
-  const project = await prisma.project.create({ data });
+  const project = await prisma.projects.create({ data });
 
   // Log activity
   await prisma.activityLog.create({
@@ -77,7 +77,7 @@ export async function updateProject(input: UpdateProjectInput) {
   const validated = updateProjectSchema.parse(input);
 
   // Get existing project to check access
-  const existingProject = await prisma.project.findUnique({
+  const existingProject = await prisma.projects.findUnique({
     where: { id: validated.id },
   });
 
@@ -94,7 +94,7 @@ export async function updateProject(input: UpdateProjectInput) {
   }
 
   // Update project
-  const updatedProject = await prisma.project.update({
+  const updatedProject = await prisma.projects.update({
     where: { id: validated.id },
     data: {
       name: validated.name,
@@ -137,7 +137,7 @@ export async function deleteProject(projectId: string) {
   }
 
   // Get project to check access
-  const project = await prisma.project.findUnique({
+  const project = await prisma.projects.findUnique({
     where: { id: projectId },
   });
 
@@ -154,7 +154,7 @@ export async function deleteProject(projectId: string) {
   }
 
   // Delete project (cascade will handle tasks)
-  await prisma.project.delete({
+  await prisma.projects.delete({
     where: { id: projectId },
   });
 

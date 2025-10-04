@@ -22,12 +22,12 @@ import {
 import { toast } from 'sonner';
 import { useRouter } from 'next/navigation';
 import { RealtimeClient, type RealtimePayload } from '@/lib/realtime/client';
-import type { Notification } from '@prisma/client';
+import type { notifications as DBNotification } from '@prisma/client';
 
 interface NotificationDropdownProps {
   userId: string;
   organizationId: string;
-  initialNotifications?: Notification[];
+  initialNotifications?: DBNotification[];
   initialUnreadCount?: number;
 }
 
@@ -37,7 +37,7 @@ export function NotificationDropdown({
   initialNotifications = [],
   initialUnreadCount = 0,
 }: NotificationDropdownProps) {
-  const [notifications, setNotifications] = useState<Notification[]>(initialNotifications);
+  const [notifications, setNotifications] = useState<DBNotification[]>(initialNotifications);
   const [unreadCount, setUnreadCount] = useState(initialUnreadCount);
   const [isOpen, setIsOpen] = useState(false);
   const router = useRouter();
@@ -46,7 +46,7 @@ export function NotificationDropdown({
   useEffect(() => {
     const client = new RealtimeClient();
 
-    const unsubscribe = client.subscribeToNotificationUpdates(userId, (payload: RealtimePayload<Notification>) => {
+    const unsubscribe = client.subscribeToNotificationUpdates(userId, (payload: RealtimePayload<DBNotification>) => {
       if (payload.eventType === 'INSERT') {
         setNotifications((prev) => [payload.new, ...prev].slice(0, 20)); // Keep last 20
         if (!payload.new.read) {
@@ -111,9 +111,9 @@ export function NotificationDropdown({
     }
 
     // Navigate if action URL provided
-    if (notification.actionUrl) {
+    if (notification.action_url) {
       setIsOpen(false);
-      router.push(notification.actionUrl);
+      router.push(notification.action_url);
     }
   };
 
@@ -223,7 +223,7 @@ export function NotificationDropdown({
                         <span className="text-xs text-muted-foreground">
                           {formatTimeAgo(notification.createdAt)}
                         </span>
-                        {notification.actionUrl && (
+                        {notification.action_url && (
                           <ExternalLink className="h-3 w-3 text-muted-foreground" />
                         )}
                       </div>

@@ -24,7 +24,7 @@ async function testNotifications() {
   try {
     // Get a test user and organization
     console.log('\n📋 Setup: Finding test user and organization...');
-    const user = await prisma.user.findFirst({
+    const user = await prisma.users.findFirst({
       include: {
         organizationMembers: {
           include: {
@@ -50,7 +50,7 @@ async function testNotifications() {
     console.log('\n🧪 Test 1: Create Notification');
     console.log('-'.repeat(60));
 
-    const notification = await prisma.notification.create({
+    const notification = await prisma.notifications.create({
       data: {
         userId,
         organizationId,
@@ -71,7 +71,7 @@ async function testNotifications() {
     console.log('\n🧪 Test 2: Fetch Unread Notifications');
     console.log('-'.repeat(60));
 
-    const unread = await prisma.notification.findMany({
+    const unread = await prisma.notifications.findMany({
       where: {
         userId,
         read: false,
@@ -89,7 +89,7 @@ async function testNotifications() {
     console.log('\n🧪 Test 3: Mark Notification as Read');
     console.log('-'.repeat(60));
 
-    const updated = await prisma.notification.update({
+    const updated = await prisma.notifications.update({
       where: { id: notification.id },
       data: { read: true },
     });
@@ -101,7 +101,7 @@ async function testNotifications() {
     console.log('\n🧪 Test 4: Verify Read Status');
     console.log('-'.repeat(60));
 
-    const verified = await prisma.notification.findUnique({
+    const verified = await prisma.notifications.findUnique({
       where: { id: notification.id },
     });
 
@@ -115,7 +115,7 @@ async function testNotifications() {
     console.log('\n🧪 Test 5: Create Notification with Optional Fields');
     console.log('-'.repeat(60));
 
-    const richNotification = await prisma.notification.create({
+    const richNotification = await prisma.notifications.create({
       data: {
         userId,
         organizationId,
@@ -138,7 +138,7 @@ async function testNotifications() {
     console.log('\n🧪 Test 6: Query Notifications by Type');
     console.log('-'.repeat(60));
 
-    const infoNotifications = await prisma.notification.findMany({
+    const infoNotifications = await prisma.notifications.findMany({
       where: {
         userId,
         type: 'INFO',
@@ -147,7 +147,7 @@ async function testNotifications() {
 
     console.log(`✅ Found ${infoNotifications.length} INFO notification(s)`);
 
-    const successNotifications = await prisma.notification.findMany({
+    const successNotifications = await prisma.notifications.findMany({
       where: {
         userId,
         type: 'SUCCESS',
@@ -160,13 +160,13 @@ async function testNotifications() {
     console.log('\n🧪 Test 7: Delete Notifications');
     console.log('-'.repeat(60));
 
-    await prisma.notification.delete({
+    await prisma.notifications.delete({
       where: { id: notification.id },
     });
 
     console.log('✅ Deleted first test notification');
 
-    await prisma.notification.delete({
+    await prisma.notifications.delete({
       where: { id: richNotification.id },
     });
 
@@ -176,7 +176,7 @@ async function testNotifications() {
     console.log('\n🧪 Test 8: Verify Deletion');
     console.log('-'.repeat(60));
 
-    const deletedNotif = await prisma.notification.findUnique({
+    const deletedNotif = await prisma.notifications.findUnique({
       where: { id: notification.id },
     });
 

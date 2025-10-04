@@ -2,19 +2,19 @@ import { prisma } from '@/lib/prisma';
 import type { Organization, OrganizationMember, User } from '@prisma/client';
 
 export async function getOrganization(orgId: string): Promise<Organization | null> {
-  return prisma.organization.findUnique({
+  return prisma.organizations.findUnique({
     where: { id: orgId },
   });
 }
 
 export async function getOrganizationBySlug(slug: string): Promise<Organization | null> {
-  return prisma.organization.findUnique({
+  return prisma.organizations.findUnique({
     where: { slug },
   });
 }
 
 export async function getUserOrganizations(userId: string): Promise<(OrganizationMember & { organization: Organization })[]> {
-  return prisma.organizationMember.findMany({
+  return prisma.organizationsMember.findMany({
     where: { userId },
     include: { organization: true },
     orderBy: { joinedAt: 'desc' },
@@ -22,7 +22,7 @@ export async function getUserOrganizations(userId: string): Promise<(Organizatio
 }
 
 export async function getOrganizationMembers(orgId: string): Promise<(OrganizationMember & { user: User })[]> {
-  return prisma.organizationMember.findMany({
+  return prisma.organizationsMember.findMany({
     where: { organizationId: orgId },
     include: { user: true },
     orderBy: { joinedAt: 'asc' },
@@ -30,7 +30,7 @@ export async function getOrganizationMembers(orgId: string): Promise<(Organizati
 }
 
 export async function checkSlugAvailability(slug: string): Promise<boolean> {
-  const existing = await prisma.organization.findUnique({
+  const existing = await prisma.organizations.findUnique({
     where: { slug },
     select: { id: true },
   });
@@ -38,7 +38,7 @@ export async function checkSlugAvailability(slug: string): Promise<boolean> {
 }
 
 export async function getUserRoleInOrganization(userId: string, orgId: string) {
-  const member = await prisma.organizationMember.findFirst({
+  const member = await prisma.organizationsMember.findFirst({
     where: {
       userId,
       organizationId: orgId,

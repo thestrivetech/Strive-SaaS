@@ -38,7 +38,7 @@ const priorityColors: Record<Priority, string> = {
 };
 
 export function TaskCard({ task, onClick, className }: TaskCardProps) {
-  const isOverdue = task.dueDate && isPast(new Date(task.dueDate)) && task.status !== TaskStatus.DONE;
+  const isOverdue = task.due_date && isPast(new Date(task.due_date)) && task.status !== TaskStatus.DONE;
 
   return (
     <div
@@ -73,7 +73,7 @@ export function TaskCard({ task, onClick, className }: TaskCardProps) {
           </Badge>
 
           {/* Due Date */}
-          {task.dueDate && (
+          {task.due_date && (
             <div
               className={cn(
                 'flex items-center gap-1',
@@ -82,15 +82,15 @@ export function TaskCard({ task, onClick, className }: TaskCardProps) {
             >
               {isOverdue && <AlertCircle className="h-3 w-3" />}
               <Calendar className="h-3 w-3" />
-              <span>{format(new Date(task.dueDate), 'MMM d')}</span>
+              <span>{format(new Date(task.due_date), 'MMM d')}</span>
             </div>
           )}
 
           {/* Estimated Hours */}
-          {task.estimatedHours && (
+          {task.estimated_hours && (
             <div className="flex items-center gap-1">
               <Clock className="h-3 w-3" />
-              <span>{Number(task.estimatedHours)}h</span>
+              <span>{Number(task.estimated_hours)}h</span>
             </div>
           )}
         </div>
@@ -98,7 +98,7 @@ export function TaskCard({ task, onClick, className }: TaskCardProps) {
         {/* Assignee Avatar */}
         {task.assignedTo && (
           <Avatar className="h-6 w-6">
-            <AvatarImage src={task.assignedTo.avatarUrl || undefined} />
+            <AvatarImage src={task.assignedTo.avatar_url || undefined} />
             <AvatarFallback className="text-[10px]">
               {task.assignedTo.name?.[0]?.toUpperCase() || task.assignedTo.email[0].toUpperCase()}
             </AvatarFallback>

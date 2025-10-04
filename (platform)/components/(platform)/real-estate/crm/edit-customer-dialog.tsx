@@ -32,12 +32,12 @@ import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { updateCustomer } from '@/lib/modules/crm/actions';
 import { updateCustomerSchema, type UpdateCustomerInput } from '@/lib/modules/crm/schemas';
-import { CustomerStatus, CustomerSource, type Customer } from '@prisma/client';
+import { CustomerStatus, CustomerSource, type customers } from '@prisma/client';
 import { Loader2, Edit } from 'lucide-react';
 import { toast } from 'sonner';
 
 interface EditCustomerDialogProps {
-  customer: Customer;
+  customer: customers;
   children?: React.ReactNode;
   asChild?: boolean;
 }

@@ -21,9 +21,9 @@ import { CreateProjectDialog } from '@/components/(platform)/projects/create-pro
 import { ProjectListSkeleton } from '@/components/(platform)/projects/project-list-skeleton';
 import { PaginationControls } from '@/components/ui/pagination-controls';
 import { ProjectFilters } from '@/components/(platform)/projects/project-filters';
-import { ExportButton } from '@/components/(platform)/features/export/export-button';
+import ExportButton from '@/components/(platform)/features/export/export-button';
 import { formatDateForCSV, type CSVColumn } from '@/lib/export/csv';
-import type { ProjectStatus, Priority, Project } from '@prisma/client';
+import type { ProjectStatus, Priority, projects } from '@prisma/client';
 import type { ProjectFilters as ProjectFiltersType } from '@/lib/types/platform';
 
 export default async function ProjectsPage({
@@ -136,7 +136,7 @@ async function ProjectListContent({
   }));
 
   // CSV Export columns
-  const exportColumns: CSVColumn<Project>[] = [
+  const exportColumns: CSVColumn<projects>[] = [
     { key: 'name', label: 'Project Name' },
     { key: 'status', label: 'Status' },
     { key: 'priority', label: 'Priority' },

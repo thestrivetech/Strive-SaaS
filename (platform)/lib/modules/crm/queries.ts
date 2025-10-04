@@ -76,7 +76,7 @@ export async function getCustomers(
     }
   }
 
-      return await prisma.customers.findMany({
+      return await prisma.customerss.findMany({
         where,
         include: {
           assignedTo: {
@@ -152,7 +152,7 @@ export async function getCustomersCount(
     }
   }
 
-      return await prisma.customers.count({ where });
+      return await prisma.customerss.count({ where });
     } catch (error) {
       const dbError = handleDatabaseError(error);
       console.error('[CRM Queries] getCustomersCount failed:', dbError);
@@ -190,7 +190,7 @@ export async function getCustomerById(
 ): Promise<CustomerWithDetails | null> {
   return withTenantContext(async () => {
     try {
-      return await prisma.customers.findFirst({
+      return await prisma.customerss.findFirst({
         where: {
           id: customerId,
         },
@@ -247,10 +247,10 @@ export async function getCustomerStats() {
   return withTenantContext(async () => {
     try {
       const [totalCustomers, activeCustomers, leadCount, prospectCount] = await Promise.all([
-        prisma.customers.count(),
-        prisma.customers.count({ where: { status: 'ACTIVE' } }),
-        prisma.customers.count({ where: { status: 'LEAD' } }),
-        prisma.customers.count({ where: { status: 'PROSPECT' } }),
+        prisma.customerss.count(),
+        prisma.customerss.count({ where: { status: 'ACTIVE' } }),
+        prisma.customerss.count({ where: { status: 'LEAD' } }),
+        prisma.customerss.count({ where: { status: 'PROSPECT' } }),
       ]);
 
       return {
@@ -282,7 +282,7 @@ export async function searchCustomers(
 ): Promise<Customer[]> {
   return withTenantContext(async () => {
     try {
-      return await prisma.customers.findMany({
+      return await prisma.customerss.findMany({
         where: {
           OR: [
             { name: { contains: query, mode: 'insensitive' } },

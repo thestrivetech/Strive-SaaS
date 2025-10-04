@@ -39,7 +39,7 @@ export async function bulkUpdateTaskStatus(input: unknown) {
     const validated = BulkUpdateStatusSchema.parse(input);
 
     // Verify user has access to all tasks (multi-tenancy check)
-    const tasks = await prisma.task.findMany({
+    const tasks = await prisma.tasks.findMany({
       where: {
         id: { in: validated.taskIds },
         project: { organizationId },
@@ -55,7 +55,7 @@ export async function bulkUpdateTaskStatus(input: unknown) {
     }
 
     // Bulk update
-    const result = await prisma.task.updateMany({
+    const result = await prisma.tasks.updateMany({
       where: { id: { in: validated.taskIds } },
       data: {
         status: validated.status,
@@ -108,7 +108,7 @@ export async function bulkAssignTasks(input: unknown) {
     const validated = BulkAssignTasksSchema.parse(input);
 
     // Verify user has access to all tasks
-    const tasks = await prisma.task.findMany({
+    const tasks = await prisma.tasks.findMany({
       where: {
         id: { in: validated.taskIds },
         project: { organizationId },
@@ -139,7 +139,7 @@ export async function bulkAssignTasks(input: unknown) {
     }
 
     // Bulk assign
-    const result = await prisma.task.updateMany({
+    const result = await prisma.tasks.updateMany({
       where: { id: { in: validated.taskIds } },
       data: {
         assignedToId: validated.assigneeId,
@@ -192,7 +192,7 @@ export async function bulkUpdateTaskPriority(input: unknown) {
     const validated = BulkUpdatePrioritySchema.parse(input);
 
     // Verify user has access to all tasks
-    const tasks = await prisma.task.findMany({
+    const tasks = await prisma.tasks.findMany({
       where: {
         id: { in: validated.taskIds },
         project: { organizationId },
@@ -208,7 +208,7 @@ export async function bulkUpdateTaskPriority(input: unknown) {
     }
 
     // Bulk update
-    const result = await prisma.task.updateMany({
+    const result = await prisma.tasks.updateMany({
       where: { id: { in: validated.taskIds } },
       data: {
         priority: validated.priority,
@@ -261,7 +261,7 @@ export async function bulkDeleteTasks(input: unknown) {
     const validated = BulkDeleteTasksSchema.parse(input);
 
     // Verify user has access to all tasks
-    const tasks = await prisma.task.findMany({
+    const tasks = await prisma.tasks.findMany({
       where: {
         id: { in: validated.taskIds },
         project: { organizationId },
@@ -277,7 +277,7 @@ export async function bulkDeleteTasks(input: unknown) {
     }
 
     // Bulk delete
-    const result = await prisma.task.deleteMany({
+    const result = await prisma.tasks.deleteMany({
       where: { id: { in: validated.taskIds } },
     });
 

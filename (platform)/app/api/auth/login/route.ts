@@ -63,7 +63,7 @@ export async function POST(request: NextRequest) {
         data: {
           email: data.user.email!,
           name: data.user.user_metadata?.full_name || email.split('@')[0],
-          avatarUrl: data.user.user_metadata?.avatar_url,
+          avatar_url: data.user.user_metadata?.avatar_url,
         },
       });
     }

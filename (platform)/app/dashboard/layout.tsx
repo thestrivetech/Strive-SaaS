@@ -2,7 +2,7 @@ import { redirect } from 'next/navigation';
 import { requireAuth, getCurrentUser } from '@/lib/auth/auth-helpers';
 import { getNavigationItems } from '@/lib/auth/rbac';
 import { UserRole } from '@/lib/auth/constants';
-import { DashboardShell } from '@/components/(platform)/layouts/dashboard-shell';
+import DashboardShell from '@/components/(platform)/layouts/dashboard-shell';
 
 // Force dynamic rendering to prevent caching issues
 export const dynamic = 'force-dynamic';

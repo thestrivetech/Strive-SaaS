@@ -16,7 +16,7 @@ import { TaskFilters } from './schemas';
 /**
  * Type for task with assignee details
  */
-export type TaskWithAssignee = Prisma.TaskGetPayload<{
+export type TaskWithAssignee = Prisma.tasksGetPayload<{
   include: {
     assignedTo: {
       select: {
@@ -32,7 +32,7 @@ export type TaskWithAssignee = Prisma.TaskGetPayload<{
 /**
  * Type for task with full details (assignee + project + customer)
  */
-export type TaskWithDetails = Prisma.TaskGetPayload<{
+export type TaskWithDetails = Prisma.tasksGetPayload<{
   include: {
     assignedTo: {
       select: {
@@ -61,7 +61,7 @@ export type TaskWithDetails = Prisma.TaskGetPayload<{
 /**
  * Type for task with project info
  */
-export type TaskWithProject = Prisma.TaskGetPayload<{
+export type TaskWithProject = Prisma.tasksGetPayload<{
   include: {
     assignedTo: {
       select: {
@@ -117,7 +117,7 @@ export async function getTasks(
       ];
     }
 
-    const tasks = await prisma.tasks.findMany({
+    const tasks = await prisma.taskss.findMany({
       where,
       include: {
         assignedTo: {
@@ -178,7 +178,7 @@ export async function getTasksCount(
       ];
     }
 
-    return await prisma.tasks.count({ where });
+    return await prisma.taskss.count({ where });
   });
 }
 
@@ -192,7 +192,7 @@ export async function getTaskById(
   taskId: string
 ): Promise<TaskWithDetails | null> {
   return withTenantContext(async () => {
-    const task = await prisma.tasks.findFirst({
+    const task = await prisma.taskss.findFirst({
       where: {
         id: taskId,
       },
@@ -236,27 +236,27 @@ export async function getTaskStats(projectId: string) {
     const [totalTasks, todoTasks, inProgressTasks, reviewTasks, doneTasks, overdueTasks] =
       await Promise.all([
         // Total tasks
-        prisma.tasks.count({
+        prisma.taskss.count({
           where: { projectId },
         }),
         // TODO tasks
-        prisma.tasks.count({
+        prisma.taskss.count({
           where: { projectId, status: TaskStatus.TODO },
         }),
         // In Progress tasks
-        prisma.tasks.count({
+        prisma.taskss.count({
           where: { projectId, status: TaskStatus.IN_PROGRESS },
         }),
         // In Review tasks
-        prisma.tasks.count({
+        prisma.taskss.count({
           where: { projectId, status: TaskStatus.REVIEW },
         }),
         // Done tasks
-        prisma.tasks.count({
+        prisma.taskss.count({
           where: { projectId, status: TaskStatus.DONE },
         }),
         // Overdue tasks (not done and due date in the past)
-        prisma.tasks.count({
+        prisma.taskss.count({
           where: {
             projectId,
             status: { notIn: [TaskStatus.DONE, TaskStatus.CANCELLED] },
@@ -312,7 +312,7 @@ export async function getUserTasks(
       ];
     }
 
-    const tasks = await prisma.tasks.findMany({
+    const tasks = await prisma.taskss.findMany({
       where,
       include: {
         assignedTo: {

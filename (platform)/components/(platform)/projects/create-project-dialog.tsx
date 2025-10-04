@@ -33,14 +33,14 @@ import { Textarea } from '@/components/ui/textarea';
 import { Button } from '@/components/ui/button';
 import { createProject } from '@/lib/modules/projects/actions';
 import { createProjectSchema, type CreateProjectInput } from '@/lib/modules/projects/schemas';
-import { ProjectStatus, Priority, type Customer, type User } from '@prisma/client';
+import { ProjectStatus, Priority, type customers, type users } from '@prisma/client';
 import { Plus, Loader2 } from 'lucide-react';
 import { toast } from 'sonner';
 
 interface CreateProjectDialogProps {
   organizationId: string;
-  customers?: Pick<Customer, 'id' | 'name'>[];
-  teamMembers?: Pick<User, 'id' | 'name'>[];
+  customers?: Pick<customers, 'id' | 'name'>[];
+  teamMembers?: Pick<users, 'id' | 'name'>[];
   children?: React.ReactNode;
 }
 
