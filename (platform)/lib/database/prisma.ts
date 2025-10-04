@@ -39,13 +39,13 @@ import { tenantIsolationExtension } from './prisma-middleware';
  */
 
 const globalForPrisma = globalThis as unknown as {
-  prisma: PrismaClient | undefined;
+  prisma: ReturnType<typeof createPrismaClient> | undefined;
 };
 
 /**
  * Create and configure Prisma Client
  */
-function createPrismaClient(): PrismaClient {
+function createPrismaClient() {
   const client = new PrismaClient({
     log: [
       {

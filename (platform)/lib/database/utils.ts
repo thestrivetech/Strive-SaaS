@@ -77,13 +77,13 @@ export async function withTenantContext<T>(
 ): Promise<T> {
   const user = await getCurrentUser();
 
-  if (!user || !user.organizationMembers || user.organizationMembers.length === 0) {
+  if (!user || !user.organization_members || user.organization_members.length === 0) {
     throw new Error('User must be authenticated and belong to an organization');
   }
 
   // Set tenant context
   setTenantContext({
-    organizationId: user.organizationMembers[0].organizationId,
+    organizationId: user.organization_members[0].organization_id,
     userId: user.id,
   });
 
@@ -393,7 +393,7 @@ export function getCurrentTenantContext() {
 export async function transaction<T extends readonly unknown[]>(
   operations: [...T]
 ): Promise<T> {
-  return await prisma.$transaction(operations as never);
+  return (await prisma.$transaction(operations as never)) as unknown as T;
 }
 
 /**

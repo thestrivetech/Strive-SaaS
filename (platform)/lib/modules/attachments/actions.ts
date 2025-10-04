@@ -75,19 +75,19 @@ export async function uploadAttachment(formData: FormData) {
     }
 
     // Create attachment record in database
-    const attachment = await prisma.attachment.create({
+    const attachment = await prisma.attachments.create({
       data: {
-        fileName: validated.fileName,
-        fileSize: validated.fileSize,
-        mimeType: validated.mimeType,
-        filePath: uploadData.path,
-        entityType: validated.entityType,
-        entityId: validated.entityId,
-        organizationId,
-        uploadedById: user.id,
+        file_name: validated.fileName,
+        file_size: validated.fileSize,
+        mime_type: validated.mimeType,
+        file_path: uploadData.path,
+        entity_type: validated.entityType,
+        entity_id: validated.entityId,
+        organization_id: organizationId,
+        uploaded_by_id: user.id,
       },
       include: {
-        uploadedBy: {
+        uploaded_by: {
           select: {
             id: true,
             name: true,
@@ -98,14 +98,14 @@ export async function uploadAttachment(formData: FormData) {
     });
 
     // Log activity
-    await prisma.activityLog.create({
+    await prisma.activity_logs.create({
       data: {
-        userId: user.id,
-        organizationId,
+        user_id: user.id,
+        organization_id: organizationId,
         action: 'CREATE',
-        resourceType: 'Attachment',
-        resourceId: attachment.id,
-        newData: {
+        resource_type: 'Attachment',
+        resource_id: attachment.id,
+        new_data: {
           description: `Uploaded file "${validated.fileName}" to ${entityType}`,
           fileName: validated.fileName,
         } as Prisma.JsonObject,
@@ -135,10 +135,10 @@ export async function deleteAttachment(input: unknown) {
     const validated = deleteAttachmentSchema.parse(input);
 
     // Verify ownership and get attachment details
-    const attachment = await prisma.attachment.findFirst({
+    const attachment = await prisma.attachments.findFirst({
       where: {
         id: validated.attachmentId,
-        organizationId,
+        organization_id: organizationId,
       },
     });
 
@@ -162,7 +162,7 @@ export async function deleteAttachment(input: unknown) {
 
     const { error: storageError } = await supabase.storage
       .from('attachments')
-      .remove([attachment.filePath]);
+      .remove([attachment.file_path]);
 
     if (storageError) {
       console.error('Supabase delete error:', storageError);
@@ -170,21 +170,21 @@ export async function deleteAttachment(input: unknown) {
     }
 
     // Delete attachment record
-    await prisma.attachment.delete({
+    await prisma.attachments.delete({
       where: { id: validated.attachmentId },
     });
 
     // Log activity
-    await prisma.activityLog.create({
+    await prisma.activity_logs.create({
       data: {
-        userId: user.id,
-        organizationId,
+        user_id: user.id,
+        organization_id: organizationId,
         action: 'DELETE',
-        resourceType: 'Attachment',
-        resourceId: attachment.id,
-        oldData: {
-          description: `Deleted file "${attachment.fileName}"`,
-          fileName: attachment.fileName,
+        resource_type: 'Attachment',
+        resource_id: attachment.id,
+        old_data: {
+          description: `Deleted file "${attachment.file_name}"`,
+          fileName: attachment.file_name,
         } as Prisma.JsonObject,
       },
     });
@@ -211,10 +211,10 @@ export async function getAttachmentUrl(attachmentId: string) {
     const organizationId = getUserOrganizationId(user);
 
     // Verify ownership
-    const attachment = await prisma.attachment.findFirst({
+    const attachment = await prisma.attachments.findFirst({
       where: {
         id: attachmentId,
-        organizationId,
+        organization_id: organizationId,
       },
     });
 
@@ -238,7 +238,7 @@ export async function getAttachmentUrl(attachmentId: string) {
 
     const { data, error } = await supabase.storage
       .from('attachments')
-      .createSignedUrl(attachment.filePath, 3600); // 1 hour expiry
+      .createSignedUrl(attachment.file_path, 3600); // 1 hour expiry
 
     if (error) {
       console.error('Supabase signed URL error:', error);
@@ -249,8 +249,8 @@ export async function getAttachmentUrl(attachmentId: string) {
       success: true,
       data: {
         url: data.signedUrl,
-        fileName: attachment.fileName,
-        mimeType: attachment.mimeType,
+        fileName: attachment.file_name,
+        mimeType: attachment.mime_type,
       },
     };
   } catch (error) {
@@ -273,14 +273,14 @@ export async function getAttachments(input: unknown) {
     const organizationId = getUserOrganizationId(user);
     const validated = getAttachmentsSchema.parse(input);
 
-    const attachments = await prisma.attachment.findMany({
+    const attachments = await prisma.attachments.findMany({
       where: {
-        organizationId,
-        entityType: validated.entityType,
-        entityId: validated.entityId,
+        organization_id: organizationId,
+        entity_type: validated.entityType,
+        entity_id: validated.entityId,
       },
       include: {
-        uploadedBy: {
+        uploaded_by: {
           select: {
             id: true,
             name: true,
@@ -289,7 +289,7 @@ export async function getAttachments(input: unknown) {
         },
       },
       orderBy: {
-        createdAt: 'desc',
+        created_at: 'desc',
       },
     });
 

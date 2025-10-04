@@ -12,57 +12,57 @@ export async function getDashboardStats(organizationId: string) {
   ] = await Promise.all([
     // Total customers
     prisma.customers.count({
-      where: { organizationId },
+      where: { organization_id: organizationId },
     }),
 
     // Total projects
     prisma.projects.count({
-      where: { organizationId },
+      where: { organization_id: organizationId },
     }),
 
     // Active projects
     prisma.projects.count({
       where: {
-        organizationId,
+        organization_id: organizationId,
         status: 'ACTIVE',
       },
     }),
 
     // Total tasks
-    prisma.task.count({
+    prisma.tasks.count({
       where: {
         project: {
-          organizationId,
+          organization_id: organizationId,
         },
       },
     }),
 
     // Completed tasks
-    prisma.task.count({
+    prisma.tasks.count({
       where: {
         project: {
-          organizationId,
+          organization_id: organizationId,
         },
         status: 'DONE',
       },
     }),
 
     // Team members
-    prisma.organizationMember.count({
-      where: { organizationId },
+    prisma.organization_members.count({
+      where: { organization_id: organizationId },
     }),
 
     // Recent activity (last 10 items)
     prisma.activity_logs.findMany({
-      where: { organizationId },
-      orderBy: { createdAt: 'desc' },
+      where: { organization_id: organizationId },
+      orderBy: { created_at: 'desc' },
       take: 10,
       include: {
-        user: {
+        users: {
           select: {
             name: true,
             email: true,
-            avatarUrl: true,
+            avatar_url: true,
           },
         },
       },
@@ -70,7 +70,7 @@ export async function getDashboardStats(organizationId: string) {
   ]);
 
   // Calculate revenue (simplified - you'd want more complex logic in production)
-  const organization = await prisma.organization.findUnique({
+  const organization = await prisma.organizations.findUnique({
     where: { id: organizationId },
     include: {
       subscription: true,
@@ -104,16 +104,16 @@ export async function getDashboardStats(organizationId: string) {
 
 export async function getActivityFeed(organizationId: string, limit: number = 20) {
   return prisma.activity_logs.findMany({
-    where: { organizationId },
-    orderBy: { createdAt: 'desc' },
+    where: { organization_id: organizationId },
+    orderBy: { created_at: 'desc' },
     take: limit,
     include: {
-      user: {
+      users: {
         select: {
           id: true,
           name: true,
           email: true,
-          avatarUrl: true,
+          avatar_url: true,
         },
       },
     },
@@ -129,27 +129,27 @@ export async function getActivityLogs(
   resourceId?: string,
   limit: number = 50
 ) {
-  const where: any = { organizationId };
+  const where: any = { organization_id: organizationId };
 
   if (resourceType) {
-    where.resourceType = resourceType;
+    where.resource_type = resourceType;
   }
 
   if (resourceId) {
-    where.resourceId = resourceId;
+    where.resource_id = resourceId;
   }
 
   return prisma.activity_logs.findMany({
     where,
-    orderBy: { createdAt: 'desc' },
+    orderBy: { created_at: 'desc' },
     take: limit,
     include: {
-      user: {
+      users: {
         select: {
           id: true,
           name: true,
           email: true,
-          avatarUrl: true,
+          avatar_url: true,
         },
       },
     },

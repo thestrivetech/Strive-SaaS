@@ -3,4 +3,4 @@
  * Re-export from the correct location
  */
 
-export { default } from '../../ai/ai-chat';
+export { AIChat as default } from '../../ai/ai-chat';

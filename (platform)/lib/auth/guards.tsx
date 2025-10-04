@@ -190,7 +190,7 @@ export async function RequireOrgPermission({
   }
 
   // Check if user is in an organization
-  const orgMembership = user.organizationMembers?.[0];
+  const orgMembership = user.organization_members?.[0];
 
   if (!orgMembership) {
     redirect('/onboarding/organization');
@@ -235,7 +235,7 @@ export async function RequireOrganization({ children }: GuardProps) {
     redirect(AUTH_ROUTES.LOGIN);
   }
 
-  if (!user.organizationMembers || user.organizationMembers.length === 0) {
+  if (!user.organization_members || user.organization_members.length === 0) {
     redirect('/onboarding/organization');
   }
 
@@ -283,7 +283,7 @@ export async function RequireTier({
     TIER_3: 3,
   };
 
-  const userTierLevel = tierOrder[user.subscriptionTier as keyof typeof tierOrder] || 0;
+  const userTierLevel = tierOrder[user.subscription_tier as keyof typeof tierOrder] || 0;
   const requiredTierLevel = tierOrder[tier];
 
   if (userTierLevel < requiredTierLevel) {

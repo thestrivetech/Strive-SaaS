@@ -51,7 +51,7 @@ export async function handlePlatformAuth(request: NextRequest): Promise<NextResp
 
   if (user && isAdminRoute) {
     const { prisma } = await import('@/lib/prisma');
-    const dbUser = await prisma.user.findUnique({
+    const dbUser = await prisma.users.findUnique({
       where: { email: user.email! },
       select: { role: true },
     });

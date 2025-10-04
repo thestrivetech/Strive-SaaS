@@ -52,7 +52,7 @@ export default async function SettingsPage() {
             <CardContent className="space-y-6">
               <div className="flex items-center gap-4">
                 <Avatar className="h-20 w-20">
-                  <AvatarImage src={user?.avatarUrl || undefined} />
+                  <AvatarImage src={user?.avatar_url || undefined} />
                   <AvatarFallback>
                     {user?.name?.substring(0, 2).toUpperCase() || 'US'}
                   </AvatarFallback>
@@ -194,15 +194,15 @@ export default async function SettingsPage() {
                 <div className="flex items-center justify-between">
                   <div>
                     <p className="font-semibold">
-                      {user?.subscriptionTier === 'FREE' ? 'Free Plan' :
-                       user?.subscriptionTier === 'BASIC' ? 'Basic Plan' :
-                       user?.subscriptionTier === 'PRO' ? 'Professional Plan' :
+                      {user?.subscription_tier === 'FREE' ? 'Free Plan' :
+                       user?.subscription_tier === 'BASIC' ? 'Basic Plan' :
+                       user?.subscription_tier === 'PRO' ? 'Professional Plan' :
                        'Enterprise Plan'}
                     </p>
                     <p className="text-sm text-muted-foreground">
-                      {user?.subscriptionTier === 'FREE' ? 'Basic features' :
-                       user?.subscriptionTier === 'BASIC' ? '$299/month • 3 tools' :
-                       user?.subscriptionTier === 'PRO' ? '$699/month • 10 tools' :
+                      {user?.subscription_tier === 'FREE' ? 'Basic features' :
+                       user?.subscription_tier === 'BASIC' ? '$299/month • 3 tools' :
+                       user?.subscription_tier === 'PRO' ? '$699/month • 10 tools' :
                        'Custom pricing • Unlimited tools'}
                     </p>
                   </div>

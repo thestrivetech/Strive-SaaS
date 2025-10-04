@@ -1,13 +1,13 @@
-import type { User, OrganizationMember, Organization } from '@prisma/client';
+import type { users, organization_members, organizations } from '@prisma/client';
 
 /**
  * User type with loaded organization member relationship
  * This type represents a user with their organization memberships eagerly loaded
  */
-export type UserWithOrganization = User & {
-  organizationMembers: Array<
-    OrganizationMember & {
-      organization: Organization;
+export type UserWithOrganization = users & {
+  organization_members: Array<
+    organization_members & {
+      organizations: organizations;
     }
   >;
 };
@@ -21,12 +21,12 @@ export type UserWithOrganization = User & {
  * @throws Error if user has no organization memberships
  */
 export function getUserOrganizationId(user: UserWithOrganization): string {
-  if (!user.organizationMembers || user.organizationMembers.length === 0) {
+  if (!user.organization_members || user.organization_members.length === 0) {
     throw new Error('User has no organization memberships');
   }
 
   // Return the first organization (primary)
-  return user.organizationMembers[0].organization.id;
+  return user.organization_members[0].organizations.id;
 }
 
 /**
@@ -36,12 +36,12 @@ export function getUserOrganizationId(user: UserWithOrganization): string {
  * @returns The primary organization
  * @throws Error if user has no organization memberships
  */
-export function getUserOrganization(user: UserWithOrganization): Organization {
-  if (!user.organizationMembers || user.organizationMembers.length === 0) {
+export function getUserOrganization(user: UserWithOrganization): organizations {
+  if (!user.organization_members || user.organization_members.length === 0) {
     throw new Error('User has no organization memberships');
   }
 
-  return user.organizationMembers[0].organization;
+  return user.organization_members[0].organizations;
 }
 
 /**
@@ -50,8 +50,8 @@ export function getUserOrganization(user: UserWithOrganization): Organization {
  * @param user - User with organization memberships loaded
  * @returns Array of all organizations the user is a member of
  */
-export function getUserOrganizations(user: UserWithOrganization): Organization[] {
-  return user.organizationMembers.map(member => member.organization);
+export function getUserOrganizations(user: UserWithOrganization): organizations[] {
+  return user.organization_members.map(member => member.organizations);
 }
 
 /**
@@ -65,7 +65,7 @@ export function userBelongsToOrganization(
   user: UserWithOrganization,
   organizationId: string
 ): boolean {
-  return user.organizationMembers.some(
-    member => member.organization.id === organizationId
+  return user.organization_members.some(
+    member => member.organizations.id === organizationId
   );
 }
