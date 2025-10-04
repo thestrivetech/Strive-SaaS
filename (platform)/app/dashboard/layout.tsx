@@ -26,7 +26,7 @@ export default async function DashboardLayout({
   // Get user's organization
   const userOrg = user.organization_members[0];
   if (!userOrg) {
-    redirect('/onboarding');
+    redirect('/onboarding/organization');
   }
 
   // Get navigation items based on user role

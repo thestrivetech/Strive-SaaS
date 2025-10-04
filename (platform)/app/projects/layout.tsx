@@ -26,7 +26,7 @@ export default async function ProjectsLayout({
   // Get user's organization
   const userOrg = user.organization_members[0];
   if (!userOrg) {
-    redirect('/onboarding');
+    redirect('/onboarding/organization');
   }
 
   // Check if user can access projects
