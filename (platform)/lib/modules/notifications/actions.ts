@@ -21,14 +21,14 @@ export async function createNotification(input: CreateNotificationInput) {
 
     const notification = await prisma.notifications.create({
       data: {
-        userId: validated.userId,
-        organizationId: validated.organizationId,
+        user_id: validated.userId,
+        organization_id: validated.organizationId,
         type: validated.type,
         title: validated.title,
         message: validated.message,
-        actionUrl: validated.actionUrl,
-        entityType: validated.entityType,
-        entityId: validated.entityId,
+        action_url: validated.actionUrl,
+        entity_type: validated.entityType,
+        entity_id: validated.entityId,
         read: false,
       },
     });
@@ -64,8 +64,8 @@ export async function markNotificationRead(input: unknown) {
     const notification = await prisma.notifications.findFirst({
       where: {
         id: validated.notificationId,
-        userId: user.id,
-        organizationId,
+        user_id: user.id,
+        organization_id: organizationId,
       },
     });
 
@@ -106,8 +106,8 @@ export async function markAllNotificationsRead() {
 
     const result = await prisma.notifications.updateMany({
       where: {
-        userId: user.id,
-        organizationId,
+        user_id: user.id,
+        organization_id: organizationId,
         read: false,
       },
       data: { read: true },
@@ -147,8 +147,8 @@ export async function bulkMarkNotificationsRead(input: unknown) {
     const notifications = await prisma.notifications.findMany({
       where: {
         id: { in: validated.notificationIds },
-        userId: user.id,
-        organizationId,
+        user_id: user.id,
+        organization_id: organizationId,
       },
       select: { id: true },
     });
@@ -201,8 +201,8 @@ export async function deleteNotification(input: unknown) {
     const notification = await prisma.notifications.findFirst({
       where: {
         id: validated.notificationId,
-        userId: user.id,
-        organizationId,
+        user_id: user.id,
+        organization_id: organizationId,
       },
     });
 

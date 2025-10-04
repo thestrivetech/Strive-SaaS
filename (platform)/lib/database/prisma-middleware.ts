@@ -118,10 +118,10 @@ export const tenantIsolationExtension = Prisma.defineExtension((client) =>
     name: 'tenantIsolation',
     query: {
       $allModels: {
-        async $allOperations({ args, query, model, operation }) {
+        async $allOperations({ args, query, model, operation }): Promise<any> {
           // Skip if no model
           if (!model) {
-            return query(args);
+            return (query as any)(args);
           }
 
           const isMultiTenant = isMultiTenantTable(model);
@@ -129,7 +129,7 @@ export const tenantIsolationExtension = Prisma.defineExtension((client) =>
 
           // Skip non-tenant tables
           if (!isMultiTenant && !isUserScoped) {
-            return query(args);
+            return query(args as any);
           }
 
           const context = getTenantContext();
@@ -153,13 +153,28 @@ export const tenantIsolationExtension = Prisma.defineExtension((client) =>
             throw new Error('User context required for this operation');
           }
 
+          // Type guard for args with 'where' property
+          const hasWhere = (args: any): args is { where?: any } => {
+            return readOperations.includes(operation) || writeOperations.includes(operation);
+          };
+
+          // Type guard for args with 'data' property
+          const hasData = (args: any): args is { data?: any } => {
+            return operation === 'create' || operation === 'createMany';
+          };
+
+          // Type guard for upsert args
+          const hasCreate = (args: any): args is { create?: any } => {
+            return operation === 'upsert';
+          };
+
           // Inject filters for read operations
-          if (readOperations.includes(operation)) {
-            const where = args.where || {};
+          if (readOperations.includes(operation) && hasWhere(args)) {
+            const where = (args.where as any) || {};
 
             if (isMultiTenant && context.organizationId) {
               // Add organization_id filter
-              args.where = {
+              (args as any).where = {
                 ...where,
                 organization_id: context.organizationId,
               };
@@ -167,8 +182,8 @@ export const tenantIsolationExtension = Prisma.defineExtension((client) =>
 
             if (isUserScoped && context.userId) {
               // Add user_id filter for user-scoped tables
-              args.where = {
-                ...args.where,
+              (args as any).where = {
+                ...(args as any).where,
                 user_id: context.userId,
               };
             }
@@ -180,21 +195,21 @@ export const tenantIsolationExtension = Prisma.defineExtension((client) =>
 
           // Inject organizationId for create operations
           if (createOperations.includes(operation) && isMultiTenant && context.organizationId) {
-            if (operation === 'create') {
-              args.data = {
-                ...args.data,
+            if (operation === 'create' && hasData(args)) {
+              (args as any).data = {
+                ...(args.data as any),
                 organization_id: context.organizationId,
               };
-            } else if (operation === 'createMany') {
+            } else if (operation === 'createMany' && hasData(args)) {
               if (Array.isArray(args.data)) {
-                args.data = args.data.map((item: any) => ({
+                (args as any).data = (args.data as any[]).map((item: any) => ({
                   ...item,
                   organization_id: context.organizationId,
                 }));
               }
-            } else if (operation === 'upsert') {
-              args.create = {
-                ...args.create,
+            } else if (operation === 'upsert' && hasCreate(args)) {
+              (args as any).create = {
+                ...(args.create as any),
                 organization_id: context.organizationId,
               };
             }
@@ -205,19 +220,19 @@ export const tenantIsolationExtension = Prisma.defineExtension((client) =>
           }
 
           // Inject filters for write operations
-          if (writeOperations.includes(operation)) {
-            const where = args.where || {};
+          if (writeOperations.includes(operation) && hasWhere(args)) {
+            const where = (args.where as any) || {};
 
             if (isMultiTenant && context.organizationId) {
-              args.where = {
+              (args as any).where = {
                 ...where,
                 organization_id: context.organizationId,
               };
             }
 
             if (isUserScoped && context.userId) {
-              args.where = {
-                ...args.where,
+              (args as any).where = {
+                ...(args as any).where,
                 user_id: context.userId,
               };
             }
@@ -227,7 +242,7 @@ export const tenantIsolationExtension = Prisma.defineExtension((client) =>
             }
           }
 
-          return query(args);
+          return query(args as any);
         },
       },
     },

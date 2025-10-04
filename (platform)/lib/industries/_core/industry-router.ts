@@ -85,13 +85,13 @@ export async function getOrganizationIndustries(
 
   const enabledModules = await prisma.organization_tool_configs.findMany({
     where: {
-      organizationId,
+      organization_id: organizationId,
       enabled: true,
     },
     select: {
       industry: true,
       settings: true,
-      enabledAt: true,
+      enabled_at: true,
     },
   });
 
@@ -130,8 +130,8 @@ export async function hasIndustryEnabled(
 
   const config = await prisma.organization_tool_configs.findFirst({
     where: {
-      organizationId,
-      industry: industryId,
+      organization_id: organizationId,
+      industry: industryId as any,
       enabled: true,
     },
   });
@@ -152,13 +152,13 @@ export async function validateIndustryAccess(
 
   // Get user's organization
   const member = await prisma.organization_members.findFirst({
-    where: { userId },
-    select: { organizationId: true },
+    where: { user_id: userId },
+    select: { organization_id: true },
   });
 
   if (!member) {
     return false;
   }
 
-  return hasIndustryEnabled(member.organizationId, industryId);
+  return hasIndustryEnabled(member.organization_id, industryId);
 }

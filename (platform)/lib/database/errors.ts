@@ -334,7 +334,8 @@ export async function safeTransaction<T>(
   try {
     // Import prisma inside function to avoid circular dependency
     const { prisma } = await import('./prisma');
-    return await prisma.$transaction(operation);
+    // Type assertion needed because extended client has different $transaction signature
+    return (await (prisma as any).$transaction(operation)) as T;
   } catch (error) {
     const dbError = handleDatabaseError(error);
     console.error('[Transaction Error]', dbError);

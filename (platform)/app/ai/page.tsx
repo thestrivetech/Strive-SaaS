@@ -18,7 +18,7 @@ export default async function AIPage() {
   const user = await getCurrentUser();
 
   // Get available models for user's subscription tier
-  const tier = (user?.subscriptionTier || 'FREE') as SubscriptionTier;
+  const tier = (user?.subscription_tier || 'FREE') as SubscriptionTier;
   const availableModels = getModelsForTier(tier);
 
   const aiFeatures = [
@@ -126,9 +126,9 @@ export default async function AIPage() {
         <CardContent>
           <div className="flex items-center justify-between">
             <div className="text-sm">
-              <p className="font-medium">Current Plan: {user?.subscriptionTier || 'FREE'}</p>
+              <p className="font-medium">Current Plan: {user?.subscription_tier || 'FREE'}</p>
               <p className="text-muted-foreground">
-                {user?.subscriptionTier === 'FREE'
+                {user?.subscription_tier === 'FREE'
                   ? 'Limited AI features available'
                   : 'Full AI access enabled'}
               </p>

@@ -24,7 +24,7 @@ export default async function CRMLayout({
   }
 
   // Get user's organization
-  const userOrg = user.organizationMembers[0];
+  const userOrg = user.organization_members[0];
   if (!userOrg) {
     redirect('/onboarding');
   }
@@ -44,11 +44,11 @@ export default async function CRMLayout({
         id: user.id,
         email: user.email,
         name: user.name || user.email,
-        avatarUrl: user.avatarUrl,
+        avatarUrl: user.avatar_url,
         role: user.role as UserRole,
-        subscriptionTier: user.subscriptionTier || 'FREE',
+        subscriptionTier: user.subscription_tier || 'FREE',
       }}
-      organizationId={userOrg.organizationId}
+      organizationId={userOrg.organization_id}
       navigationItems={navigationItems}
     >
       {children}

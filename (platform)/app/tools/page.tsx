@@ -20,7 +20,7 @@ import {
 
 export default async function ToolsPage() {
   const user = await getCurrentUser();
-  const toolLimit = getToolLimit(user?.subscriptionTier || 'FREE');
+  const toolLimit = getToolLimit(user?.subscription_tier || 'FREE');
 
   const tools = [
     {
@@ -141,9 +141,9 @@ export default async function ToolsPage() {
       'ENTERPRISE': 3,
     };
 
-    const userTierLevel = user?.subscriptionTier === 'BASIC' ? 1 :
-                          user?.subscriptionTier === 'PRO' ? 2 :
-                          user?.subscriptionTier === 'ENTERPRISE' ? 3 : 0;
+    const userTierLevel = user?.subscription_tier === 'BASIC' ? 1 :
+                          user?.subscription_tier === 'PRO' ? 2 :
+                          user?.subscription_tier === 'ENTERPRISE' ? 3 : 0;
 
     return tierLevels[toolTier] <= userTierLevel;
   };
@@ -163,7 +163,7 @@ export default async function ToolsPage() {
         <div className="text-right">
           <p className="text-sm font-medium">Your Plan</p>
           <p className="text-2xl font-bold text-primary">
-            {user?.subscriptionTier || 'FREE'}
+            {user?.subscription_tier || 'FREE'}
           </p>
           <p className="text-xs text-muted-foreground">
             {toolLimit === Infinity ? 'Unlimited' : toolLimit === 0 ? 'No' : toolLimit} tools available

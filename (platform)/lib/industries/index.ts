@@ -4,10 +4,11 @@
  * Central export for the industry-as-plugin system
  */
 
-// Core abstractions
-export * from './_core';
+// Core abstractions (types and base classes)
+export * from './_core/industry-config';
+export * from './_core/base-industry';
 
-// Registry
+// Registry functions (preferred over router functions)
 export * from './registry';
 
 // Individual industries will be exported here as they're created

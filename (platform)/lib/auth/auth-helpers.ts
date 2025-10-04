@@ -60,9 +60,9 @@ export const getCurrentUser = async (): Promise<UserWithOrganization | null> => 
         email: session.user.email!,
       },
       include: {
-        organizationMembers: {
+        organization_members: {
           include: {
-            organization: true,
+            organizations: true,
           },
         },
       },
@@ -106,11 +106,11 @@ export const requireOrganization = async () => {
     redirect(AUTH_ROUTES.LOGIN);
   }
 
-  if (!user.organizationMembers || user.organizationMembers.length === 0) {
+  if (!user.organization_members || user.organization_members.length === 0) {
     redirect('/onboarding/organization');
   }
 
-  return user.organizationMembers[0].organization;
+  return user.organization_members[0].organizations;
 };
 
 export async function signOut() {
