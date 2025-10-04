@@ -43,7 +43,7 @@
 - **Dual-Role RBAC** - Global + organization roles
 - **Subscription Tiers** - STARTER, GROWTH, ELITE, Custom, Enterprise
 - **Module Architecture** - Self-contained feature modules
-- **AI Integration** - Sai intelligent assistant project & AI agents that can be used in the SaaS app via tools (mulitple AI models will be used for different AI agents and workflows or automations that's selected or )
+- **AI Integration** - Embedded from the Chatbot project
 - **Tool Marketplace** - Installable add-on tools
 - **Stripe Integration** - Subscription billing and webhooks
 

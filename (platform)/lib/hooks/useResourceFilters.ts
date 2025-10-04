@@ -26,7 +26,7 @@ export function useResourceFilters(activeFilter: string) {
 
   // Generate subfilter options based on active filter
   const subFilterOptions = useMemo((): SubFilterOption[] => {
-    let options: SubFilterOption[] = [{ value: 'all', label: 'All Categories', count: 0 }];
+    const options: SubFilterOption[] = [{ value: 'all', label: 'All Categories', count: 0 }];
 
     const resourceList = activeFilter === "All"
       ? resources
