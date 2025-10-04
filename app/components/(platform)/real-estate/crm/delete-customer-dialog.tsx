@@ -12,8 +12,8 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
   AlertDialogTrigger,
-} from '@/components/(shared)/ui/alert-dialog';
-import { Button } from '@/components/(shared)/ui/button';
+} from '@/components/ui/alert-dialog';
+import { Button } from '@/components/ui/button';
 import { deleteCustomer } from '@/lib/modules/crm/actions';
 import { Loader2, Trash2 } from 'lucide-react';
 import { toast } from 'sonner';

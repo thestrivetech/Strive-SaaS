@@ -2,8 +2,8 @@
 
 import { Calendar, Eye, MessageCircle } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { Card, CardContent } from "@/components/(shared)/ui/card";
-import { Button } from "@/components/(shared)/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
 
 interface QuickActionsProps {
   onBrochureClick: () => void;

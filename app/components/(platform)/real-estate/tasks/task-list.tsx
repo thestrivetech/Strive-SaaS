@@ -4,14 +4,14 @@ import { useState } from 'react';
 import { TaskCard } from './task-card';
 import { EditTaskDialog } from './edit-task-dialog';
 import { TaskStatus } from '@prisma/client';
-import { Button } from '@/components/(shared)/ui/button';
+import { Button } from '@/components/ui/button';
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
   DropdownMenuSeparator,
-} from '@/components/(shared)/ui/dropdown-menu';
+} from '@/components/ui/dropdown-menu';
 import { MoreVertical, Pencil, Trash2, CheckCircle2, Clock, Users } from 'lucide-react';
 import { updateTaskStatus, deleteTask } from '@/lib/modules/tasks/actions';
 import { bulkUpdateTaskStatus, bulkDeleteTasks, bulkAssignTasks } from '@/lib/modules/tasks/bulk-actions';
@@ -26,8 +26,8 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
-} from '@/components/(shared)/ui/alert-dialog';
-import { BulkSelector, BulkSelectCheckbox, type BulkAction } from '@/components/(shared)/ui/bulk-selector';
+} from '@/components/ui/alert-dialog';
+import { BulkSelector, BulkSelectCheckbox, type BulkAction } from '@/components/ui/bulk-selector';
 import { useRealtimeTaskUpdates } from '@/lib/realtime/use-realtime';
 import type { TaskWithAssignee } from '@/lib/modules/tasks/queries';
 

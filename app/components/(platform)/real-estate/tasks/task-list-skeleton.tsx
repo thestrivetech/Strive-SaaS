@@ -1,5 +1,5 @@
-import { Skeleton } from '@/components/(shared)/ui/skeleton';
-import { Card } from '@/components/(shared)/ui/card';
+import { Skeleton } from '@/components/ui/skeleton';
+import { Card } from '@/components/ui/card';
 
 export function TaskListSkeleton({ groupByStatus = true }: { groupByStatus?: boolean }) {
   if (!groupByStatus) {

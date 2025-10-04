@@ -1,12 +1,12 @@
 "use client";
 
 import React, { useState, useCallback, useEffect } from "react";
-import { Label } from "@/components/(shared)/ui/label";
-import { Checkbox } from "@/components/(shared)/ui/checkbox";
-import { Input } from "@/components/(shared)/ui/input";
-import { Textarea } from "@/components/(shared)/ui/textarea";
+import { Label } from "@/components/ui/label";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
 import { Calendar } from "lucide-react";
-import { CalendlyFallback } from "@/components/(shared)/ui/calendly-fallback";
+import { CalendlyFallback } from "@/components/ui/calendly-fallback";
 import type { CalendlyStatus } from "@/hooks/useCalendlyIntegration";
 
 interface DemoStepProps {

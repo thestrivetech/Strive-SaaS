@@ -1,9 +1,9 @@
 "use client";
 
-import { Input } from "@/components/(shared)/ui/input";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/(shared)/ui/select";
-import { Checkbox } from "@/components/(shared)/ui/checkbox";
-import { Textarea } from "@/components/(shared)/ui/textarea";
+import { Input } from "@/components/ui/input";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Textarea } from "@/components/ui/textarea";
 import { Users, Video, Phone, MapPin } from "lucide-react";
 
 interface ContactStepProps {

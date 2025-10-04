@@ -1,13 +1,13 @@
 'use client';
 
 import { useState } from 'react';
-import { Button } from '@/components/(shared)/ui/button';
+import { Button } from '@/components/ui/button';
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from '@/components/(shared)/ui/dropdown-menu';
+} from '@/components/ui/dropdown-menu';
 import { Download, FileSpreadsheet, Loader2 } from 'lucide-react';
 import { generateCSV, downloadCSV, type CSVColumn } from '@/lib/export/csv';
 import { toast } from 'sonner';

@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { Filter } from 'lucide-react';
-import { Button } from '@/components/(shared)/ui/button';
+import { Button } from '@/components/ui/button';
 import {
   Sheet,
   SheetContent,
@@ -12,11 +12,11 @@ import {
   SheetHeader,
   SheetTitle,
   SheetTrigger,
-} from '@/components/(shared)/ui/sheet';
+} from '@/components/ui/sheet';
 import { CustomerStatus, CustomerSource } from '@prisma/client';
-import { Badge } from '@/components/(shared)/ui/badge';
-import { MultiSelect } from '@/components/(shared)/ui/multi-select';
-import { DateRangePicker } from '@/components/(shared)/ui/date-range-picker';
+import { Badge } from '@/components/ui/badge';
+import { MultiSelect } from '@/components/ui/multi-select';
+import { DateRangePicker } from '@/components/ui/date-range-picker';
 
 export function CustomerFilters() {
   const router = useRouter();

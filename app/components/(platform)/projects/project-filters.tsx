@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { Button } from '@/components/(shared)/ui/button';
+import { Button } from '@/components/ui/button';
 import {
   Sheet,
   SheetContent,
@@ -11,18 +11,18 @@ import {
   SheetHeader,
   SheetTitle,
   SheetTrigger,
-} from '@/components/(shared)/ui/sheet';
-import { Badge } from '@/components/(shared)/ui/badge';
+} from '@/components/ui/sheet';
+import { Badge } from '@/components/ui/badge';
 import { Filter } from 'lucide-react';
-import { MultiSelect } from '@/components/(shared)/ui/multi-select';
-import { DateRangePicker } from '@/components/(shared)/ui/date-range-picker';
+import { MultiSelect } from '@/components/ui/multi-select';
+import { DateRangePicker } from '@/components/ui/date-range-picker';
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/components/(shared)/ui/select';
+} from '@/components/ui/select';
 import { ProjectStatus, Priority } from '@prisma/client';
 
 interface ProjectFiltersProps {

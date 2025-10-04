@@ -4,8 +4,8 @@ import { useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Menu, Home, Cpu, FolderOpen, BookOpen, Building, Mail } from "lucide-react";
-import { Button } from "@/components/(shared)/ui/button";
-import { Sheet, SheetContent, SheetTrigger } from "@/components/(shared)/ui/sheet";
+import { Button } from "@/components/ui/button";
+import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import Image from "next/image";
 // Updated for Next.js public directory (Session 16)
 const logoImage = "/assets/logos/strive_logo.webp";

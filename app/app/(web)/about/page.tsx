@@ -1,8 +1,8 @@
 "use client";
 
 import { Target, Eye, Heart } from "lucide-react";
-import { Card, CardContent } from "@/components/(shared)/ui/card";
-import { Button } from "@/components/(shared)/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
 import { VisionTimeline } from "@/components/(web)/about/VisionTimeline";
 import { CompanyStory } from "@/components/(web)/about/CompanyStory";
 import { TeamCarousel } from "@/components/(web)/about/TeamCarousel";

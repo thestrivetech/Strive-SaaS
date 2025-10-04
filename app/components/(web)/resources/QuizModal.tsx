@@ -2,8 +2,8 @@
 
 import { useState } from "react";
 import { X, Play, CheckCircle, AlertCircle } from "lucide-react";
-import { Button } from "@/components/(shared)/ui/button";
-import { Dialog, DialogContent, DialogTitle, DialogDescription } from "@/components/(shared)/ui/dialog";
+import { Button } from "@/components/ui/button";
+import { Dialog, DialogContent, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import * as DialogPrimitive from "@radix-ui/react-dialog";
 import { cn } from "@/lib/utils";
 import { useRouter } from "next/navigation";

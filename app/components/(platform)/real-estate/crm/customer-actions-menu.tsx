@@ -9,8 +9,8 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from '@/components/(shared)/ui/dropdown-menu';
-import { Button } from '@/components/(shared)/ui/button';
+} from '@/components/ui/dropdown-menu';
+import { Button } from '@/components/ui/button';
 import { EditCustomerDialog } from './edit-customer-dialog';
 import { DeleteCustomerDialog } from './delete-customer-dialog';
 import type { Customer } from '@prisma/client';

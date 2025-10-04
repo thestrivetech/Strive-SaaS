@@ -1,6 +1,6 @@
 import { Building2, TrendingUp, Shield, BarChart3, DollarSign, CreditCard } from "lucide-react";
-import { Card, CardContent } from "@/components/(shared)/ui/card";
-import { Button } from "@/components/(shared)/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
 import Link from "next/link";
 
 const Financial = () => {

@@ -2,11 +2,11 @@
 
 import { useState } from "react";
 import { Users } from "lucide-react";
-import { Button } from "@/components/(shared)/ui/button";
-import { Input } from "@/components/(shared)/ui/input";
-import { Textarea } from "@/components/(shared)/ui/textarea";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/(shared)/ui/select";
-import { Checkbox } from "@/components/(shared)/ui/checkbox";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Checkbox } from "@/components/ui/checkbox";
 import { validatePhone } from "@/lib/validation";
 import { useToast } from "@/hooks/use-toast";
 

@@ -1,6 +1,6 @@
 import { Laptop, Code2, Cloud, Zap, GitBranch, Server, Database, Network, Brain, Bot, Workflow, Globe, Shield, Cpu } from "lucide-react";
-import { Card, CardContent } from "@/components/(shared)/ui/card";
-import { Button } from "@/components/(shared)/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
 import Link from "next/link";
 
 const Technology = () => {

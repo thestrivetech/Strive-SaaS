@@ -13,9 +13,9 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
-} from '@/components/(shared)/ui/sidebar';
-import { Button } from '@/components/(shared)/ui/button';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/(shared)/ui/avatar';
+} from '@/components/ui/sidebar';
+import { Button } from '@/components/ui/button';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { UserRole } from '@/lib/auth/constants';
 import {
   LayoutDashboard,
@@ -35,7 +35,7 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from '@/components/(shared)/ui/dropdown-menu';
+} from '@/components/ui/dropdown-menu';
 
 const iconMap = {
   LayoutDashboard,

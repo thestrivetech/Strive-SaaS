@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { SidebarProvider } from '@/components/(shared)/ui/sidebar';
+import { SidebarProvider } from '@/components/ui/sidebar';
 import { MainSidebar } from './sidebar/main-sidebar';
 import { Topbar } from './topbar/topbar';
 import { UserRole } from '@/lib/auth/constants';

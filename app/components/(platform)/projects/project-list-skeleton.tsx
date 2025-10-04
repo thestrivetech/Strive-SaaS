@@ -1,5 +1,5 @@
-import { Skeleton } from '@/components/(shared)/ui/skeleton';
-import { Card, CardContent, CardHeader } from '@/components/(shared)/ui/card';
+import { Skeleton } from '@/components/ui/skeleton';
+import { Card, CardContent, CardHeader } from '@/components/ui/card';
 
 export function ProjectListSkeleton({ count = 6 }: { count?: number }) {
   return (

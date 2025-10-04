@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { ChevronRight, FileText, Download, X, Menu, ChevronUp } from 'lucide-react';
-import { Button } from '@/components/(shared)/ui/button';
-import { Badge } from '@/components/(shared)/ui/badge';
+import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
 import { cn } from '@/lib/utils';
 import { Resource } from '@/data/(web)/resources/types';
 import * as DialogPrimitive from '@radix-ui/react-dialog';

@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
-import { Button } from "@/components/(shared)/ui/button";
-import { Card } from "@/components/(shared)/ui/card";
+import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
 import { X, Shield, BarChart3, Eye } from "lucide-react";
 import { analytics } from "@/lib/analytics/analytics-tracker";
 

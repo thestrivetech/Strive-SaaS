@@ -1,5 +1,5 @@
-import { Skeleton } from '@/components/(shared)/ui/skeleton';
-import { Card, CardContent, CardHeader } from '@/components/(shared)/ui/card';
+import { Skeleton } from '@/components/ui/skeleton';
+import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import {
   Table,
   TableBody,
@@ -7,7 +7,7 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from '@/components/(shared)/ui/table';
+} from '@/components/ui/table';
 
 export function CustomerListSkeleton({ rows = 5 }: { rows?: number }) {
   return (

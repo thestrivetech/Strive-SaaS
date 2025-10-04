@@ -1,8 +1,8 @@
 'use client';
 
 import { Menu, Search, User, Settings, LogOut } from 'lucide-react';
-import { Button } from '@/components/(shared)/ui/button';
-import { Input } from '@/components/(shared)/ui/input';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -10,7 +10,7 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from '@/components/(shared)/ui/dropdown-menu';
+} from '@/components/ui/dropdown-menu';
 import { UserRole } from '@/lib/auth/constants';
 import { signOutAction } from '@/lib/auth/actions';
 import { NotificationDropdown } from '@/components/(platform)/shared/navigation/notification-dropdown';

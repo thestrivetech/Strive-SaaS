@@ -1,16 +1,16 @@
 'use client';
 
 import { useState, useRef, useEffect } from 'react';
-import { Button } from '@/components/(shared)/ui/button';
-import { Textarea } from '@/components/(shared)/ui/textarea';
-import { Badge } from '@/components/(shared)/ui/badge';
+import { Button } from '@/components/ui/button';
+import { Textarea } from '@/components/ui/textarea';
+import { Badge } from '@/components/ui/badge';
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/components/(shared)/ui/select';
+} from '@/components/ui/select';
 import { MessageBubble } from './message-bubble';
 import { TypingIndicator } from './typing-indicator';
 import { sendMessage } from '@/lib/modules/ai/actions';

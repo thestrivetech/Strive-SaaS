@@ -12,7 +12,7 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from '@/components/(shared)/ui/dialog';
+} from '@/components/ui/dialog';
 import {
   Form,
   FormControl,
@@ -20,17 +20,17 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from '@/components/(shared)/ui/form';
+} from '@/components/ui/form';
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/components/(shared)/ui/select';
-import { Input } from '@/components/(shared)/ui/input';
-import { Textarea } from '@/components/(shared)/ui/textarea';
-import { Button } from '@/components/(shared)/ui/button';
+} from '@/components/ui/select';
+import { Input } from '@/components/ui/input';
+import { Textarea } from '@/components/ui/textarea';
+import { Button } from '@/components/ui/button';
 import { updateProject } from '@/lib/modules/projects/actions';
 import { updateProjectSchema, type UpdateProjectInput } from '@/lib/modules/projects/schemas';
 import { ProjectStatus, Priority } from '@prisma/client';

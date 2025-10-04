@@ -2,8 +2,8 @@
 
 import { useState } from 'react';
 import { Loader2, Download, Trash2, FileIcon, ImageIcon, FileText, FileSpreadsheet } from 'lucide-react';
-import { Button } from '@/components/(shared)/ui/button';
-import { FileUpload } from '@/components/(shared)/ui/file-upload';
+import { Button } from '@/components/ui/button';
+import { FileUpload } from '@/components/ui/file-upload';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -14,7 +14,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
   AlertDialogTrigger,
-} from '@/components/(shared)/ui/alert-dialog';
+} from '@/components/ui/alert-dialog';
 import { uploadAttachment, deleteAttachment, getAttachmentUrl } from '@/lib/modules/attachments';
 import { toast } from 'sonner';
 
