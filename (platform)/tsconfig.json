@@ -32,7 +32,7 @@
     "**/*.ts",
     "**/*.tsx",
     ".next/types/**/*.ts"
-  ],
+, "../(chatbot)/hooks/use-chat.ts", "../(chatbot)/hooks/use-chat-helpers.ts", "../(chatbot)/app/services/rentcast-service.ts"  ],
   "exclude": [
     "node_modules"
   ]

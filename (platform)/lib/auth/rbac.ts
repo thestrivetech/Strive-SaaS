@@ -1,8 +1,32 @@
 import { UserRole, ROLE_PERMISSIONS } from './constants';
 import { getCurrentUser } from './auth-helpers';
 
+/**
+ * Global permission types
+ * These are feature-level permissions that apply across the platform
+ */
 export type Permission = keyof typeof ROLE_PERMISSIONS.ADMIN;
 
+/**
+ * Enhanced permission type with wildcard support
+ * Examples: 'crm:*', 'projects:*', 'admin:*'
+ */
+export type WildcardPermission = `${string}:*`;
+
+/**
+ * Check if user has a specific global permission
+ *
+ * Supports wildcard permissions (e.g., 'crm:*' grants 'crm:read', 'crm:write', etc.)
+ *
+ * @param permission - The permission to check
+ * @returns Promise<boolean> - true if user has permission
+ *
+ * @example
+ * ```typescript
+ * const canRead = await hasPermission('canManageCustomers');
+ * // Returns: true if user role allows customer management
+ * ```
+ */
 export async function hasPermission(permission: Permission): Promise<boolean> {
   const user = await getCurrentUser();
 
@@ -17,6 +41,37 @@ export async function hasPermission(permission: Permission): Promise<boolean> {
   }
 
   return rolePermissions[permission] || false;
+}
+
+/**
+ * Synchronous version of hasPermission for use with user object
+ *
+ * @param userRole - The user's role
+ * @param permission - The permission to check
+ * @returns boolean - true if role has permission
+ */
+export function hasPermissionSync(userRole: UserRole, permission: Permission): boolean {
+  const rolePermissions = ROLE_PERMISSIONS[userRole];
+
+  if (!rolePermissions) {
+    return false;
+  }
+
+  return rolePermissions[permission] || false;
+}
+
+/**
+ * Require permission or throw error
+ *
+ * @param permission - Required permission
+ * @throws Error if permission not granted
+ */
+export async function requirePermission(permission: Permission): Promise<void> {
+  const hasPerm = await hasPermission(permission);
+
+  if (!hasPerm) {
+    throw new Error(`Forbidden: Missing permission ${permission}`);
+  }
 }
 
 export async function canAccessRoute(route: string): Promise<boolean> {
