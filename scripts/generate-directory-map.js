@@ -20,6 +20,7 @@ const path = require('path');
 
 const ROOT_DIR = path.resolve(__dirname, '..');
 const OUTPUT_TXT = path.join(ROOT_DIR, 'project-directory-map.txt');
+const OUTPUT_JSON = path.join(ROOT_DIR, 'project-directory-map.json');
 
 // Directories to always exclude
 const EXCLUDE_DIRS = new Set([
@@ -35,6 +36,10 @@ const EXCLUDE_DIRS = new Set([
   '.turbo',
   '.claude',
   '.serena',
+  'docs',
+  'doc',
+  'archive',
+  'archives',
 ]);
 
 // Files to always exclude
@@ -84,8 +89,15 @@ function shouldExclude(itemPath, isDirectory) {
   if (EXCLUDE_EXTENSIONS.has(ext)) return true;
 
   // Exclude hidden files (except .gitignore, .env.example)
-  if (name.startsWith('.') && !['gitignore', '.env.example'].includes(name)) {
+  if (name.startsWith('.') && !['.gitignore', '.env.example'].includes(name)) {
     return true;
+  }
+
+  // Exclude all .md files EXCEPT CLAUDE.md and README.md (case-insensitive)
+  if (ext === '.md') {
+    const nameUpper = name.toUpperCase();
+    const isAllowed = nameUpper === 'CLAUDE.MD' || nameUpper === 'README.MD';
+    if (!isAllowed) return true;
   }
 
   return false;

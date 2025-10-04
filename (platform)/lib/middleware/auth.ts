@@ -39,6 +39,7 @@ export async function handlePlatformAuth(request: NextRequest): Promise<NextResp
     path.startsWith('/ai') ||
     path.startsWith('/tools') ||
     path.startsWith('/settings') ||
+    path.startsWith('/onboarding') ||
     isAdminRoute;
 
   if (!user && isProtectedRoute) {

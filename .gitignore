@@ -76,5 +76,6 @@ archive/app-backup/.vercel/project.json
 .vercel/package.json
 
 .claude/
+.claude/settings.local.json
 .serena/
 (platform)/.env.test
