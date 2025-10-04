@@ -20,7 +20,6 @@ const path = require('path');
 
 const ROOT_DIR = path.resolve(__dirname, '..');
 const OUTPUT_TXT = path.join(ROOT_DIR, 'project-directory-map.txt');
-const OUTPUT_JSON = path.join(ROOT_DIR, 'project-directory-map.json');
 
 // Directories to always exclude
 const EXCLUDE_DIRS = new Set([
