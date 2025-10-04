@@ -231,7 +231,7 @@ export default async function ProjectDetailPage({
                 <TaskList
                   tasks={tasks.map((task) => ({
                     ...task,
-                    estimatedHours: task.estimatedHours ? Number(task.estimatedHours) : null,
+                    estimatedHours: task.estimated_hours ? Number(task.estimated_hours) : null,
                     priority: task.priority as any,
                   })) as any}
                   projectId={project.id}
@@ -260,10 +260,10 @@ export default async function ProjectDetailPage({
                 projectId={project.id}
                 initialAttachments={attachments.map((att: AttachmentWithUser) => ({
                   id: att.id,
-                  fileName: att.fileName,
-                  fileSize: att.fileSize,
-                  mimeType: att.mimeType,
-                  createdAt: att.createdAt,
+                  fileName: att.file_name,
+                  fileSize: att.file_size,
+                  mimeType: att.mime_type,
+                  createdAt: att.created_at,
                   uploadedBy: {
                     id: att.uploadedBy.id,
                     name: att.uploadedBy.name,

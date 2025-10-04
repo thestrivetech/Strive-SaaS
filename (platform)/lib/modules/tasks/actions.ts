@@ -44,7 +44,7 @@ export async function createTask(input: CreateTaskInput) {
   }
 
   // Get the max position for this project to add task at the end
-  const maxPosition = await prisma.task.aggregate({
+  const maxPosition = await prisma.tasks.aggregate({
     where: { projectId: validated.projectId },
     _max: { position: true },
   });
@@ -52,7 +52,7 @@ export async function createTask(input: CreateTaskInput) {
   const position = (maxPosition._max.position || 0) + 1;
 
   // Create task
-  const task = await prisma.task.create({
+  const task = await prisma.tasks.create({
     data: {
       title: validated.title,
       description: validated.description || null,
@@ -101,7 +101,7 @@ export async function updateTask(input: UpdateTaskInput) {
   const validated = updateTaskSchema.parse(input);
 
   // Get existing task to check access
-  const existingTask = await prisma.task.findUnique({
+  const existingTask = await prisma.tasks.findUnique({
     where: { id: validated.id },
     include: {
       project: {
@@ -137,7 +137,7 @@ export async function updateTask(input: UpdateTaskInput) {
   if (validated.tags !== undefined) updateData.tags = validated.tags;
 
   // Update task
-  const task = await prisma.task.update({
+  const task = await prisma.tasks.update({
     where: { id: validated.id },
     data: updateData,
   });
@@ -182,7 +182,7 @@ export async function deleteTask(taskId: string) {
   }
 
   // Get task to check access
-  const task = await prisma.task.findUnique({
+  const task = await prisma.tasks.findUnique({
     where: { id: taskId },
     include: {
       project: {
@@ -206,7 +206,7 @@ export async function deleteTask(taskId: string) {
   }
 
   // Delete task
-  await prisma.task.delete({
+  await prisma.tasks.delete({
     where: { id: taskId },
   });
 
@@ -241,7 +241,7 @@ export async function updateTaskStatus(taskId: string, status: TaskStatus) {
   }
 
   // Get task to check access
-  const existingTask = await prisma.task.findUnique({
+  const existingTask = await prisma.tasks.findUnique({
     where: { id: taskId },
     include: {
       project: {
@@ -265,7 +265,7 @@ export async function updateTaskStatus(taskId: string, status: TaskStatus) {
   }
 
   // Update task status
-  const task = await prisma.task.update({
+  const task = await prisma.tasks.update({
     where: { id: taskId },
     data: { status },
   });
@@ -302,7 +302,7 @@ export async function assignTask(taskId: string, userId: string | null) {
   }
 
   // Get task to check access
-  const existingTask = await prisma.task.findUnique({
+  const existingTask = await prisma.tasks.findUnique({
     where: { id: taskId },
     include: {
       project: {
@@ -326,7 +326,7 @@ export async function assignTask(taskId: string, userId: string | null) {
   }
 
   // Update task assignment
-  const task = await prisma.task.update({
+  const task = await prisma.tasks.update({
     where: { id: taskId },
     data: { assignedToId: userId },
   });

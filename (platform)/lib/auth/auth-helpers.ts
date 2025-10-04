@@ -55,7 +55,7 @@ export const getCurrentUser = async (): Promise<UserWithOrganization | null> => 
   }
 
   try {
-    const user = await prisma.user.findUnique({
+    const user = await prisma.users.findUnique({
       where: {
         email: session.user.email!,
       },
@@ -139,17 +139,17 @@ export async function signIn(email: string, password: string) {
   }
 
   // Check if user exists in our database
-  const user = await prisma.user.findUnique({
+  const user = await prisma.users.findUnique({
     where: { email },
   });
 
   // If user doesn't exist in our database, create them
   if (!user && data.user) {
-    await prisma.user.create({
+    await prisma.users.create({
       data: {
         email: data.user.email!,
         name: data.user.user_metadata?.full_name || email.split('@')[0],
-        avatarUrl: data.user.user_metadata?.avatar_url,
+        avatar_url: data.user.user_metadata?.avatar_url,
       },
     });
   }
@@ -176,11 +176,11 @@ export async function signUp(email: string, password: string, name?: string) {
 
   // Create user in our database
   if (data.user) {
-    await prisma.user.create({
+    await prisma.users.create({
       data: {
         email: data.user.email!,
         name: name || email.split('@')[0],
-        avatarUrl: data.user.user_metadata?.avatar_url,
+        avatar_url: data.user.user_metadata?.avatar_url,
       },
     });
   }

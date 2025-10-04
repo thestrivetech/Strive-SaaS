@@ -19,7 +19,7 @@ export async function createNotification(input: CreateNotificationInput) {
   try {
     const validated = CreateNotificationSchema.parse(input);
 
-    const notification = await prisma.notification.create({
+    const notification = await prisma.notifications.create({
       data: {
         userId: validated.userId,
         organizationId: validated.organizationId,
@@ -61,7 +61,7 @@ export async function markNotificationRead(input: unknown) {
     const validated = MarkNotificationReadSchema.parse(input);
 
     // Verify ownership
-    const notification = await prisma.notification.findFirst({
+    const notification = await prisma.notifications.findFirst({
       where: {
         id: validated.notificationId,
         userId: user.id,
@@ -73,7 +73,7 @@ export async function markNotificationRead(input: unknown) {
       return { success: false, error: 'Notification not found' };
     }
 
-    await prisma.notification.update({
+    await prisma.notifications.update({
       where: { id: validated.notificationId },
       data: { read: true },
     });
@@ -104,7 +104,7 @@ export async function markAllNotificationsRead() {
 
     const organizationId = getUserOrganizationId(user);
 
-    const result = await prisma.notification.updateMany({
+    const result = await prisma.notifications.updateMany({
       where: {
         userId: user.id,
         organizationId,
@@ -144,7 +144,7 @@ export async function bulkMarkNotificationsRead(input: unknown) {
     const validated = BulkMarkReadSchema.parse(input);
 
     // Verify ownership of all notifications
-    const notifications = await prisma.notification.findMany({
+    const notifications = await prisma.notifications.findMany({
       where: {
         id: { in: validated.notificationIds },
         userId: user.id,
@@ -160,7 +160,7 @@ export async function bulkMarkNotificationsRead(input: unknown) {
       };
     }
 
-    const result = await prisma.notification.updateMany({
+    const result = await prisma.notifications.updateMany({
       where: {
         id: { in: validated.notificationIds },
       },
@@ -198,7 +198,7 @@ export async function deleteNotification(input: unknown) {
     const validated = DeleteNotificationSchema.parse(input);
 
     // Verify ownership
-    const notification = await prisma.notification.findFirst({
+    const notification = await prisma.notifications.findFirst({
       where: {
         id: validated.notificationId,
         userId: user.id,
@@ -210,7 +210,7 @@ export async function deleteNotification(input: unknown) {
       return { success: false, error: 'Notification not found' };
     }
 
-    await prisma.notification.delete({
+    await prisma.notifications.delete({
       where: { id: validated.notificationId },
     });
 

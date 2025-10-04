@@ -23,7 +23,7 @@ async function testRLS() {
     // Get test organizations and users
     console.log('\n📋 Setup: Finding test organizations and users...');
 
-    const organizations = await prisma.organization.findMany({
+    const organizations = await prisma.organizations.findMany({
       take: 2,
       include: {
         members: {
@@ -49,13 +49,13 @@ async function testRLS() {
     console.log('\n🧪 Test 1: Customer Isolation');
     console.log('-'.repeat(60));
 
-    const org1Customers = await prisma.customer.findMany({
+    const org1Customers = await prisma.customers.findMany({
       where: {
         organizationId: org1.id
       }
     });
 
-    const org2Customers = await prisma.customer.findMany({
+    const org2Customers = await prisma.customers.findMany({
       where: {
         organizationId: org2.id
       }
@@ -78,13 +78,13 @@ async function testRLS() {
     console.log('\n🧪 Test 2: Project Isolation');
     console.log('-'.repeat(60));
 
-    const org1Projects = await prisma.project.findMany({
+    const org1Projects = await prisma.projects.findMany({
       where: {
         organizationId: org1.id
       }
     });
 
-    const org2Projects = await prisma.project.findMany({
+    const org2Projects = await prisma.projects.findMany({
       where: {
         organizationId: org2.id
       }
@@ -107,7 +107,7 @@ async function testRLS() {
     console.log('-'.repeat(60));
 
     if (org1Projects.length > 0 && org2Projects.length > 0) {
-      const org1Tasks = await prisma.task.findMany({
+      const org1Tasks = await prisma.tasks.findMany({
         where: {
           projectId: {
             in: org1Projects.map(p => p.id)
@@ -115,7 +115,7 @@ async function testRLS() {
         }
       });
 
-      const org2Tasks = await prisma.task.findMany({
+      const org2Tasks = await prisma.tasks.findMany({
         where: {
           projectId: {
             in: org2Projects.map(p => p.id)
@@ -142,7 +142,7 @@ async function testRLS() {
     console.log('\n🧪 Test 4: Notification Isolation (User-scoped)');
     console.log('-'.repeat(60));
 
-    const allUsers = await prisma.user.findMany({
+    const allUsers = await prisma.users.findMany({
       take: 2,
       include: {
         notifications: true
@@ -173,13 +173,13 @@ async function testRLS() {
     console.log('-'.repeat(60));
 
     if (allUsers.length >= 2) {
-      const user1Convos = await prisma.aIConversation.findMany({
+      const user1Convos = await prisma.ai_conversations.findMany({
         where: {
           userId: allUsers[0].id
         }
       });
 
-      const user2Convos = await prisma.aIConversation.findMany({
+      const user2Convos = await prisma.ai_conversations.findMany({
         where: {
           userId: allUsers[1].id
         }
@@ -204,13 +204,13 @@ async function testRLS() {
     console.log('\n🧪 Test 6: Organization Member Isolation');
     console.log('-'.repeat(60));
 
-    const org1Members = await prisma.organizationMember.findMany({
+    const org1Members = await prisma.organizationsMember.findMany({
       where: {
         organizationId: org1.id
       }
     });
 
-    const org2Members = await prisma.organizationMember.findMany({
+    const org2Members = await prisma.organizationsMember.findMany({
       where: {
         organizationId: org2.id
       }

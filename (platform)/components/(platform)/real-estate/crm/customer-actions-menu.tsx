@@ -13,11 +13,11 @@ import {
 import { Button } from '@/components/ui/button';
 import { EditCustomerDialog } from './edit-customer-dialog';
 import { DeleteCustomerDialog } from './delete-customer-dialog';
-import type { Customer } from '@prisma/client';
+import type { customers } from '@prisma/client';
 import { useState } from 'react';
 
 interface CustomerActionsMenuProps {
-  customer: Customer;
+  customer: customers;
 }
 
 export function CustomerActionsMenu({ customer }: CustomerActionsMenuProps) {

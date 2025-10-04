@@ -13,13 +13,13 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
-import type { Organization, OrganizationMember } from '@prisma/client';
+import type { organizations, organization_members } from '@prisma/client';
 import { CreateOrganizationDialog } from './create-organization-dialog';
 import { setCurrentOrganization } from '@/lib/modules/organization/context';
 import { toast } from 'sonner';
 
 interface OrganizationSwitcherProps {
-  organizations: (OrganizationMember & { organization: Organization })[];
+  organizations: (organization_members & { organization: organizations })[];
   currentOrgId: string;
   userId: string;
 }
@@ -30,7 +30,7 @@ export function OrganizationSwitcher({ organizations, currentOrgId, userId }: Or
   const [isSwitching, setIsSwitching] = useState(false);
   const router = useRouter();
 
-  const currentOrg = organizations.find((org) => org.organizationId === currentOrgId);
+  const currentOrg = organizations.find((org) => org.organization_id === currentOrgId);
 
   const handleOrgSwitch = async (orgId: string) => {
     if (orgId === currentOrgId) {
@@ -82,14 +82,14 @@ export function OrganizationSwitcher({ organizations, currentOrgId, userId }: Or
           <DropdownMenuSeparator />
           {organizations.map((org) => (
             <DropdownMenuItem
-              key={org.organizationId}
-              onClick={() => handleOrgSwitch(org.organizationId)}
+              key={org.organization_id}
+              onClick={() => handleOrgSwitch(org.organization_id)}
               className="cursor-pointer"
             >
               <Check
                 className={cn(
                   'mr-2 h-4 w-4',
-                  currentOrgId === org.organizationId ? 'opacity-100' : 'opacity-0'
+                  currentOrgId === org.organization_id ? 'opacity-100' : 'opacity-0'
                 )}
               />
               <span className="truncate">{org.organization.name}</span>

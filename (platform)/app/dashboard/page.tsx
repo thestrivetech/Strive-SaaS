@@ -50,7 +50,7 @@ export default async function DashboardPage() {
 
   // Format recent activity from database
   const recentActivity = stats.recentActivity.length > 0
-    ? stats.recentActivity.map((activity) => ({
+    ? stats.recentActivity.map((activity: any) => ({
         id: activity.id,
         action: activity.action,
         description: activity.resourceType ? `${activity.resourceType} ${activity.resourceId || ''}` : '',
@@ -143,7 +143,7 @@ export default async function DashboardPage() {
           </CardHeader>
           <CardContent>
             <div className="space-y-4">
-              {recentActivity.map((activity) => {
+              {recentActivity.map((activity: any) => {
                 const Icon = activity.icon;
                 return (
                   <div key={activity.id} className="flex items-start gap-3">

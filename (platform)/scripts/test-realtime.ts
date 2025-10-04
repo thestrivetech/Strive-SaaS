@@ -33,7 +33,7 @@ async function testRealtime() {
   try {
     // Get test data
     console.log('\n📋 Setup: Finding test project...');
-    const project = await prisma.project.findFirst({
+    const project = await prisma.projects.findFirst({
       include: {
         tasks: true,
         organization: true
@@ -82,13 +82,13 @@ async function testRealtime() {
           // Create a test task to trigger the event
           console.log('\n   Creating test task to trigger event...');
 
-          const user = await prisma.user.findFirst();
+          const user = await prisma.users.findFirst();
           if (!user) {
             console.log('   ⚠️  No user found, skipping task creation');
             return;
           }
 
-          const testTask = await prisma.task.create({
+          const testTask = await prisma.tasks.create({
             data: {
               title: 'Realtime Test Task',
               description: 'This task tests realtime subscriptions',
@@ -107,7 +107,7 @@ async function testRealtime() {
 
           // Update the task
           console.log('\n   Updating test task to trigger another event...');
-          await prisma.task.update({
+          await prisma.tasks.update({
             where: { id: testTask.id },
             data: { status: 'IN_PROGRESS' }
           });
@@ -115,7 +115,7 @@ async function testRealtime() {
           await new Promise(resolve => setTimeout(resolve, 2000));
 
           // Clean up
-          await prisma.task.delete({
+          await prisma.tasks.delete({
             where: { id: testTask.id }
           });
 
@@ -140,7 +140,7 @@ async function testRealtime() {
     console.log('\n🧪 Test 2: Customer Updates Subscription');
     console.log('-'.repeat(60));
 
-    const customer = await prisma.customer.findFirst();
+    const customer = await prisma.customers.findFirst();
 
     if (customer) {
       let customerEventReceived = false;
@@ -177,7 +177,7 @@ async function testRealtime() {
     console.log('\n🧪 Test 3: Notification Updates Subscription');
     console.log('-'.repeat(60));
 
-    const user = await prisma.user.findFirst({
+    const user = await prisma.users.findFirst({
       include: {
         organizationMembers: true
       }
@@ -211,7 +211,7 @@ async function testRealtime() {
 
             // Create a test notification
             console.log('\n   Creating test notification to trigger event...');
-            const testNotif = await prisma.notification.create({
+            const testNotif = await prisma.notifications.create({
               data: {
                 userId: user.id,
                 organizationId: user.organizationMembers[0].organizationId,
@@ -227,7 +227,7 @@ async function testRealtime() {
             await new Promise(resolve => setTimeout(resolve, 2000));
 
             // Clean up
-            await prisma.notification.delete({
+            await prisma.notifications.delete({
               where: { id: testNotif.id }
             });
 

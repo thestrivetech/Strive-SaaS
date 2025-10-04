@@ -71,7 +71,7 @@ export async function POST(request: NextRequest) {
         data: {
           email: data.user.email!,
           name: username,
-          avatarUrl: data.user.user_metadata?.avatar_url,
+          avatar_url: data.user.user_metadata?.avatar_url,
         },
       });
 

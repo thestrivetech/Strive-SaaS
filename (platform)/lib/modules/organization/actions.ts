@@ -24,7 +24,7 @@ export async function createOrganization(input: CreateOrganizationInput) {
   const validated = createOrganizationSchema.parse(input);
 
   // Check if slug is already taken
-  const existingOrg = await prisma.organization.findUnique({
+  const existingOrg = await prisma.organizations.findUnique({
     where: { slug: validated.slug },
   });
 
@@ -33,7 +33,7 @@ export async function createOrganization(input: CreateOrganizationInput) {
   }
 
   // Create organization and add user as owner
-  const org = await prisma.organization.create({
+  const org = await prisma.organizations.create({
     data: {
       name: validated.name,
       slug: validated.slug,
@@ -68,7 +68,7 @@ export async function inviteTeamMember(input: InviteTeamMemberInput) {
   const validated = inviteTeamMemberSchema.parse(input);
 
   // Check if user has permission to invite (must be OWNER or ADMIN)
-  const currentMember = await prisma.organizationMember.findFirst({
+  const currentMember = await prisma.organizationsMember.findFirst({
     where: {
       userId: user.id,
       organizationId: validated.organizationId,
@@ -80,13 +80,13 @@ export async function inviteTeamMember(input: InviteTeamMemberInput) {
   }
 
   // Check if user already exists
-  let invitedUser = await prisma.user.findUnique({
+  let invitedUser = await prisma.users.findUnique({
     where: { email: validated.email },
   });
 
   // If user doesn't exist, create a placeholder user
   if (!invitedUser) {
-    invitedUser = await prisma.user.create({
+    invitedUser = await prisma.users.create({
       data: {
         email: validated.email,
         role: 'EMPLOYEE',
@@ -95,7 +95,7 @@ export async function inviteTeamMember(input: InviteTeamMemberInput) {
   }
 
   // Check if user is already a member
-  const existingMember = await prisma.organizationMember.findFirst({
+  const existingMember = await prisma.organizationsMember.findFirst({
     where: {
       userId: invitedUser.id,
       organizationId: validated.organizationId,
@@ -107,7 +107,7 @@ export async function inviteTeamMember(input: InviteTeamMemberInput) {
   }
 
   // Add user to organization
-  const member = await prisma.organizationMember.create({
+  const member = await prisma.organizationsMember.create({
     data: {
       userId: invitedUser.id,
       organizationId: validated.organizationId,
@@ -134,7 +134,7 @@ export async function updateMemberRole(input: UpdateMemberRoleInput) {
   const validated = updateMemberRoleSchema.parse(input);
 
   // Get the member to update
-  const memberToUpdate = await prisma.organizationMember.findUnique({
+  const memberToUpdate = await prisma.organizationsMember.findUnique({
     where: { id: validated.memberId },
   });
 
@@ -143,7 +143,7 @@ export async function updateMemberRole(input: UpdateMemberRoleInput) {
   }
 
   // Check if current user has permission (must be OWNER or ADMIN)
-  const currentMember = await prisma.organizationMember.findFirst({
+  const currentMember = await prisma.organizationsMember.findFirst({
     where: {
       userId: user.id,
       organizationId: memberToUpdate.organizationId,
@@ -160,7 +160,7 @@ export async function updateMemberRole(input: UpdateMemberRoleInput) {
   }
 
   // Update role
-  const updatedMember = await prisma.organizationMember.update({
+  const updatedMember = await prisma.organizationsMember.update({
     where: { id: validated.memberId },
     data: { role: validated.role as OrgRole },
     include: { user: true },
@@ -180,7 +180,7 @@ export async function removeMemberFromOrganization(memberId: string) {
   }
 
   // Get the member to remove
-  const memberToRemove = await prisma.organizationMember.findUnique({
+  const memberToRemove = await prisma.organizationsMember.findUnique({
     where: { id: memberId },
   });
 
@@ -189,7 +189,7 @@ export async function removeMemberFromOrganization(memberId: string) {
   }
 
   // Check if current user has permission (must be OWNER or ADMIN)
-  const currentMember = await prisma.organizationMember.findFirst({
+  const currentMember = await prisma.organizationsMember.findFirst({
     where: {
       userId: user.id,
       organizationId: memberToRemove.organizationId,
@@ -205,7 +205,7 @@ export async function removeMemberFromOrganization(memberId: string) {
     throw new Error('Cannot remove owner from organization');
   }
 
-  await prisma.organizationMember.delete({
+  await prisma.organizationsMember.delete({
     where: { id: memberId },
   });
 

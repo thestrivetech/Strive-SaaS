@@ -11,17 +11,17 @@ export async function getDashboardStats(organizationId: string) {
     recentActivity
   ] = await Promise.all([
     // Total customers
-    prisma.customer.count({
+    prisma.customers.count({
       where: { organizationId },
     }),
 
     // Total projects
-    prisma.project.count({
+    prisma.projects.count({
       where: { organizationId },
     }),
 
     // Active projects
-    prisma.project.count({
+    prisma.projects.count({
       where: {
         organizationId,
         status: 'ACTIVE',
@@ -53,7 +53,7 @@ export async function getDashboardStats(organizationId: string) {
     }),
 
     // Recent activity (last 10 items)
-    prisma.activityLog.findMany({
+    prisma.activity_logs.findMany({
       where: { organizationId },
       orderBy: { createdAt: 'desc' },
       take: 10,
@@ -103,7 +103,7 @@ export async function getDashboardStats(organizationId: string) {
 }
 
 export async function getActivityFeed(organizationId: string, limit: number = 20) {
-  return prisma.activityLog.findMany({
+  return prisma.activity_logs.findMany({
     where: { organizationId },
     orderBy: { createdAt: 'desc' },
     take: limit,
@@ -139,7 +139,7 @@ export async function getActivityLogs(
     where.resourceId = resourceId;
   }
 
-  return prisma.activityLog.findMany({
+  return prisma.activity_logs.findMany({
     where,
     orderBy: { createdAt: 'desc' },
     take: limit,

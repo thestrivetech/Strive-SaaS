@@ -30,7 +30,7 @@ export async function createCustomer(input: CreateCustomerInput) {
   }
 
   // Create customer
-  const customer = await prisma.customer.create({
+  const customer = await prisma.customers.create({
     data: {
       name: validated.name,
       email: validated.email || null,
@@ -73,7 +73,7 @@ export async function updateCustomer(input: UpdateCustomerInput) {
   const validated = updateCustomerSchema.parse(input);
 
   // Get existing customer to check access
-  const existingCustomer = await prisma.customer.findUnique({
+  const existingCustomer = await prisma.customers.findUnique({
     where: { id: validated.id },
   });
 
@@ -90,7 +90,7 @@ export async function updateCustomer(input: UpdateCustomerInput) {
   }
 
   // Update customer
-  const updatedCustomer = await prisma.customer.update({
+  const updatedCustomer = await prisma.customers.update({
     where: { id: validated.id },
     data: {
       name: validated.name,
@@ -133,7 +133,7 @@ export async function deleteCustomer(customerId: string) {
   }
 
   // Get customer to check access
-  const customer = await prisma.customer.findUnique({
+  const customer = await prisma.customers.findUnique({
     where: { id: customerId },
   });
 
@@ -150,7 +150,7 @@ export async function deleteCustomer(customerId: string) {
   }
 
   // Delete customer
-  await prisma.customer.delete({
+  await prisma.customers.delete({
     where: { id: customerId },
   });
 

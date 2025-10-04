@@ -74,7 +74,7 @@ export async function createTestUser(overrides: Partial<{
       name: overrides.name || 'Test User',
       role: overrides.role || UserRole.EMPLOYEE,
       subscription_tier: overrides.subscriptionTier || SubscriptionTier.FREE,
-      isActive: overrides.isActive ?? true,
+      is_active: overrides.isActive ?? true,
     },
   });
 }

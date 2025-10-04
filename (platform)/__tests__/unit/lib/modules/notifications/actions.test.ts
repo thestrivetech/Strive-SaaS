@@ -139,14 +139,12 @@ describe('Notification Actions', () => {
       // Create notification
       const notification = await testPrisma.notifications.create({
         data: {
-          id: `notif-${Date.now()}`,
           user_id: user.id,
           organization_id: organization.id,
           type: NotificationType.INFO,
           title: 'Test',
           message: 'Test',
           read: false,
-          updated_at: new Date(),
         },
       });
 
@@ -175,14 +173,12 @@ describe('Notification Actions', () => {
 
       const notification = await testPrisma.notifications.create({
         data: {
-          id: `notif-${Date.now()}-2`,
           user_id: user.id,
           organization_id: organization.id,
           type: NotificationType.INFO,
           title: 'Test',
           message: 'Test',
           read: false,
-          updated_at: new Date(),
         },
       });
 
@@ -223,14 +219,12 @@ describe('Notification Actions', () => {
       // Create notification for user1
       const notification = await testPrisma.notifications.create({
         data: {
-          id: `notif-${Date.now()}-3`,
           user_id: user.id,
           organization_id: organization.id,
           type: NotificationType.INFO,
           title: 'Test',
           message: 'Test',
           read: false,
-          updated_at: new Date(),
         },
       });
 

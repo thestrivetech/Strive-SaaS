@@ -2,7 +2,7 @@
 
 import { useTransition } from 'react';
 import Link from 'next/link';
-import { User } from '@prisma/client';
+import { users } from '@prisma/client';
 import { signOutAction } from '@/lib/auth/actions';
 import {
   DropdownMenu,

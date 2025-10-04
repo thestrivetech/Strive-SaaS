@@ -2,7 +2,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { getCurrentUser } from '@/lib/auth/auth-helpers';
-import { AIChat } from '@/components/(platform)/features/ai/ai-chat';
+import AIChat from '@/components/(platform)/features/ai/ai-chat';
 import { getModelsForTier, type SubscriptionTier } from '@/lib/ai/config';
 import {
   Bot,
