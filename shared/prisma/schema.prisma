@@ -105,6 +105,7 @@ model appointments {
   id              String            @id @default(cuid())
   organization_id String
   customer_id     String?
+  contact_id      String?
   assigned_to     String
   title           String
   description     String?
@@ -118,6 +119,7 @@ model appointments {
   updated_at      DateTime          @updatedAt
   users           users             @relation(fields: [assigned_to], references: [id])
   customers       customers?        @relation(fields: [customer_id], references: [id])
+  contact         contacts?         @relation("ContactAppointments", fields: [contact_id], references: [id])
   organizations   organizations     @relation(fields: [organization_id], references: [id], onDelete: Cascade)
 
   @@index([organization_id])
@@ -218,6 +220,195 @@ model customers {
   @@index([email])
   @@index([organization_id])
   @@index([status])
+}
+
+/// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
+model leads {
+  id              String        @id @default(cuid())
+  name            String
+  email           String?
+  phone           String?
+  company         String?
+  source          LeadSource    @default(WEBSITE)
+  status          LeadStatus    @default(NEW_LEAD)
+  score           LeadScore     @default(COLD)
+  score_value     Int           @default(0)
+  budget          Decimal?      @db.Decimal(12, 2)
+  timeline        String?
+  notes           String?       @db.Text
+  tags            String[]      @default([])
+  custom_fields   Json?         @db.JsonB
+  organization_id String
+  assigned_to_id  String?
+  created_at      DateTime      @default(now())
+  updated_at      DateTime      @updatedAt
+  last_contact_at DateTime?
+  organizations   organizations @relation(fields: [organization_id], references: [id], onDelete: Cascade)
+  assigned_to     users?        @relation("LeadAssignedTo", fields: [assigned_to_id], references: [id], onDelete: SetNull)
+  activities      activities[]
+  deals           deals[]
+
+  @@index([organization_id])
+  @@index([assigned_to_id])
+  @@index([status])
+  @@index([source])
+  @@index([score])
+  @@index([created_at])
+  @@map("leads")
+}
+
+/// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
+model contacts {
+  id                       String        @id @default(cuid())
+  name                     String
+  email                    String?
+  phone                    String?
+  company                  String?
+  position                 String?
+  type                     ContactType   @default(PROSPECT)
+  status                   ContactStatus @default(ACTIVE)
+  notes                    String?       @db.Text
+  tags                     String[]      @default([])
+  custom_fields            Json?         @db.JsonB
+  linkedin_url             String?
+  twitter_url              String?
+  preferred_contact_method String?
+  organization_id          String
+  assigned_to_id           String?
+  created_at               DateTime      @default(now())
+  updated_at               DateTime      @updatedAt
+  last_contact_at          DateTime?
+  organizations            organizations @relation(fields: [organization_id], references: [id], onDelete: Cascade)
+  assigned_to              users?        @relation("ContactAssignedTo", fields: [assigned_to_id], references: [id], onDelete: SetNull)
+  activities               activities[]
+  deals                    deals[]
+  appointments             appointments[] @relation("ContactAppointments")
+
+  @@index([organization_id])
+  @@index([assigned_to_id])
+  @@index([type])
+  @@index([status])
+  @@index([created_at])
+  @@map("contacts")
+}
+
+/// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
+model deals {
+  id                  String        @id @default(cuid())
+  title               String
+  description         String?       @db.Text
+  value               Decimal       @db.Decimal(12, 2)
+  stage               DealStage     @default(LEAD)
+  status              DealStatus    @default(ACTIVE)
+  probability         Int           @default(50)
+  expected_close_date DateTime?
+  actual_close_date   DateTime?
+  lost_reason         String?
+  notes               String?       @db.Text
+  tags                String[]      @default([])
+  custom_fields       Json?         @db.JsonB
+  lead_id             String?
+  contact_id          String?
+  listing_id          String?
+  organization_id     String
+  assigned_to_id      String?
+  created_at          DateTime      @default(now())
+  updated_at          DateTime      @updatedAt
+  organizations       organizations @relation(fields: [organization_id], references: [id], onDelete: Cascade)
+  assigned_to         users?        @relation("DealAssignedTo", fields: [assigned_to_id], references: [id], onDelete: SetNull)
+  lead                leads?        @relation(fields: [lead_id], references: [id], onDelete: SetNull)
+  contact             contacts?     @relation(fields: [contact_id], references: [id], onDelete: SetNull)
+  listing             listings?     @relation(fields: [listing_id], references: [id], onDelete: SetNull)
+  activities          activities[]
+
+  @@index([organization_id])
+  @@index([assigned_to_id])
+  @@index([stage])
+  @@index([status])
+  @@index([expected_close_date])
+  @@index([created_at])
+  @@map("deals")
+}
+
+/// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
+model listings {
+  id               String        @id @default(cuid())
+  title            String
+  description      String?       @db.Text
+  address          String
+  city             String
+  state            String
+  zip_code         String
+  country          String        @default("USA")
+  property_type    PropertyType  @default(RESIDENTIAL)
+  bedrooms         Int?
+  bathrooms        Decimal?      @db.Decimal(3, 1)
+  square_feet      Int?
+  lot_size         Decimal?      @db.Decimal(10, 2)
+  year_built       Int?
+  price            Decimal       @db.Decimal(12, 2)
+  price_per_sqft   Decimal?      @db.Decimal(10, 2)
+  status           ListingStatus @default(ACTIVE)
+  mls_number       String?
+  listing_date     DateTime?
+  expiration_date  DateTime?
+  images           String[]      @default([])
+  virtual_tour_url String?
+  features         String[]      @default([])
+  notes            String?       @db.Text
+  tags             String[]      @default([])
+  custom_fields    Json?         @db.JsonB
+  organization_id  String
+  assigned_to_id   String?
+  created_at       DateTime      @default(now())
+  updated_at       DateTime      @updatedAt
+  organizations    organizations @relation(fields: [organization_id], references: [id], onDelete: Cascade)
+  assigned_to      users?        @relation("ListingAgent", fields: [assigned_to_id], references: [id], onDelete: SetNull)
+  deals            deals[]
+  activities       activities[]
+
+  @@index([organization_id])
+  @@index([assigned_to_id])
+  @@index([status])
+  @@index([city])
+  @@index([state])
+  @@index([property_type])
+  @@index([created_at])
+  @@map("listings")
+}
+
+/// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
+model activities {
+  id               String        @id @default(cuid())
+  type             ActivityType
+  title            String
+  description      String?       @db.Text
+  outcome          String?
+  duration_minutes Int?
+  lead_id          String?
+  contact_id       String?
+  deal_id          String?
+  listing_id       String?
+  organization_id  String
+  created_by_id    String
+  created_at       DateTime      @default(now())
+  updated_at       DateTime      @updatedAt
+  completed_at     DateTime?
+  organizations    organizations @relation(fields: [organization_id], references: [id], onDelete: Cascade)
+  created_by       users         @relation("ActivityCreatedBy", fields: [created_by_id], references: [id], onDelete: Cascade)
+  lead             leads?        @relation(fields: [lead_id], references: [id], onDelete: SetNull)
+  contact          contacts?     @relation(fields: [contact_id], references: [id], onDelete: SetNull)
+  deal             deals?        @relation(fields: [deal_id], references: [id], onDelete: SetNull)
+  listing          listings?     @relation(fields: [listing_id], references: [id], onDelete: SetNull)
+
+  @@index([organization_id])
+  @@index([created_by_id])
+  @@index([type])
+  @@index([lead_id])
+  @@index([contact_id])
+  @@index([deal_id])
+  @@index([created_at])
+  @@map("activities")
 }
 
 /// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
@@ -335,6 +526,14 @@ model organizations {
   projects                  projects[]
   subscriptions             subscriptions?
   usage_tracking            usage_tracking[]
+  transaction_loops         transaction_loops[]
+  workflow_templates        workflows[]
+  transaction_audit_logs    transaction_audit_logs[]
+  leads                     leads[]
+  contacts                  contacts[]
+  deals                     deals[]
+  listings                  listings[]
+  activities                activities[]
 }
 
 model page_views {
@@ -509,6 +708,11 @@ model users {
   created_transaction_tasks      transaction_tasks[]
   created_workflows              workflows[]
   transaction_audit_logs         transaction_audit_logs[]
+  assigned_leads                 leads[]                @relation("LeadAssignedTo")
+  assigned_contacts              contacts[]             @relation("ContactAssignedTo")
+  assigned_deals                 deals[]                @relation("DealAssignedTo")
+  assigned_listings              listings[]             @relation("ListingAgent")
+  created_activities             activities[]           @relation("ActivityCreatedBy")
 }
 
 /// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
@@ -863,4 +1067,166 @@ enum Industry {
   HEALTHCARE
   STRIVE
   GENERAL
+}
+
+// CRM Enums
+enum LeadSource {
+  WEBSITE
+  REFERRAL
+  GOOGLE_ADS
+  SOCIAL_MEDIA
+  COLD_CALL
+  EMAIL_CAMPAIGN
+  EVENT
+  PARTNER
+  OTHER
+}
+
+enum LeadStatus {
+  NEW_LEAD
+  IN_CONTACT
+  QUALIFIED
+  UNQUALIFIED
+  CONVERTED
+  LOST
+}
+
+enum LeadScore {
+  HOT
+  WARM
+  COLD
+}
+
+enum ContactType {
+  PROSPECT
+  CLIENT
+  PAST_CLIENT
+  PARTNER
+  VENDOR
+}
+
+enum ContactStatus {
+  ACTIVE
+  INACTIVE
+  DO_NOT_CONTACT
+}
+
+enum DealStage {
+  LEAD
+  QUALIFIED
+  PROPOSAL
+  NEGOTIATION
+  CLOSING
+  CLOSED_WON
+  CLOSED_LOST
+}
+
+enum DealStatus {
+  ACTIVE
+  WON
+  LOST
+  ABANDONED
+}
+
+enum PropertyType {
+  RESIDENTIAL
+  COMMERCIAL
+  LAND
+  MULTI_FAMILY
+  CONDO
+  TOWNHOUSE
+  LUXURY
+}
+
+enum ListingStatus {
+  ACTIVE
+  PENDING
+  SOLD
+  EXPIRED
+  WITHDRAWN
+  CONTINGENT
+}
+
+enum ActivityType {
+  CALL
+  EMAIL
+  MEETING
+  TASK
+  NOTE
+  SHOWING
+  OPEN_HOUSE
+  FOLLOW_UP
+}
+
+enum TransactionType {
+  PURCHASE_AGREEMENT
+  LISTING_AGREEMENT
+  LEASE_AGREEMENT
+  COMMERCIAL_PURCHASE
+  COMMERCIAL_LEASE
+}
+
+enum LoopStatus {
+  DRAFT
+  ACTIVE
+  UNDER_CONTRACT
+  CLOSING
+  CLOSED
+  CANCELLED
+  ARCHIVED
+}
+
+enum DocumentStatus {
+  DRAFT
+  PENDING
+  REVIEWED
+  SIGNED
+  ARCHIVED
+}
+
+enum SignatureStatus {
+  PENDING
+  SENT
+  VIEWED
+  SIGNED
+  DECLINED
+  EXPIRED
+}
+
+enum SigningOrder {
+  SEQUENTIAL
+  PARALLEL
+}
+
+enum PartyRole {
+  BUYER
+  SELLER
+  BUYER_AGENT
+  LISTING_AGENT
+  LENDER
+  TITLE_COMPANY
+  INSPECTOR
+  APPRAISER
+  ATTORNEY
+  ESCROW_OFFICER
+  OTHER
+}
+
+enum PartyStatus {
+  ACTIVE
+  INACTIVE
+  REMOVED
+}
+
+enum TaskPriority {
+  LOW
+  MEDIUM
+  HIGH
+  URGENT
+}
+
+enum WorkflowStatus {
+  ACTIVE
+  COMPLETED
+  CANCELLED
 }
