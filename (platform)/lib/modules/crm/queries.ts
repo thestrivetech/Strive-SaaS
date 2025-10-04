@@ -3,7 +3,7 @@ import 'server-only';
 import { prisma } from '@/lib/database/prisma';
 import { withTenantContext } from '@/lib/database/utils';
 import { handleDatabaseError } from '@/lib/database/errors';
-import type { Customer, Prisma } from '@prisma/client';
+import type { customers, Prisma } from '@prisma/client';
 import type { CustomerFilters } from './schemas';
 
 /**
@@ -15,8 +15,8 @@ import type { CustomerFilters } from './schemas';
  * @see lib/database/prisma-middleware.ts
  */
 
-type CustomerWithAssignee = Prisma.CustomerGetPayload<{
-  include: { assignedTo: { select: { id: true; name: true; email: true; avatarUrl: true } } };
+type CustomerWithAssignee = Prisma.customersGetPayload<{
+  include: { assignedTo: { select: { id: true; name: true; email: true; avatar_url: true } } };
 }>;
 
 /**
@@ -67,16 +67,16 @@ export async function getCustomers(
 
   // Date range filters
   if (filters?.createdFrom || filters?.createdTo) {
-    where.createdAt = {};
+    where.created_at = {};
     if (filters.createdFrom) {
-      where.createdAt.gte = filters.createdFrom;
+      where.created_at.gte = filters.createdFrom;
     }
     if (filters.createdTo) {
-      where.createdAt.lte = filters.createdTo;
+      where.created_at.lte = filters.createdTo;
     }
   }
 
-      return await prisma.customerss.findMany({
+      return await prisma.customers.findMany({
         where,
         include: {
           assignedTo: {
@@ -143,16 +143,16 @@ export async function getCustomersCount(
 
   // Date range filters
   if (filters?.createdFrom || filters?.createdTo) {
-    where.createdAt = {};
+    where.created_at = {};
     if (filters.createdFrom) {
-      where.createdAt.gte = filters.createdFrom;
+      where.created_at.gte = filters.createdFrom;
     }
     if (filters.createdTo) {
-      where.createdAt.lte = filters.createdTo;
+      where.created_at.lte = filters.createdTo;
     }
   }
 
-      return await prisma.customerss.count({ where });
+      return await prisma.customers.count({ where });
     } catch (error) {
       const dbError = handleDatabaseError(error);
       console.error('[CRM Queries] getCustomersCount failed:', dbError);
@@ -190,7 +190,7 @@ export async function getCustomerById(
 ): Promise<CustomerWithDetails | null> {
   return withTenantContext(async () => {
     try {
-      return await prisma.customerss.findFirst({
+      return await prisma.customers.findFirst({
         where: {
           id: customerId,
         },
@@ -247,10 +247,10 @@ export async function getCustomerStats() {
   return withTenantContext(async () => {
     try {
       const [totalCustomers, activeCustomers, leadCount, prospectCount] = await Promise.all([
-        prisma.customerss.count(),
-        prisma.customerss.count({ where: { status: 'ACTIVE' } }),
-        prisma.customerss.count({ where: { status: 'LEAD' } }),
-        prisma.customerss.count({ where: { status: 'PROSPECT' } }),
+        prisma.customers.count(),
+        prisma.customers.count({ where: { status: 'ACTIVE' } }),
+        prisma.customers.count({ where: { status: 'LEAD' } }),
+        prisma.customers.count({ where: { status: 'PROSPECT' } }),
       ]);
 
       return {
@@ -282,7 +282,7 @@ export async function searchCustomers(
 ): Promise<Customer[]> {
   return withTenantContext(async () => {
     try {
-      return await prisma.customerss.findMany({
+      return await prisma.customers.findMany({
         where: {
           OR: [
             { name: { contains: query, mode: 'insensitive' } },

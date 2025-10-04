@@ -187,7 +187,7 @@ export default async function ProjectDetailPage({
                 <User className="h-5 w-5 text-muted-foreground" />
                 <div className="flex items-center gap-2 flex-1">
                   <Avatar className="h-8 w-8">
-                    <AvatarImage src={project.users.avatarUrl || undefined} />
+                    <AvatarImage src={project.users.avatar_url || undefined} />
                     <AvatarFallback>
                       {project.users.name?.[0]?.toUpperCase() ||
                         project.users.email[0].toUpperCase()}

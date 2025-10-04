@@ -20,10 +20,10 @@ async function checkRateLimit(userId: string, tier: SubscriptionTier): Promise<b
   // Count requests in the current window
   const windowStart = new Date(Date.now() - limit.window * 1000);
 
-  const count = await prisma.aIConversation.count({
+  const count = await prisma.ai_conversations.count({
     where: {
-      userId,
-      createdAt: {
+      user_id: userId,
+      created_at: {
         gte: windowStart,
       },
     },
@@ -76,16 +76,16 @@ export async function sendMessage(input: unknown) {
 
     // If conversation exists, load previous messages
     if (validated.conversationId) {
-      const conversation = await prisma.aIConversation.findFirst({
+      const conversation = await prisma.ai_conversations.findFirst({
         where: {
           id: validated.conversationId,
-          userId: user.id,
-          organizationId,
+          user_id: user.id,
+          organization_id: organizationId,
         },
       });
 
-      if (conversation && conversation.conversationData) {
-        const previousMessages = conversation.conversationData as Prisma.JsonArray;
+      if (conversation && conversation.conversation_data) {
+        const previousMessages = conversation.conversation_data as Prisma.JsonArray;
         previousMessages.forEach((msg: any) => {
           if (msg.role && msg.content) {
             messages.push({
@@ -115,53 +115,53 @@ export async function sendMessage(input: unknown) {
 
     if (conversationId) {
       // Update existing conversation
-      const conversation = await prisma.aIConversation.findFirst({
+      const conversation = await prisma.ai_conversations.findFirst({
         where: {
           id: conversationId,
-          userId: user.id,
-          organizationId,
+          user_id: user.id,
+          organization_id: organizationId,
         },
       });
 
       if (conversation) {
-        const currentMessages = (conversation.conversationData as Prisma.JsonArray) || [];
-        await prisma.aIConversation.update({
+        const currentMessages = (conversation.conversation_data as Prisma.JsonArray) || [];
+        await prisma.ai_conversations.update({
           where: { id: conversationId },
           data: {
-            conversationData: [
+            conversation_data: [
               ...currentMessages,
               { role: 'user', content: validated.message, timestamp: new Date().toISOString() },
               { role: 'assistant', content: response.content, timestamp: new Date().toISOString() },
             ] as Prisma.JsonArray,
-            updatedAt: new Date(),
+            updated_at: new Date(),
           },
         });
       }
     } else {
       // Create new conversation
-      const newConversation = await prisma.aIConversation.create({
+      const newConversation = await prisma.ai_conversations.create({
         data: {
-          userId: user.id,
-          organizationId,
-          conversationData: [
+          user_id: user.id,
+          organization_id: organizationId,
+          conversation_data: [
             { role: 'user', content: validated.message, timestamp: new Date().toISOString() },
             { role: 'assistant', content: response.content, timestamp: new Date().toISOString() },
           ] as Prisma.JsonArray,
-          aiModel: validated.model as AIModel,
+          ai_model: validated.model as AIModel,
         },
       });
       conversationId = newConversation.id;
     }
 
     // Log activity
-    await prisma.activityLog.create({
+    await prisma.activity_logs.create({
       data: {
-        userId: user.id,
-        organizationId,
+        user_id: user.id,
+        organization_id: organizationId,
         action: 'AI_MESSAGE',
-        resourceType: 'AIConversation',
-        resourceId: conversationId,
-        newData: {
+        resource_type: 'AIConversation',
+        resource_id: conversationId,
+        new_data: {
           model: validated.model,
           provider: validated.provider,
           tokens: response.usage.totalTokens,
@@ -202,12 +202,12 @@ export async function createConversation(input: unknown) {
     const organizationId = getUserOrganizationId(user);
     const validated = CreateConversationSchema.parse(input);
 
-    const conversation = await prisma.aIConversation.create({
+    const conversation = await prisma.ai_conversations.create({
       data: {
-        userId: user.id,
-        organizationId,
-        conversationData: [] as Prisma.JsonArray,
-        aiModel: validated.model as AIModel,
+        user_id: user.id,
+        organization_id: organizationId,
+        conversation_data: [] as Prisma.JsonArray,
+        ai_model: validated.model as AIModel,
       },
     });
 

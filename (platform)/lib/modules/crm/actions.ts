@@ -23,7 +23,7 @@ export async function createCustomer(input: CreateCustomerInput) {
 
   // Verify user has access to this organization
   const userOrgs = await getUserOrganizations(user.id);
-  const hasAccess = userOrgs.some((org) => org.organizationId === validated.organizationId);
+  const hasAccess = userOrgs.some((org) => org.organization_id === validated.organizationId);
 
   if (!hasAccess) {
     throw new Error('You do not have access to this organization');
@@ -39,21 +39,21 @@ export async function createCustomer(input: CreateCustomerInput) {
       status: validated.status,
       source: validated.source,
       tags: validated.tags,
-      customFields: validated.customFields as any,
-      assignedToId: validated.assignedToId || null,
-      organizationId: validated.organizationId,
+      custom_fields: validated.customFields as any,
+      assigned_to: validated.assignedToId || null,
+      organization_id: validated.organizationId,
     },
   });
 
   // Log activity
-  await prisma.activityLog.create({
+  await prisma.activity_logs.create({
     data: {
-      organizationId: validated.organizationId,
-      userId: user.id,
+      organization_id: validated.organizationId,
+      user_id: user.id,
       action: 'created_customer',
-      resourceType: 'customer',
-      resourceId: customer.id,
-      newData: { name: customer.name, status: customer.status },
+      resource_type: 'customer',
+      resource_id: customer.id,
+      new_data: { name: customer.name, status: customer.status },
     },
   });
 
@@ -83,7 +83,7 @@ export async function updateCustomer(input: UpdateCustomerInput) {
 
   // Verify user has access to this organization
   const userOrgs = await getUserOrganizations(user.id);
-  const hasAccess = userOrgs.some((org) => org.organizationId === existingCustomer.organizationId);
+  const hasAccess = userOrgs.some((org) => org.organization_id === existingCustomer.organization_id);
 
   if (!hasAccess) {
     throw new Error('You do not have access to this organization');
@@ -100,21 +100,21 @@ export async function updateCustomer(input: UpdateCustomerInput) {
       status: validated.status,
       source: validated.source,
       tags: validated.tags,
-      customFields: validated.customFields as any,
-      assignedToId: validated.assignedToId || null,
+      custom_fields: validated.customFields as any,
+      assigned_to: validated.assignedToId || null,
     },
   });
 
   // Log activity
-  await prisma.activityLog.create({
+  await prisma.activity_logs.create({
     data: {
-      organizationId: existingCustomer.organizationId,
-      userId: user.id,
+      organization_id: existingCustomer.organization_id,
+      user_id: user.id,
       action: 'updated_customer',
-      resourceType: 'customer',
-      resourceId: updatedCustomer.id,
-      oldData: existingCustomer,
-      newData: updatedCustomer,
+      resource_type: 'customer',
+      resource_id: updatedCustomer.id,
+      old_data: existingCustomer,
+      new_data: updatedCustomer,
     },
   });
 
@@ -143,7 +143,7 @@ export async function deleteCustomer(customerId: string) {
 
   // Verify user has access to this organization
   const userOrgs = await getUserOrganizations(user.id);
-  const hasAccess = userOrgs.some((org) => org.organizationId === customer.organizationId);
+  const hasAccess = userOrgs.some((org) => org.organization_id === customer.organization_id);
 
   if (!hasAccess) {
     throw new Error('You do not have access to this organization');
@@ -155,14 +155,14 @@ export async function deleteCustomer(customerId: string) {
   });
 
   // Log activity
-  await prisma.activityLog.create({
+  await prisma.activity_logs.create({
     data: {
-      organizationId: customer.organizationId,
-      userId: user.id,
+      organization_id: customer.organization_id,
+      user_id: user.id,
       action: 'deleted_customer',
-      resourceType: 'customer',
-      resourceId: customerId,
-      oldData: customer,
+      resource_type: 'customer',
+      resource_id: customerId,
+      old_data: customer,
     },
   });
 
