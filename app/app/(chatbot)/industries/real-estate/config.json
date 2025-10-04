@@ -1,0 +1,104 @@
+{
+  "industry": "real-estate",
+  "displayName": "Real Estate AI Assistant",
+  "branding": {
+    "primaryColor": "#2563eb",
+    "secondaryColor": "#1d4ed8",
+    "logo": "/images/real-estate-logo.png",
+    "favicon": "/images/real-estate-icon.svg"
+  },
+  "assistant": {
+    "name": "Sai",
+    "title": "Real Estate AI Assistant",
+    "avatar": "/images/sai-real-estate.svg",
+    "capabilities": [
+      "Property search and matching",
+      "Client prequalification",
+      "Budget analysis",
+      "Market insights",
+      "Showing coordination"
+    ]
+  },
+  "businessInfo": {
+    "calendlyLink": "https://calendly.com/your-real-estate-agency",
+    "website": "https://your-agency.com",
+    "phone": "+1-555-0123"
+  },
+  "welcomeMessage": {
+    "greeting": "Welcome! I'm Sai, your Real Estate AI Assistant.",
+    "intro": "I help buyers find their perfect home and assist agents in closing more deals faster.",
+    "firstQuestion": "Are you looking to buy a home, or are you an agent looking to streamline your business?"
+  },
+  "quickActions": [
+    {
+      "id": "search",
+      "icon": "Home",
+      "text": "Search Homes",
+      "action": "property_search"
+    },
+    {
+      "id": "prequalify",
+      "icon": "Calculator",
+      "text": "Get Prequalified",
+      "action": "prequalification"
+    },
+    {
+      "id": "market",
+      "icon": "TrendingUp",
+      "text": "Market Analysis",
+      "action": "market_data"
+    }
+  ],
+  "sampleQuestions": [
+    {
+      "category": "Home Search",
+      "questions": [
+        "I'm looking for a 3-bedroom home in Nashville under $500k",
+        "Show me homes with pools in Austin",
+        "What's available in Denver with mountain views?"
+      ]
+    },
+    {
+      "category": "Buyer Qualification",
+      "questions": [
+        "How much home can I afford with my income?",
+        "What's the process to get prequalified?",
+        "Can you calculate my debt-to-income ratio?"
+      ]
+    },
+    {
+      "category": "Market Insights",
+      "questions": [
+        "What are the market trends in Dallas?",
+        "Which neighborhoods are appreciating fastest?",
+        "Is now a good time to buy?"
+      ]
+    }
+  ],
+  "services": [
+    {
+      "id": "search",
+      "name": "Smart Property Search",
+      "description": "AI-powered search that finds homes matching your exact needs before they hit major sites.",
+      "icon": "Home",
+      "gradientFrom": "from-blue-500",
+      "gradientTo": "to-blue-600"
+    },
+    {
+      "id": "prequalify",
+      "name": "Instant Prequalification",
+      "description": "Get prequalified in minutes with real-time lender integration.",
+      "icon": "Calculator",
+      "gradientFrom": "from-green-500",
+      "gradientTo": "to-green-600"
+    },
+    {
+      "id": "insights",
+      "name": "Market Intelligence",
+      "description": "Data-driven insights on pricing, trends, and investment opportunities.",
+      "icon": "TrendingUp",
+      "gradientFrom": "from-purple-500",
+      "gradientTo": "to-purple-600"
+    }
+  ]
+}
