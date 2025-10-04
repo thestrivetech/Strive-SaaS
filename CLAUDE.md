@@ -214,10 +214,29 @@ const schema = z.object({ email: z.string().email() });
 ❌ dangerouslySetInnerHTML={{ __html: userContent }}
 
 // 4. NEVER expose secrets
-❌ Commit .env files
+❌ Commit .env files (especially .env.local!)
 ❌ Hardcode API keys
 ❌ Expose SUPABASE_SERVICE_ROLE_KEY to client
+❌ Commit DOCUMENT_ENCRYPTION_KEY (in .env.local ONLY!)
 ```
+
+**⚠️ CRITICAL: Environment Variables & Secrets**
+
+| Secret | Location | Committed? | Notes |
+|--------|----------|------------|-------|
+| `SUPABASE_SERVICE_ROLE_KEY` | `.env.local` | ❌ NEVER | Bypasses RLS - admin only |
+| `DOCUMENT_ENCRYPTION_KEY` | `.env.local` | ❌ NEVER | Lost key = lost documents! |
+| `STRIPE_SECRET_KEY` | `.env.local` | ❌ NEVER | Payment processing |
+| `DATABASE_URL` | `.env.local` | ❌ NEVER | Contains password |
+| All other secrets | `.env.local` | ❌ NEVER | Production credentials |
+| Placeholder values | `.env.example` | ✅ YES | Template with fake values |
+
+**Platform-Specific: Document Encryption Key**
+- Added in Session 2 (Transaction Management Dashboard)
+- Required for: Transaction document encryption (AES-256-GCM)
+- Generate once: `node -e "console.log(require('crypto').randomBytes(32).toString('hex'))"`
+- Backup securely - this key cannot be recovered if lost!
+- Location: `(platform)/.env.local` → `DOCUMENT_ENCRYPTION_KEY`
 
 ### Testing (Universal)
 ```bash

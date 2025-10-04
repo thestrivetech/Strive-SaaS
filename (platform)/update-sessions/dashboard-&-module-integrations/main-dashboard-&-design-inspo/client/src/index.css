@@ -1,0 +1,271 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  /* Dark theme colors */
+  --background: hsl(240 10% 4%);
+  --foreground: hsl(0 0% 98%);
+  --card: hsl(240 8% 8%);
+  --card-foreground: hsl(0 0% 98%);
+  --popover: hsl(240 10% 4%);
+  --popover-foreground: hsl(0 0% 98%);
+  --primary: hsl(189 100% 56%);
+  --primary-foreground: hsl(240 10% 4%);
+  --secondary: hsl(100 100% 54%);
+  --secondary-foreground: hsl(240 10% 4%);
+  --accent: hsl(258 90% 66%);
+  --accent-foreground: hsl(0 0% 98%);
+  --muted: hsl(240 6% 20%);
+  --muted-foreground: hsl(240 5% 65%);
+  --destructive: hsl(0 84% 60%);
+  --destructive-foreground: hsl(0 0% 98%);
+  --border: hsl(240 6% 20%);
+  --input: hsl(240 6% 20%);
+  --ring: hsl(189 100% 56%);
+  --chart-1: hsl(189 100% 56%);
+  --chart-2: hsl(100 100% 54%);
+  --chart-3: hsl(258 90% 66%);
+  --chart-4: hsl(147 78% 42%);
+  --chart-5: hsl(341 75% 51%);
+  --sidebar-background: hsl(240 8% 8%);
+  --sidebar-foreground: hsl(0 0% 85%);
+  --sidebar-primary: hsl(189 100% 56%);
+  --sidebar-primary-foreground: hsl(0 0% 98%);
+  --sidebar-accent: hsl(258 90% 66%);
+  --sidebar-accent-foreground: hsl(0 0% 98%);
+  --sidebar-border: hsl(240 6% 20%);
+  --sidebar-ring: hsl(189 100% 56%);
+  --font-sans: 'Inter', system-ui, sans-serif;
+  --font-serif: Georgia, serif;
+  --font-mono: Menlo, monospace;
+  --radius: 1.3rem;
+}
+
+.light {
+  --background: hsl(0 0% 100%);
+  --foreground: hsl(210 25% 8%);
+  --card: hsl(180 7% 97%);
+  --card-foreground: hsl(210 25% 8%);
+  --popover: hsl(0 0% 100%);
+  --popover-foreground: hsl(210 25% 8%);
+  --primary: hsl(204 88% 53%);
+  --primary-foreground: hsl(0 0% 100%);
+  --secondary: hsl(210 25% 8%);
+  --secondary-foreground: hsl(0 0% 100%);
+  --muted: hsl(240 2% 90%);
+  --muted-foreground: hsl(210 25% 8%);
+  --accent: hsl(212 51% 93%);
+  --accent-foreground: hsl(204 88% 53%);
+  --destructive: hsl(356 91% 54%);
+  --destructive-foreground: hsl(0 0% 100%);
+  --border: hsl(201 30% 91%);
+  --input: hsl(200 23% 97%);
+  --ring: hsl(203 89% 53%);
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply font-sans antialiased bg-background text-foreground;
+    overflow-x: hidden;
+  }
+
+  /* Glassmorphic effect classes */
+  .glass {
+    background: rgba(255, 255, 255, 0.03);
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+  }
+
+  .glass-strong {
+    background: rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(30px);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+  }
+
+  /* Neon glow effects */
+  .neon-cyan {
+    box-shadow: 0 0 10px rgba(0, 210, 255, 0.3), 0 0 20px rgba(0, 210, 255, 0.1);
+  }
+
+  .neon-green {
+    box-shadow: 0 0 10px rgba(57, 255, 20, 0.3), 0 0 20px rgba(57, 255, 20, 0.1);
+  }
+
+  .neon-purple {
+    box-shadow: 0 0 10px rgba(139, 92, 246, 0.3), 0 0 20px rgba(139, 92, 246, 0.1);
+  }
+
+  .neon-border-cyan {
+    border: 1px solid rgba(0, 210, 255, 0.5);
+    box-shadow: 0 0 15px rgba(0, 210, 255, 0.2), inset 0 0 15px rgba(0, 210, 255, 0.1);
+  }
+
+  .neon-border-green {
+    border: 1px solid rgba(57, 255, 20, 0.5);
+    box-shadow: 0 0 15px rgba(57, 255, 20, 0.2), inset 0 0 15px rgba(57, 255, 20, 0.1);
+  }
+
+  .neon-border-purple {
+    border: 1px solid rgba(139, 92, 246, 0.5);
+    box-shadow: 0 0 15px rgba(139, 92, 246, 0.2), inset 0 0 15px rgba(139, 92, 246, 0.1);
+  }
+
+  .neon-border-primary {
+    border: 1px solid rgba(0, 210, 255, 0.3);
+    box-shadow: 0 0 10px rgba(0, 210, 255, 0.1);
+  }
+
+  /* Widget hover effect */
+  .widget-hover {
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+  }
+
+  .widget-hover:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 10px 30px rgba(0, 210, 255, 0.2);
+  }
+
+  /* Scrollbar styling */
+  ::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.05);
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: rgba(0, 210, 255, 0.3);
+    border-radius: 4px;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background: rgba(0, 210, 255, 0.5);
+  }
+
+  /* Custom animations */
+  @keyframes float {
+    0%, 100% { transform: translateY(0px); }
+    50% { transform: translateY(-20px); }
+  }
+
+  @keyframes glow {
+    0% { box-shadow: 0 0 5px rgba(0, 210, 255, 0.3); }
+    100% { box-shadow: 0 0 20px rgba(0, 210, 255, 0.8), 0 0 40px rgba(0, 210, 255, 0.4); }
+  }
+
+  @keyframes pulse-slow {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.8; transform: scale(1.05); }
+  }
+
+  @keyframes data-pulse {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.8; transform: scale(1.05); }
+  }
+
+  .animate-float {
+    animation: float 6s ease-in-out infinite;
+  }
+
+  .animate-glow {
+    animation: glow 2s ease-in-out infinite alternate;
+  }
+
+  .animate-pulse-slow {
+    animation: pulse-slow 3s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+  }
+
+  .data-pulse {
+    animation: data-pulse 1s ease-in-out;
+  }
+
+  /* Activity feed smooth scroll */
+  .activity-feed {
+    scroll-behavior: smooth;
+  }
+
+  /* Focus ring for accessibility */
+  .focus-visible\:ring-2:focus-visible {
+    ring-color: var(--ring);
+  }
+}
+
+/* React Grid Layout styling */
+.react-grid-layout {
+  position: relative;
+  transition: height 200ms ease;
+}
+
+.react-grid-item {
+  transition: all 200ms ease;
+  transition-property: left, top, width, height;
+}
+
+.react-grid-item.cssTransforms {
+  transition-property: transform, width, height;
+}
+
+.react-grid-item.resizing {
+  transition: none;
+  z-index: 100;
+  will-change: width, height;
+}
+
+.react-grid-item.react-draggable-dragging {
+  transition: none;
+  z-index: 100;
+  will-change: transform;
+}
+
+.react-grid-item.dropping {
+  visibility: hidden;
+}
+
+.react-grid-item.react-grid-placeholder {
+  background: rgba(0, 210, 255, 0.1);
+  opacity: 0.5;
+  transition-duration: 100ms;
+  z-index: 2;
+  border: 2px dashed rgba(0, 210, 255, 0.5);
+  border-radius: 1rem;
+}
+
+.react-resizable-handle {
+  position: absolute;
+  width: 20px;
+  height: 20px;
+  background-color: rgba(0, 210, 255, 0.3);
+  border-radius: 0 0 0.5rem 0;
+}
+
+.react-resizable-handle::after {
+  content: "";
+  position: absolute;
+  right: 3px;
+  bottom: 3px;
+  width: 5px;
+  height: 5px;
+  border-right: 2px solid rgba(0, 210, 255, 0.8);
+  border-bottom: 2px solid rgba(0, 210, 255, 0.8);
+}
+
+.react-resizable-handle-se {
+  bottom: 0;
+  right: 0;
+  cursor: se-resize;
+}
+
+/* Mobile responsive adjustments */
+@media (max-width: 768px) {
+  .sidebar-transition {
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+}

@@ -372,14 +372,29 @@ const isValid = await stripe.webhooks.constructEvent(
   webhookSecret
 );
 if (!isValid) return new Response('400', { status: 400 });
+
+// 9. Document Encryption (Transaction Documents)
+// CRITICAL: Encryption key ONLY in .env.local (NEVER commit!)
+// Location: .env.local -> DOCUMENT_ENCRYPTION_KEY
+import { encryptDocument } from '@/lib/storage/encryption';
+const encrypted = encryptDocument(fileBuffer);
 ```
 
 **NEVER expose:**
 - `SUPABASE_SERVICE_ROLE_KEY`
 - `STRIPE_SECRET_KEY`
 - `STRIPE_WEBHOOK_SECRET`
+- `DOCUMENT_ENCRYPTION_KEY` ⚠️ **CRITICAL - In .env.local only!**
 - Database credentials
 - Other organizations' data
+
+**⚠️ CRITICAL: Document Encryption Key**
+- **Location:** `.env.local` file (NEVER commit this file!)
+- **Purpose:** AES-256-GCM encryption for transaction documents
+- **Format:** 64 hex characters (32 bytes)
+- **Backup:** Store securely - lost key = lost documents!
+- **Generate:** `node -e "console.log(require('crypto').randomBytes(32).toString('hex'))"`
+- **Session:** Added in Session 2 (Storage Infrastructure)
 
 ---
 

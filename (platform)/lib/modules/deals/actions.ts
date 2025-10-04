@@ -1,0 +1,422 @@
+'use server';
+
+import { revalidatePath } from 'next/cache';
+import { prisma } from '@/lib/database/prisma';
+import { requireAuth, getCurrentUser } from '@/lib/auth/auth-helpers';
+import { canAccessCRM, canManageDeals, canDeleteDeals } from '@/lib/auth/rbac';
+import { withTenantContext } from '@/lib/database/utils';
+import { handleDatabaseError } from '@/lib/database/errors';
+import {
+  createDealSchema,
+  updateDealSchema,
+  updateDealStageSchema,
+  closeDealSchema,
+  bulkUpdateDealsSchema,
+  deleteDealSchema,
+  type CreateDealInput,
+  type UpdateDealInput,
+  type UpdateDealStageInput,
+  type CloseDealInput,
+  type BulkUpdateDealsInput,
+  type DeleteDealInput,
+} from './schemas';
+
+/**
+ * Create a new deal
+ *
+ * RBAC: Requires CRM access + deal management permission
+ *
+ * @param input - Deal data
+ * @returns Created deal
+ */
+export async function createDeal(input: CreateDealInput) {
+  await requireAuth();
+  const user = await getCurrentUser();
+
+  if (!user) {
+    throw new Error('Unauthorized: User not found');
+  }
+
+  // Check RBAC permissions
+  if (!canAccessCRM(user.role) || !canManageDeals(user.role)) {
+    throw new Error('Unauthorized: Insufficient permissions to create deals');
+  }
+
+  // Validate input
+  const validated = createDealSchema.parse(input);
+
+  return withTenantContext(async () => {
+    try {
+      const deal = await prisma.deals.create({
+        data: {
+          ...validated,
+          organization_id: user.organization_members[0].organization_id,
+        },
+        include: {
+          assigned_to: {
+            select: {
+              id: true,
+              name: true,
+              email: true,
+              avatar_url: true,
+            },
+          },
+        },
+      });
+
+      // Create activity for deal creation
+      await prisma.activities.create({
+        data: {
+          type: 'NOTE',
+          title: 'Deal created',
+          description: `Created deal "${deal.title}" with value $${deal.value}`,
+          deal_id: deal.id,
+          organization_id: user.organization_members[0].organization_id,
+          created_by_id: user.id,
+        },
+      });
+
+      // Revalidate deals pages
+      revalidatePath('/crm/deals');
+      revalidatePath('/crm/dashboard');
+
+      return deal;
+    } catch (error) {
+      const dbError = handleDatabaseError(error);
+      console.error('[Deals Actions] createDeal failed:', dbError);
+      throw new Error('Failed to create deal');
+    }
+  });
+}
+
+/**
+ * Update an existing deal
+ *
+ * RBAC: Requires CRM access + deal management permission
+ *
+ * @param input - Deal update data
+ * @returns Updated deal
+ */
+export async function updateDeal(input: UpdateDealInput) {
+  await requireAuth();
+  const user = await getCurrentUser();
+
+  if (!user) {
+    throw new Error('Unauthorized: User not found');
+  }
+
+  // Check RBAC permissions
+  if (!canAccessCRM(user.role) || !canManageDeals(user.role)) {
+    throw new Error('Unauthorized: Insufficient permissions to update deals');
+  }
+
+  // Validate input
+  const validated = updateDealSchema.parse(input);
+  const { id, ...updates } = validated;
+
+  return withTenantContext(async () => {
+    try {
+      const deal = await prisma.deals.update({
+        where: { id },
+        data: updates,
+        include: {
+          assigned_to: {
+            select: {
+              id: true,
+              name: true,
+              email: true,
+              avatar_url: true,
+            },
+          },
+        },
+      });
+
+      // Create activity for deal update
+      await prisma.activities.create({
+        data: {
+          type: 'NOTE',
+          title: 'Deal updated',
+          description: `Updated deal "${deal.title}"`,
+          deal_id: deal.id,
+          organization_id: user.organization_members[0].organization_id,
+          created_by_id: user.id,
+        },
+      });
+
+      // Revalidate pages
+      revalidatePath('/crm/deals');
+      revalidatePath(`/crm/deals/${id}`);
+      revalidatePath('/crm/dashboard');
+
+      return deal;
+    } catch (error) {
+      const dbError = handleDatabaseError(error);
+      console.error('[Deals Actions] updateDeal failed:', dbError);
+      throw new Error('Failed to update deal');
+    }
+  });
+}
+
+/**
+ * Update deal stage (for pipeline Kanban)
+ *
+ * RBAC: Requires CRM access + deal management permission
+ *
+ * @param input - Stage update data
+ * @returns Updated deal
+ */
+export async function updateDealStage(input: UpdateDealStageInput) {
+  await requireAuth();
+  const user = await getCurrentUser();
+
+  if (!user) {
+    throw new Error('Unauthorized: User not found');
+  }
+
+  // Check RBAC permissions
+  if (!canAccessCRM(user.role) || !canManageDeals(user.role)) {
+    throw new Error('Unauthorized: Insufficient permissions to update deal stage');
+  }
+
+  // Validate input
+  const validated = updateDealStageSchema.parse(input);
+
+  return withTenantContext(async () => {
+    try {
+      const deal = await prisma.deals.update({
+        where: { id: validated.id },
+        data: {
+          stage: validated.stage,
+          probability: validated.probability,
+        },
+        include: {
+          assigned_to: {
+            select: {
+              id: true,
+              name: true,
+              email: true,
+              avatar_url: true,
+            },
+          },
+        },
+      });
+
+      // Create activity for stage change
+      await prisma.activities.create({
+        data: {
+          type: 'NOTE',
+          title: `Deal moved to ${validated.stage}`,
+          description: `Pipeline stage updated to ${validated.stage} (${validated.probability}% probability)`,
+          deal_id: validated.id,
+          organization_id: user.organization_members[0].organization_id,
+          created_by_id: user.id,
+        },
+      });
+
+      // Revalidate deals page (pipeline view)
+      revalidatePath('/crm/deals');
+
+      return deal;
+    } catch (error) {
+      const dbError = handleDatabaseError(error);
+      console.error('[Deals Actions] updateDealStage failed:', dbError);
+      throw new Error('Failed to update deal stage');
+    }
+  });
+}
+
+/**
+ * Close a deal (mark as won or lost)
+ *
+ * RBAC: Requires CRM access + deal management permission
+ *
+ * @param input - Close deal data
+ * @returns Closed deal
+ */
+export async function closeDeal(input: CloseDealInput) {
+  await requireAuth();
+  const user = await getCurrentUser();
+
+  if (!user) {
+    throw new Error('Unauthorized: User not found');
+  }
+
+  // Check RBAC permissions
+  if (!canAccessCRM(user.role) || !canManageDeals(user.role)) {
+    throw new Error('Unauthorized: Insufficient permissions to close deals');
+  }
+
+  // Validate input
+  const validated = closeDealSchema.parse(input);
+
+  return withTenantContext(async () => {
+    try {
+      const deal = await prisma.deals.update({
+        where: { id: validated.id },
+        data: {
+          status: validated.status,
+          actual_close_date: validated.actual_close_date,
+          lost_reason: validated.lost_reason,
+          stage: validated.status === 'WON' ? 'CLOSED_WON' : 'CLOSED_LOST',
+        },
+        include: {
+          assigned_to: {
+            select: {
+              id: true,
+              name: true,
+              email: true,
+              avatar_url: true,
+            },
+          },
+        },
+      });
+
+      // Create activity for deal close
+      await prisma.activities.create({
+        data: {
+          type: 'NOTE',
+          title: `Deal ${validated.status === 'WON' ? 'won' : 'lost'}`,
+          description: validated.lost_reason || `Deal closed as ${validated.status}`,
+          deal_id: validated.id,
+          organization_id: user.organization_members[0].organization_id,
+          created_by_id: user.id,
+        },
+      });
+
+      // Revalidate pages
+      revalidatePath('/crm/deals');
+      revalidatePath(`/crm/deals/${validated.id}`);
+      revalidatePath('/crm/dashboard');
+
+      return deal;
+    } catch (error) {
+      const dbError = handleDatabaseError(error);
+      console.error('[Deals Actions] closeDeal failed:', dbError);
+      throw new Error('Failed to close deal');
+    }
+  });
+}
+
+/**
+ * Bulk update deals
+ *
+ * RBAC: Requires CRM access + deal management permission
+ *
+ * @param input - Bulk update data
+ * @returns Updated deals count
+ */
+export async function bulkUpdateDeals(input: BulkUpdateDealsInput) {
+  await requireAuth();
+  const user = await getCurrentUser();
+
+  if (!user) {
+    throw new Error('Unauthorized: User not found');
+  }
+
+  // Check RBAC permissions
+  if (!canAccessCRM(user.role) || !canManageDeals(user.role)) {
+    throw new Error('Unauthorized: Insufficient permissions to bulk update deals');
+  }
+
+  // Validate input
+  const validated = bulkUpdateDealsSchema.parse(input);
+
+  return withTenantContext(async () => {
+    try {
+      const result = await prisma.deals.updateMany({
+        where: {
+          id: {
+            in: validated.deal_ids,
+          },
+        },
+        data: validated.updates,
+      });
+
+      // Create activity for bulk update
+      await prisma.activities.create({
+        data: {
+          type: 'NOTE',
+          title: 'Bulk deals update',
+          description: `Updated ${result.count} deals`,
+          organization_id: user.organization_members[0].organization_id,
+          created_by_id: user.id,
+        },
+      });
+
+      // Revalidate deals page
+      revalidatePath('/crm/deals');
+      revalidatePath('/crm/dashboard');
+
+      return result.count;
+    } catch (error) {
+      const dbError = handleDatabaseError(error);
+      console.error('[Deals Actions] bulkUpdateDeals failed:', dbError);
+      throw new Error('Failed to bulk update deals');
+    }
+  });
+}
+
+/**
+ * Delete a deal
+ *
+ * RBAC: Requires CRM access + delete permission
+ *
+ * @param input - Delete deal data
+ * @returns Success status
+ */
+export async function deleteDeal(input: DeleteDealInput) {
+  await requireAuth();
+  const user = await getCurrentUser();
+
+  if (!user) {
+    throw new Error('Unauthorized: User not found');
+  }
+
+  // Check RBAC permissions
+  if (!canAccessCRM(user.role) || !canDeleteDeals(user.role)) {
+    throw new Error('Unauthorized: Insufficient permissions to delete deals');
+  }
+
+  // Validate input
+  const validated = deleteDealSchema.parse(input);
+
+  return withTenantContext(async () => {
+    try {
+      // Get deal details before deleting
+      const deal = await prisma.deals.findUnique({
+        where: { id: validated.id },
+        select: { title: true },
+      });
+
+      if (!deal) {
+        throw new Error('Deal not found');
+      }
+
+      // Delete the deal
+      await prisma.deals.delete({
+        where: { id: validated.id },
+      });
+
+      // Create activity for deletion
+      await prisma.activities.create({
+        data: {
+          type: 'NOTE',
+          title: 'Deal deleted',
+          description: `Deleted deal "${deal.title}"`,
+          organization_id: user.organization_members[0].organization_id,
+          created_by_id: user.id,
+        },
+      });
+
+      // Revalidate pages
+      revalidatePath('/crm/deals');
+      revalidatePath('/crm/dashboard');
+
+      return { success: true };
+    } catch (error) {
+      const dbError = handleDatabaseError(error);
+      console.error('[Deals Actions] deleteDeal failed:', dbError);
+      throw new Error('Failed to delete deal');
+    }
+  });
+}
