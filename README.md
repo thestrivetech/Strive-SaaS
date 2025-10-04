@@ -1,824 +1,643 @@
-# Strive Tech Platform
+# Strive Tech - Tri-Fold Repository
 
-**Enterprise B2B SaaS Platform with AI-Powered Tools**
+**Enterprise B2B SaaS Platform | AI-Powered Business Tools | Modern Web Experience**
 
-[![Next.js](https://img.shields.io/badge/Next.js-15.5.4-black)](https://nextjs.org/)
+[![Next.js](https://img.shields.io/badge/Next.js-15-black)](https://nextjs.org/)
 [![React](https://img.shields.io/badge/React-19.1.0-blue)](https://react.dev/)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.6+-blue)](https://www.typescriptlang.org/)
 [![Prisma](https://img.shields.io/badge/Prisma-6.16.2-green)](https://www.prisma.io/)
 
-> **Quick Reference:** For concise development rules and quick lookup, see [`/CLAUDE.md`](../CLAUDE.md) (v3.0). This file contains comprehensive project documentation, architecture details, and complete command references.
+---
+
+## 🎯 What is This Repository?
+
+This is the **Strive Tech tri-fold repository** containing **three independent Next.js applications** that work together to provide a complete business solution:
+
+1. **[(chatbot)/](#chatbot---ai-chatbot-widget)** - Embeddable AI assistant widget
+2. **[(platform)/](#platform---main-saas-application)** - Enterprise SaaS platform
+3. **[(website)/](#website---marketing-site)** - Marketing and public website
+
+All three projects share a common database and authentication system while maintaining independent deployments and codebases.
 
 ---
 
-## 🔴 CRITICAL: READ-BEFORE-EDIT WORKFLOW
+## 📁 Repository Structure
 
-**MANDATORY STEPS BEFORE ANY ACTION:**
-
-1. **READ FIRST** - Always use Read tool on any file before editing
-2. **SEARCH FOR EXISTING** - Use Glob/Grep to check if files, scripts, or tests already exist
-   - Don't create `test-*.ts` if similar test files exist
-   - Don't create utility functions if they already exist elsewhere
-   - Don't create new components if similar ones exist
-3. **UPDATE, DON'T CREATE** - Prefer editing existing files over creating new ones (99% of the time)
-4. **ASK IF UNCERTAIN** - When unsure if something exists, ask the user first
+```
+Strive-SaaS/
+├── (chatbot)/          # AI Chatbot Widget → chat.strivetech.ai
+├── (platform)/         # Main SaaS Platform → app.strivetech.ai
+├── (website)/          # Marketing Website → strivetech.ai
+├── shared/             # Shared Resources
+│   ├── prisma/        # Database schema (13 models)
+│   └── supabase/      # Auth & storage config
+├── scripts/            # Repository utilities
+├── dev-workspace/      # Development planning
+├── CLAUDE.md          # AI assistant instructions
+└── README.md          # This file
+```
 
 ---
 
-## Project Overview
+## 🚀 Quick Start
 
-**Strive Tech SaaS Platform** (`app/`) → `app.strivetech.ai`
-- Enterprise B2B platform with AI-powered tools
-- Multi-tenant architecture with 3/4-tier subscription model
-- Built with Next.js 15.5.4 App Router
-- Production-ready with comprehensive security and performance standards
+### Prerequisites
 
-**🔑 Database Strategy (HYBRID APPROACH):**
-> **CRITICAL:** Supabase and Prisma work TOGETHER, not as alternatives
->
-> - **Supabase** = Database provider (PostgreSQL) + Auth + Storage + Realtime
-> - **Prisma** = ORM tool that connects TO Supabase database
-> - **Use Prisma for:** Complex queries, transactions, aggregations, migrations
-> - **Use Supabase for:** Auth, Realtime updates, file storage, presence tracking
->
-> **Full Guide:** [`docs/database/PRISMA-SUPABASE-STRATEGY.md`](docs/database/PRISMA-SUPABASE-STRATEGY.md)
+- **Node.js** 18+ and npm
+- **Supabase** account (for database & auth)
+- **Vercel** account (for deployment)
+- **Git** installed
 
-**Legacy Marketing Website** (`app/web/`) → `strivetech.ai` -> In progress
-- To be migrated/integrated with SaaS platform in future
-- Legacy React app (not actively developed)
-- **DO NOT MODIFY** unless explicitly requested
-
----
-
-## Tech Stack
-
-### SaaS Platform (app/) - PRIMARY FOCUS
-
-```yaml
-# Core
-Framework: Next.js 15.5.4 (App Router)
-Runtime: React 19.1.0
-Language: TypeScript 5.6+
-Styling: Tailwind CSS 4.0 + shadcn/ui
-
-# Data Layer & Backend (HYBRID APPROACH - Both Required)
-Database Provider: Supabase (PostgreSQL hosting)
-ORM: Prisma 6.16.2 (connects TO Supabase DB)
-Auth: Supabase Auth (JWT in httpOnly cookies)
-Storage: Supabase Storage (file uploads)
-Realtime: Supabase Realtime (live updates, presence)
-RLS: Supabase Row Level Security
-Caching: Next.js Cache + React Query
-
-# State Management
-Server State: TanStack Query
-Client State: Zustand (when needed)
-Forms: React Hook Form + Zod
-
-# AI Integration
-Providers: OpenRouter + Groq
-Models: GPT-4, Claude 3.5, Llama 3.3
-
-# Payments
-Provider: Stripe
-Webhooks: Stripe CLI (dev) / Webhook endpoints (prod)
-
-# Testing
-Unit/Integration: Jest + React Testing Library
-E2E: Playwright
-Coverage: 80% minimum
-
-# Monitoring
-Analytics: Vercel Analytics
-Errors: Sentry
-Logs: Structured JSON
-```
-
-**🔄 How Prisma + Supabase Work Together:**
-```
-Your Application Code
-        ├─► Prisma Client (ORM) ─────► Supabase PostgreSQL
-        │                               (Complex queries, transactions)
-        │
-        └─► Supabase Client ───────────► Supabase Services
-                                         ├─► Auth (login, sessions)
-                                         ├─► Storage (file uploads)
-                                         ├─► Realtime (live updates)
-                                         └─► Presence (who's online)
-```
-
-### Legacy Marketing Website (app//app/web/) - Will be integrated into the SaaS in the future after it's updated to fit with next.js and the SaaS -> Currrently happening
-- Legacy React + Express.js
-- PostgreSQL via Supabase (separate DB)
-- Drizzle ORM + Passport.js auth
-- To be migrated to match SaaS architecture
-
----
-
-## Project Structure -> Currently changing
-
-### Root Directory
-```
-/
-├── app/web/             # Legacy marketing website (React)
-├── app/                 # SaaS platform (Next.js 15)
-├── docs/                # Documentation (future)
-├── .env                 # Environment variables (gitignored)
-├── .gitignore
-└── [essential configs only]
-```
-
-### Marketing Website (app/web/)
-```
-app/web/
-├── client/              # React frontend
-│   ├── src/
-│   │   ├── components/  # UI components (shadcn/ui)
-│   │   ├── pages/       # Page components
-│   │   ├── hooks/       # Custom React hooks
-│   │   ├── lib/         # Utilities
-│   │   ├── App.tsx      # Root component with routing
-│   │   └── sw.ts        # Service worker (PWA)
-├── server/              # Express backend
-│   ├── routes/          # API route handlers
-│   ├── services/        # Business logic services
-│   ├── middleware/      # Express middleware
-│   ├── lib/             # Server utilities
-│   ├── index.ts         # Server entry point
-│   ├── auth.ts          # Passport authentication
-│   └── routes.ts        # Route definitions
-├── shared/              # Shared code
-│   └── schema.ts        # Drizzle database schema
-└── scripts/             # Utility scripts
-```
-
-### SaaS Platform (app/) - Production Architecture
-
-```
-app/
-├── app/                           # Next.js App Router
-│   ├── (auth)/                   # Auth routes (login, signup, reset)
-│   │   └── layout.tsx            # Minimal auth layout
-│   ├── (platform)/               # Protected platform routes
-│   │   ├── dashboard/            # Role-based dashboards
-│   │   ├── crm/                  # CRM system
-│   │   ├── projects/             # Project management
-│   │   ├── ai/                   # AI assistant (Sai)
-│   │   ├── tools/                # Tool marketplace
-│   │   ├── settings/             # User/org settings
-│   │   └── layout.tsx            # Platform layout with sidebar
-│   ├── api/                      # API routes (webhooks only)
-│   │   ├── webhooks/
-│   │   │   ├── stripe/           # Payment webhooks
-│   │   │   └── supabase/         # Auth webhooks
-│   │   └── health/               # Health check endpoint
-│   ├── layout.tsx                # Root layout
-│   ├── error.tsx                 # Global error boundary
-│   └── globals.css               # Global styles
-├── components/
-│   ├── ui/                       # shadcn/ui components
-│   ├── features/                 # Feature-specific components
-│   │   ├── crm/
-│   │   ├── projects/
-│   │   └── ai/
-│   └── shared/                   # Shared components
-│       ├── layouts/
-│       ├── navigation/
-│       └── errors/
-├── lib/
-│   ├── modules/                  # Feature modules
-│   │   └── [feature]/
-│   │       ├── actions/          # Server Actions
-│   │       ├── queries/          # Data queries
-│   │       ├── schemas/          # Zod schemas
-│   │       ├── hooks/            # Custom hooks
-│   │       ├── types/            # TypeScript types
-│   │       └── index.ts          # Public API
-│   ├── auth/                     # Auth utilities
-│   │   ├── client.ts             # Supabase client
-│   │   ├── middleware.ts         # Auth middleware
-│   │   └── rbac.ts               # Role-based access
-│   ├── database/
-│   │   ├── prisma.ts             # Prisma client
-│   │   └── queries.ts            # Common queries
-│   └── utils/                    # Shared utilities
-├── prisma/
-│   ├── schema.prisma             # Database schema
-│   ├── migrations/               # Migration files
-│   └── seed.ts                   # Seed data
-├── tests/
-│   ├── unit/                     # Unit tests
-│   ├── integration/              # Integration tests
-│   └── e2e/                      # E2E tests
-└── middleware.ts                 # Next.js middleware
-```
-
-**Architecture Notes:**
-- **Industry-as-plugin architecture**: Multi-industry platform with industry-specific customizations
-  - Core modules in `lib/modules/` (CRM, Projects, AI, Tasks)
-  - Industry implementations in `lib/industries/[industry]/` (features, tools, overrides)
-  - Shared tools in `lib/tools/shared/` (universal marketplace tools)
-- **Feature-first organization**: Each business feature is a self-contained module
-- **Role-Based Access Control (RBAC)**: Controls which modules users can access based on role and subscription tier
-- **Configurable dashboard**: Main dashboard at `/dashboard` shows widgets from enabled modules based on user's industry and subscription tier
-- **Modular components**: Each feature module has its own component directory
-
-**📖 Architecture Documentation:**
-- Primary architecture: [`docs/structure/STRUCTURE-OVERVIEW-1.md`](docs/structure/STRUCTURE-OVERVIEW-1.md)
-- Future scaling: [`docs/structure/MULTI-INDUSTRY-ARCHITECTURE.md`](docs/structure/MULTI-INDUSTRY-ARCHITECTURE.md)
-- Type system: [`docs/structure/TYPES-GUIDE.md`](docs/structure/TYPES-GUIDE.md)
-- Tool system: [`docs/structure/tools-guide.md`](docs/structure/tools-guide.md)
-
----
-
-## Common Development Commands
-
-### Marketing Website (app/web/)
+### Initial Setup (First Time Only)
 
 ```bash
-# Development
-npm run dev              # Start dev server (tsx server/index.ts)
+# Clone repository
+git clone https://github.com/your-org/strive-saas.git
+cd strive-saas
 
-# Building
-npm run build            # Build React app + Express server
-npm run build:analyze    # Build with bundle analysis
+# Setup shared database
+cd shared/prisma
+npx prisma generate
+npx prisma migrate dev
+cd ../..
 
-# Type Checking
-npm run check            # TypeScript type checking
-
-# Database
-npm run db:push          # Push Drizzle schema changes
-npm run db:migrate       # Run Supabase migrations
-npm run supabase:start   # Start local Supabase
-
-# Testing
-npm run test             # Run tests
-npm run test:e2e         # Run Playwright e2e tests
-npm run test:coverage    # Generate coverage report
-
-# Production
-npm start                # Start production server
+# Copy environment template
+cp .env.example .env.local
+# Edit .env.local with your Supabase credentials
 ```
 
-### SaaS Platform (app/)
+### Running Individual Projects
+
+**Choose which project you want to work on:**
 
 ```bash
-# Setup
-npm install              # Install dependencies
-npx prisma generate      # Generate Prisma client
-npx prisma migrate dev   # Run migrations
+# Option 1: Chatbot Widget
+cd "(chatbot)"
+npm install
+npm run dev
+# → http://localhost:3000
 
-# Development
-npm run dev              # Start dev server (Turbopack)
-npx prisma studio        # Database GUI
-npm run lint:fix         # Fix linting issues
+# Option 2: Platform (SaaS)
+cd "(platform)"
+npm install
+npm run dev
+# → http://localhost:3000
 
-# Testing
-npm test                 # Run all tests
-npm test -- --coverage   # With coverage report
-npm test -- --watch      # Watch mode
-npm run test:e2e         # E2E tests (if configured)
-
-# Pre-commit (ALWAYS RUN - BLOCKS if fails)
-npm run lint             # ESLint - Zero warnings
-npx tsc --noEmit         # TypeScript - Zero errors
-npm test                 # Tests - 80% coverage minimum
-
-# Performance Analysis
-ANALYZE=true npm run build    # Bundle analysis
-npm run build -- --profile    # React profiling
-
-# Production
-npm run build            # Production build
-npm start                # Start production server
+# Option 3: Marketing Website
+cd "(website)"
+npm install
+npm run dev
+# → http://localhost:3000
 ```
 
 ---
 
-## Critical Development Rules
+## 📦 (chatbot)/ - AI Chatbot Widget
 
-### 🚫 Project Organization (NEVER DO THIS)
+**Domain:** `chat.strivetech.ai`
 
-- ❌ **NEVER** create files without checking if they already exist (use Glob/Grep first!)
-- ❌ **NEVER** create scripts or tests without checking for existing similar ones
-- ❌ **NEVER** create random files in root directory
-  - No session logs, chat_logs, random .md files
-  - No image.png, test-results.json, etc.
-- ❌ **NEVER** commit AI tool configs to source control
-  - .claude/, .serena/ must be in .gitignore
-- ❌ **NEVER** create parallel route conflicts
-  - Both `app/(platform)/page.tsx` AND `app/(web)/page.tsx` = BUILD ERROR
-  - Use single `app/page.tsx` with HostDependent pattern for host-based routing
-- ❌ **NEVER** create monolithic "god files" over 500 lines (unless pure data/content)
-- ❌ **NEVER** mix business logic with UI components
-- ❌ **NEVER** use multiple ORMs (Prisma ONLY - no Drizzle, no raw SQL)
-- ❌ **NEVER** create duplicate solutions (multiple DB clients, auth systems)
-- ❌ **NEVER** skip Zod validation on inputs
-- ❌ **NEVER** commit without: lint + typecheck + tests + 80% coverage
-- ❌ **NEVER** expose credentials in code or git history
+### What It Does
 
-### ✅ Project Organization (DO THIS)
+Embeddable AI assistant that can be integrated into any website via iframe or script tag. Supports multiple AI models (GPT-4, Claude, Llama) with conversation history and RAG capabilities.
 
-- ✅ All documentation goes in `docs/` directory
-- ✅ Keep root directory clean (only essential config files)
-- ✅ One file, one responsibility (Single Responsibility Principle)
-- ✅ Files under 300 lines - split into smaller modules if exceeding (500 line limit in specific cases)
-- ✅ Separate concerns: UI in `components/`, logic in `lib/`, types in `types/`
-- ✅ Check for existing implementations before creating new files
-- ✅ Update existing files instead of creating duplicates
+### Key Features
 
-### 📂 Root Directory Standards
+- 🤖 Multi-model AI support
+- 💬 Real-time streaming responses
+- 📝 Conversation history
+- 🔍 RAG (Retrieval-Augmented Generation)
+- 🎨 Customizable appearance
+- 📱 Mobile responsive
+- 🔗 Easy embed (iframe or script)
 
-**CRITICAL:** Keep root directory clean - NO random files allowed
+### Tech Stack
 
-**Prohibited in root:**
-```
-❌ .claude/ .serena/           # AI configs (add to .gitignore)
-❌ chat-logs/ session-logs/    # Session data (move to docs/)
-❌ *.md files                  # Documentation (move to docs/)
-❌ test-*.ts                   # Tests (belongs in __tests__/)
-❌ *.log files                 # Logs (add to .gitignore)
-❌ database-migration/         # History (move to docs/migration-history/)
+- Next.js 15.6.0 + App Router
+- React 19.1.0
+- TypeScript 5.6+
+- Supabase (auth + database)
+- OpenRouter + Groq (AI)
+- TailwindCSS + shadcn/ui
+
+### Getting Started
+
+```bash
+cd "(chatbot)"
+npm install
+npm run dev
 ```
 
-**Allowed in root:**
-```
-✅ package.json, package-lock.json
-✅ next.config.mjs, tsconfig.json
-✅ .env.local, .env.example
-✅ .gitignore, .eslintrc
-✅ README.md (only this one .md file)
-```
-
-**Correct locations:**
-- Documentation → `docs/`
-- AI configs → Local only (in .gitignore)
-- Tests → `__tests__/` or co-located `*.test.ts`
-- Scripts → `scripts/` or `tools/`
+**Documentation:**
+- [Setup Guide]((chatbot)/README.md)
+- [Development Rules]((chatbot)/CLAUDE.md)
+- [Project Plan]((chatbot)/PLAN.md)
 
 ---
 
-## Architecture Best Practices
+## 🏢 (platform)/ - Main SaaS Application
 
-### Modular Design (CRITICAL)
+**Domain:** `app.strivetech.ai`
 
-**The old codebase failed due to monolithic files. Follow these rules strictly:**
+### What It Does
 
-1. **Feature Module Pattern** (for `app/`)
-   ```
-   lib/modules/[feature]/
-   ├── actions/         # Server Actions (mutations with validation)
-   ├── queries/         # Database queries (read operations)
-   ├── schemas/         # Zod validation schemas
-   └── index.ts         # Public API
-   ```
+Enterprise B2B multi-tenant SaaS platform with AI-powered tools for business management. Supports multiple industries (Real Estate, Healthcare, etc.) with customizable dashboards and tools.
 
-2. **Component Organization**
-   - Keep components under 200 lines
-   - Break into smaller, composable pieces
-   - Separate presentational from container components
-   - Co-locate related components in feature directories
+### Key Features
 
-3. **Business Logic Separation**
-   - All data access in `lib/modules/[feature]/`
-   - Never inline database queries in components
-   - Use repository pattern for data access
-   - Keep services pure and testable
+- 👥 **Multi-tenant architecture** with Row Level Security
+- 🎭 **Role-based access** (Admin, Employee, Client)
+- 📊 **CRM system** with industry customizations
+- 📁 **Project management** with tasks & collaboration
+- 🤖 **AI assistant (Sai)** - embedded chatbot
+- 🛠️ **Tool marketplace** with shared & industry tools
+- 🏭 **Multi-industry support** with plugin architecture
+- 💳 **4-tier subscriptions** (Free, Starter, Growth, Enterprise)
 
-4. **File Size Limits**
-   - **Hard Limit:** 500 lines per file (enforced by ESLint)
-     - Applies to all `.ts`/`.tsx` files
-     - Exception: Pure data/content files (Blogs, Case Studies, Whitepapers, Articles, etc.)
-     - Blocks PRs when exceeded
-   - **Soft Targets (Code Review Warning):**
-     - UI Components: 200 lines
-     - Server Components: 250 lines
-     - Services/Logic: 300 lines
-     - API Routes: 150 lines
-   - **When approaching soft target:** Extract reusable hooks/utilities, use component composition, separate concerns
-   - **If exceeding:** Split into multiple files
+### Tech Stack
 
-### Dependency Management
+- Next.js 15.5.4 + App Router
+- React 19.1.0
+- TypeScript 5.6+
+- Prisma 6.16.2 + Supabase PostgreSQL
+- Supabase Auth + Storage + RLS
+- TanStack Query + Zustand
+- Stripe (payments)
+- Jest + Playwright (testing)
 
-**Production mindset - every dependency is a liability:**
-
-- ✅ **Check existing dependencies first** before adding new ones
-- ✅ **Justify each new package** - document why it's needed
-- ✅ **Audit bundle impact** - check size before committing
-- ✅ **Security audit** - check for known vulnerabilities
-- ❌ **NEVER install multiple solutions for the same problem**
-
-**Dependency Checklist:**
-```yaml
-Before adding:
-  - Can existing deps solve this?
-  - Can we build it in <100 lines?
-  - Is it actively maintained?
-  - Weekly downloads > 100k?
-  - Last publish < 6 months?
-  - Bundle size < 50kb?
-  - Tree-shakeable?
-  - TypeScript support?
-```
-
-### Single Source of Truth
-
-**The old codebase mixed multiple solutions. Follow these strictly:**
-
-#### For SaaS Platform (app/):
-- ✅ **Database:** Prisma 6.16.2 + Supabase PostgreSQL (ONLY)
-  - Single Prisma schema at `app/prisma/schema.prisma`
-  - Migration command: `npx prisma migrate dev --name <description>`
-  - **NO Drizzle, NO raw SQL, NO multiple ORMs**
-  - Row Level Security (RLS) for multi-tenancy
-- ✅ **Authentication:** Supabase Auth (built-in JWT)
-  - httpOnly cookies for sessions
-  - Auth middleware in `middleware.ts`
-  - RBAC enforcement in all routes
-- ✅ **State Management:**
-  - Server state: TanStack Query
-  - Client state: Zustand (only when needed)
-  - Forms: React Hook Form + Zod
-- ✅ **Data Fetching Hierarchy:**
-  1. Server Components (default) - Direct DB
-  2. Server Actions - Mutations with Zod validation
-  3. Client Components - Interactive UI
-  4. API Routes - Webhooks only (NO internal data fetching)
-
-#### For Marketing Website (app/web/):
-- Migration to Prisma in progress
-- Follow SaaS architecture patterns
-- Only make changes when explicitly requested
-
-### Code Quality Gates
-
-**Pre-commit Checklist (MANDATORY):**
+### Getting Started
 
 ```bash
-# Run ALL before pushing - BLOCKS commit if fails
-npm run lint             # Zero warnings (BLOCKS)
-npx tsc --noEmit         # Zero errors (BLOCKS)
-npm test                 # 80% coverage (BLOCKS)
+cd "(platform)"
+npm install
+npx prisma generate --schema=../shared/prisma/schema.prisma
+npm run dev
 ```
 
-**Testing Requirements (ENFORCED):**
-```yaml
-Approach: Test-Driven Development (TDD)
-  - Write tests BEFORE implementation
-  - 80% coverage is MINIMUM, not a target
-  - Commit BLOCKED if coverage < 80%
+**Documentation:**
+- [Setup Guide]((platform)/README.md)
+- [Development Rules]((platform)/CLAUDE.md)
+- [Project Plan]((platform)/PLAN.md)
+- [Session Plans]((platform)/update-sessions/)
 
-Coverage Targets:
-  Unit: 80% minimum (statements, branches)
-  Integration: All Server Actions + API routes (100%)
-  E2E: Critical user flows (auth, payment, core features)
+---
 
-Test File Structure:
-  app/
-  ├── __tests__/
-  │   ├── components/
-  │   ├── api/
-  │   └── integration/
-  ├── lib/
-  │   └── modules/
-  │       └── crm/
-  │           ├── actions.ts
-  │           └── actions.test.ts  # Co-located
+## 🌐 (website)/ - Marketing Site
 
-Required Tests:
-  - All Server Actions MUST have tests
-  - All API routes MUST have tests
-  - All business logic MUST have tests
+**Domain:** `strivetech.ai`
+
+### What It Does
+
+Public-facing marketing website showcasing the Strive Tech platform, services, and resources. Handles lead generation and provides SSO integration with the main platform.
+
+### Key Features
+
+- 📄 **Company information** & about pages
+- 🎨 **Product showcase** & feature highlights
+- 📰 **Blog & resources** for content marketing
+- 📧 **Contact forms** & lead generation
+- 🔐 **SSO integration** with platform
+- 🚀 **Modern design** with animations
+- 📱 **Fully responsive** across devices
+
+### Tech Stack
+
+- Next.js 15 + App Router
+- React 19.1.0
+- TypeScript 5.6+
+- Supabase (database + auth)
+- TailwindCSS + shadcn/ui
+- Framer Motion (animations)
+
+### Getting Started
+
+```bash
+cd "(website)"
+npm install
+npm run dev
 ```
 
-### Performance Standards
+**Documentation:**
+- [Setup Guide]((website)/README.md)
+- [Development Rules]((website)/CLAUDE.md)
+- [Project Plan]((website)/PLAN.md)
 
-**Core Web Vitals (MANDATORY):**
-```yaml
-Targets:
-  LCP: < 2.5s        # Largest Contentful Paint
-  FID: < 100ms       # First Input Delay
-  CLS: < 0.1         # Cumulative Layout Shift
-  TTFB: < 600ms      # Time to First Byte
-  Bundle: < 500kb    # Initial JS load
+---
+
+## 🔗 Shared Resources
+
+### shared/prisma/ - Database Schema
+
+**Single source of truth** for database structure used by all three projects.
+
+**13 Database Models:**
+- User, Organization, OrganizationMember
+- Customer, Project, Task
+- AIConversation, AIMessage, AITool
+- Subscription, UsageTracking
+- Appointment, Content, ActivityLog
+
+**Usage from any project:**
+```bash
+# Generate Prisma client
+npx prisma generate --schema=../shared/prisma/schema.prisma
+
+# Create migration
+npx prisma migrate dev --name your_migration --schema=../shared/prisma/schema.prisma
+
+# View database
+npx prisma studio --schema=../shared/prisma/schema.prisma
 ```
 
-**Optimization Patterns:**
-```typescript
-// 1. Server Components by default (80% of components)
-async function Page() {
-  const data = await prisma.user.findMany(); // Direct DB access
-  return <UserList data={data} />;
-}
+### shared/supabase/ - Authentication & Storage
 
-// 2. Dynamic imports for heavy features
-const HeavyChart = dynamic(() => import('./HeavyChart'), {
-  ssr: false,
-  loading: () => <Skeleton />,
-});
+**Shared Supabase configuration** for SSO across all applications.
 
-// 3. Image optimization ALWAYS
-import Image from 'next/image';
-<Image src="..." alt="..." width={...} height={...} priority />
+**Features:**
+- 🔐 Authentication (JWT sessions)
+- 📁 File storage (avatars, documents)
+- ⚡ Real-time subscriptions
+- 🛡️ Row Level Security (RLS)
+- 👥 Multi-tenancy support
 
-// 4. Tree-shaking imports
-import { debounce } from 'lodash-es';  // ✅ Tree-shakeable
-import _ from 'lodash';                 // ❌ Imports entire library
+---
 
-// 5. Streaming with Suspense
-export default function Page() {
-  return (
-    <Suspense fallback={<Skeleton />}>
-      <DataComponent />
-    </Suspense>
-  );
-}
+## 🔄 How Projects Work Together
 
-// 6. Bundle analysis
-// Run: ANALYZE=true npm run build
+### Authentication Flow (SSO)
+
+```
+1. User signs up on (website)/strivetech.ai
+   ↓
+2. Supabase Auth creates user session
+   ↓
+3. User can access (platform)/app.strivetech.ai without re-login
+   ↓
+4. User can use (chatbot)/chat.strivetech.ai with same session
+```
+
+### Database Architecture
+
+All three projects connect to the **SAME Supabase PostgreSQL database**:
+
+```
+┌─────────────┐
+│  (chatbot)  │────┐
+└─────────────┘    │
+                   │
+┌─────────────┐    ├──► shared/prisma/schema.prisma
+│ (platform)  │────┤         ↓
+└─────────────┘    │    Supabase PostgreSQL
+                   │    (RLS for multi-tenancy)
+┌─────────────┐    │
+│  (website)  │────┘
+└─────────────┘
+```
+
+### Deployment Architecture
+
+Each project deploys **independently** to Vercel:
+
+```
+(chatbot)/  → Vercel → chat.strivetech.ai
+(platform)/ → Vercel → app.strivetech.ai
+(website)/  → Vercel → strivetech.ai
+```
+
+**Benefits:**
+- Independent scaling
+- Isolated failures
+- Separate environments (dev/staging/prod)
+- Different deployment schedules
+
+---
+
+## 🛠️ Development Workflow
+
+### Working on a Specific Project
+
+```bash
+# 1. Navigate to project
+cd "(platform)"
+
+# 2. Read project documentation
+cat CLAUDE.md      # Development rules
+cat PLAN.md        # Project roadmap
+cat README.md      # Setup instructions
+
+# 3. Install dependencies
+npm install
+
+# 4. Setup environment
+cp .env.example .env.local
+# Edit .env.local
+
+# 5. Run development server
+npm run dev
+
+# 6. Make changes following project standards
+
+# 7. Run tests before committing
+npm run lint          # Zero warnings
+npx tsc --noEmit      # Zero errors
+npm test              # 80%+ coverage
+```
+
+### Updating Database Schema
+
+```bash
+# 1. Navigate to shared Prisma
+cd shared/prisma
+
+# 2. Edit schema.prisma
+# Add/modify models
+
+# 3. Create migration
+npx prisma migrate dev --name your_migration_name
+
+# 4. Generate client in each affected project
+cd "../../(platform)"
+npx prisma generate --schema=../shared/prisma/schema.prisma
+
+cd "../(chatbot)"
+npx prisma generate --schema=../shared/prisma/schema.prisma
+
+cd "../(website)"
+npx prisma generate --schema=../shared/prisma/schema.prisma
+```
+
+### Pre-Commit Checklist (ALL Projects)
+
+✅ **Before committing any code:**
+
+```bash
+# Run in project directory
+npm run lint          # Must pass (zero warnings)
+npx tsc --noEmit      # Must pass (zero errors)
+npm test              # Must pass (80%+ coverage)
 ```
 
 ---
 
-## Environment Variables
+## 📚 Documentation
 
-### Marketing Website (app/web/.env)
-```bash
-PORT=3000
-SITE_URL=http://localhost:3000
-DATABASE_URL=postgresql://...
-SUPABASE_URL=https://...
-SUPABASE_ANON_KEY=...
-SUPABASE_SERVICE_ROLE_KEY=...
-SMTP_HOST=smtp.gmail.com
-SMTP_USER=...
-SMTP_PASS=...
-SESSION_SECRET=...
-JWT_SECRET=...
-NODE_ENV=development
-```
+### Repository-Level
 
-### SaaS Platform (app/.env.local)
+- **[CLAUDE.md](CLAUDE.md)** - AI assistant instructions & standards
+- **[README.md](README.md)** - This file (overview & setup)
+- **[.env.example](.env.example)** - Environment variable template
+- **[dev-workspace/](dev-workspace/)** - Development planning & logs
+
+### Project-Specific
+
+Each project has complete documentation:
+
+| File | Description |
+|------|-------------|
+| `CLAUDE.md` | Development rules & patterns |
+| `PLAN.md` | Project roadmap & phases |
+| `README.md` | Setup & getting started |
+| `docs/` | Additional documentation |
+
+---
+
+## 🔒 Environment Variables
+
+### Required for All Projects
+
+Create `.env.local` in each project directory:
+
 ```bash
-# Database
+# Database (Supabase PostgreSQL)
 DATABASE_URL="postgresql://..."
 DIRECT_URL="postgresql://..."
 
-# Supabase (SaaS DB)
-NEXT_PUBLIC_SUPABASE_URL="..."
-NEXT_PUBLIC_SUPABASE_ANON_KEY="..."
-SUPABASE_SERVICE_ROLE_KEY="..." # NEVER expose to client
+# Supabase Auth & Storage
+NEXT_PUBLIC_SUPABASE_URL="https://xxxxx.supabase.co"
+NEXT_PUBLIC_SUPABASE_ANON_KEY="eyJhbGci..."
+SUPABASE_SERVICE_ROLE_KEY="eyJhbGci..."  # SERVER ONLY!
 
-# AI Providers
-OPENROUTER_API_KEY="..."          # Multi-model gateway
-GROQ_API_KEY="..."                # Fast open-source models
-
-# Stripe
-STRIPE_SECRET_KEY="..."
-STRIPE_WEBHOOK_SECRET="..."
-
-# App
-NEXT_PUBLIC_APP_URL="https://app.strivetech.ai"
+# App Configuration
+NEXT_PUBLIC_APP_URL="http://localhost:3000"
 NODE_ENV="development"
+```
 
-# Security Note: Rotate all secrets quarterly
-# Use different keys per environment (dev/staging/prod)
+### Platform-Specific
+
+**[(platform)/](#platform---main-saas-application) requires additional vars:**
+
+```bash
+# AI Providers
+OPENROUTER_API_KEY="sk-or-..."
+GROQ_API_KEY="gsk_..."
+
+# Stripe (Payments)
+STRIPE_SECRET_KEY="sk_test_..."
+STRIPE_WEBHOOK_SECRET="whsec_..."
+
+# Upstash Redis (Rate Limiting)
+UPSTASH_REDIS_REST_URL="https://..."
+UPSTASH_REDIS_REST_TOKEN="..."
+```
+
+**Security Note:** Never commit `.env` or `.env.local` files!
+
+---
+
+## 🧪 Testing
+
+### Test Requirements (ALL Projects)
+
+- **Minimum Coverage:** 80% (enforced)
+- **Test-Driven Development:** Write tests first
+- **All Server Actions:** 100% coverage
+- **All API Routes:** 100% coverage
+
+### Running Tests
+
+```bash
+# Run all tests
+npm test
+
+# With coverage report
+npm test -- --coverage
+
+# Watch mode
+npm test -- --watch
+
+# E2E tests (Playwright)
+npm run test:e2e
 ```
 
 ---
 
-## Path Aliases
+## 🚀 Deployment
 
-### Marketing Website (app/web/)
-- `@/*` → `app/web/client/src/*`
-- `@shared/*` → `app/web/shared/*`
-- `@assets/*` → `app/web/attached_assets/*`
+### Production Deployments
 
-### SaaS Platform (app/)
-- `@/*` → `app/*` (app root)
+Each project deploys independently to Vercel:
 
----
+```bash
+# Deploy chatbot
+cd "(chatbot)"
+vercel --prod
 
-## Database Architecture
+# Deploy platform
+cd "(platform)"
+vercel --prod
 
-### 🔑 Hybrid Database Strategy (Prisma + Supabase)
-
-**CRITICAL Understanding:** Prisma and Supabase are NOT alternatives - they work TOGETHER:
-
-```
-┌─────────────────────────────────────────────────────┐
-│          Your Next.js Application                   │
-│                                                     │
-│  ┌──────────────┐         ┌──────────────┐        │
-│  │    Prisma    │         │   Supabase   │        │
-│  │  (ORM Tool)  │         │   (Client)   │        │
-│  └──────┬───────┘         └──────┬───────┘        │
-│         │                        │                 │
-└─────────┼────────────────────────┼─────────────────┘
-          │                        │
-          ▼                        ▼
-┌─────────────────────────────────────────────────────┐
-│           Supabase Platform                         │
-│                                                     │
-│  ┌─────────────────┐  ┌─────────────────┐         │
-│  │   PostgreSQL    │  │      Auth       │         │
-│  │   (Database)    │  │    Service      │         │
-│  └─────────────────┘  └─────────────────┘         │
-│                                                     │
-│  ┌─────────────────┐  ┌─────────────────┐         │
-│  │    Storage      │  │   Realtime      │         │
-│  │   (Files)       │  │   (Websocket)   │         │
-│  └─────────────────┘  └─────────────────┘         │
-└─────────────────────────────────────────────────────┘
+# Deploy website
+cd "(website)"
+vercel --prod
 ```
 
-**Prisma is used for:** (connects to Supabase PostgreSQL)
-- Complex database queries with joins
-- Transactions (multi-step operations)
-- Aggregations and analytics
-- Schema migrations
-- All Server Actions and mutations
-- AI conversation storage and RAG (vector search)
+### Production Domains
 
-**Supabase Client is used for:** (connects to Supabase services)
-- Authentication (login, signup, sessions)
-- Real-time database subscriptions
-- File storage (avatars, documents)
-- Live presence tracking (who's online)
-- Typing indicators
-- Live notifications
+- **Chatbot:** https://chat.strivetech.ai
+- **Platform:** https://app.strivetech.ai
+- **Website:** https://strivetech.ai
 
-**Database Details:**
-1. **SaaS Platform DB** (`app/`) ✅
-   - Provider: Supabase PostgreSQL
-   - ORM: Prisma 6.16.2
-   - Schema: `app/prisma/schema.prisma`
-   - Models: 13 total (User, Organization, Customer, Project, Task, AIConversation, etc.)
-   - Multi-tenant with RLS (Row Level Security)
-   - Connection: Both Prisma AND Supabase client connect to this same database
+### Environment Setup in Vercel
 
-2. **Marketing Site DB** (`app/web/`) - Migration in progress
-   - Currently: Drizzle ORM (legacy)
-   - Migrating to: Prisma (to match SaaS architecture)
+For each project, configure environment variables in:
+`Vercel Dashboard → Project → Settings → Environment Variables`
 
-**See comprehensive guide:** [`docs/database/PRISMA-SUPABASE-STRATEGY.md`](docs/database/PRISMA-SUPABASE-STRATEGY.md)
+Mark secrets (API keys, database passwords) as **"Secret"** in Vercel.
 
 ---
 
-## Subscription Tiers & Access Control
+## 🤝 Contributing
 
-The SaaS platform has **4 subscription tiers** with different module access:
+### Development Standards
 
-- **Tier 0 (FREE):** Very low rate limit with open source models, basic features
-- **Tier 1 ($299):** Basic dashboard, 3 tools, best for solopreneurs & startups
-- **Tier 2 ($699):** Industry-specific dashboard, 10 tools, best for SMEs & growth
-- **Tier 3 (Enterprise/Custom):** Fully customized dashboard, unlimited tools, custom workflows
+1. **Read project CLAUDE.md** before making changes
+2. **Follow file size limits** (500 lines max, 200-300 recommended)
+3. **Write tests first** (TDD approach)
+4. **Server Components by default** ("use client" only when needed)
+5. **Validate all inputs** with Zod schemas
+6. **Never expose secrets** in code or commits
 
-**RBAC Implementation:**
-- Middleware checks user role and subscription tier
-- Each route protected by role/tier requirements
-- Dashboard shows only modules user has access to
-- Module access controlled via `lib/rbac.ts`
+### Git Workflow
 
----
+```bash
+# Create feature branch
+git checkout -b feature/your-feature-name
 
-## Testing Strategy
+# Make changes in appropriate project
+cd "(platform)"
+# ... make changes ...
 
-### Unit Tests
-- Test business logic in `lib/modules/`
-- Test utilities and helpers
-- Mock external dependencies (DB, APIs)
+# Run pre-commit checks
+npm run lint
+npx tsc --noEmit
+npm test
 
-### Integration Tests
-- Test API routes with real database (test DB)
-- Test authentication flows
-- Test RBAC enforcement
+# Commit if all checks pass
+git add .
+git commit -m "feat(platform): your change description"
 
-### E2E Tests (Playwright)
-- Test critical user flows
-- Test across subscription tiers
-- Test role-based access
-
-**Coverage Goals:**
-- Minimum 80% for new code
-- 100% for critical paths (auth, billing, RBAC)
-
----
-
-## Security Requirements
-
-### Core Security Checklist
-```typescript
-// 1. Input validation (ALWAYS)
-const schema = z.object({
-  email: z.string().email(),
-  name: z.string().min(1).max(100)
-});
-
-// 2. SQL injection prevention
-✅ prisma.user.findMany({ where: { name: input }})
-❌ prisma.$queryRaw(`SELECT * WHERE name = '${input}'`)
-
-// 3. XSS prevention
-✅ <div>{userContent}</div>  // React escapes
-❌ dangerouslySetInnerHTML={{ __html: userContent }}
-
-// 4. Rate limiting
-const { success } = await rateLimit(identifier);
-if (!success) return new Response('Too Many Requests', { status: 429 });
-
-// 5. Server-only protection (for sensitive operations)
-import 'server-only'; // At top of file - prevents client imports
-
-// 6. Environment validation (add to app startup)
-const envSchema = z.object({
-  DATABASE_URL: z.string().url(),
-  SUPABASE_SERVICE_ROLE_KEY: z.string().min(32),
-  NEXT_PUBLIC_SUPABASE_URL: z.string().url(),
-});
-envSchema.parse(process.env);
+# Push and create PR
+git push origin feature/your-feature-name
 ```
 
-### Multi-tenancy Security (RLS)
-```sql
-CREATE POLICY "Tenant isolation"
-ON all_tables
-USING (org_id = current_user_org());
+---
+
+## 📊 Project Status
+
+### (chatbot)/ - AI Chatbot Widget
+- ✅ Core functionality complete
+- ✅ Multi-model AI support
+- ✅ Conversation history
+- 🚧 Advanced RAG features (in progress)
+
+### (platform)/ - Main SaaS Platform
+- 🚧 **In Development** - Production roadmap in progress
+- ✅ Authentication & RBAC
+- ✅ CRM system
+- ✅ Project management
+- 🚧 Industry plugins (Real Estate, Healthcare)
+- 📋 See [(platform)/PLAN.md]((platform)/PLAN.md) for details
+
+### (website)/ - Marketing Site
+- 🚧 **In Development** - Migrating to new architecture
+- ✅ Basic pages & content
+- 🚧 Blog system
+- 🚧 SSO integration
+
+---
+
+## 🆘 Troubleshooting
+
+### "Module not found" errors
+
+```bash
+# Regenerate Prisma client
+npx prisma generate --schema=../shared/prisma/schema.prisma
+
+# Clear Next.js cache
+rm -rf .next
+npm run dev
 ```
 
-### Environment Security & Credential Protection
-- **NEVER expose:** `SUPABASE_SERVICE_ROLE_KEY`, API keys, database credentials
-- Check git history for exposed secrets: `git log -p | grep -i "password\|secret\|key"`
-- Use `.env.example` with dummy values only
-- Never commit `.claude/settings.local.json` or similar config files
-- Rotate secrets quarterly
-- Use different keys per environment
-- Enable audit logging for all data access
+### Database connection issues
+
+```bash
+# Check Supabase is running
+# Verify DATABASE_URL in .env.local
+
+# Test connection
+npx prisma db pull --schema=../shared/prisma/schema.prisma
+```
+
+### TypeScript errors
+
+```bash
+# Clear TypeScript cache
+rm -rf node_modules
+npm install
+npx tsc --noEmit
+```
 
 ---
 
-## Deployment
+## 📞 Support & Resources
 
-### Marketing Website
-- **Platform:** Vercel
-- **Environment:** Production config in `.env.production`
-- **Domain:** `strivetech.ai`
+### Documentation
 
-### SaaS Platform
-- **Platform:** Vercel
-- **Environment:** Set in Vercel dashboard
-- **Domain:** `app.strivetech.ai`
-- **Cookie sharing:** Domain set to `.strivetech.ai` for auth
+- [Platform Documentation]((platform)/README.md)
+- [Chatbot Documentation]((chatbot)/README.md)
+- [Website Documentation]((website)/README.md)
+- [Development Standards](CLAUDE.md)
+
+### External Resources
+
+- [Next.js Documentation](https://nextjs.org/docs)
+- [Prisma Documentation](https://www.prisma.io/docs)
+- [Supabase Documentation](https://supabase.com/docs)
+- [Vercel Deployment](https://vercel.com/docs)
 
 ---
 
-## Core Development Principles
+## 📝 License
 
-### 🎯 Production Mindset
-1. **Server-first architecture** - Minimize client-side JavaScript
-2. **Type safety everywhere** - TypeScript + Zod validation
-3. **Security by default** - Never trust user input
-4. **Performance budgets** - Monitor Core Web Vitals
-5. **Test-driven development** - Write tests first
-6. **Clean architecture** - Separation of concerns
-7. **Progressive enhancement** - Works without JavaScript
-8. **Accessibility first** - WCAG 2.1 AA compliance
-9. **Documentation as code** - Keep docs in sync
-10. **Continuous improvement** - Measure and iterate
+Proprietary - Strive Tech © 2024
 
-### ⚠️ Critical Rules
-- **File size limits:** Components 200 lines, Services 300 lines, Hard limit 500 lines (exception for data: Blogs, Case Studies, Whitepapers, Articles, etc.)
-- **No cross-module imports** - Modules are self-contained (may change in future with data/information transfer system)
-- **One solution per problem** - No duplicate dependencies
-- **Always run pre-commit checks** - lint, typecheck, test
-- **Server Components by default** - "use client" only when needed
-- **API routes for webhooks only** - Use Server Actions for mutations
+---
 
-### 📋 Session Checklist
+## 🎯 Quick Reference
 
-**Before starting any task:**
-- [ ] Check if files/scripts/tests already exist (use Glob/Grep)
-- [ ] Read existing code (use Read tool on files to modify)
-- [ ] Write tests first (TDD approach for new features)
-- [ ] Check for route group conflicts
-- [ ] Avoid cross-module imports
+| Action | Command |
+|--------|---------|
+| **Navigate to project** | `cd "(project)"` |
+| **Install dependencies** | `npm install` |
+| **Start dev server** | `npm run dev` |
+| **Run tests** | `npm test` |
+| **Build for production** | `npm run build` |
+| **Deploy to Vercel** | `vercel --prod` |
+| **Generate Prisma client** | `npx prisma generate --schema=../shared/prisma/schema.prisma` |
+| **Create migration** | `npx prisma migrate dev --schema=../shared/prisma/schema.prisma` |
 
-**During implementation:**
-- [ ] Using Server Components by default?
-- [ ] Server Actions for mutations with Zod validation?
-- [ ] "use client" only when truly needed?
-- [ ] Heavy components use dynamic() imports?
-- [ ] Slow operations wrapped in Suspense?
+---
 
-**Before completing any task:**
-- [ ] Lint passes with zero warnings (BLOCKS)
-- [ ] TypeScript has zero errors (BLOCKS)
-- [ ] Tests pass with 80%+ coverage (BLOCKS)
-- [ ] Security considered (XSS, CSRF, SQL, credentials)
-- [ ] Performance impact assessed
-- [ ] No cross-module imports
-- [ ] Files under size limits (400 soft, 500 hard)
-- [ ] No exposed secrets or credentials
-- [ ] Run: `npm run lint && npx tsc --noEmit && npm test`
+**Remember:** This is a tri-fold repository. Always work in the correct project directory: **(chatbot)**, **(platform)**, or **(website)**.
 
-**Remember:** This is a production system. Every line of code should be secure, performant, and maintainable. Secure > Fast > Pretty. No shortcuts.
+**Last Updated:** 2025-10-04

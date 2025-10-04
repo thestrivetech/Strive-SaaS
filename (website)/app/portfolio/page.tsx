@@ -13,8 +13,8 @@ import { Badge } from "@/components/ui/badge";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 // Import data from new modular structure
-import { Project, projects } from "@/data/(web)/portfolio";
-import { getSolutionById } from "@/data/(web)/solutions-mapping";
+import { Project, projects } from "@/data/projects";
+import { getSolutionById } from "@/data/solutions-mapping";
 
 // Project interface is now imported from the modular structure
 
@@ -23,7 +23,7 @@ const Portfolio = () => {
   const [selectedProject, setSelectedProject] = useState<Project | null>(null);
   const [selectedFilter, setSelectedFilter] = useState("all");
 
-  // projects is now imported from @/data/portfolio
+  // projects is now imported from @/data/projects
 
   const filters = [
     { id: "all", name: "All Projects", icon: <Globe className="h-4 w-4" /> },

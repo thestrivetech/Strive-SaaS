@@ -1,12 +1,12 @@
 # Website Project - Session Start Prompt
 
-**Session:** session[n].md
+**Session:** session[3].md
 **Project:** Strive Tech Marketing Website (strivetech.ai)
 **Working Directory:** `C:\Users\zochr\Desktop\GitHub\Strive-SaaS\(website)`
 
 ---
 
-## =Ë Session Initialization
+## =ï¿½ Session Initialization
 
 Before starting work, Claude should read the following files IN ORDER:
 
@@ -19,6 +19,8 @@ Read these files to understand development rules and architecture:
 3. ./PLAN.md - Website completion plan (SEO, content, conversion)
 4. ./README.md - Project overview and setup instructions
 5. ../README.md - Repository overview (tri-fold structure)
+
+-> Read the current session[n]-plan.md file located here to see this sessions plan: C:\Users\zochr\Desktop\GitHub\Strive-SaaS\(website)\update-sessions\SESSION[n]-PLAN.md
 ```
 
 ### 2. Current Project State (ASSESS)
@@ -51,7 +53,7 @@ This website follows:
 
 ---
 
-## <¯ Session Workflow
+## <ï¿½ Session Workflow
 
 ### At Session Start:
 1. **Read context files** (listed above)
@@ -80,7 +82,7 @@ This website follows:
 
 ---
 
-## =Ý Session End Requirements
+## =ï¿½ Session End Requirements
 
 At the end of this session, create:
 
@@ -92,7 +94,7 @@ At the end of this session, create:
 
 **Date:** [auto-fill]
 **Duration:** [estimate]
-**Status:**  Complete /   Partial / L Blocked
+**Status:**  Complete / ï¿½ Partial / L Blocked
 
 ## Session Goal
 [What we planned to accomplish]
@@ -129,9 +131,9 @@ At the end of this session, create:
 - /L Form labels properly associated
 - /L Keyboard navigation tested
 - /L Color contrast ratios meet WCAG AA
-- /L Heading hierarchy correct (H1 ’ H2 ’ H3)
+- /L Heading hierarchy correct (H1 ï¿½ H2 ï¿½ H3)
 
-## Tests Written
+## Tests Written - OR UPDATED SINCE THEY ALREADY EXIST!
 - E2E tests: [count] new tests
 - Unit tests: [count] new tests
 - Coverage: [%] (target: 80%+)
@@ -166,7 +168,7 @@ npm run build
 
 ---
 
-## =€ Ready to Start
+## =ï¿½ Ready to Start
 
 Now that context is loaded, ask the user:
 **"What would you like to work on in this session? (Content creation, SEO optimization, performance, or new pages)"**

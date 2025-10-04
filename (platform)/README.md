@@ -39,10 +39,11 @@
 ### Key Features
 
 - **Multi-Tenancy** - Organizations isolated via Row Level Security (RLS)
+- **Multiple Dashboards/Modules** - Industry specific dashboards and modules that will be available for users to use
 - **Dual-Role RBAC** - Global + organization roles
-- **Subscription Tiers** - FREE, STARTER ($299), GROWTH ($699), ELITE (Custom)
+- **Subscription Tiers** - STARTER, GROWTH, ELITE, Custom, Enterprise
 - **Module Architecture** - Self-contained feature modules
-- **AI Integration** - Embedded Sai chatbot from (chatbot) project
+- **AI Integration** - Sai intelligent assistant project & AI agents that can be used in the SaaS app via tools (mulitple AI models will be used for different AI agents and workflows or automations that's selected or )
 - **Tool Marketplace** - Installable add-on tools
 - **Stripe Integration** - Subscription billing and webhooks
 

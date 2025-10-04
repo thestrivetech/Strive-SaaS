@@ -16,7 +16,7 @@ import { DeleteProjectDialog } from '@/components/(platform)/projects/delete-pro
 import { TaskList } from '@/components/(platform)/real-estate/tasks/task-list';
 import { CreateTaskDialog } from '@/components/(platform)/real-estate/tasks/create-task-dialog';
 import { TaskAttachments } from '@/components/(platform)/real-estate/tasks/task-attachments';
-import { ActivityTimeline } from '@/components/(web)/features/shared/activity-timeline';
+import { ActivityTimeline } from '@/components/(platform)/features/shared/activity-timeline';
 import { getAttachments } from '@/lib/modules/attachments';
 import type { OrganizationMember, TeamMember } from '@/lib/types/platform';
 import type { Task, Attachment, User as PrismaUser } from '@prisma/client';
