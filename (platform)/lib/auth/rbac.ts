@@ -201,3 +201,66 @@ export function getToolLimit(tier: string): number {
 
   return limits[tier] || 0;
 }
+
+/**
+ * Check if user can access CRM module
+ */
+export function canAccessCRM(role: UserRole): boolean {
+  return role === 'ADMIN' || role === 'MODERATOR' || role === 'EMPLOYEE';
+}
+
+/**
+ * Check if user can manage leads (create, edit)
+ */
+export function canManageLeads(role: UserRole): boolean {
+  return role === 'ADMIN' || role === 'MODERATOR' || role === 'EMPLOYEE';
+}
+
+/**
+ * Check if user can delete leads
+ */
+export function canDeleteLeads(role: UserRole): boolean {
+  return role === 'ADMIN' || role === 'MODERATOR';
+}
+
+/**
+ * Check if user can manage contacts (create, edit)
+ */
+export function canManageContacts(role: UserRole): boolean {
+  return role === 'ADMIN' || role === 'MODERATOR' || role === 'EMPLOYEE';
+}
+
+/**
+ * Check if user can delete contacts
+ */
+export function canDeleteContacts(role: UserRole): boolean {
+  return role === 'ADMIN' || role === 'MODERATOR';
+}
+
+/**
+ * Check if user can manage deals (create, edit)
+ */
+export function canManageDeals(role: UserRole): boolean {
+  return role === 'ADMIN' || role === 'MODERATOR' || role === 'EMPLOYEE';
+}
+
+/**
+ * Check if user can delete deals
+ */
+export function canDeleteDeals(role: UserRole): boolean {
+  return role === 'ADMIN' || role === 'MODERATOR';
+}
+
+/**
+ * Check if user can manage listings (create, edit)
+ */
+export function canManageListings(role: UserRole): boolean {
+  return role === 'ADMIN' || role === 'MODERATOR' || role === 'EMPLOYEE';
+}
+
+/**
+ * Check if user can delete listings
+ */
+export function canDeleteListings(role: UserRole): boolean {
+  return role === 'ADMIN' || role === 'MODERATOR';
+}

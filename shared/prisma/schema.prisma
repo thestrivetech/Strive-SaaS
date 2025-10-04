@@ -112,18 +112,29 @@ model appointments {
   start_time      DateTime
   end_time        DateTime
   status          AppointmentStatus @default(SCHEDULED)
+  type            AppointmentType   @default(OTHER)
   location        String?
   meeting_url     String?
   reminders_sent  Json?
+  lead_id         String?
+  deal_id         String?
+  listing_id      String?
   created_at      DateTime          @default(now())
   updated_at      DateTime          @updatedAt
   users           users             @relation(fields: [assigned_to], references: [id])
   customers       customers?        @relation(fields: [customer_id], references: [id])
   contact         contacts?         @relation("ContactAppointments", fields: [contact_id], references: [id])
   organizations   organizations     @relation(fields: [organization_id], references: [id], onDelete: Cascade)
+  lead            leads?            @relation(fields: [lead_id], references: [id], onDelete: SetNull)
+  deal            deals?            @relation(fields: [deal_id], references: [id], onDelete: SetNull)
+  listing         listings?         @relation(fields: [listing_id], references: [id], onDelete: SetNull)
 
   @@index([organization_id])
   @@index([start_time])
+  @@index([lead_id])
+  @@index([deal_id])
+  @@index([listing_id])
+  @@index([type])
 }
 
 /// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
@@ -247,6 +258,7 @@ model leads {
   assigned_to     users?        @relation("LeadAssignedTo", fields: [assigned_to_id], references: [id], onDelete: SetNull)
   activities      activities[]
   deals           deals[]
+  appointments    appointments[]
 
   @@index([organization_id])
   @@index([assigned_to_id])
@@ -320,6 +332,7 @@ model deals {
   contact             contacts?     @relation(fields: [contact_id], references: [id], onDelete: SetNull)
   listing             listings?     @relation(fields: [listing_id], references: [id], onDelete: SetNull)
   activities          activities[]
+  appointments        appointments[]
 
   @@index([organization_id])
   @@index([assigned_to_id])
@@ -366,6 +379,7 @@ model listings {
   assigned_to      users?        @relation("ListingAgent", fields: [assigned_to_id], references: [id], onDelete: SetNull)
   deals            deals[]
   activities       activities[]
+  appointments     appointments[]
 
   @@index([organization_id])
   @@index([assigned_to_id])
@@ -959,6 +973,15 @@ enum AppointmentStatus {
   COMPLETED
   CANCELLED
   NO_SHOW
+}
+
+enum AppointmentType {
+  MEETING
+  CALL
+  SHOWING
+  OPEN_HOUSE
+  FOLLOW_UP
+  OTHER
 }
 
 enum ContentStatus {
