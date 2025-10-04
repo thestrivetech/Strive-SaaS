@@ -1,8 +1,8 @@
 // Export all resources page data (includes technology, blog-posts, whitepapers, case-studies, quizzes, featured)
-export * from './resources';
+export * from '../../website/data/resources';
 
 // Export all portfolio page data
-export * from './portfolio';
+export * from '../../website/data/portfolio';
 
 // Export industries and solutions data
 export * from '../industries';
