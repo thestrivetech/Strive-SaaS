@@ -5,7 +5,7 @@
 
 2. Move all of the following into a newly created "styling" folder in app/app: favicon.io & global.css & layout.tsx & page.tsx -> Possible?
 
-3. Is it possible to keep next.js best practices while making separate components, data, scripts, types, hooks, public (web and chatbot will be using the same public assets) and lib folders within each project (web, platform, and chatbot) -> I believe this will achieve the best level of organization when scaling in the future.
+3. Is it possible to keep next.js best practices while making separate components, data, scripts, types, hooks, public (web and chatbot will be using the same public assets) and lib folders within each project (web, platform, and chatbot) and any other project specific files that may need to go into each project folder -> I believe this will achieve the best level of organization when scaling in the future.
     - Extra context to take into account: The app/app/lib/middleware folder might have to stay in app/app to work correctly since it basically acts as the directories router. Correct?
 
 ### Final thoughts from user

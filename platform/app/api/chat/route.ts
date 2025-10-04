@@ -1,7 +1,7 @@
 // app/api/chat/route.ts
 
 import { NextRequest, NextResponse } from 'next/server';
-import Groq from 'groq-sdk';
+import Groq from 'groq-sdk/index.mjs';
 import { z } from 'zod';
 import { loadIndustryConfig } from '@/app/(chatbot)/industries';
 import { RAGService } from '@/app/(chatbot)/services/rag-service';
