@@ -326,8 +326,8 @@ describe('Authentication Flow Integration Tests', () => {
         role: UserRole.EMPLOYEE,
       });
 
-      const hasAccess = [UserRole.ADMIN, UserRole.EMPLOYEE].includes(
-        employeeUser.role as UserRole
+      const hasAccess = ([UserRole.ADMIN, UserRole.EMPLOYEE] as UserRole[]).includes(
+        employeeUser.role
       );
 
       expect(hasAccess).toBe(true);
@@ -340,8 +340,8 @@ describe('Authentication Flow Integration Tests', () => {
         role: UserRole.CLIENT,
       });
 
-      const hasAccess = [UserRole.ADMIN, UserRole.EMPLOYEE].includes(
-        clientUser.role as UserRole
+      const hasAccess = ([UserRole.ADMIN, UserRole.EMPLOYEE] as UserRole[]).includes(
+        clientUser.role
       );
 
       expect(hasAccess).toBe(false);

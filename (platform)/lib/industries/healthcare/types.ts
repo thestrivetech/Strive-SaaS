@@ -5,14 +5,14 @@
  * Co-located with the healthcare implementation for better organization.
  */
 
-import type { Customer } from '@prisma/client';
+import type { customers } from '@prisma/client';
 
 /**
  * Healthcare-Specific Customer Extension
  *
  * Extends the base Customer type with healthcare-specific fields
  */
-export interface HealthcareCustomer extends Customer {
+export interface HealthcareCustomer extends customers {
   // Custom fields stored in customFields JSON
   customFields: {
     patientId: string;

@@ -5,14 +5,14 @@
  * Co-located with the real estate implementation for better organization.
  */
 
-import type { Customer, Project } from '@prisma/client';
+import type { customers, projects } from '@prisma/client';
 
 /**
  * Real Estate Customer Extension
  *
  * Extends the base Customer type with real estate-specific fields
  */
-export interface RealEstateCustomer extends Customer {
+export interface RealEstateCustomer extends customers {
   customFields: {
     buyerType?: 'first-time' | 'repeat' | 'investor' | 'luxury';
     priceRange?: {
@@ -385,7 +385,7 @@ export interface CMAdjustment {
  *
  * Extends the base Project with real estate-specific fields
  */
-export interface RealEstateProject extends Project {
+export interface RealEstateProject extends projects {
   customFields: {
     propertyAddress?: string;
     mlsNumber?: string;

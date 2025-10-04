@@ -104,7 +104,7 @@ export function NotificationDropdown({
     }
   };
 
-  const handleNotificationClick = async (notification: Notification) => {
+  const handleNotificationClick = async (notification: DBNotification) => {
     // Mark as read if unread
     if (!notification.read) {
       await handleMarkRead(notification.id);
@@ -221,7 +221,7 @@ export function NotificationDropdown({
                       </p>
                       <div className="flex items-center gap-2 mt-2">
                         <span className="text-xs text-muted-foreground">
-                          {formatTimeAgo(notification.createdAt)}
+                          {formatTimeAgo(notification.created_at)}
                         </span>
                         {notification.action_url && (
                           <ExternalLink className="h-3 w-3 text-muted-foreground" />

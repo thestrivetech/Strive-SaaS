@@ -24,21 +24,21 @@ export const healthcareConfig: IndustryConfig = {
       name: 'Patient Management',
       description: 'Comprehensive patient record system with HIPAA compliance',
       componentPath: '@/lib/industries/healthcare/features/patient-management',
-      requiredTier: 'GROWTH',
+      requiredTier: 'PRO',
     },
     {
       id: 'hipaa-compliance',
       name: 'HIPAA Compliance',
       description: 'Automated compliance monitoring and audit trails',
       componentPath: '@/lib/industries/healthcare/features/compliance',
-      requiredTier: 'ELITE',
+      requiredTier: 'ENTERPRISE',
     },
     {
       id: 'appointment-scheduling',
       name: 'Appointment Scheduling',
       description: 'Patient appointment scheduling with automated reminders',
       componentPath: '@/lib/industries/healthcare/features/scheduling',
-      requiredTier: 'STARTER',
+      requiredTier: 'BASIC',
     },
   ],
 
@@ -51,7 +51,7 @@ export const healthcareConfig: IndustryConfig = {
       category: 'engagement',
       pricing: 'paid',
       basePrice: 9900, // $99/month (PLACEHOLDER - TBD)
-      requiredTier: 'GROWTH',
+      requiredTier: 'PRO',
     },
     {
       id: 'prescription-tracker',
@@ -59,7 +59,7 @@ export const healthcareConfig: IndustryConfig = {
       description: 'Medication management and prescription tracking',
       category: 'clinical',
       pricing: 'enterprise',
-      requiredTier: 'ELITE',
+      requiredTier: 'ENTERPRISE',
     },
     {
       id: 'telehealth-platform',
@@ -68,7 +68,7 @@ export const healthcareConfig: IndustryConfig = {
       category: 'clinical',
       pricing: 'paid',
       basePrice: 14900, // $149/month (PLACEHOLDER - TBD)
-      requiredTier: 'ELITE',
+      requiredTier: 'ENTERPRISE',
     },
   ],
 

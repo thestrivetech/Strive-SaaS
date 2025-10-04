@@ -116,14 +116,14 @@ async function CustomerListContent({
   ]);
 
   // CSV Export columns
-  const exportColumns: CSVColumn<Customer>[] = [
+  const exportColumns: CSVColumn<customers>[] = [
     { key: 'name', label: 'Name' },
     { key: 'email', label: 'Email' },
     { key: 'phone', label: 'Phone' },
     { key: 'company', label: 'Company' },
     { key: 'status', label: 'Status' },
     { key: 'source', label: 'Source' },
-    { key: 'createdAt', label: 'Created Date', format: (value) => formatDateForCSV(value as Date | string | null) },
+    { key: 'created_at', label: 'Created Date', format: (value) => formatDateForCSV(value as Date | string | null) },
   ];
 
   const getStatusColor = (status: string) => {
@@ -248,7 +248,7 @@ async function CustomerListContent({
                     <TableCell>
                       <div className="flex items-center gap-3">
                         <Avatar className="h-8 w-8">
-                          <AvatarImage src={customer.assignedTo?.avatarUrl || undefined} />
+                          <AvatarImage src={customer.assignedTo?.avatar_url || undefined} />
                           <AvatarFallback className="text-xs">
                             {customer.name.substring(0, 2).toUpperCase()}
                           </AvatarFallback>
@@ -274,7 +274,7 @@ async function CustomerListContent({
                       {customer.assignedTo?.name || 'Unassigned'}
                     </TableCell>
                     <TableCell className="text-muted-foreground">
-                      {formatTimeAgo(new Date(customer.createdAt))}
+                      {formatTimeAgo(new Date(customer.created_at))}
                     </TableCell>
                     <TableCell>
                       <CustomerActionsMenu customer={customer} />

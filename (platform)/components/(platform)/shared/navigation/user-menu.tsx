@@ -16,7 +16,7 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { LogOut, Settings as SettingsIcon, User as UserIcon } from 'lucide-react';
 
 interface UserMenuProps {
-  user: User;
+  user: users;
 }
 
 export function UserMenu({ user }: UserMenuProps) {
@@ -37,7 +37,7 @@ export function UserMenu({ user }: UserMenuProps) {
     <DropdownMenu>
       <DropdownMenuTrigger className="focus:outline-none">
         <Avatar className="h-8 w-8">
-          <AvatarImage src={user.image || undefined} alt={user.name || 'User'} />
+          <AvatarImage src={user.avatar_url || undefined} alt={user.name || 'User'} />
           <AvatarFallback>{initials}</AvatarFallback>
         </Avatar>
       </DropdownMenuTrigger>

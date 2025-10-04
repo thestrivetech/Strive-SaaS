@@ -23,7 +23,7 @@ export type TaskWithAssignee = Prisma.tasksGetPayload<{
         id: true;
         name: true;
         email: true;
-        avatarUrl: true;
+        avatar_url: true;
       };
     };
   };

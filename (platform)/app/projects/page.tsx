@@ -122,11 +122,11 @@ async function ProjectListContent({
   }
 
   const [projects, stats, customers, orgMembers, totalCount] = await Promise.all([
-    getProjects(organizationId, filters),
-    getProjectStats(organizationId),
-    getCustomers(organizationId),
+    getProjects(filters),
+    getProjectStats(),
+    getCustomers(),
     getOrganizationMembers(organizationId),
-    getProjectsCount(organizationId, filters),
+    getProjectsCount(filters),
   ]);
 
   // Map organization members to team members format

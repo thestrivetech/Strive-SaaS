@@ -86,8 +86,8 @@ describe('Notification Actions', () => {
       const result = await createNotification(input);
 
       expect(result.success).toBe(true);
-      expect(result.data?.actionUrl).toBeUndefined();
-      expect(result.data?.entityType).toBeUndefined();
+      expect(result.data?.action_url).toBeUndefined();
+      expect(result.data?.entity_type).toBeUndefined();
     });
 
     it('should validate notification type', async () => {
