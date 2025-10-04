@@ -11,8 +11,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { MessageBubble } from '../../../components/features/ai/message-bubble';
-import { TypingIndicator } from '../../../components/features/ai/typing-indicator';
+import { MessageBubble } from '../../features/ai/message-bubble';
+import { TypingIndicator } from '../../features/ai/typing-indicator';
 import { sendMessage } from '@/lib/modules/ai/actions';
 import { Send, Sparkles } from 'lucide-react';
 import { toast } from 'sonner';
