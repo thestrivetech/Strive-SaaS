@@ -1,7 +1,7 @@
 // app/lib/modules/real-estate/services/rentcast-service.ts
 import 'server-only';
 
-import { CacheService } from '@/lib/modules/chatbot/services/cache-service';
+import { CacheService } from '@/app/chatbot/services/cache-service';
 
 // Environment variable for RentCast API key
 const RENTCAST_API_KEY = process.env.RENTCAST_API_KEY;

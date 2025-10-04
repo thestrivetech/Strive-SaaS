@@ -1,0 +1,295 @@
+// app/api/chat/route.ts
+
+import { NextRequest, NextResponse } from 'next/server';
+import Groq from 'groq-sdk';
+import { z } from 'zod';
+import { loadIndustryConfig } from '@/app/chatbot/industries';
+import { RAGService } from '@/app/chatbot/services/rag-service';
+import { RentCastService, PropertySearchParams } from '@/lib/modules/real-estate/services/rentcast-service';
+import { IndustryType } from '@/app/chatbot/types/industry';
+import { Message } from '@/app/chatbot/types/conversation';
+import { ChatRequestSchema } from '@/app/chatbot/schemas/chat-request';
+import { RAGContext } from '@/app/chatbot/types/rag';
+
+const groq = new Groq({
+  apiKey: process.env.GROQ_API_KEY,
+});
+
+export async function POST(req: NextRequest) {
+  try {
+    // Parse and validate request body
+    const body = await req.json();
+    const validated = ChatRequestSchema.parse(body);
+
+    const {
+      messages,
+      industry = 'strive',
+      sessionId,
+    } = validated;
+
+    // Load industry configuration
+    const config = await loadIndustryConfig(industry as IndustryType);
+
+    // Get the latest user message
+    const latestUserMessage = messages[messages.length - 1];
+
+    // Build conversation history context
+    const conversationHistory = {
+      stage: determineConversationStage(messages as unknown as Message[]),
+      messageCount: messages.length,
+      problemsDiscussed: extractProblemsDiscussed(messages as unknown as Message[]),
+    };
+
+    // 🔥 RAG ENHANCEMENT: Get semantic context
+    console.log('🔍 Searching for similar conversations...');
+    const ragContext = await RAGService.buildRAGContext(
+      latestUserMessage.content,
+      industry,
+      conversationHistory
+    );
+
+    console.log('✅ RAG Context:', {
+      detectedProblems: ragContext.searchResults.detectedProblems,
+      confidence: ragContext.searchResults.confidence.overallConfidence,
+      suggestedApproach: ragContext.guidance.suggestedApproach,
+    });
+
+    // Build enhanced system prompt with RAG context
+    const enhancedSystemPrompt = buildEnhancedSystemPrompt(
+      config.systemPrompt,
+      ragContext
+    );
+
+    // Prepare messages for Groq
+    const groqMessages = [
+      {
+        role: 'system' as const,
+        content: enhancedSystemPrompt,
+      },
+      ...messages
+        .filter(m => m.role !== 'system')
+        .map(m => ({
+          role: m.role as 'user' | 'assistant',
+          content: m.content,
+        })),
+    ];
+
+    // Stream response from Groq
+    const stream = await groq.chat.completions.create({
+      model: 'llama-3.3-70b-versatile',
+      messages: groqMessages,
+      temperature: 0.7,
+      max_tokens: 2000, // Increased for property results
+      stream: true,
+    });
+
+    // Create readable stream
+    const encoder = new TextEncoder();
+    let fullResponse = '';
+
+    const readableStream = new ReadableStream({
+      async start(controller) {
+        try {
+          // Stream LLM response
+          for await (const chunk of stream) {
+            const content = chunk.choices[0]?.delta?.content || '';
+            fullResponse += content;
+            
+            controller.enqueue(
+              encoder.encode(`data: ${JSON.stringify({ content })}\n\n`)
+            );
+          }
+
+          // 🏠 PROPERTY SEARCH: Check if response contains property search request
+          if (industry === 'real-estate' && fullResponse.includes('<property_search>')) {
+            try {
+              console.log('🏠 Property search detected in response');
+              
+              // Extract search parameters from LLM response
+              const searchMatch = fullResponse.match(/<property_search>([\s\S]*?)<\/property_search>/);
+              
+              if (searchMatch) {
+                const searchParams: PropertySearchParams = JSON.parse(searchMatch[1]);
+                console.log('🔍 Searching properties with params:', searchParams);
+
+                // Fetch properties from RentCast
+                const properties = await RentCastService.searchProperties(searchParams);
+                console.log(`✅ Found ${properties.length} properties`);
+
+                // Match and score properties
+                const matches = RentCastService.matchProperties(properties, searchParams);
+                console.log(`🎯 Top ${matches.length} matches selected`);
+
+                // Send property results to client
+                const propertyData = JSON.stringify({
+                  type: 'property_results',
+                  properties: matches,
+                });
+                controller.enqueue(encoder.encode(`data: ${propertyData}\n\n`));
+              }
+            } catch (propertyError) {
+              console.error('❌ Property search error:', propertyError);
+              const errorData = JSON.stringify({
+                type: 'property_search_error',
+                error: 'Failed to search properties. Please try again.',
+              });
+              controller.enqueue(encoder.encode(`data: ${errorData}\n\n`));
+            }
+          }
+
+          // 🔥 STORE CONVERSATION: Save for future learning
+          console.log('💾 Storing conversation for learning...');
+          await RAGService.storeConversation({
+            industry,
+            sessionId,
+            userMessage: latestUserMessage.content,
+            assistantResponse: fullResponse,
+            conversationStage: conversationHistory.stage,
+            outcome: 'in_progress',
+            bookingCompleted: false,
+            problemDetected: ragContext.searchResults.detectedProblems[0],
+            solutionPresented: ragContext.searchResults.recommendedSolutions[0],
+          });
+
+          // Send completion signal
+          controller.enqueue(encoder.encode('data: [DONE]\n\n'));
+          controller.close();
+        } catch (error) {
+          console.error('❌ Streaming error:', error);
+          controller.error(error);
+        }
+      },
+    });
+
+    return new NextResponse(readableStream, {
+      headers: {
+        'Content-Type': 'text/event-stream',
+        'Cache-Control': 'no-cache',
+        Connection: 'keep-alive',
+      },
+    });
+  } catch (error) {
+    // Handle validation errors
+    if (error instanceof z.ZodError) {
+      return NextResponse.json(
+        {
+          error: 'Invalid request format',
+          details: error.issues.map((e: z.ZodIssue) => ({
+            path: e.path.join('.'),
+            message: e.message
+          }))
+        },
+        { status: 400 }
+      );
+    }
+
+    // Handle other errors
+    console.error('❌ Chat API error:', error);
+    return NextResponse.json(
+      { error: 'Internal server error' },
+      { status: 500 }
+    );
+  }
+}
+
+/**
+ * Build enhanced system prompt with RAG context
+ */
+function buildEnhancedSystemPrompt(
+  basePrompt: string,
+  ragContext: RAGContext
+): string {
+  const { searchResults, guidance } = ragContext;
+
+  let enhancement = '\n\n## 🎯 CONTEXTUAL INTELLIGENCE (RAG-Enhanced)\n\n';
+
+  // Add detected problems
+  if (searchResults.detectedProblems.length > 0) {
+    enhancement += `**Similar Conversations Detected These Problems:**\n`;
+    searchResults.detectedProblems.forEach((problem: string) => {
+      enhancement += `- ${problem}\n`;
+    });
+    enhancement += '\n';
+  }
+
+  // Add proven approach
+  if (searchResults.bestPattern) {
+    enhancement += `**Proven Approach (${Math.round(searchResults.bestPattern.conversionScore * 100)}% conversion rate):**\n`;
+    enhancement += `This type of conversation typically succeeds when you focus on quantifying the problem's impact and showing clear ROI.\n\n`;
+  }
+
+  // Add guidance
+  enhancement += `**Recommended Strategy:**\n`;
+  enhancement += `${guidance.suggestedApproach}\n\n`;
+
+  if (guidance.keyPoints.length > 0) {
+    enhancement += `**Key Points to Include:**\n`;
+    guidance.keyPoints.forEach((point: string) => {
+      enhancement += `- ${point}\n`;
+    });
+    enhancement += '\n';
+  }
+
+  if (guidance.avoidTopics && guidance.avoidTopics.length > 0) {
+    enhancement += `**Topics to Avoid:**\n`;
+    guidance.avoidTopics.forEach((topic: string) => {
+      enhancement += `- ${topic}\n`;
+    });
+    enhancement += '\n';
+  }
+
+  enhancement += `**Confidence Level:** ${Math.round(searchResults.confidence.overallConfidence * 100)}%\n`;
+  enhancement += `**Urgency:** ${guidance.urgencyLevel}\n`;
+
+  return basePrompt + enhancement;
+}
+
+/**
+ * Determine current conversation stage
+ */
+function determineConversationStage(messages: Message[]): string {
+  const userMessages = messages.filter(m => m.role === 'user');
+  
+  if (userMessages.length <= 2) return 'discovery';
+  if (userMessages.length <= 4) return 'qualifying';
+  if (userMessages.length <= 6) return 'solutioning';
+  
+  return 'closing';
+}
+
+/**
+ * Extract problems discussed so far
+ */
+function extractProblemsDiscussed(messages: Message[]): string[] {
+  const problems: string[] = [];
+  const problemKeywords = [
+    'losing customers',
+    'churn',
+    'defects',
+    'quality',
+    'support tickets',
+    'fraud',
+    'maintenance',
+    'inventory',
+    // Real estate specific
+    'looking for',
+    'buy',
+    'sell',
+    'property',
+    'home',
+    'budget',
+    'prequalified',
+    'market',
+  ];
+
+  messages.forEach(message => {
+    const content = message.content.toLowerCase();
+    problemKeywords.forEach(keyword => {
+      if (content.includes(keyword) && !problems.includes(keyword)) {
+        problems.push(keyword);
+      }
+    });
+  });
+
+  return problems;
+}
