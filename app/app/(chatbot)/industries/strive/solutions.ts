@@ -1,6 +1,6 @@
 // lib/industries/strive/solutions.ts
 
-import { Solution } from '@/app/chatbot/types/industry';
+import { Solution } from '@/app/(chatbot)/types/industry';
 
 export const striveSolutions: Record<string, Solution> = {
   churn: {

@@ -1,6 +1,6 @@
 // lib/industries/strive/conversation-flow.ts
 
-import { ConversationFlow } from '@/app/chatbot/types/industry';
+import { ConversationFlow } from '@/app/(chatbot)/types/industry';
 
 export const striveConversationFlow: ConversationFlow = {
   stages: {

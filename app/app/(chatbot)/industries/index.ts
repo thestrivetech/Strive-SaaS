@@ -1,7 +1,7 @@
 // lib/modules/chatbot/config/industries/index.ts
 
-import { IndustryConfig, IndustryType } from '@/app/chatbot/types/industry';
-import { ClientConfig } from '@/app/chatbot/types/api';
+import { IndustryConfig, IndustryType } from '@/app/(chatbot)/types/industry';
+import { ClientConfig } from '@/app/(chatbot)/types/api';
 
 // Import STRIVE configuration
 import striveConfigJson from './strive/config.json';

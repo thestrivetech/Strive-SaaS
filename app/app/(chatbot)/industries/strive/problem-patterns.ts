@@ -1,6 +1,6 @@
 // lib/industries/strive/problem-patterns.ts
 
-import { ProblemPattern } from '@/app/chatbot/types/industry';
+import { ProblemPattern } from '@/app/(chatbot)/types/industry';
 
 export const striveProblemPatterns: Record<string, ProblemPattern> = {
   churn: {

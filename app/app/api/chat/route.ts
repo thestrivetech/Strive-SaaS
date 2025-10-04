@@ -3,13 +3,13 @@
 import { NextRequest, NextResponse } from 'next/server';
 import Groq from 'groq-sdk';
 import { z } from 'zod';
-import { loadIndustryConfig } from '@/app/chatbot/industries';
-import { RAGService } from '@/app/chatbot/services/rag-service';
+import { loadIndustryConfig } from '@/app/(chatbot)/industries';
+import { RAGService } from '@/app/(chatbot)/services/rag-service';
 import { RentCastService, PropertySearchParams } from '@/lib/modules/real-estate/services/rentcast-service';
-import { IndustryType } from '@/app/chatbot/types/industry';
-import { Message } from '@/app/chatbot/types/conversation';
-import { ChatRequestSchema } from '@/app/chatbot/schemas/chat-request';
-import { RAGContext } from '@/app/chatbot/types/rag';
+import { IndustryType } from '@/app/(chatbot)/types/industry';
+import { Message } from '@/app/(chatbot)/types/conversation';
+import { ChatRequestSchema } from '@/app/(chatbot)/schemas/chat-request';
+import { RAGContext } from '@/app/(chatbot)/types/rag';
 
 const groq = new Groq({
   apiKey: process.env.GROQ_API_KEY,

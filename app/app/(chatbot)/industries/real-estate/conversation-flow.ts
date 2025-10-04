@@ -1,6 +1,6 @@
 // lib/modules/chatbot/config/industries/real-estate/conversation-flow.ts
 
-import { ConversationFlow } from '@/app/chatbot/types/industry';
+import { ConversationFlow } from '@/app/(chatbot)/types/industry';
 
 export const realEstateConversationFlow: ConversationFlow = {
   stages: {

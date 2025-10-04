@@ -11,7 +11,7 @@ import {
 import ChatMessage from './chat-message';
 import ChatInput from './chat-input';
 import { useChat } from '@/hooks/use-chat';
-import { URLS, SERVICE_CARDS } from '@/app/chatbot/constants';
+import { URLS, SERVICE_CARDS } from '@/app/(chatbot)/constants';
 import { useTimeBasedGreeting, useKeyboardShortcuts } from '@/hooks/use-advanced-chat';
 import useScrollManager from '@/hooks/use-scroll-manager';
 import parentComm from '@/lib/utils/parent-communication';
