@@ -1,0 +1,35 @@
+{
+  "name": "strive-saas-monorepo",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Strive Tech Tri-Fold Repository - Turborepo monorepo",
+  "workspaces": [
+    "[(]chatbot[)]",
+    "[(]platform[)]",
+    "[(]website[)]",
+    "shared/lib"
+  ],
+  "scripts": {
+    "dev": "turbo run dev",
+    "dev:chatbot": "turbo run dev --filter=chatbot",
+    "dev:platform": "turbo run dev --filter=platform",
+    "dev:website": "turbo run dev --filter=website",
+    "build": "turbo run build",
+    "build:chatbot": "turbo run build --filter=chatbot",
+    "build:platform": "turbo run build --filter=platform",
+    "build:website": "turbo run build --filter=website",
+    "lint": "turbo run lint",
+    "test": "turbo run test",
+    "clean": "turbo run clean && rm -rf node_modules",
+    "format": "prettier --write \"**/*.{ts,tsx,md}\""
+  },
+  "devDependencies": {
+    "concurrently": "^9.1.2",
+    "prettier": "^3.3.3",
+    "turbo": "^2.3.3"
+  },
+  "packageManager": "npm@10.9.2",
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}

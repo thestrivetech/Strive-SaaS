@@ -1,12 +1,12 @@
 # Platform Project - Session Start Prompt
 
-**Session:** session[n].md
+**Session:** session[2].md
 **Project:** Strive Tech SaaS Platform (app.strivetech.ai)
 **Working Directory:** `C:\Users\zochr\Desktop\GitHub\Strive-SaaS\(platform)`
 
 ---
 
-## =Ë Session Initialization
+## =ï¿½ Session Initialization
 
 Before starting work, Claude should read the following files IN ORDER:
 
@@ -19,6 +19,8 @@ Read these files to understand development rules and architecture:
 3. ./PLAN.md - Platform production roadmap
 4. ./README.md - Project overview and setup instructions
 5. ../README.md - Repository overview (tri-fold structure)
+
+-> Read session current plan: session[2]-plan.md file located here to see this sessions plan: C:\Users\zochr\Desktop\GitHub\Strive-SaaS\(platform)\update-sessions\SESSION[2]-PLAN.md
 ```
 
 ### 2. Current Project State (ASSESS)
@@ -51,7 +53,7 @@ This platform follows:
 
 ---
 
-## <¯ Session Workflow
+## <ï¿½ Session Workflow
 
 ### At Session Start:
 1. **Read context files** (listed above)
@@ -71,13 +73,13 @@ This platform follows:
 - L NEVER create files in app/styling/ (root files go in app/)
 - L NEVER skip Prisma client generation after schema changes
 - L NEVER expose SUPABASE_SERVICE_ROLE_KEY to client
-- L NEVER create cross-module imports (crm/ ’ projects/)
+- L NEVER create cross-module imports (crm/ ï¿½ projects/)
 - L NEVER bypass RLS - always filter by organizationId
 -  ALWAYS run: `npm run lint && npx tsc --noEmit && npm test`
 
 ---
 
-## =Ý Session End Requirements
+## =ï¿½ Session End Requirements
 
 At the end of this session, create:
 
@@ -89,7 +91,7 @@ At the end of this session, create:
 
 **Date:** [auto-fill]
 **Duration:** [estimate]
-**Status:**  Complete /   Partial / L Blocked
+**Status:**  Complete / ï¿½ Partial / L Blocked
 
 ## Session Goal
 [What we planned to accomplish]
@@ -99,7 +101,7 @@ At the end of this session, create:
 - `lib/modules/crm/actions.ts:new` - Created customer CRUD actions
 - `__tests__/modules/crm/actions.test.ts:new` - Added CRM tests (90% coverage)
 
-## Tests Written
+## Tests Written - OR UPDATED SINCE THEY ALREADY EXIST!
 - Unit tests: [count] new tests
 - Integration tests: [count] new tests
 - Coverage: [%] (target: 80%+)
@@ -137,7 +139,7 @@ npm run build
 
 ---
 
-## =€ Ready to Start
+## =ï¿½ Ready to Start
 
 Now that context is loaded, ask the user:
 **"What would you like to work on in this session?"**

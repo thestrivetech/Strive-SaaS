@@ -1,28 +1,23 @@
-// Export all resources page data (includes technology, blog-posts, whitepapers, case-studies, quizzes, featured)
-export * from '../../website/data/resources';
-
-// Export all portfolio page data
-export * from '../../website/data/portfolio';
-
 // Export industries and solutions data
-export * from '../industries';
-export * from '../industry-cards';
+export * from './industries';
+export * from './industry-cards';
 
 // Export solutions data with explicit naming to avoid conflicts
-export { 
+export {
   solutions,
   solutionTypeOptions,
   solutionCorrelations,
-  getSolutionById as getSolutionById,
-  getSolutionsByCategory as getSolutionsByCategory,
+  getSolutionById,
+  getSolutionsByCategory,
   type Solution,
   type SolutionTypeOption
-} from '../solutions';
+} from './solutions';
 
-// Export solutions mapping with renamed functions to avoid conflicts
-export { 
-  solutionMappings,
-  getSolutionById as getMappedSolutionById,
-  getSolutionsByCategory as getMappedSolutionsByCategory,
-  type SolutionMapping
-} from '../solutions-mapping';
+// Export solutions mapping
+export * from './solutions-mapping';
+
+// Export projects/portfolio data
+export * from './projects';
+
+// Export resources data
+export * from './resources';

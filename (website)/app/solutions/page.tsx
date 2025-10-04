@@ -12,9 +12,9 @@ import { HeroSection } from "@/components/(web)/solutions/HeroSection";
 import { SolutionCard } from "@/components/(web)/solutions/SolutionCard";
 import { IndustryCard } from "@/components/(web)/solutions/IndustryCard";
 import { UnifiedFilterDropdown, type FilterSelection } from "@/components/(web)/filters/unified-filter-dropdown";
-import { solutions, type Solution, solutionTypeOptions } from "@/data/(web)/solutions";
-import { industryCards } from "@/data/(web)/industry-cards";
-import { industryOptions } from "@/data/(web)/industries";
+import { solutions, type Solution, solutionTypeOptions } from "@/data";
+import { industryCards } from "@/data";
+import { industryOptions } from "@/data";
 
 const Solutions = () => {
   const router = useRouter();

@@ -1,5 +1,5 @@
 {
-  "name": "dashboard",
+  "name": "website",
   "version": "0.1.0",
   "private": true,
   "type": "module",
@@ -33,6 +33,7 @@
     "chatbot:test-vector-search": "npx tsx scripts/test-vector-search.ts"
   },
   "dependencies": {
+    "@strive/shared": "*",
     "@heroicons/react": "^2.2.0",
     "@hookform/resolvers": "^5.2.2",
     "@prisma/client": "^6.16.2",
@@ -83,7 +84,6 @@
     "react": "19.1.0",
     "react-day-picker": "^9.11.0",
     "react-dom": "19.1.0",
-    "react-helmet-async": "^2.0.5",
     "react-hook-form": "^7.63.0",
     "react-hot-toast": "^2.6.0",
     "react-resizable-panels": "^3.0.6",

@@ -11,7 +11,7 @@ import { getUserOrganizations } from '@/lib/modules/organization/queries';
 import { getCustomerById } from '@/lib/modules/crm/queries';
 import { EditCustomerDialog } from '@/components/(platform)/real-estate/crm/edit-customer-dialog';
 import { DeleteCustomerDialog } from '@/components/(platform)/real-estate/crm/delete-customer-dialog';
-import { ActivityTimeline } from '@/components/(web)/features/shared/activity-timeline';
+import { ActivityTimeline } from '@/components/(platform)/features/shared/activity-timeline';
 
 export default async function CustomerDetailPage({
   params,

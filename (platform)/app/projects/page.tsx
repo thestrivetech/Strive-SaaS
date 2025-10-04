@@ -21,7 +21,7 @@ import { CreateProjectDialog } from '@/components/(platform)/projects/create-pro
 import { ProjectListSkeleton } from '@/components/(platform)/projects/project-list-skeleton';
 import { PaginationControls } from '@/components/ui/pagination-controls';
 import { ProjectFilters } from '@/components/(platform)/projects/project-filters';
-import { ExportButton } from '@/components/(web)/features/export/export-button';
+import { ExportButton } from '@/components/(platform)/features/export/export-button';
 import { formatDateForCSV, type CSVColumn } from '@/lib/export/csv';
 import type { ProjectStatus, Priority, Project } from '@prisma/client';
 import type { ProjectFilters as ProjectFiltersType } from '@/lib/types/platform';

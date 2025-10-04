@@ -23,7 +23,7 @@ import { CustomerFilters } from '@/components/(platform)/real-estate/crm/custome
 import { CustomerListSkeleton } from '@/components/(platform)/real-estate/crm/customer-list-skeleton';
 import { PaginationControls } from '@/components/ui/pagination-controls';
 import { getCustomersCount } from '@/lib/modules/crm/queries';
-import { ExportButton } from '@/components/(web)/features/export/export-button';
+import { ExportButton } from '@/components/(platform)/features/export/export-button';
 import { formatDateForCSV, type CSVColumn } from '@/lib/export/csv';
 import type { CustomerStatus, CustomerSource, Customer } from '@prisma/client';
 import type { CRMFilters } from '@/lib/types/platform';

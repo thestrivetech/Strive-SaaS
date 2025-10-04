@@ -77,3 +77,4 @@ archive/app-backup/.vercel/project.json
 
 .claude/
 .serena/
+(platform)/.env.test

@@ -7,10 +7,10 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { useRouter } from "next/navigation";
 
 // Import data
-import { Resource, resources } from "@/data/(web)/resources";
-import { Quiz, allQuizzes } from "@/data/(web)/resources/quizzes";
-import { featuredResource } from "@/data/(web)/resources/featured";
-import { ethicalAIImplementation } from "@/data/(web)/resources/whitepapers";
+import { Resource, resources } from "@/data/resources";
+import { Quiz, allQuizzes } from "@/data/resources/quizzes";
+import { featuredResource } from "@/data/resources/featured";
+import { ethicalAIImplementation } from "@/data/resources/whitepapers";
 import { SubFilterBar } from "@/components/ui/sub-filter-bar";
 import { WhitepaperViewer } from "@/components/(web)/resources/WhitepaperViewer";
 
@@ -19,7 +19,7 @@ import { QuizModal } from "@/components/(web)/resources/QuizModal";
 import { FeaturedResource } from "@/components/(web)/resources/FeaturedResource";
 import { NewsletterSection } from "@/components/(web)/resources/NewsletterSection";
 import { ResourceGrid } from "@/components/(web)/resources/ResourceGrid";
-import { useResourceFilters } from "@/lib/hooks/useResourceFilters";
+// import { useResourceFilters } from "@/lib/hooks/useResourceFilters"; // TODO: Create in Session 2
 
 const Resources = () => {
   const router = useRouter();

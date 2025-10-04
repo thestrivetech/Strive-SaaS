@@ -22,4 +22,3 @@
 export * from './shared';
 export * from './web';
 export * from './platform';
-export * from './chatbot';
