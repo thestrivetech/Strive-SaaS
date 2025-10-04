@@ -20,7 +20,7 @@ export async function getConversations(userId: string) {
   return withTenantContext(async () => {
     return await prisma.ai_conversations.findMany({
       where: {
-        userId,
+        user_id: userId,
       },
       orderBy: {
         updated_at: 'desc',
@@ -45,7 +45,7 @@ export async function getConversation(
     return await prisma.ai_conversations.findFirst({
       where: {
         id: conversationId,
-        userId,
+        user_id: userId,
       },
     });
   });
@@ -65,7 +65,7 @@ export async function getRecentConversations(
   return withTenantContext(async () => {
     return await prisma.ai_conversations.findMany({
       where: {
-        userId,
+        user_id: userId,
       },
       orderBy: {
         updated_at: 'desc',
