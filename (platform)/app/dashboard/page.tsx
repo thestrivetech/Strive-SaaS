@@ -21,7 +21,7 @@ export default async function DashboardPage() {
     {
       title: 'Monthly Revenue',
       value: stats.revenue > 0 ? `$${stats.revenue.toLocaleString()}` : '$0',
-      description: organization?.subscriptionStatus === 'ACTIVE' ? 'Active subscription' : 'No active subscription',
+      description: organization?.subscription_status === 'ACTIVE' ? 'Active subscription' : 'No active subscription',
       icon: DollarSign,
       trend: 'up',
     },

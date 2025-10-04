@@ -21,7 +21,7 @@ import { getAttachments } from '@/lib/modules/attachments';
 import type { OrganizationMember, TeamMember } from '@/lib/types/platform';
 import type { tasks, attachments, users as PrismaUser } from '@prisma/client';
 
-type AttachmentWithUser = attachments & { uploadedBy: Pick<PrismaUser, 'id' | 'name' | 'email'> };
+type AttachmentWithUser = attachments & { users: Pick<PrismaUser, 'id' | 'name' | 'email'> };
 
 export default async function ProjectDetailPage({
   params,
@@ -44,7 +44,7 @@ export default async function ProjectDetailPage({
   const [project, tasks, orgMembers, attachmentsResult] = await Promise.all([
     getProjectById(params.projectId),
     getTasks(params.projectId),
-    getOrganizationMembers(currentOrg.organizationId),
+    getOrganizationMembers(currentOrg.organization_id),
     getAttachments({ entityType: 'project', entityId: params.projectId }),
   ]);
 
@@ -55,9 +55,9 @@ export default async function ProjectDetailPage({
   }
 
   // Map organization members to team members format
-  const teamMembers: TeamMember[] = (orgMembers as OrganizationMember[]).map((member) => ({
-    id: member.user.id,
-    name: member.user.name || member.user.email,
+  const teamMembers: TeamMember[] = orgMembers.map((member) => ({
+    id: member.users.id,
+    name: member.users.name || member.users.email,
   }));
 
   // Calculate progress
@@ -260,14 +260,14 @@ export default async function ProjectDetailPage({
                 projectId={project.id}
                 initialAttachments={attachments.map((att: AttachmentWithUser) => ({
                   id: att.id,
-                  fileName: att.file_name,
-                  fileSize: att.file_size,
-                  mimeType: att.mime_type,
-                  createdAt: att.created_at,
-                  uploadedBy: {
-                    id: att.uploadedBy.id,
-                    name: att.uploadedBy.name,
-                    email: att.uploadedBy.email,
+                  file_name: att.file_name,
+                  file_size: att.file_size,
+                  mime_type: att.mime_type,
+                  created_at: att.created_at,
+                  users: {
+                    id: att.users.id,
+                    name: att.users.name,
+                    email: att.users.email,
                   },
                 }))}
               />

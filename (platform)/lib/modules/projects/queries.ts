@@ -2,7 +2,7 @@ import 'server-only';
 
 import { prisma } from '@/lib/database/prisma';
 import { withTenantContext } from '@/lib/database/utils';
-import type { Prisma } from '@prisma/client';
+import type { projects } from '@prisma/client';
 import type { ProjectFilters } from './schemas';
 
 /**
@@ -12,7 +12,7 @@ import type { ProjectFilters } from './schemas';
  * No need to pass organizationId manually - it's injected automatically!
  */
 
-type ProjectWithRelations = Prisma.projects & {
+type ProjectWithRelations = projects & {
   customers: { id: string; name: string; email: string | null } | null;
   users: { id: string; name: string | null; email: string; avatar_url: string | null };
   tasks: { id: string; status: string }[];

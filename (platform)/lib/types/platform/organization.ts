@@ -2,7 +2,7 @@
  * Organization and member types
  */
 
-import type { User } from '@prisma/client';
+import type { users as User } from '@prisma/client';
 
 export interface OrganizationMember {
   id: string;

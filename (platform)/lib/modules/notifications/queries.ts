@@ -25,10 +25,10 @@ export async function getUnreadNotifications(
     try {
       return await prisma.notifications.findMany({
         where: {
-          userId,
+          user_id: userId,
           read: false,
         },
-        orderBy: { createdAt: 'desc' },
+        orderBy: { created_at: 'desc' },
         take: limit,
       });
     } catch (error) {
@@ -58,7 +58,7 @@ export async function getNotifications(
   return withTenantContext(async () => {
     try {
       const where: any = {
-        userId,
+        user_id: userId,
       };
 
       if (readFilter === 'read') {
@@ -70,7 +70,7 @@ export async function getNotifications(
       const [notifications, count] = await Promise.all([
         prisma.notifications.findMany({
           where,
-          orderBy: { createdAt: 'desc' },
+          orderBy: { created_at: 'desc' },
           take: limit,
           skip: offset,
         }),
@@ -100,7 +100,7 @@ export async function getUnreadCount(userId: string) {
     try {
       return await prisma.notifications.count({
         where: {
-          userId,
+          user_id: userId,
           read: false,
         },
       });
@@ -127,7 +127,7 @@ export async function getNotificationById(
       return await prisma.notifications.findFirst({
         where: {
           id: notificationId,
-          userId,
+          user_id: userId,
         },
       });
     } catch (error) {

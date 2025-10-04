@@ -68,7 +68,7 @@ Strive-SaaS/                    # Root (this is NOT a Next.js project)
 - AI Assistant (Sai) - embeds (chatbot)
 - Tool marketplace
 - Multi-industry support (Real Estate, Healthcare, etc.)
-- 4-tier subscription model
+- 4-tier subscription model -> (Starter, Growth, Elite, & Custom -> Last option is "Enterprise" which is requires a sales call and will be fully custom solutions dependant on clients needs)
 
 **📖 Documentation:**
 - Project rules: [`(platform)/CLAUDE.md`]((platform)/CLAUDE.md)

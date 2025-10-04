@@ -9,7 +9,9 @@ export type Resource = {
   title: string;
   type: string;
   tags: string[];
+  description?: string;
 };
 
 export const resources: Resource[] = [];
+export const technologyCards: Resource[] = [];
 export const resourceCategories: string[] = [];

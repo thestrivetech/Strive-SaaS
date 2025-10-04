@@ -23,15 +23,15 @@ interface TaskAttachmentsProps {
   projectId: string;
   initialAttachments: Array<{
     id: string;
-    fileName: string;
-    fileSize: number;
-    mimeType: string;
-    createdAt: Date;
-    uploadedBy: {
+    file_name: string;
+    file_size: number;
+    mime_type: string;
+    created_at: Date;
+    users: {
       id: string;
       name: string | null;
       email: string;
-    };
+    } | null;
   }>;
 }
 
@@ -141,16 +141,16 @@ export function TaskAttachments({
             <div key={attachment.id} className="flex items-center gap-3 p-3 border rounded-lg">
               {/* File Icon */}
               <div className="flex-shrink-0">
-                {getFileIcon(attachment.mimeType)}
+                {getFileIcon(attachment.mime_type)}
               </div>
 
               {/* File Info */}
               <div className="flex-1 min-w-0">
-                <p className="text-sm font-medium truncate">{attachment.fileName}</p>
+                <p className="text-sm font-medium truncate">{attachment.file_name}</p>
                 <p className="text-xs text-muted-foreground">
-                  {formatFileSize(attachment.fileSize)} •
-                  Uploaded by {attachment.uploadedBy.name || attachment.uploadedBy.email} •
-                  {formatDate(attachment.createdAt)}
+                  {formatFileSize(attachment.file_size)} •
+                  Uploaded by {attachment.users?.name || attachment.users?.email || 'Unknown'} •
+                  {formatDate(attachment.created_at)}
                 </p>
               </div>
 
@@ -159,7 +159,7 @@ export function TaskAttachments({
                 <Button
                   variant="ghost"
                   size="sm"
-                  onClick={() => handleDownload(attachment.id, attachment.fileName)}
+                  onClick={() => handleDownload(attachment.id, attachment.file_name)}
                 >
                   <Download className="h-4 w-4" />
                 </Button>
@@ -174,14 +174,14 @@ export function TaskAttachments({
                     <AlertDialogHeader>
                       <AlertDialogTitle>Delete attachment?</AlertDialogTitle>
                       <AlertDialogDescription>
-                        Are you sure you want to delete &quot;{attachment.fileName}&quot;?
+                        Are you sure you want to delete &quot;{attachment.file_name}&quot;?
                         This action cannot be undone.
                       </AlertDialogDescription>
                     </AlertDialogHeader>
                     <AlertDialogFooter>
                       <AlertDialogCancel>Cancel</AlertDialogCancel>
                       <AlertDialogAction
-                        onClick={() => handleDelete(attachment.id, attachment.fileName)}
+                        onClick={() => handleDelete(attachment.id, attachment.file_name)}
                         disabled={isDeleting === attachment.id}
                       >
                         {isDeleting === attachment.id ? (

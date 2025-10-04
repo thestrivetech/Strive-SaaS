@@ -9,7 +9,7 @@ const COOKIE_MAX_AGE = 30 * 24 * 60 * 60; // 30 days
 export async function setCurrentOrganization(organizationId: string, userId: string) {
   // Verify user has access to this organization
   const userOrgs = await getUserOrganizations(userId);
-  const hasAccess = userOrgs.some((org) => org.organizationId === organizationId);
+  const hasAccess = userOrgs.some((org) => org.organization_id === organizationId);
 
   if (!hasAccess) {
     throw new Error('You do not have access to this organization');
@@ -34,7 +34,7 @@ export async function getCurrentOrganizationId(userId: string): Promise<string |
   if (orgId) {
     // Verify user still has access
     const userOrgs = await getUserOrganizations(userId);
-    const hasAccess = userOrgs.some((org) => org.organizationId === orgId);
+    const hasAccess = userOrgs.some((org) => org.organization_id === orgId);
 
     if (hasAccess) {
       return orgId;
@@ -44,7 +44,7 @@ export async function getCurrentOrganizationId(userId: string): Promise<string |
   // Fallback to first organization
   const userOrgs = await getUserOrganizations(userId);
   if (userOrgs.length > 0) {
-    const firstOrgId = userOrgs[0].organizationId;
+    const firstOrgId = userOrgs[0].organization_id;
     // Set cookie for next time
     const cookieStore = await cookies();
     cookieStore.set(CURRENT_ORG_COOKIE, firstOrgId, {
@@ -68,7 +68,7 @@ export async function getActiveOrganization(userId: string) {
   }
 
   const userOrgs = await getUserOrganizations(userId);
-  const orgMembership = userOrgs.find((org) => org.organizationId === orgId);
+  const orgMembership = userOrgs.find((org) => org.organization_id === orgId);
 
-  return orgMembership?.organization || null;
+  return orgMembership?.organizations || null;
 }

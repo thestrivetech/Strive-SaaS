@@ -16,7 +16,7 @@ import type { CustomerFilters } from './schemas';
  */
 
 type CustomerWithAssignee = Prisma.customersGetPayload<{
-  include: { assignedTo: { select: { id: true; name: true; email: true; avatar_url: true } } };
+  include: { users: { select: { id: true; name: true; email: true; avatar_url: true } } };
 }>;
 
 /**
@@ -67,24 +67,25 @@ export async function getCustomers(
 
   // Date range filters
   if (filters?.createdFrom || filters?.createdTo) {
-    where.created_at = {};
+    const dateFilter: Record<string, Date> = {};
     if (filters.createdFrom) {
-      where.created_at.gte = filters.createdFrom;
+      dateFilter.gte = filters.createdFrom;
     }
     if (filters.createdTo) {
-      where.created_at.lte = filters.createdTo;
+      dateFilter.lte = filters.createdTo;
     }
+    where.created_at = dateFilter;
   }
 
       return await prisma.customers.findMany({
         where,
         include: {
-          assignedTo: {
+          users: {
             select: {
               id: true,
               name: true,
               email: true,
-              avatarUrl: true,
+              avatar_url: true,
             },
           },
         },
@@ -143,13 +144,14 @@ export async function getCustomersCount(
 
   // Date range filters
   if (filters?.createdFrom || filters?.createdTo) {
-    where.created_at = {};
+    const dateFilter: Record<string, Date> = {};
     if (filters.createdFrom) {
-      where.created_at.gte = filters.createdFrom;
+      dateFilter.gte = filters.createdFrom;
     }
     if (filters.createdTo) {
-      where.created_at.lte = filters.createdTo;
+      dateFilter.lte = filters.createdTo;
     }
+    where.created_at = dateFilter;
   }
 
       return await prisma.customers.count({ where });
@@ -161,17 +163,17 @@ export async function getCustomersCount(
   });
 }
 
-type CustomerWithDetails = Prisma.CustomerGetPayload<{
+type CustomerWithDetails = Prisma.customersGetPayload<{
   include: {
-    assignedTo: { select: { id: true; name: true; email: true; avatarUrl: true } };
+    users: { select: { id: true; name: true; email: true; avatar_url: true } };
     projects: {
       include: {
-        projectManager: { select: { id: true; name: true; email: true } };
+        users: { select: { id: true; name: true; email: true } };
       };
     };
     appointments: {
       include: {
-        assignedTo: { select: { id: true; name: true } };
+        users: { select: { id: true; name: true } };
       };
     };
   };
@@ -195,17 +197,17 @@ export async function getCustomerById(
           id: customerId,
         },
         include: {
-          assignedTo: {
+          users: {
             select: {
               id: true,
               name: true,
               email: true,
-              avatarUrl: true,
+              avatar_url: true,
             },
           },
           projects: {
             include: {
-              projectManager: {
+              users: {
                 select: {
                   id: true,
                   name: true,
@@ -213,11 +215,11 @@ export async function getCustomerById(
                 },
               },
             },
-            orderBy: { createdAt: 'desc' },
+            orderBy: { created_at: 'desc' },
           },
           appointments: {
             include: {
-              assignedTo: {
+              users: {
                 select: {
                   id: true,
                   name: true,
@@ -279,7 +281,7 @@ export async function getCustomerStats() {
 export async function searchCustomers(
   query: string,
   limit = 10
-): Promise<Customer[]> {
+): Promise<customers[]> {
   return withTenantContext(async () => {
     try {
       return await prisma.customers.findMany({

@@ -96,11 +96,11 @@ export function TaskCard({ task, onClick, className }: TaskCardProps) {
         </div>
 
         {/* Assignee Avatar */}
-        {task.assignedTo && (
+        {task.users_tasks_assigned_toTousers && (
           <Avatar className="h-6 w-6">
-            <AvatarImage src={task.assignedTo.avatar_url || undefined} />
+            <AvatarImage src={task.users_tasks_assigned_toTousers.avatar_url || undefined} />
             <AvatarFallback className="text-[10px]">
-              {task.assignedTo.name?.[0]?.toUpperCase() || task.assignedTo.email[0].toUpperCase()}
+              {task.users_tasks_assigned_toTousers.name?.[0]?.toUpperCase() || task.users_tasks_assigned_toTousers.email[0].toUpperCase()}
             </AvatarFallback>
           </Avatar>
         )}

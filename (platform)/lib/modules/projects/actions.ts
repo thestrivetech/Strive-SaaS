@@ -23,7 +23,7 @@ export async function createProject(input: CreateProjectInput) {
 
   // Verify user has access to this organization
   const userOrgs = await getUserOrganizations(user.id);
-  const hasAccess = userOrgs.some((org) => org.organizationId === validated.organizationId);
+  const hasAccess = userOrgs.some((org) => org.organization_id === validated.organizationId);
 
   if (!hasAccess) {
     throw new Error('You do not have access to this organization');
@@ -33,31 +33,31 @@ export async function createProject(input: CreateProjectInput) {
   const data: any = {
     name: validated.name,
     description: validated.description || null,
-    customerId: validated.customerId || null,
+    customer_id: validated.customerId || null,
     status: validated.status,
     priority: validated.priority,
-    startDate: validated.startDate || null,
-    dueDate: validated.dueDate || null,
+    start_date: validated.startDate || null,
+    due_date: validated.dueDate || null,
     budget: validated.budget || null,
-    organizationId: validated.organizationId,
+    organization_id: validated.organizationId,
   };
 
   // Only include projectManagerId if provided
   if (validated.projectManagerId) {
-    data.projectManagerId = validated.projectManagerId;
+    data.project_manager_id = validated.projectManagerId;
   }
 
   const project = await prisma.projects.create({ data });
 
   // Log activity
-  await prisma.activityLog.create({
+  await prisma.activity_logs.create({
     data: {
-      organizationId: validated.organizationId,
-      userId: user.id,
+      organization_id: validated.organizationId,
+      user_id: user.id,
       action: 'created_project',
-      resourceType: 'project',
-      resourceId: project.id,
-      newData: { name: project.name, status: project.status },
+      resource_type: 'project',
+      resource_id: project.id,
+      new_data: { name: project.name, status: project.status },
     },
   });
 
@@ -87,7 +87,7 @@ export async function updateProject(input: UpdateProjectInput) {
 
   // Verify user has access to this organization
   const userOrgs = await getUserOrganizations(user.id);
-  const hasAccess = userOrgs.some((org) => org.organizationId === existingProject.organizationId);
+  const hasAccess = userOrgs.some((org) => org.organization_id === existingProject.organization_id);
 
   if (!hasAccess) {
     throw new Error('You do not have access to this organization');
@@ -99,26 +99,26 @@ export async function updateProject(input: UpdateProjectInput) {
     data: {
       name: validated.name,
       description: validated.description,
-      customerId: validated.customerId,
-      projectManagerId: validated.projectManagerId ?? undefined,
+      customer_id: validated.customerId,
+      project_manager_id: validated.projectManagerId ?? undefined,
       status: validated.status,
       priority: validated.priority,
-      startDate: validated.startDate,
-      dueDate: validated.dueDate,
+      start_date: validated.startDate,
+      due_date: validated.dueDate,
       budget: validated.budget,
     },
   });
 
   // Log activity
-  await prisma.activityLog.create({
+  await prisma.activity_logs.create({
     data: {
-      organizationId: existingProject.organizationId,
-      userId: user.id,
+      organization_id: existingProject.organization_id,
+      user_id: user.id,
       action: 'updated_project',
-      resourceType: 'project',
-      resourceId: updatedProject.id,
-      oldData: existingProject,
-      newData: updatedProject,
+      resource_type: 'project',
+      resource_id: updatedProject.id,
+      old_data: existingProject,
+      new_data: updatedProject,
     },
   });
 
@@ -147,7 +147,7 @@ export async function deleteProject(projectId: string) {
 
   // Verify user has access to this organization
   const userOrgs = await getUserOrganizations(user.id);
-  const hasAccess = userOrgs.some((org) => org.organizationId === project.organizationId);
+  const hasAccess = userOrgs.some((org) => org.organization_id === project.organization_id);
 
   if (!hasAccess) {
     throw new Error('You do not have access to this organization');
@@ -159,14 +159,14 @@ export async function deleteProject(projectId: string) {
   });
 
   // Log activity
-  await prisma.activityLog.create({
+  await prisma.activity_logs.create({
     data: {
-      organizationId: project.organizationId,
-      userId: user.id,
+      organization_id: project.organization_id,
+      user_id: user.id,
       action: 'deleted_project',
-      resourceType: 'project',
-      resourceId: projectId,
-      oldData: project,
+      resource_type: 'project',
+      resource_id: projectId,
+      old_data: project,
     },
   });
 

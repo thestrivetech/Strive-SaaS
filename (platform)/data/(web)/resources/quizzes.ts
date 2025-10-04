@@ -8,6 +8,9 @@ export type Quiz = {
   id: string;
   title: string;
   questions: unknown[];
+  difficulty: string;
+  description?: string;
 };
 
 export const quizzes: Quiz[] = [];
+export const allQuizzes: Quiz[] = [];

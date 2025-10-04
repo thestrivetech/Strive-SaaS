@@ -26,9 +26,9 @@ export async function createTask(input: CreateTaskInput) {
   const validated = createTaskSchema.parse(input);
 
   // Get project to verify organization access
-  const project = await prisma.project.findUnique({
+  const project = await prisma.projects.findUnique({
     where: { id: validated.projectId },
-    select: { organizationId: true },
+    select: { organization_id: true },
   });
 
   if (!project) {
@@ -37,7 +37,7 @@ export async function createTask(input: CreateTaskInput) {
 
   // Verify user has access to this organization
   const userOrgs = await getUserOrganizations(user.id);
-  const hasAccess = userOrgs.some((org) => org.organizationId === project.organizationId);
+  const hasAccess = userOrgs.some((org) => org.organization_id === project.organization_id);
 
   if (!hasAccess) {
     throw new Error('You do not have access to this organization');
@@ -45,38 +45,38 @@ export async function createTask(input: CreateTaskInput) {
 
   // Get the max position for this project to add task at the end
   const maxPosition = await prisma.tasks.aggregate({
-    where: { projectId: validated.projectId },
+    where: { project_id: validated.projectId },
     _max: { position: true },
   });
 
-  const position = (maxPosition._max.position || 0) + 1;
+  const position = (maxPosition._max?.position || 0) + 1;
 
   // Create task
   const task = await prisma.tasks.create({
     data: {
       title: validated.title,
       description: validated.description || null,
-      projectId: validated.projectId,
-      assignedToId: validated.assignedToId || null,
+      project_id: validated.projectId,
+      assigned_to: validated.assignedToId || null,
       status: validated.status,
       priority: validated.priority,
-      dueDate: validated.dueDate || null,
-      estimatedHours: validated.estimatedHours || null,
+      due_date: validated.dueDate || null,
+      estimated_hours: validated.estimatedHours || null,
       tags: validated.tags,
       position,
-      createdById: user.id,
+      created_by: user.id,
     },
   });
 
   // Log activity
-  await prisma.activityLog.create({
+  await prisma.activity_logs.create({
     data: {
-      organizationId: project.organizationId,
-      userId: user.id,
+      organization_id: project.organization_id,
+      user_id: user.id,
       action: 'created_task',
-      resourceType: 'task',
-      resourceId: task.id,
-      newData: { title: task.title, status: task.status, projectId: task.projectId },
+      resource_type: 'task',
+      resource_id: task.id,
+      new_data: { title: task.title, status: task.status, project_id: task.project_id },
     },
   });
 
@@ -104,8 +104,8 @@ export async function updateTask(input: UpdateTaskInput) {
   const existingTask = await prisma.tasks.findUnique({
     where: { id: validated.id },
     include: {
-      project: {
-        select: { organizationId: true },
+      projects: {
+        select: { organization_id: true },
       },
     },
   });
@@ -117,7 +117,7 @@ export async function updateTask(input: UpdateTaskInput) {
   // Verify user has access to this organization
   const userOrgs = await getUserOrganizations(user.id);
   const hasAccess = userOrgs.some(
-    (org) => org.organizationId === existingTask.project.organizationId
+    (org) => org.organization_id === existingTask.projects.organization_id
   );
 
   if (!hasAccess) {
@@ -129,11 +129,11 @@ export async function updateTask(input: UpdateTaskInput) {
 
   if (validated.title !== undefined) updateData.title = validated.title;
   if (validated.description !== undefined) updateData.description = validated.description;
-  if (validated.assignedToId !== undefined) updateData.assignedToId = validated.assignedToId;
+  if (validated.assignedToId !== undefined) updateData.assigned_to = validated.assignedToId;
   if (validated.status !== undefined) updateData.status = validated.status;
   if (validated.priority !== undefined) updateData.priority = validated.priority;
-  if (validated.dueDate !== undefined) updateData.dueDate = validated.dueDate;
-  if (validated.estimatedHours !== undefined) updateData.estimatedHours = validated.estimatedHours;
+  if (validated.dueDate !== undefined) updateData.due_date = validated.dueDate;
+  if (validated.estimatedHours !== undefined) updateData.estimated_hours = validated.estimatedHours;
   if (validated.tags !== undefined) updateData.tags = validated.tags;
 
   // Update task
@@ -143,19 +143,19 @@ export async function updateTask(input: UpdateTaskInput) {
   });
 
   // Log activity
-  await prisma.activityLog.create({
+  await prisma.activity_logs.create({
     data: {
-      organizationId: existingTask.project.organizationId,
-      userId: user.id,
+      organization_id: existingTask.projects.organization_id,
+      user_id: user.id,
       action: 'updated_task',
-      resourceType: 'task',
-      resourceId: task.id,
-      oldData: {
+      resource_type: 'task',
+      resource_id: task.id,
+      old_data: {
         title: existingTask.title,
         status: existingTask.status,
         priority: existingTask.priority,
       },
-      newData: {
+      new_data: {
         title: task.title,
         status: task.status,
         priority: task.priority,
@@ -165,7 +165,7 @@ export async function updateTask(input: UpdateTaskInput) {
 
   // Revalidate project page
   revalidatePath('/projects');
-  revalidatePath(`/projects/${existingTask.projectId}`);
+  revalidatePath(`/projects/${existingTask.project_id}`);
 
   return task;
 }
@@ -185,8 +185,8 @@ export async function deleteTask(taskId: string) {
   const task = await prisma.tasks.findUnique({
     where: { id: taskId },
     include: {
-      project: {
-        select: { id: true, organizationId: true },
+      projects: {
+        select: { id: true, organization_id: true },
       },
     },
   });
@@ -198,7 +198,7 @@ export async function deleteTask(taskId: string) {
   // Verify user has access to this organization
   const userOrgs = await getUserOrganizations(user.id);
   const hasAccess = userOrgs.some(
-    (org) => org.organizationId === task.project.organizationId
+    (org) => org.organization_id === task.projects.organization_id
   );
 
   if (!hasAccess) {
@@ -211,20 +211,20 @@ export async function deleteTask(taskId: string) {
   });
 
   // Log activity
-  await prisma.activityLog.create({
+  await prisma.activity_logs.create({
     data: {
-      organizationId: task.project.organizationId,
-      userId: user.id,
+      organization_id: task.projects.organization_id,
+      user_id: user.id,
       action: 'deleted_task',
-      resourceType: 'task',
-      resourceId: taskId,
-      oldData: { title: task.title, status: task.status },
+      resource_type: 'task',
+      resource_id: taskId,
+      old_data: { title: task.title, status: task.status },
     },
   });
 
   // Revalidate project page
   revalidatePath('/projects');
-  revalidatePath(`/projects/${task.projectId}`);
+  revalidatePath(`/projects/${task.project_id}`);
 
   return { success: true };
 }
@@ -244,8 +244,8 @@ export async function updateTaskStatus(taskId: string, status: TaskStatus) {
   const existingTask = await prisma.tasks.findUnique({
     where: { id: taskId },
     include: {
-      project: {
-        select: { id: true, organizationId: true },
+      projects: {
+        select: { id: true, organization_id: true },
       },
     },
   });
@@ -257,7 +257,7 @@ export async function updateTaskStatus(taskId: string, status: TaskStatus) {
   // Verify user has access to this organization
   const userOrgs = await getUserOrganizations(user.id);
   const hasAccess = userOrgs.some(
-    (org) => org.organizationId === existingTask.project.organizationId
+    (org) => org.organization_id === existingTask.projects.organization_id
   );
 
   if (!hasAccess) {
@@ -271,21 +271,21 @@ export async function updateTaskStatus(taskId: string, status: TaskStatus) {
   });
 
   // Log activity
-  await prisma.activityLog.create({
+  await prisma.activity_logs.create({
     data: {
-      organizationId: existingTask.project.organizationId,
-      userId: user.id,
+      organization_id: existingTask.projects.organization_id,
+      user_id: user.id,
       action: 'updated_task_status',
-      resourceType: 'task',
-      resourceId: taskId,
-      oldData: { status: existingTask.status },
-      newData: { status: task.status },
+      resource_type: 'task',
+      resource_id: taskId,
+      old_data: { status: existingTask.status },
+      new_data: { status: task.status },
     },
   });
 
   // Revalidate project page
   revalidatePath('/projects');
-  revalidatePath(`/projects/${existingTask.projectId}`);
+  revalidatePath(`/projects/${existingTask.project_id}`);
 
   return task;
 }
@@ -305,8 +305,8 @@ export async function assignTask(taskId: string, userId: string | null) {
   const existingTask = await prisma.tasks.findUnique({
     where: { id: taskId },
     include: {
-      project: {
-        select: { id: true, organizationId: true },
+      projects: {
+        select: { id: true, organization_id: true },
       },
     },
   });
@@ -318,7 +318,7 @@ export async function assignTask(taskId: string, userId: string | null) {
   // Verify user has access to this organization
   const userOrgs = await getUserOrganizations(user.id);
   const hasAccess = userOrgs.some(
-    (org) => org.organizationId === existingTask.project.organizationId
+    (org) => org.organization_id === existingTask.projects.organization_id
   );
 
   if (!hasAccess) {
@@ -328,25 +328,25 @@ export async function assignTask(taskId: string, userId: string | null) {
   // Update task assignment
   const task = await prisma.tasks.update({
     where: { id: taskId },
-    data: { assignedToId: userId },
+    data: { assigned_to: userId },
   });
 
   // Log activity
-  await prisma.activityLog.create({
+  await prisma.activity_logs.create({
     data: {
-      organizationId: existingTask.project.organizationId,
-      userId: user.id,
+      organization_id: existingTask.projects.organization_id,
+      user_id: user.id,
       action: 'assigned_task',
-      resourceType: 'task',
-      resourceId: taskId,
-      oldData: { assignedToId: existingTask.assignedToId },
-      newData: { assignedToId: task.assignedToId },
+      resource_type: 'task',
+      resource_id: taskId,
+      old_data: { assigned_to: existingTask.assigned_to },
+      new_data: { assigned_to: task.assigned_to },
     },
   });
 
   // Revalidate project page
   revalidatePath('/projects');
-  revalidatePath(`/projects/${existingTask.projectId}`);
+  revalidatePath(`/projects/${existingTask.project_id}`);
 
   return task;
 }

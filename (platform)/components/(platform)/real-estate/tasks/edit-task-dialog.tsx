@@ -65,7 +65,7 @@ export function EditTaskDialog({
       description: task.description || '',
       status: task.status,
       priority: task.priority,
-      assignedToId: task.assignedTo?.id || null,
+      assignedToId: task.users_tasks_assigned_toTousers?.id || null,
       dueDate: task.due_date || null,
       estimatedHours: task.estimated_hours ? Number(task.estimated_hours) : null,
     },
@@ -79,7 +79,7 @@ export function EditTaskDialog({
       description: task.description || '',
       status: task.status,
       priority: task.priority,
-      assignedToId: task.assignedTo?.id || null,
+      assignedToId: task.users_tasks_assigned_toTousers?.id || null,
       dueDate: task.due_date || null,
       estimatedHours: task.estimated_hours ? Number(task.estimated_hours) : null,
     });

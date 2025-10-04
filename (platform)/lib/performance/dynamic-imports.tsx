@@ -51,7 +51,7 @@ export function createDynamicComponent<P = any>(
   const { loading = DefaultLoading, ssr = false } = options;
 
   return dynamic(importFn, {
-    loading,
+    loading: loading as any,
     ssr,
   });
 }
@@ -93,61 +93,67 @@ export function createDynamicWithSkeleton<P = any>(
  * Dynamically loaded chart component
  *
  * Charts are usually heavy and not needed immediately on page load.
+ * NOTE: Commented out - chart.tsx exports multiple named exports, no default
  */
-export const DynamicChart = createDynamicWithSkeleton(
-  () => import('@/components/ui/chart'),
-  'h-[400px] w-full rounded-lg'
-);
+// export const DynamicChart = createDynamicWithSkeleton(
+//   () => import('@/components/ui/chart'),
+//   'h-[400px] w-full rounded-lg'
+// );
 
 /**
  * Dynamically loaded data table
  *
  * Tables with sorting, filtering, pagination can be large.
+ * NOTE: Commented out - data-table.tsx does not exist
  */
-export const DynamicDataTable = createDynamicWithSkeleton(
-  () => import('@/components/ui/data-table'),
-  'h-[600px] w-full rounded-lg'
-);
+// export const DynamicDataTable = createDynamicWithSkeleton(
+//   () => import('@/components/ui/data-table'),
+//   'h-[600px] w-full rounded-lg'
+// );
 
 /**
  * Dynamically loaded modal/dialog
  *
  * Modals are often not needed on initial page load.
+ * NOTE: Commented out - dialog.tsx exports multiple named exports, no default
  */
-export const DynamicModal = createDynamicComponent(
-  () => import('@/components/ui/dialog'),
-  { ssr: false }
-);
+// export const DynamicModal = createDynamicComponent(
+//   () => import('@/components/ui/dialog'),
+//   { ssr: false }
+// );
 
 /**
  * Dynamically loaded rich text editor
  *
  * Editors are heavy and rarely needed immediately.
+ * NOTE: Commented out - editor.tsx does not exist
  */
-export const DynamicEditor = createDynamicWithSkeleton(
-  () => import('@/components/ui/editor').then((mod) => ({ default: mod.Editor })),
-  'h-[500px] w-full rounded-lg'
-);
+// export const DynamicEditor = createDynamicWithSkeleton(
+//   () => import('@/components/ui/editor').then((mod) => ({ default: mod.Editor })),
+//   'h-[500px] w-full rounded-lg'
+// );
 
 /**
  * Dynamically loaded calendar
  *
  * Calendars have many dependencies and can be large.
+ * NOTE: Commented out - calendar.tsx exports Calendar as named export, no default
  */
-export const DynamicCalendar = createDynamicWithSkeleton(
-  () => import('@/components/ui/calendar'),
-  'h-[350px] w-full rounded-lg'
-);
+// export const DynamicCalendar = createDynamicWithSkeleton(
+//   () => import('@/components/ui/calendar'),
+//   'h-[350px] w-full rounded-lg'
+// );
 
 /**
  * Dynamically loaded code editor
  *
  * Code editors (Monaco, CodeMirror) are very heavy.
+ * NOTE: Commented out - code-editor.tsx does not exist
  */
-export const DynamicCodeEditor = createDynamicWithSkeleton(
-  () => import('@/components/ui/code-editor').then((mod) => ({ default: mod.CodeEditor })),
-  'h-[600px] w-full rounded-lg'
-);
+// export const DynamicCodeEditor = createDynamicWithSkeleton(
+//   () => import('@/components/ui/code-editor').then((mod) => ({ default: mod.CodeEditor })),
+//   'h-[600px] w-full rounded-lg'
+// );
 
 // ============================================================================
 // Route-based Code Splitting Helpers
