@@ -74,28 +74,11 @@ Please follow these steps:
      - 📝 Notes for next session
      - 🔗 Integration points verified
 
-Let's begin with Session [SESSION_NUMBER]!
+Let's begin with Session [1]!
 ```
 
 ---
 
-## 🔄 How to Use This Prompt
-
-### Step 1: Copy the Prompt
-Copy the entire prompt template above
-
-### Step 2: Replace Session Number
-Replace `[1]` with the actual session number (1, 2, 3, etc.)
-
-Example for Session 1:
-```
-I'm starting Session 1 of the Transaction Management Dashboard integration.
-```
-
-### Step 3: Paste and Execute
-Paste the complete prompt into your chat with Claude
-
----
 
 ## 📝 Example: Starting Session 1
 

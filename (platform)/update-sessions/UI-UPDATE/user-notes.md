@@ -13,3 +13,15 @@ Remove text box color effect once user has entered their email -> Just leave it 
 # Onboarding Pages #
 
 First organization page is boo boo. It needs to be beautiful
+
+
+# Transaction Dashboard & Modules
+
+- Change "loops" to a different name
+
+- 
+
+# Prompt for CMS & Marketing dashboard
+Please analyze this integration plan file and create multiple chat log session[n].plan.md files for every session that is needed in order to fully integrate    
+this external dashboard into the platform: C:\Users\zochr\Desktop\GitHub\Strive-SaaS\(platform)\update-sessions\dashboard-&-module-integrations\cms&marketing\marketing-integration-plan.md 
+-> Seek additional contest if needed to make sure that the full integration plan is full proof and will seamlessly integrate -> Create all chat logs here: C:\Users\zochr\Desktop\GitHub\Strive-SaaS\(platform)\update-sessions\dashboard-&-module-integrations -> Here's the full dashboard project folder that we will be pulling from and integrating: C:\Users\zochr\Desktop\GitHub\Strive-SaaS\(platform)\update-sessions\dashboard--module-integrations\cmsmarketing\real-estate-cms-and-marketinges
