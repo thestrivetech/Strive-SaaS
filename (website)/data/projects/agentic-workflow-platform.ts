@@ -1,4 +1,4 @@
-import { Project } from '../types';
+import { Project } from './types';
 
 export const agenticWorkflowPlatform: Project = {
   id: 4,

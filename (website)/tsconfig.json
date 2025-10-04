@@ -33,7 +33,7 @@
     "**/*.ts",
     "**/*.tsx",
     ".next/types/**/*.ts"
-, "../website/data/index.ts", "../website/data/industries.tsx", "../website/data/industry-cards.tsx", "../website/data/industry-statistics.ts", "../website/data/solutions-mapping.ts", "../website/data/solutions.tsx"  ],
+, "data/index.ts", "data/industries.tsx", "data/industry-cards.tsx", "data/industry-statistics.ts", "data/solutions-mapping.ts", "data/solutions.tsx"  ],
   "exclude": [
     "node_modules"
   ]
