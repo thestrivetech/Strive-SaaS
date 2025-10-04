@@ -53,13 +53,13 @@ export async function POST(request: NextRequest) {
     }
 
     // Check if user exists in our database
-    let user = await prisma.user.findUnique({
+    let user = await prisma.users.findUnique({
       where: { email },
     });
 
     // If user doesn't exist in our database, create them
     if (!user && data.user) {
-      user = await prisma.user.create({
+      user = await prisma.users.create({
         data: {
           email: data.user.email!,
           name: data.user.user_metadata?.full_name || email.split('@')[0],

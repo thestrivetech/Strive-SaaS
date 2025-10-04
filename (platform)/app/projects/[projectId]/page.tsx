@@ -16,12 +16,12 @@ import { DeleteProjectDialog } from '@/components/(platform)/projects/delete-pro
 import { TaskList } from '@/components/(platform)/real-estate/tasks/task-list';
 import { CreateTaskDialog } from '@/components/(platform)/real-estate/tasks/create-task-dialog';
 import { TaskAttachments } from '@/components/(platform)/real-estate/tasks/task-attachments';
-import { ActivityTimeline } from '@/components/(platform)/features/shared/activity-timeline';
+// import { ActivityTimeline } from '@/components/(platform)/features/shared/activity-timeline';
 import { getAttachments } from '@/lib/modules/attachments';
 import type { OrganizationMember, TeamMember } from '@/lib/types/platform';
-import type { Task, Attachment, User as PrismaUser } from '@prisma/client';
+import type { tasks, attachments, users as PrismaUser } from '@prisma/client';
 
-type AttachmentWithUser = Attachment & { uploadedBy: Pick<PrismaUser, 'id' | 'name' | 'email'> };
+type AttachmentWithUser = attachments & { uploadedBy: Pick<PrismaUser, 'id' | 'name' | 'email'> };
 
 export default async function ProjectDetailPage({
   params,
@@ -42,7 +42,7 @@ export default async function ProjectDetailPage({
   }
 
   const [project, tasks, orgMembers, attachmentsResult] = await Promise.all([
-    getProjectById(params.projectId, currentOrg.organizationId),
+    getProjectById(params.projectId),
     getTasks(params.projectId),
     getOrganizationMembers(currentOrg.organizationId),
     getAttachments({ entityType: 'project', entityId: params.projectId }),
@@ -130,7 +130,15 @@ export default async function ProjectDetailPage({
         <div className="flex items-center gap-2">
           <EditProjectDialog
             project={{
-              ...project,
+              id: project.id,
+              name: project.name,
+              description: project.description,
+              status: project.status,
+              priority: project.priority,
+              customerId: project.customer_id,
+              projectManagerId: project.project_manager_id,
+              startDate: project.start_date,
+              dueDate: project.due_date,
               budget: project.budget ? Number(project.budget) : null,
             }}
           />
@@ -159,16 +167,16 @@ export default async function ProjectDetailPage({
               <Separator />
 
               {/* Customer */}
-              {project.customer && (
+              {project.customers && (
                 <div className="flex items-center gap-3">
                   <Building2 className="h-5 w-5 text-muted-foreground" />
                   <div className="flex-1">
                     <p className="text-sm font-medium">Customer</p>
                     <Link
-                      href={`/crm/${project.customer.id}`}
+                      href={`/crm/${project.customers.id}`}
                       className="text-sm text-blue-600 hover:underline"
                     >
-                      {project.customer.name}
+                      {project.customers.name}
                     </Link>
                   </div>
                 </div>
@@ -179,16 +187,16 @@ export default async function ProjectDetailPage({
                 <User className="h-5 w-5 text-muted-foreground" />
                 <div className="flex items-center gap-2 flex-1">
                   <Avatar className="h-8 w-8">
-                    <AvatarImage src={project.projectManager.avatarUrl || undefined} />
+                    <AvatarImage src={project.users.avatarUrl || undefined} />
                     <AvatarFallback>
-                      {project.projectManager.name?.[0]?.toUpperCase() ||
-                        project.projectManager.email[0].toUpperCase()}
+                      {project.users.name?.[0]?.toUpperCase() ||
+                        project.users.email[0].toUpperCase()}
                     </AvatarFallback>
                   </Avatar>
                   <div>
                     <p className="text-sm font-medium">Project Manager</p>
                     <p className="text-sm text-muted-foreground">
-                      {project.projectManager.name || project.projectManager.email}
+                      {project.users.name || project.users.email}
                     </p>
                   </div>
                 </div>
@@ -267,7 +275,7 @@ export default async function ProjectDetailPage({
           </Card>
 
           {/* Activity Timeline */}
-          <Card>
+          {/* <Card>
             <CardHeader>
               <CardTitle>Activity Timeline</CardTitle>
               <CardDescription>Recent activity for this project</CardDescription>
@@ -280,7 +288,7 @@ export default async function ProjectDetailPage({
                 limit={25}
               />
             </CardContent>
-          </Card>
+          </Card> */}
         </div>
 
         {/* Sidebar */}
@@ -317,7 +325,7 @@ export default async function ProjectDetailPage({
                 <Calendar className="h-5 w-5 text-muted-foreground mt-0.5" />
                 <div className="flex-1">
                   <p className="text-sm font-medium">Start Date</p>
-                  <p className="text-sm text-muted-foreground">{formatDate(project.startDate)}</p>
+                  <p className="text-sm text-muted-foreground">{formatDate(project.start_date)}</p>
                 </div>
               </div>
 
@@ -325,17 +333,17 @@ export default async function ProjectDetailPage({
                 <Calendar className="h-5 w-5 text-muted-foreground mt-0.5" />
                 <div className="flex-1">
                   <p className="text-sm font-medium">Due Date</p>
-                  <p className="text-sm text-muted-foreground">{formatDate(project.dueDate)}</p>
+                  <p className="text-sm text-muted-foreground">{formatDate(project.due_date)}</p>
                 </div>
               </div>
 
-              {project.completionDate && (
+              {project.completion_date && (
                 <div className="flex items-start gap-3">
                   <Calendar className="h-5 w-5 text-muted-foreground mt-0.5" />
                   <div className="flex-1">
                     <p className="text-sm font-medium">Completed Date</p>
                     <p className="text-sm text-muted-foreground">
-                      {formatDate(project.completionDate)}
+                      {formatDate(project.completion_date)}
                     </p>
                   </div>
                 </div>
@@ -361,11 +369,11 @@ export default async function ProjectDetailPage({
             <CardContent className="space-y-2 text-sm">
               <div className="flex justify-between">
                 <span className="text-muted-foreground">Created</span>
-                <span>{formatDate(project.createdAt)}</span>
+                <span>{formatDate(project.created_at)}</span>
               </div>
               <div className="flex justify-between">
                 <span className="text-muted-foreground">Last Updated</span>
-                <span>{formatDate(project.updatedAt)}</span>
+                <span>{formatDate(project.updated_at)}</span>
               </div>
             </CardContent>
           </Card>

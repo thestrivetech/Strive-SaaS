@@ -1,6 +1,6 @@
 # Platform Project - Session Start Prompt
 
-**Session:** session[2].md
+**Session:** session[6].md
 **Project:** Strive Tech SaaS Platform (app.strivetech.ai)
 **Working Directory:** `C:\Users\zochr\Desktop\GitHub\Strive-SaaS\(platform)`
 
@@ -20,7 +20,7 @@ Read these files to understand development rules and architecture:
 4. ./README.md - Project overview and setup instructions
 5. ../README.md - Repository overview (tri-fold structure)
 
--> Read session current plan: session[2]-plan.md file located here to see this sessions plan: C:\Users\zochr\Desktop\GitHub\Strive-SaaS\(platform)\update-sessions\SESSION[2]-PLAN.md
+-> Read session current plan: session[6]-plan.md file located here to see this sessions plan: C:\Users\zochr\Desktop\GitHub\Strive-SaaS\(platform)\update-sessions\SESSION[6]-PLAN.md
 ```
 
 ### 2. Current Project State (ASSESS)

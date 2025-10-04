@@ -68,12 +68,12 @@ export async function createTestUser(overrides: Partial<{
   subscriptionTier: SubscriptionTier;
   isActive: boolean;
 }> = {}) {
-  return await testPrisma.user.create({
+  return await testPrisma.users.create({
     data: {
       email: overrides.email || `test-${Date.now()}@example.com`,
       name: overrides.name || 'Test User',
       role: overrides.role || UserRole.EMPLOYEE,
-      subscriptionTier: overrides.subscriptionTier || SubscriptionTier.FREE,
+      subscription_tier: overrides.subscriptionTier || SubscriptionTier.FREE,
       isActive: overrides.isActive ?? true,
     },
   });
@@ -89,12 +89,12 @@ export async function createTestOrganization(overrides: Partial<{
   subscriptionStatus: SubscriptionStatus;
 }> = {}) {
   const timestamp = Date.now();
-  return await testPrisma.organization.create({
+  return await testPrisma.organizations.create({
     data: {
       name: overrides.name || `Test Org ${timestamp}`,
       slug: overrides.slug || `test-org-${timestamp}`,
       description: overrides.description || 'Test organization',
-      subscriptionStatus: overrides.subscriptionStatus || SubscriptionStatus.TRIAL,
+      subscription_status: overrides.subscriptionStatus || SubscriptionStatus.TRIAL,
     },
   });
 }
@@ -107,10 +107,10 @@ export async function createOrganizationMember(
   organizationId: string,
   role: OrgRole = OrgRole.MEMBER
 ) {
-  return await testPrisma.organizationMember.create({
+  return await testPrisma.organization_members.create({
     data: {
-      userId,
-      organizationId,
+      user_id: userId,
+      organization_id: organizationId,
       role,
     },
   });
@@ -141,7 +141,7 @@ export async function createTestCustomer(
   }> = {}
 ) {
   const timestamp = Date.now();
-  return await testPrisma.customer.create({
+  return await testPrisma.customers.create({
     data: {
       organizationId,
       name: overrides.name || `Test Customer ${timestamp}`,

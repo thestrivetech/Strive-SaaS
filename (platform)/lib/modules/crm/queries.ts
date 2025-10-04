@@ -1,16 +1,43 @@
-import { prisma } from '@/lib/prisma';
-import type { Customer, CustomerStatus, CustomerSource, Prisma } from '@prisma/client';
+import 'server-only';
+
+import { prisma } from '@/lib/database/prisma';
+import { withTenantContext } from '@/lib/database/utils';
+import { handleDatabaseError } from '@/lib/database/errors';
+import type { Customer, Prisma } from '@prisma/client';
 import type { CustomerFilters } from './schemas';
+
+/**
+ * CRM Queries Module
+ *
+ * SECURITY: All queries automatically filtered by organizationId via tenant middleware
+ * No need to manually pass organizationId - it's injected automatically
+ *
+ * @see lib/database/prisma-middleware.ts
+ */
 
 type CustomerWithAssignee = Prisma.CustomerGetPayload<{
   include: { assignedTo: { select: { id: true; name: true; email: true; avatarUrl: true } } };
 }>;
 
+/**
+ * Get customers with filters
+ *
+ * Automatically filtered by current user's organization
+ *
+ * @param filters - Optional filters
+ * @returns List of customers
+ *
+ * @example
+ * ```typescript
+ * const customers = await getCustomers({ status: 'ACTIVE', limit: 50 });
+ * ```
+ */
 export async function getCustomers(
-  organizationId: string,
   filters?: CustomerFilters
 ): Promise<CustomerWithAssignee[]> {
-  const where: any = { organizationId };
+  return withTenantContext(async () => {
+    try {
+      const where: Record<string, unknown> = {};
 
   if (filters?.status) {
     // Support array of statuses (OR logic)
@@ -49,29 +76,44 @@ export async function getCustomers(
     }
   }
 
-  return prisma.customer.findMany({
-    where,
-    include: {
-      assignedTo: {
-        select: {
-          id: true,
-          name: true,
-          email: true,
-          avatarUrl: true,
+      return await prisma.customers.findMany({
+        where,
+        include: {
+          assignedTo: {
+            select: {
+              id: true,
+              name: true,
+              email: true,
+              avatarUrl: true,
+            },
+          },
         },
-      },
-    },
-    orderBy: { createdAt: 'desc' },
-    take: filters?.limit || 50,
-    skip: filters?.offset || 0,
+        orderBy: { created_at: 'desc' },
+        take: filters?.limit || 50,
+        skip: filters?.offset || 0,
+      });
+    } catch (error) {
+      const dbError = handleDatabaseError(error);
+      console.error('[CRM Queries] getCustomers failed:', dbError);
+      throw error;
+    }
   });
 }
 
+/**
+ * Get count of customers with filters
+ *
+ * Automatically filtered by current user's organization
+ *
+ * @param filters - Optional filters
+ * @returns Count of customers
+ */
 export async function getCustomersCount(
-  organizationId: string,
   filters?: CustomerFilters
 ): Promise<number> {
-  const where: any = { organizationId };
+  return withTenantContext(async () => {
+    try {
+      const where: Record<string, unknown> = {};
 
   if (filters?.status) {
     // Support array of statuses (OR logic)
@@ -110,7 +152,13 @@ export async function getCustomersCount(
     }
   }
 
-  return prisma.customer.count({ where });
+      return await prisma.customers.count({ where });
+    } catch (error) {
+      const dbError = handleDatabaseError(error);
+      console.error('[CRM Queries] getCustomersCount failed:', dbError);
+      throw error;
+    }
+  });
 }
 
 type CustomerWithDetails = Prisma.CustomerGetPayload<{
@@ -129,88 +177,126 @@ type CustomerWithDetails = Prisma.CustomerGetPayload<{
   };
 }>;
 
+/**
+ * Get customer by ID
+ *
+ * Automatically filtered by current user's organization
+ *
+ * @param customerId - Customer ID
+ * @returns Customer with details or null
+ */
 export async function getCustomerById(
-  customerId: string,
-  organizationId: string
+  customerId: string
 ): Promise<CustomerWithDetails | null> {
-  return prisma.customer.findFirst({
-    where: {
-      id: customerId,
-      organizationId,
-    },
-    include: {
-      assignedTo: {
-        select: {
-          id: true,
-          name: true,
-          email: true,
-          avatarUrl: true,
+  return withTenantContext(async () => {
+    try {
+      return await prisma.customers.findFirst({
+        where: {
+          id: customerId,
         },
-      },
-      projects: {
-        include: {
-          projectManager: {
-            select: {
-              id: true,
-              name: true,
-              email: true,
-            },
-          },
-        },
-        orderBy: { createdAt: 'desc' },
-      },
-      appointments: {
         include: {
           assignedTo: {
             select: {
               id: true,
               name: true,
+              email: true,
+              avatarUrl: true,
             },
           },
+          projects: {
+            include: {
+              projectManager: {
+                select: {
+                  id: true,
+                  name: true,
+                  email: true,
+                },
+              },
+            },
+            orderBy: { createdAt: 'desc' },
+          },
+          appointments: {
+            include: {
+              assignedTo: {
+                select: {
+                  id: true,
+                  name: true,
+                },
+              },
+            },
+            orderBy: { start_time: 'desc' },
+          },
         },
-        orderBy: { startTime: 'desc' },
-      },
-    },
+      });
+    } catch (error) {
+      const dbError = handleDatabaseError(error);
+      console.error('[CRM Queries] getCustomerById failed:', dbError);
+      throw error;
+    }
   });
 }
 
-export async function getCustomerStats(organizationId: string) {
-  const [totalCustomers, activeCustomers, leadCount, prospectCount] = await Promise.all([
-    prisma.customer.count({ where: { organizationId } }),
-    prisma.customer.count({
-      where: { organizationId, status: 'ACTIVE' },
-    }),
-    prisma.customer.count({
-      where: { organizationId, status: 'LEAD' },
-    }),
-    prisma.customer.count({
-      where: { organizationId, status: 'PROSPECT' },
-    }),
-  ]);
+/**
+ * Get customer statistics
+ *
+ * Automatically filtered by current user's organization
+ *
+ * @returns Customer stats by status
+ */
+export async function getCustomerStats() {
+  return withTenantContext(async () => {
+    try {
+      const [totalCustomers, activeCustomers, leadCount, prospectCount] = await Promise.all([
+        prisma.customers.count(),
+        prisma.customers.count({ where: { status: 'ACTIVE' } }),
+        prisma.customers.count({ where: { status: 'LEAD' } }),
+        prisma.customers.count({ where: { status: 'PROSPECT' } }),
+      ]);
 
-  return {
-    totalCustomers,
-    activeCustomers,
-    leadCount,
-    prospectCount,
-  };
+      return {
+        totalCustomers,
+        activeCustomers,
+        leadCount,
+        prospectCount,
+      };
+    } catch (error) {
+      const dbError = handleDatabaseError(error);
+      console.error('[CRM Queries] getCustomerStats failed:', dbError);
+      throw error;
+    }
+  });
 }
 
+/**
+ * Search customers by name, email, or company
+ *
+ * Automatically filtered by current user's organization
+ *
+ * @param query - Search query
+ * @param limit - Maximum results
+ * @returns Matching customers
+ */
 export async function searchCustomers(
-  organizationId: string,
   query: string,
-  limit: number = 10
+  limit = 10
 ): Promise<Customer[]> {
-  return prisma.customer.findMany({
-    where: {
-      organizationId,
-      OR: [
-        { name: { contains: query, mode: 'insensitive' } },
-        { email: { contains: query, mode: 'insensitive' } },
-        { company: { contains: query, mode: 'insensitive' } },
-      ],
-    },
-    take: limit,
-    orderBy: { name: 'asc' },
+  return withTenantContext(async () => {
+    try {
+      return await prisma.customers.findMany({
+        where: {
+          OR: [
+            { name: { contains: query, mode: 'insensitive' } },
+            { email: { contains: query, mode: 'insensitive' } },
+            { company: { contains: query, mode: 'insensitive' } },
+          ],
+        },
+        take: limit,
+        orderBy: { name: 'asc' },
+      });
+    } catch (error) {
+      const dbError = handleDatabaseError(error);
+      console.error('[CRM Queries] searchCustomers failed:', dbError);
+      throw error;
+    }
   });
 }

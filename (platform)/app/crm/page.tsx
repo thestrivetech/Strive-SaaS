@@ -110,9 +110,9 @@ async function CustomerListContent({
   pageSize: number;
 }) {
   const [customers, stats, totalCount] = await Promise.all([
-    getCustomers(organizationId, filters),
-    getCustomerStats(organizationId),
-    getCustomersCount(organizationId, filters),
+    getCustomers(filters),
+    getCustomerStats(),
+    getCustomersCount(filters),
   ]);
 
   // CSV Export columns

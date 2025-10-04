@@ -9,7 +9,7 @@ export async function POST(request: NextRequest) {
     const { email, password, firstName, lastName, username } = signupApiSchema.parse(body);
 
     // Check if user already exists in our database
-    const existingUser = await prisma.user.findFirst({
+    const existingUser = await prisma.users.findFirst({
       where: {
         OR: [
           { email },
@@ -67,7 +67,7 @@ export async function POST(request: NextRequest) {
 
     // Create user in our database
     if (data.user) {
-      const user = await prisma.user.create({
+      const user = await prisma.users.create({
         data: {
           email: data.user.email!,
           name: username,

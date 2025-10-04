@@ -11,7 +11,7 @@ import { getUserOrganizations } from '@/lib/modules/organization/queries';
 import { getCustomerById } from '@/lib/modules/crm/queries';
 import { EditCustomerDialog } from '@/components/(platform)/real-estate/crm/edit-customer-dialog';
 import { DeleteCustomerDialog } from '@/components/(platform)/real-estate/crm/delete-customer-dialog';
-import { ActivityTimeline } from '@/components/(platform)/features/shared/activity-timeline';
+// import { ActivityTimeline } from '@/components/(platform)/features/shared/activity-timeline';
 
 export default async function CustomerDetailPage({
   params,
@@ -31,7 +31,7 @@ export default async function CustomerDetailPage({
     return notFound();
   }
 
-  const customer = await getCustomerById(params.customerId, currentOrg.organizationId);
+  const customer = await getCustomerById(params.customerId);
 
   if (!customer) {
     return notFound();
@@ -162,12 +162,12 @@ export default async function CustomerDetailPage({
             <CardContent>
               {customer.projects && customer.projects.length > 0 ? (
                 <div className="space-y-3">
-                  {customer.projects.map((project) => (
+                  {customer.projects.map((project: any) => (
                     <div key={project.id} className="flex items-center justify-between p-3 border rounded-lg">
                       <div>
                         <p className="font-medium">{project.name}</p>
                         <p className="text-sm text-muted-foreground">
-                          Manager: {project.projectManager?.name || 'Unassigned'}
+                          Manager: {project.users?.name || 'Unassigned'}
                         </p>
                       </div>
                       <Badge variant="outline">{project.status}</Badge>
@@ -181,7 +181,7 @@ export default async function CustomerDetailPage({
           </Card>
 
           {/* Activity Timeline */}
-          <Card>
+          {/* <Card>
             <CardHeader>
               <CardTitle>Activity Timeline</CardTitle>
               <CardDescription>Recent activity for this customer</CardDescription>
@@ -194,7 +194,7 @@ export default async function CustomerDetailPage({
                 limit={25}
               />
             </CardContent>
-          </Card>
+          </Card> */}
         </div>
 
         {/* Sidebar */}
@@ -213,14 +213,14 @@ export default async function CustomerDetailPage({
 
               <div>
                 <p className="text-sm text-muted-foreground">Created</p>
-                <p className="text-sm font-medium">{formatDate(customer.createdAt)}</p>
+                <p className="text-sm font-medium">{formatDate(customer.created_at)}</p>
               </div>
 
               <Separator />
 
               <div>
                 <p className="text-sm text-muted-foreground">Last Updated</p>
-                <p className="text-sm font-medium">{formatDate(customer.updatedAt)}</p>
+                <p className="text-sm font-medium">{formatDate(customer.updated_at)}</p>
               </div>
             </CardContent>
           </Card>
@@ -233,7 +233,7 @@ export default async function CustomerDetailPage({
             <CardContent>
               {customer.appointments && customer.appointments.length > 0 ? (
                 <div className="space-y-3">
-                  {customer.appointments.slice(0, 5).map((appointment) => (
+                  {customer.appointments.slice(0, 5).map((appointment: any) => (
                     <div key={appointment.id} className="flex items-start gap-2">
                       <Calendar className="h-4 w-4 text-muted-foreground mt-0.5" />
                       <div>

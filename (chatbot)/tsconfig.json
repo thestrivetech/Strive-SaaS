@@ -35,6 +35,7 @@
     ".next/types/**/*.ts"
 , "../website/data/index.ts", "../website/data/industries.tsx", "../website/data/industry-cards.tsx", "../website/data/industry-statistics.ts", "../website/data/solutions-mapping.ts", "../website/data/solutions.tsx", "../(platform)/scripts/generate-embeddings.ts"  ],
   "exclude": [
-    "node_modules"
+    "node_modules",
+    "update-sessions"
   ]
 }
