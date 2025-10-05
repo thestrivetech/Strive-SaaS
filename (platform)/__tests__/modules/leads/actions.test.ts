@@ -25,7 +25,7 @@ import {
   updateLeadStatus,
   bulkAssignLeads,
   convertLead,
-} from '@/lib/modules/leads/actions';
+} from '@/lib/modules/crm/leads/actions';
 import type { OrgRole } from '@prisma/client';
 
 // Mock auth helpers

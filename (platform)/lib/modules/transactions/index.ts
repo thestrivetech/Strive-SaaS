@@ -1,43 +1,63 @@
 /**
- * Transaction Management Module
+ * Transactions Module - Public API
  *
- * Public API for managing transaction loops with:
- * - CRUD operations via Server Actions
- * - RBAC permission enforcement
- * - Multi-tenancy via organization isolation
- * - Input validation with Zod
- * - Audit logging
+ * Consolidated transactions module containing:
+ * - Core transaction loop management
+ * - Task management
+ * - Activity tracking
+ * - Transaction analytics
+ * - Listings (real estate specific)
+ * - Parties management
+ * - Document management
+ * - E-signature workflow
+ * - Workflow automation
+ * - Milestone tracking
  */
 
-// Queries - Data fetching
-export {
-  getLoops,
-  getLoopById,
-  getLoopStats,
-} from './queries';
+// Core
+export * from './core';
 
-// Actions - Mutations
-export {
-  createLoop,
-  updateLoop,
-  deleteLoop,
-  updateLoopProgress,
-} from './actions';
+// Tasks
+export * from './tasks/actions';
+export * from './tasks/queries';
+export * from './tasks/schemas';
 
-// Schemas & Types
-export {
-  CreateLoopSchema,
-  UpdateLoopSchema,
-  QueryLoopsSchema,
-  type CreateLoopInput,
-  type UpdateLoopInput,
-  type QueryLoopsInput,
-} from './schemas';
+// Activity
+export * from './activity/formatters';
+export * from './activity/queries';
 
-// Permissions
-export {
-  TRANSACTION_PERMISSIONS,
-  hasTransactionPermission,
-  canModifyLoop,
-  type TransactionPermission,
-} from './permissions';
+// Analytics
+export * from './analytics/charts';
+export { type TaskStats as AnalyticsTaskStats } from './analytics/queries';
+
+// Listings
+export * from './listings/actions';
+export * from './listings/queries';
+export * from './listings/schemas';
+
+// Parties
+export * from './parties/actions';
+export * from './parties/queries';
+
+// Documents
+export * from './documents/actions';
+export * from './documents/queries';
+
+// Signatures
+export * from './signatures/actions';
+export * from './signatures/queries';
+
+// Workflows
+export * from './workflows/actions';
+export * from './workflows/queries';
+
+// Milestones
+export * from './milestones/calculator';
+export * from './milestones/schemas';
+
+// Types
+export type {
+  transaction_loops,
+  transaction_tasks,
+  transaction_audit_logs
+} from '@prisma/client';

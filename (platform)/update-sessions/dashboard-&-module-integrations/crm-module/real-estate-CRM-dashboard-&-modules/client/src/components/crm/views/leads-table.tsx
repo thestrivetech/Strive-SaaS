@@ -15,7 +15,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { PhaseBadge } from "@/components/crm/shared/phase-badge";
-import { Lead } from "@/types/crm";
+import { Lead } from "@/lib/types/real-estate/crm";
 import { format } from "date-fns";
 import { MoreHorizontal, Phone, Mail, ArrowUpDown } from "lucide-react";
 import { useState } from "react";

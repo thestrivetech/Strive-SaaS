@@ -1,10 +1,10 @@
-import { createDocumentVersion } from '@/lib/modules/documents/actions';
+import { createDocumentVersion } from '@/lib/modules/transactions/documents/actions';
 import {
   getDocumentsByLoop,
   getDocumentById,
   getDocumentVersions,
   getDocumentStats,
-} from '@/lib/modules/documents/queries';
+} from '@/lib/modules/transactions/documents/queries';
 import { getCurrentUser } from '@/lib/auth/auth-helpers';
 import { prisma } from '@/lib/prisma';
 import { storageService } from '@/lib/storage/supabase-storage';

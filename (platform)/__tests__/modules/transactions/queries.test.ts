@@ -1,5 +1,5 @@
-import { getLoops, getLoopById, getLoopStats } from '@/lib/modules/transactions/queries';
-import { TRANSACTION_PERMISSIONS } from '@/lib/modules/transactions/permissions';
+import { getLoops, getLoopById, getLoopStats } from '@/lib/modules/transactions/core/queries';
+import { TRANSACTION_PERMISSIONS } from '@/lib/modules/transactions/core/permissions';
 import { getCurrentUser } from '@/lib/auth/auth-helpers';
 import { prisma } from '@/lib/prisma';
 

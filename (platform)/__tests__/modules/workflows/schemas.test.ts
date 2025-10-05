@@ -4,7 +4,7 @@ import {
   ApplyWorkflowSchema,
   UpdateWorkflowTemplateSchema,
   QueryWorkflowTemplatesSchema,
-} from '@/lib/modules/workflows/schemas';
+} from '@/lib/modules/transactions/workflows/schemas';
 import { PartyRole } from '@prisma/client';
 
 describe('Workflow Schemas', () => {

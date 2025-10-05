@@ -1,10 +1,10 @@
 /**
  * Centralized types for Strive Tech SaaS Platform
- * Organized by domain: shared, web, platform, chatbot
+ * Organized by domain: shared, web, real-estate, chatbot
  *
  * @example
  * // Import from specific domain (recommended for clarity)
- * import { CRMFilters, UserWithOrganization } from '@/lib/types/platform';
+ * import { CRMFilters, UserWithOrganization } from '@/lib/types/real-estate';
  * import { ApiResponse, CSVColumn } from '@/lib/types/shared';
  *
  * @example
@@ -12,13 +12,13 @@
  * import { CRMFilters, ApiResponse } from '@/lib/types';
  *
  * Structure:
- * - shared/: Cross-domain utility types (api, csv, validation)
+ * - shared/: Cross-domain utility types (api, csv, validation, supabase)
  * - web/: Marketing site types (analytics)
- * - platform/: SaaS platform types (auth, crm, filters, organization, etc.)
+ * - real-estate/: Real estate platform types (auth, crm, filters, organization, seo, etc.)
  * - chatbot/: Chatbot-specific types (iframe communication)
  */
 
 // Re-export all domains for convenience
 export * from './shared';
 export * from './web';
-export * from './platform';
+export * from './real-estate';

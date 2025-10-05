@@ -20,7 +20,7 @@ import {
 } from "@/components/ui/select";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
-import { Client, FollowUp, Note } from "@/types/crm";
+import { Client, FollowUp, Note } from "@/lib/types/real-estate/crm";
 import { format, formatDistanceToNow } from "date-fns";
 import {
   Calendar,

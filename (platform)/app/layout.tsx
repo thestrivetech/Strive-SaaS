@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
 import "@/lib/env"; // Validate environment variables at startup
-import { Providers } from "@/components/(platform)/shared/providers";
+import { Providers } from "@/components/shared/providers";
 import { Toaster } from "sonner";
 
 const inter = Inter({
