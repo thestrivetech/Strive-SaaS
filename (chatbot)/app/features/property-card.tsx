@@ -1,3 +1,5 @@
+'use client';
+
 import React, { useState } from 'react';
 import { Home, Bed, Bath, Maximize2, Calendar, Image, MapPin, Star, TrendingUp, X, Heart, Share2, Info } from 'lucide-react';
 
@@ -39,7 +41,8 @@ interface PropertyMatch {
 
 interface PropertyCardProps {
   match: PropertyMatch;
-  onScheduleShowing: (propertyId: string, propertyAddress: string) => void;
+  rank?: number; // ✅ Added rank prop for "Top #1" badge
+  onScheduleShowing?: (propertyId: string, propertyAddress: string) => void;
   onSaveFavorite?: (propertyId: string, propertyAddress: string) => void;
   onViewDetails?: (propertyId: string) => void;
   onShare?: (propertyId: string, propertyAddress: string) => void;
@@ -47,7 +50,8 @@ interface PropertyCardProps {
 
 const PropertyCard: React.FC<PropertyCardProps> = ({
   match,
-  onScheduleShowing,
+  rank,
+  onScheduleShowing = () => {}, // ✅ Default handler
   onSaveFavorite,
   onViewDetails,
   onShare,
@@ -96,8 +100,15 @@ const PropertyCard: React.FC<PropertyCardProps> = ({
             </div>
           )}
           
+          {/* Rank Badge - NEW */}
+          {rank && (
+            <div className="absolute top-3 left-3 bg-white text-gray-900 px-3 py-1.5 rounded-full font-bold shadow-lg">
+              #{rank}
+            </div>
+          )}
+
           {/* Match Percentage Badge */}
-          <div className={`absolute top-3 left-3 px-4 py-2 rounded-full font-bold text-lg shadow-lg ${
+          <div className={`absolute ${rank ? 'top-14' : 'top-3'} left-3 px-4 py-2 rounded-full font-bold text-lg shadow-lg ${
             matchPercentage >= 90 ? 'bg-green-600 text-white' :
             matchPercentage >= 75 ? 'bg-blue-600 text-white' :
             matchPercentage >= 60 ? 'bg-yellow-600 text-white' :
@@ -303,97 +314,4 @@ const PropertyCard: React.FC<PropertyCardProps> = ({
   );
 };
 
-// Example usage with demo data
-export default function PropertyResults() {
-  const demoMatches: PropertyMatch[] = [
-    {
-      property: {
-        id: '1',
-        address: '123 Oak Street',
-        city: 'Nashville',
-        state: 'TN',
-        zipCode: '37209',
-        price: 385000,
-        bedrooms: 3,
-        bathrooms: 2,
-        sqft: 1850,
-        propertyType: 'single-family',
-        images: [
-          'https://images.unsplash.com/photo-1570129477492-45c003edd2be?w=800',
-          'https://images.unsplash.com/photo-1568605114967-8130f3a36994?w=800',
-        ],
-        daysOnMarket: 2,
-        schoolRatings: {
-          elementary: 9,
-          middle: 8,
-          high: 9,
-        },
-      },
-      matchScore: 95,
-      matchReasons: [
-        'Great value - $115,000 under budget',
-        'Large backyard with deck',
-        'Sparkling pool',
-        'Recently renovated kitchen',
-        'Top-rated schools nearby',
-      ],
-      missingFeatures: [],
-    },
-    {
-      property: {
-        id: '2',
-        address: '456 Maple Avenue',
-        city: 'Nashville',
-        state: 'TN',
-        zipCode: '37205',
-        price: 395000,
-        bedrooms: 3,
-        bathrooms: 2.5,
-        sqft: 2100,
-        propertyType: 'single-family',
-        images: [
-          'https://images.unsplash.com/photo-1564013799919-ab600027ffc6?w=800',
-        ],
-        daysOnMarket: 1,
-      },
-      matchScore: 92,
-      matchReasons: [
-        'Just listed!',
-        '2.5 bathrooms',
-        'Fenced backyard with pool',
-        'Granite countertops',
-      ],
-      missingFeatures: [],
-    },
-  ];
-
-  const handleScheduleShowing = (propertyId: string) => {
-    alert(`Scheduling showing for property ${propertyId}`);
-    // In real implementation, this would open a booking modal or redirect
-  };
-
-  return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-blue-100 p-6">
-      <div className="max-w-6xl mx-auto">
-        <div className="mb-6">
-          <h1 className="text-3xl font-bold text-gray-800 mb-2">
-            Your Property Matches
-          </h1>
-          <p className="text-gray-600">
-            We found {demoMatches.length} homes that match your preferences
-          </p>
-        </div>
-
-        <div className="grid gap-6 md:grid-cols-2">
-          {demoMatches.map((match) => (
-            <PropertyCard
-              key={match.property.id}
-              match={match}
-              onScheduleShowing={handleScheduleShowing}
-            />
-          ))}
-        </div>
-      </div>
-    </div>
-  );
-}
+export default PropertyCard;

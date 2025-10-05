@@ -1861,119 +1861,16 @@ class RAGService {
     }
 }
 }),
-"[project]/shared/lib/services/cache-service.ts [app-route] (ecmascript)", ((__turbopack_context__) => {
-"use strict";
-
-// shared/lib/services/cache-service.ts
-// Shared in-memory caching service with TTL support
-__turbopack_context__.s([
-    "CacheService",
-    ()=>CacheService
-]);
-class CacheService {
-    static cache = new Map();
-    static DEFAULT_TTL = 3600;
-    static cleanupInterval = null;
-    /**
-   * Set a value in cache with TTL
-   */ static set(key, value, ttl = this.DEFAULT_TTL) {
-        this.cache.set(key, {
-            data: value,
-            expires: Date.now() + ttl * 1000
-        });
-    }
-    /**
-   * Get a value from cache (returns null if expired or not found)
-   */ static get(key) {
-        const entry = this.cache.get(key);
-        if (!entry) {
-            return null;
-        }
-        // Check if expired
-        if (entry.expires < Date.now()) {
-            this.cache.delete(key);
-            return null;
-        }
-        return entry.data;
-    }
-    /**
-   * Delete a specific key
-   */ static delete(key) {
-        this.cache.delete(key);
-    }
-    /**
-   * Clear all cache
-   */ static clear() {
-        this.cache.clear();
-    }
-    /**
-   * Get cache statistics
-   */ static getStats() {
-        return {
-            size: this.cache.size,
-            entries: Array.from(this.cache.keys())
-        };
-    }
-    /**
-   * Check if a key exists and is not expired
-   */ static has(key) {
-        const entry = this.cache.get(key);
-        if (!entry) return false;
-        if (entry.expires < Date.now()) {
-            this.cache.delete(key);
-            return false;
-        }
-        return true;
-    }
-    /**
-   * Cleanup expired entries periodically
-   */ static startCleanup(intervalMs = 60000) {
-        if (this.cleanupInterval) {
-            return; // Already running
-        }
-        this.cleanupInterval = setInterval(()=>{
-            const now = Date.now();
-            let cleaned = 0;
-            for (const [key, entry] of this.cache.entries()){
-                if (entry.expires < now) {
-                    this.cache.delete(key);
-                    cleaned++;
-                }
-            }
-            if (cleaned > 0) {
-                console.log(`🧹 Cache cleanup: Removed ${cleaned} expired entries`);
-            }
-        }, intervalMs);
-    }
-    /**
-   * Stop cleanup interval
-   */ static stopCleanup() {
-        if (this.cleanupInterval) {
-            clearInterval(this.cleanupInterval);
-            this.cleanupInterval = null;
-        }
-    }
-    /**
-   * Simple hash function for creating cache keys
-   */ static createKey(...parts) {
-        return parts.join(':');
-    }
-}
-// Initialize cleanup on server start (only in Node.js environment)
-if ("TURBOPACK compile-time truthy", 1) {
-    CacheService.startCleanup();
-}
-}),
 "[project]/(chatbot)/app/services/rentcast-service.ts [app-route] (ecmascript)", ((__turbopack_context__) => {
 "use strict";
 
-// app/lib/modules/real-estate/services/rentcast-service.ts
+// app/services/rentcast-service.ts
 __turbopack_context__.s([
     "RentCastService",
     ()=>RentCastService
 ]);
 var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$server$2d$only$2f$empty$2e$js__$5b$app$2d$route$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/node_modules/next/dist/compiled/server-only/empty.js [app-route] (ecmascript)");
-var __TURBOPACK__imported__module__$5b$project$5d2f$shared$2f$lib$2f$services$2f$cache$2d$service$2e$ts__$5b$app$2d$route$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/shared/lib/services/cache-service.ts [app-route] (ecmascript)");
+var __TURBOPACK__imported__module__$5b$project$5d2f28$chatbot$292f$app$2f$services$2f$cache$2d$service$2e$ts__$5b$app$2d$route$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/(chatbot)/app/services/cache-service.ts [app-route] (ecmascript)");
 ;
 ;
 // Environment variable for RentCast API key
@@ -1984,14 +1881,15 @@ class RentCastService {
    * Search properties using RentCast API
    */ static async searchProperties(params) {
         // Create cache key based on search params
-        const cacheKey = __TURBOPACK__imported__module__$5b$project$5d2f$shared$2f$lib$2f$services$2f$cache$2d$service$2e$ts__$5b$app$2d$route$5d$__$28$ecmascript$29$__["CacheService"].createKey('rentcast', params.location, params.maxPrice.toString(), params.minBedrooms.toString(), params.propertyType || 'any');
+        const cacheKey = __TURBOPACK__imported__module__$5b$project$5d2f28$chatbot$292f$app$2f$services$2f$cache$2d$service$2e$ts__$5b$app$2d$route$5d$__$28$ecmascript$29$__["CacheService"].createKey('rentcast', params.location, params.maxPrice.toString(), params.minBedrooms.toString(), params.propertyType || 'any');
         // Check cache first (15 minute TTL for property searches)
-        const cached = __TURBOPACK__imported__module__$5b$project$5d2f$shared$2f$lib$2f$services$2f$cache$2d$service$2e$ts__$5b$app$2d$route$5d$__$28$ecmascript$29$__["CacheService"].get(cacheKey);
+        const cached = __TURBOPACK__imported__module__$5b$project$5d2f28$chatbot$292f$app$2f$services$2f$cache$2d$service$2e$ts__$5b$app$2d$route$5d$__$28$ecmascript$29$__["CacheService"].get(cacheKey);
         if (cached) {
             console.log('✅ RentCast cache HIT');
             return cached;
         }
         console.log('🔍 RentCast cache MISS - fetching from API');
+        console.log('🔑 RentCast API Key present:', !!RENTCAST_API_KEY);
         try {
             // Parse location to get city and state
             const { city, state, zipCode } = this.parseLocation(params.location);
@@ -2044,7 +1942,7 @@ class RentCastService {
             // Transform RentCast response to our Property format
             const properties = Array.isArray(data) ? data.map((listing)=>this.transformListing(listing)) : [];
             // Cache results for 15 minutes
-            __TURBOPACK__imported__module__$5b$project$5d2f$shared$2f$lib$2f$services$2f$cache$2d$service$2e$ts__$5b$app$2d$route$5d$__$28$ecmascript$29$__["CacheService"].set(cacheKey, properties, 900);
+            __TURBOPACK__imported__module__$5b$project$5d2f28$chatbot$292f$app$2f$services$2f$cache$2d$service$2e$ts__$5b$app$2d$route$5d$__$28$ecmascript$29$__["CacheService"].set(cacheKey, properties, 900);
             return properties;
         } catch (error) {
             console.error('RentCast API error:', error);
@@ -3304,6 +3202,7 @@ async function POST(req) {
                     if (shouldSearch) {
                         try {
                             console.log('🏠 Property search triggered');
+                            console.log('📋 Session preferences:', sessionPreferences);
                             let searchParams;
                             // Check if AI provided explicit search parameters
                             const searchMatch = fullResponse.match(/<property_search>([\s\S]*?)<\/property_search>/);
@@ -3537,4 +3436,4 @@ async function POST(req) {
 }),
 ];
 
-//# sourceMappingURL=%5Broot-of-the-server%5D__5174c444._.js.map
+//# sourceMappingURL=%5Broot-of-the-server%5D__8a6326de._.js.map

@@ -1,7 +1,7 @@
-// app/lib/modules/real-estate/services/rentcast-service.ts
+// app/services/rentcast-service.ts
 import 'server-only';
 
-import { CacheService } from '@strive/shared/services/cache-service';
+import { CacheService } from './cache-service';
 
 // Environment variable for RentCast API key
 const RENTCAST_API_KEY = process.env.RENTCAST_API_KEY;
@@ -78,10 +78,15 @@ export class RentCastService {
     }
 
     console.log('🔍 RentCast cache MISS - fetching from API');
+    console.log('🔑 RentCast API Key present:', !!RENTCAST_API_KEY);
 
     try {
       // Parse location to get city and state
       const { city, state, zipCode } = this.parseLocation(params.location);
+
+      // 🔍 DEBUG: Log what we're sending to RentCast
+      console.log('📍 Parsed location:', { city, state, zipCode });
+      console.log('🔍 Search criteria:', { maxPrice: params.maxPrice, minBedrooms: params.minBedrooms });
 
       // Build RentCast API request
       const url = new URL(`${RENTCAST_BASE_URL}/listings/sale`);
@@ -112,8 +117,22 @@ export class RentCastService {
 
       const data = await response.json();
 
+      // 🔍 DEBUG: Log raw RentCast response
+      console.log('🏠 RentCast API Response:', {
+        totalResults: Array.isArray(data) ? data.length : 'Not an array',
+        firstListing: data[0] ? {
+          address: data[0].addressLine1 || data[0].address,
+          price: data[0].price,
+          city: data[0].city,
+          mlsId: data[0].mlsId,
+          isSynthetic: data[0].isSample || data[0].isTest || false
+        } : 'No results'
+      });
+
       // Transform RentCast response to our Property format
-      const properties: Property[] = data.map((listing: any) => this.transformListing(listing));
+      const properties: Property[] = Array.isArray(data)
+        ? data.map((listing: any) => this.transformListing(listing))
+        : [];
 
       // Cache results for 15 minutes
       CacheService.set(cacheKey, properties, 900);

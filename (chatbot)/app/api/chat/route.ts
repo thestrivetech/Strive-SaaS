@@ -8,6 +8,8 @@ import { RAGService } from '@/app/services/rag-service';
 import { RentCastService, PropertySearchParams } from '@/app/services/rentcast-service';
 import { IndustryType } from '@/types/industry';
 import { ChatRequestSchema } from '@/app/schemas/chat-request';
+import { Message } from '@/types/conversation';
+import { RAGContext } from '@/types/rag';
 import {
   extractDataFromMessage,
   mergeExtractedData,
@@ -154,6 +156,7 @@ export async function POST(req: NextRequest) {
           if (shouldSearch) {
             try {
               console.log('🏠 Property search triggered');
+              console.log('📋 Session preferences:', sessionPreferences);
 
               let searchParams: PropertySearchParams;
 
@@ -188,11 +191,17 @@ export async function POST(req: NextRequest) {
               // Match and score properties
               const matches = RentCastService.matchProperties(properties, searchParams);
               console.log(`🎯 Top ${matches.length} matches selected`);
+              console.log('🏘️ Property addresses:', matches.map(m => m.property.address));
 
               // Send property results to client
               const propertyData = JSON.stringify({
                 type: 'property_results',
                 properties: matches,
+              });
+              console.log('📤 Sending to client:', {
+                type: 'property_results',
+                count: matches.length,
+                firstAddress: matches[0]?.property.address
               });
               controller.enqueue(encoder.encode(`data: ${propertyData}\n\n`));
             } catch (propertyError) {

@@ -101,7 +101,7 @@ const ChatContainer: React.FC<ChatContainerProps> = ({ mode = 'full' }) => {
   const {
     messages, isLoading, streamingMessage, error,
     sendMessage, clearMessages, stopGeneration, retryLastMessage, getStats
-  } = useChat();
+  } = useChat('real-estate'); // ✅ Configure for Real Estate industry
 
   const {
     scrollContainerRef,

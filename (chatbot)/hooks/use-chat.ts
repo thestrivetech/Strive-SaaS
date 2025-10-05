@@ -305,10 +305,12 @@ export const useChat = (industry: string = 'strive') => {
               if (parsed.type === 'property_results') {
                 propertyResults = parsed.properties;
                 console.log('🏠 Received property results:', propertyResults);
+                console.log('🏘️ Property count:', propertyResults?.length);
+                console.log('🏡 First property:', propertyResults?.[0]?.property?.address);
 
                 // Update message with property results immediately
-                setMessages(prev => prev.map(msg => 
-                  msg.id === assistantMessageId 
+                setMessages(prev => prev.map(msg =>
+                  msg.id === assistantMessageId
                     ? { ...msg, propertyResults }
                     : msg
                 ));

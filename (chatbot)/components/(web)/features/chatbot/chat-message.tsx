@@ -6,6 +6,8 @@ import { User, AlertCircle, Clock, ExternalLink, Calendar } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { MessageSaiAvatar, UserAvatar } from '../../shared/avatars';
 import { URLS } from '@/app/constants/chatConstants';
+import { PropertyResults } from '@/app/features/property-results';
+import { PropertyMatch } from '@/app/services/rentcast-service';
 
 interface ChatMessageProps {
   message: {
@@ -19,6 +21,7 @@ interface ChatMessageProps {
     isError?: boolean;
     isWelcome?: boolean;
     showCalendlyButton?: boolean;
+    propertyResults?: PropertyMatch[]; // ✅ Property search results
   };
   isStreaming?: boolean;
   mode?: 'full' | 'widget';
@@ -261,6 +264,18 @@ const ChatMessage: React.FC<ChatMessageProps> = memo(({ message, isStreaming = f
                 </div>
               )}
             </div>
+          </motion.div>
+        )}
+
+        {/* Property Results - NEW */}
+        {message.propertyResults && message.propertyResults.length > 0 && (
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.2, duration: 0.4 }}
+            className="w-full mt-4"
+          >
+            <PropertyResults properties={message.propertyResults} />
           </motion.div>
         )}
 
