@@ -34,7 +34,7 @@ export async function ClientLayout({ children }: ClientLayoutProps) {
   ];
 
   return (
-    <RequireRole role="CLIENT">
+    <RequireRole role="USER">
       <BasePlatformLayout navItems={clientNavItems}>
         {children}
       </BasePlatformLayout>

@@ -1,0 +1,63 @@
+{
+  "name": "Role & Tier Migration Example",
+  "description": "Example migration config for updating roles and tiers across the codebase",
+  "backupDir": ".migration-backup",
+  "excludePatterns": [
+    "**/node_modules/**",
+    "**/.next/**",
+    "**/dist/**",
+    "**/build/**",
+    "**/.git/**",
+    "**/coverage/**",
+    "**/scripts/**",
+    "**/*.md"
+  ],
+  "validation": {
+    "typeCheck": true,
+    "tests": false
+  },
+  "rules": [
+    {
+      "find": "'EMPLOYEE'",
+      "replace": "'USER'",
+      "filePattern": "**/*.{ts,tsx}",
+      "description": "Replace 'EMPLOYEE' string literals with 'USER'"
+    },
+    {
+      "find": "UserRole.EMPLOYEE",
+      "replace": "UserRole.USER",
+      "filePattern": "**/*.{ts,tsx}",
+      "description": "Replace UserRole.EMPLOYEE enum references"
+    },
+    {
+      "find": "'CLIENT'",
+      "replace": "'USER'",
+      "filePattern": "**/*.{ts,tsx}",
+      "description": "Replace 'CLIENT' string literals with 'USER'"
+    },
+    {
+      "find": "'BASIC'",
+      "replace": "'STARTER'",
+      "filePattern": "**/*.{ts,tsx}",
+      "description": "Replace 'BASIC' tier with 'STARTER'"
+    },
+    {
+      "find": "'PRO'",
+      "replace": "'GROWTH'",
+      "filePattern": "**/*.{ts,tsx}",
+      "description": "Replace 'PRO' tier with 'GROWTH'"
+    },
+    {
+      "find": "SubscriptionTier.BASIC",
+      "replace": "SubscriptionTier.STARTER",
+      "filePattern": "**/*.{ts,tsx}",
+      "description": "Replace SubscriptionTier.BASIC enum references"
+    },
+    {
+      "find": "SubscriptionTier.PRO",
+      "replace": "SubscriptionTier.GROWTH",
+      "filePattern": "**/*.{ts,tsx}",
+      "description": "Replace SubscriptionTier.PRO enum references"
+    }
+  ]
+}

@@ -69,7 +69,7 @@ describe('Lead-to-Deal Workflow Integration', () => {
     const { organization, user } = await createTestOrgWithUser();
     const agent = await createTestUser({
       name: 'Sales Agent',
-      role: UserRole.EMPLOYEE,
+      role: UserRole.USER,
     });
     await createOrganizationMember(agent.id, organization.id, OrgRole.MEMBER);
 

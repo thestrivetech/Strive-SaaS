@@ -47,19 +47,19 @@ describe('Global RBAC System', () => {
       expect(hasPermissionSync('MODERATOR', 'canManageBilling')).toBe(false);
     });
 
-    it('should allow EMPLOYEE limited permissions', () => {
-      expect(hasPermissionSync('EMPLOYEE', 'canManageProjects')).toBe(true);
-      expect(hasPermissionSync('EMPLOYEE', 'canManageCustomers')).toBe(true);
-      expect(hasPermissionSync('EMPLOYEE', 'canViewAnalytics')).toBe(true);
-      expect(hasPermissionSync('EMPLOYEE', 'canManageUsers')).toBe(false);
-      expect(hasPermissionSync('EMPLOYEE', 'canManageSettings')).toBe(false);
+    it('should allow USER limited permissions', () => {
+      expect(hasPermissionSync('USER', 'canManageProjects')).toBe(true);
+      expect(hasPermissionSync('USER', 'canManageCustomers')).toBe(true);
+      expect(hasPermissionSync('USER', 'canViewAnalytics')).toBe(true);
+      expect(hasPermissionSync('USER', 'canManageUsers')).toBe(false);
+      expect(hasPermissionSync('USER', 'canManageSettings')).toBe(false);
     });
 
-    it('should deny CLIENT most permissions', () => {
-      expect(hasPermissionSync('CLIENT', 'canManageUsers')).toBe(false);
-      expect(hasPermissionSync('CLIENT', 'canManageProjects')).toBe(false);
-      expect(hasPermissionSync('CLIENT', 'canManageCustomers')).toBe(false);
-      expect(hasPermissionSync('CLIENT', 'canManageBilling')).toBe(false);
+    it('should deny USER most permissions when not in organization', () => {
+      expect(hasPermissionSync('USER', 'canManageUsers')).toBe(false);
+      expect(hasPermissionSync('USER', 'canManageProjects')).toBe(true);
+      expect(hasPermissionSync('USER', 'canManageCustomers')).toBe(true);
+      expect(hasPermissionSync('USER', 'canManageBilling')).toBe(false);
     });
 
     it('should return false for invalid role', () => {
@@ -82,8 +82,8 @@ describe('Global RBAC System', () => {
     it('should throw for user without permission', async () => {
       mockGetCurrentUser.mockResolvedValue({
         id: '1',
-        email: 'client@test.com',
-        role: 'CLIENT',
+        email: 'user@test.com',
+        role: 'USER',
         organizationMembers: [],
       } as never);
 
@@ -114,50 +114,26 @@ describe('Global RBAC System', () => {
       expect(await canAccessRoute('/settings')).toBe(true);
     });
 
-    it('should deny CLIENT access to employee routes', async () => {
+    it('should allow USER access to user routes', async () => {
       mockGetCurrentUser.mockResolvedValue({
         id: '1',
-        email: 'client@test.com',
-        role: 'CLIENT',
-        organizationMembers: [],
-      } as never);
-
-      expect(await canAccessRoute('/crm')).toBe(false);
-      expect(await canAccessRoute('/projects')).toBe(false);
-      expect(await canAccessRoute('/admin')).toBe(false);
-      expect(await canAccessRoute('/settings')).toBe(false);
-    });
-
-    it('should allow CLIENT to access dashboard', async () => {
-      mockGetCurrentUser.mockResolvedValue({
-        id: '1',
-        email: 'client@test.com',
-        role: 'CLIENT',
+        email: 'user@test.com',
+        role: 'USER',
         organizationMembers: [],
       } as never);
 
       expect(await canAccessRoute('/dashboard')).toBe(true);
-    });
-
-    it('should allow EMPLOYEE to access employee routes', async () => {
-      mockGetCurrentUser.mockResolvedValue({
-        id: '1',
-        email: 'employee@test.com',
-        role: 'EMPLOYEE',
-        organizationMembers: [],
-      } as never);
-
       expect(await canAccessRoute('/crm')).toBe(true);
       expect(await canAccessRoute('/projects')).toBe(true);
       expect(await canAccessRoute('/ai')).toBe(true);
       expect(await canAccessRoute('/tools')).toBe(true);
     });
 
-    it('should deny EMPLOYEE access to admin routes', async () => {
+    it('should deny USER access to admin routes', async () => {
       mockGetCurrentUser.mockResolvedValue({
         id: '1',
-        email: 'employee@test.com',
-        role: 'EMPLOYEE',
+        email: 'user@test.com',
+        role: 'USER',
         organizationMembers: [],
       } as never);
 
@@ -174,8 +150,8 @@ describe('Global RBAC System', () => {
     it('should allow access to undefined routes by default', async () => {
       mockGetCurrentUser.mockResolvedValue({
         id: '1',
-        email: 'employee@test.com',
-        role: 'EMPLOYEE',
+        email: 'user@test.com',
+        role: 'USER',
         organizationMembers: [],
       } as never);
 
@@ -199,8 +175,8 @@ describe('Global RBAC System', () => {
       ]);
     });
 
-    it('should exclude admin and settings for EMPLOYEE', () => {
-      const items = getNavigationItems('EMPLOYEE');
+    it('should exclude admin and settings for USER', () => {
+      const items = getNavigationItems('USER');
 
       expect(items).toHaveLength(5);
       expect(items.map(i => i.href)).toEqual([
@@ -212,13 +188,6 @@ describe('Global RBAC System', () => {
       ]);
       expect(items.find(i => i.href === '/admin')).toBeUndefined();
       expect(items.find(i => i.href === '/settings')).toBeUndefined();
-    });
-
-    it('should only show dashboard for CLIENT', () => {
-      const items = getNavigationItems('CLIENT');
-
-      expect(items).toHaveLength(1);
-      expect(items[0].href).toBe('/dashboard');
     });
 
     it('should include settings for MODERATOR', () => {
@@ -233,54 +202,47 @@ describe('Global RBAC System', () => {
     it('should allow ADMIN and MODERATOR to manage organization', () => {
       expect(canManageOrganization('ADMIN')).toBe(true);
       expect(canManageOrganization('MODERATOR')).toBe(true);
-      expect(canManageOrganization('EMPLOYEE')).toBe(false);
-      expect(canManageOrganization('CLIENT')).toBe(false);
+      expect(canManageOrganization('USER')).toBe(false);
     });
 
     it('should allow ADMIN and MODERATOR to invite members', () => {
       expect(canInviteMembers('ADMIN')).toBe(true);
       expect(canInviteMembers('MODERATOR')).toBe(true);
-      expect(canInviteMembers('EMPLOYEE')).toBe(false);
-      expect(canInviteMembers('CLIENT')).toBe(false);
+      expect(canInviteMembers('USER')).toBe(false);
     });
 
     it('should only allow ADMIN to delete members', () => {
       expect(canDeleteMembers('ADMIN')).toBe(true);
       expect(canDeleteMembers('MODERATOR')).toBe(false);
-      expect(canDeleteMembers('EMPLOYEE')).toBe(false);
-      expect(canDeleteMembers('CLIENT')).toBe(false);
+      expect(canDeleteMembers('USER')).toBe(false);
     });
   });
 
   describe('Project Permissions', () => {
-    it('should allow ADMIN, MODERATOR, and EMPLOYEE to edit projects', () => {
+    it('should allow ADMIN, MODERATOR, and USER to edit projects', () => {
       expect(canEditProject('ADMIN')).toBe(true);
       expect(canEditProject('MODERATOR')).toBe(true);
-      expect(canEditProject('EMPLOYEE')).toBe(true);
-      expect(canEditProject('CLIENT')).toBe(false);
+      expect(canEditProject('USER')).toBe(true);
     });
 
     it('should allow all roles to view projects', () => {
       expect(canViewProject('ADMIN')).toBe(true);
       expect(canViewProject('MODERATOR')).toBe(true);
-      expect(canViewProject('EMPLOYEE')).toBe(true);
-      expect(canViewProject('CLIENT')).toBe(true);
+      expect(canViewProject('USER')).toBe(true);
     });
   });
 
   describe('Customer Management Permissions', () => {
-    it('should allow ADMIN, MODERATOR, and EMPLOYEE to manage customers', () => {
+    it('should allow ADMIN, MODERATOR, and USER to manage customers', () => {
       expect(canManageCustomer('ADMIN')).toBe(true);
       expect(canManageCustomer('MODERATOR')).toBe(true);
-      expect(canManageCustomer('EMPLOYEE')).toBe(true);
-      expect(canManageCustomer('CLIENT')).toBe(false);
+      expect(canManageCustomer('USER')).toBe(true);
     });
 
-    it('should allow all except CLIENT to view customers', () => {
+    it('should allow all roles to view customers', () => {
       expect(canViewCustomer('ADMIN')).toBe(true);
       expect(canViewCustomer('MODERATOR')).toBe(true);
-      expect(canViewCustomer('EMPLOYEE')).toBe(true);
-      expect(canViewCustomer('CLIENT')).toBe(false);
+      expect(canViewCustomer('USER')).toBe(true);
     });
   });
 

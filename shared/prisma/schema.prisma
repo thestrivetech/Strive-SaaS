@@ -611,7 +611,7 @@ model subscriptions {
   stripe_subscription_id String?            @unique
   stripe_customer_id     String?
   status                 SubscriptionStatus @default(TRIAL)
-  tier                   SubscriptionTier   @default(FREE)
+  tier                   SubscriptionTier   @default(STARTER)
   current_period_start   DateTime
   current_period_end     DateTime
   cancel_at_period_end   Boolean            @default(false)
@@ -699,8 +699,8 @@ model users {
   email                          String                 @unique
   name                           String?
   avatar_url                     String?
-  role                           UserRole               @default(EMPLOYEE)
-  subscription_tier              SubscriptionTier       @default(FREE)
+  role                           UserRole               @default(USER)
+  subscription_tier              SubscriptionTier       @default(STARTER)
   is_active                      Boolean                @default(true)
   created_at                     DateTime               @default(now())
   updated_at                     DateTime               @updatedAt
@@ -1058,8 +1058,10 @@ enum SubscriptionStatus {
 
 enum SubscriptionTier {
   FREE
-  BASIC
-  PRO
+  CUSTOM
+  STARTER
+  GROWTH
+  ELITE
   ENTERPRISE
 }
 
@@ -1080,10 +1082,9 @@ enum ToolType {
 
 enum UserRole {
   SUPER_ADMIN
-  ORG_ADMIN
+  ADMIN
   MODERATOR
-  EMPLOYEE
-  CLIENT
+  USER
 }
 
 enum Industry {

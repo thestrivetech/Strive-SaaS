@@ -29,7 +29,7 @@ describe('Authentication Flow Integration Tests', () => {
       const mockUser = {
         id: 'user-123',
         email: 'test@example.com',
-        role: UserRole.EMPLOYEE,
+        role: UserRole.USER,
       };
 
       mockSupabaseClient.auth.signInWithPassword.mockResolvedValue({
@@ -116,7 +116,7 @@ describe('Authentication Flow Integration Tests', () => {
       const mockUser = mockAuthenticatedUser({
         id: 'user-123',
         email: 'test@example.com',
-        role: UserRole.EMPLOYEE,
+        role: UserRole.USER,
         organizationId: 'org-123',
       });
 
@@ -208,7 +208,7 @@ describe('Authentication Flow Integration Tests', () => {
       const newUser = {
         id: 'new-user-123',
         email: 'newuser@example.com',
-        role: UserRole.CLIENT,
+        role: UserRole.USER,
       };
 
       mockSupabaseClient.auth.signUp.mockResolvedValue({
@@ -270,7 +270,7 @@ describe('Authentication Flow Integration Tests', () => {
       mockAuthenticatedUser({
         id: 'user-123',
         email: 'test@example.com',
-        role: UserRole.EMPLOYEE,
+        role: UserRole.USER,
         organizationId: 'org-123',
       });
 
@@ -309,39 +309,39 @@ describe('Authentication Flow Integration Tests', () => {
     });
 
     it('should deny non-ADMIN access to admin routes', async () => {
-      const employeeUser = mockAuthenticatedUser({
-        id: 'employee-123',
-        email: 'employee@example.com',
-        role: UserRole.EMPLOYEE,
+      const userUser = mockAuthenticatedUser({
+        id: 'user-123',
+        email: 'user@example.com',
+        role: UserRole.USER,
       });
 
-      expect(employeeUser.role).not.toBe(UserRole.ADMIN);
+      expect(userUser.role).not.toBe(UserRole.ADMIN);
       // In real middleware, check would fail and redirect
     });
 
-    it('should grant EMPLOYEE access to CRM routes', async () => {
-      const employeeUser = mockAuthenticatedUser({
-        id: 'employee-123',
-        email: 'employee@example.com',
-        role: UserRole.EMPLOYEE,
+    it('should grant USER access to CRM routes', async () => {
+      const userUser = mockAuthenticatedUser({
+        id: 'user-123',
+        email: 'user@example.com',
+        role: UserRole.USER,
       });
 
-      const hasAccess = ([UserRole.ADMIN, UserRole.EMPLOYEE] as UserRole[]).includes(
-        employeeUser.role as UserRole
+      const hasAccess = ([UserRole.ADMIN, UserRole.USER] as UserRole[]).includes(
+        userUser.role as UserRole
       );
 
       expect(hasAccess).toBe(true);
     });
 
-    it('should deny CLIENT access to CRM routes', async () => {
-      const clientUser = mockAuthenticatedUser({
-        id: 'client-123',
-        email: 'client@example.com',
-        role: UserRole.CLIENT,
+    it('should deny USER access to CRM routes if not in allowed list', async () => {
+      const userUser = mockAuthenticatedUser({
+        id: 'user-123',
+        email: 'user@example.com',
+        role: UserRole.USER,
       });
 
-      const hasAccess = ([UserRole.ADMIN, UserRole.EMPLOYEE] as UserRole[]).includes(
-        clientUser.role as UserRole
+      const hasAccess = ([UserRole.ADMIN, UserRole.MODERATOR] as UserRole[]).includes(
+        userUser.role as UserRole
       );
 
       expect(hasAccess).toBe(false);

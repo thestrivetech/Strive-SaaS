@@ -42,7 +42,7 @@ describe('CRM Workflow Integration Tests', () => {
 
       const user = await createTestUser({
         email: 'manager@test.com',
-        role: UserRole.EMPLOYEE,
+        role: UserRole.USER,
       });
 
       await createOrganizationMember(user.id, org.id, OrgRole.OWNER);
@@ -210,7 +210,7 @@ describe('CRM Workflow Integration Tests', () => {
   describe('Permission Checks', () => {
     it('should allow OWNER to create customers', async () => {
       const org = await createTestOrganization();
-      const user = await createTestUser({ role: UserRole.EMPLOYEE });
+      const user = await createTestUser({ role: UserRole.USER });
       await createOrganizationMember(user.id, org.id, OrgRole.OWNER);
 
       const customer = await createTestCustomer(org.id, { name: 'Test Customer' });
@@ -221,7 +221,7 @@ describe('CRM Workflow Integration Tests', () => {
 
     it('should allow ADMIN (org role) to edit customers', async () => {
       const org = await createTestOrganization();
-      const user = await createTestUser({ role: UserRole.EMPLOYEE });
+      const user = await createTestUser({ role: UserRole.USER });
       await createOrganizationMember(user.id, org.id, OrgRole.ADMIN);
 
       const customer = await createTestCustomer(org.id, { name: 'Original Name' });
@@ -236,7 +236,7 @@ describe('CRM Workflow Integration Tests', () => {
 
     it('should allow MEMBER to view customers', async () => {
       const org = await createTestOrganization();
-      const user = await createTestUser({ role: UserRole.EMPLOYEE });
+      const user = await createTestUser({ role: UserRole.USER });
       await createOrganizationMember(user.id, org.id, OrgRole.MEMBER);
 
       await createTestCustomer(org.id, { name: 'Viewable Customer' });
@@ -253,7 +253,7 @@ describe('CRM Workflow Integration Tests', () => {
   describe('Customer Relationships', () => {
     it('should associate customer with user (assigned to)', async () => {
       const org = await createTestOrganization();
-      const user = await createTestUser({ role: UserRole.EMPLOYEE });
+      const user = await createTestUser({ role: UserRole.USER });
       await createOrganizationMember(user.id, org.id, OrgRole.OWNER);
 
       // Create customer

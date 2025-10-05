@@ -260,7 +260,7 @@ describe('Leads Queries', () => {
 
     it('should filter leads by assigned user', async () => {
       const { organization, user } = await createTestOrgWithUser();
-      const agent = await createTestUser({ role: UserRole.EMPLOYEE });
+      const agent = await createTestUser({ role: UserRole.USER });
 
       await testPrisma.leads.create({
         data: {
@@ -591,7 +591,7 @@ describe('Leads Queries', () => {
   describe('getLeadsByAssignee', () => {
     it('should get all leads assigned to a user', async () => {
       const { organization, user } = await createTestOrgWithUser();
-      const agent = await createTestUser({ role: UserRole.EMPLOYEE });
+      const agent = await createTestUser({ role: UserRole.USER });
 
       await testPrisma.leads.create({
         data: {

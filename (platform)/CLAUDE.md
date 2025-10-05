@@ -102,18 +102,9 @@ Coverage: 80% minimum
 │   │   └── features/           # Features showcase
 │   │
 │   ├── real-estate/             # Real Estate Industry App
-│   │   ├── layout.tsx          # Industry-specific layout
+│   │   ├── crm/                # CRM (contacts, leads, deals)
 │   │   ├── dashboard/          # Role-based dashboards
-│   │   │   ├── admin/         # Admin dashboard
-│   │   │   ├── employee/      # Employee workspace
-│   │   │   └── client/        # Client portal
-│   │   ├── crm/               # CRM (contacts, leads, deals)
-│   │   ├── transactions/      # Transaction management
-│   │   ├── listings/          # Property listings
-│   │   ├── tasks/             # Task management
-│   │   ├── analytics/         # Analytics & reporting
-│   │   ├── ai/                # Sai AI assistant
-│   │   └── settings/          # User/org settings
+│   │   └── transactions/       # Transaction management
 │   │
 │   └── api/                     # API routes
 │       ├── webhooks/           # Stripe, Supabase webhooks
@@ -225,21 +216,21 @@ const data = await prisma.customer.findMany(); // Only current org's customers
 ```typescript
 // User has TWO roles:
 interface User {
-  globalRole: 'ADMIN' | 'MODERATOR' | 'EMPLOYEE' | 'CLIENT';
+  globalRole: 'SUPER_ADMIN' | 'ADMIN' | 'MODERATOR' | 'USER';
   organizationRole: 'OWNER' | 'ADMIN' | 'MEMBER' | 'VIEWER';
 }
 
 // ✅ Check BOTH roles for access
 export function canAccessCRM(user: User) {
-  const isEmployee = ['ADMIN', 'MODERATOR', 'EMPLOYEE'].includes(user.globalRole);
+  const hasGlobalRole = ['SUPER_ADMIN', 'ADMIN', 'MODERATOR', 'USER'].includes(user.globalRole);
   const hasOrgAccess = ['OWNER', 'ADMIN', 'MEMBER'].includes(user.organizationRole);
 
-  return isEmployee && hasOrgAccess;
+  return hasGlobalRole && hasOrgAccess;
 }
 
 // ❌ WRONG - Only checking global role
 export function canAccessCRM(user: User) {
-  return user.globalRole === 'EMPLOYEE'; // Missing org check!
+  return user.globalRole === 'USER'; // Missing org check!
 }
 ```
 
@@ -301,10 +292,12 @@ export function canAccessFeature(
   feature: Feature
 ): boolean {
   const tierLimits = {
-    FREE: ['dashboard', 'profile'],
-    STARTER: ['dashboard', 'profile', 'crm', 'projects'],
-    GROWTH: ['dashboard', 'profile', 'crm', 'projects', 'ai', 'tools'],
-    ELITE: ['*'], // All features
+    FREE: ['dashboard', 'profile'], // SUPER_ADMIN assignment only
+    CUSTOM: [], // Pay-per-use marketplace
+    STARTER: ['dashboard', 'crm', 'cms', 'transactions'],
+    GROWTH: ['dashboard', 'crm', 'cms', 'transactions', 'ai', 'tools'],
+    ELITE: ['*'], // All features + all tools
+    ENTERPRISE: ['*'], // Unlimited
   };
 
   const allowedFeatures = tierLimits[user.subscriptionTier];
@@ -769,17 +762,19 @@ describe('MyFeature Module', () => {
 
 ## 🔗 QUICK REFS - PLATFORM
 
-- **Subscription Tiers:**
-  - FREE - Basic dashboard, limited AI
-  - STARTER ($299) - Dashboard, 3 tools, CRM
-  - GROWTH ($699) - Dashboard, 10 tools, CRM, Projects
-  - ELITE (Custom) - Unlimited features
+- **Subscription Tiers (per-seat):**
+  - FREE - SUPER_ADMIN assignment only
+  - CUSTOM - Pay-per-use marketplace
+  - STARTER ($299) - CRM, CMS, Transactions
+  - GROWTH ($699) - Starter + modules + tools
+  - ELITE ($999) - Everything + all tools
+  - ENTERPRISE (Custom) - Unlimited
 
 - **User Roles (Global):**
-  - ADMIN - Full system access
-  - MODERATOR - Limited admin
-  - EMPLOYEE - Internal team member
-  - CLIENT - External customer
+  - SUPER_ADMIN - Platform dev (unrestricted, /platform-admin)
+  - ADMIN - Org admin (org-scoped, /admin)
+  - MODERATOR - Content/support moderator
+  - USER - Standard user
 
 - **Organization Roles:**
   - OWNER - Organization creator

@@ -24,7 +24,7 @@ export const healthcareConfig: IndustryConfig = {
       name: 'Patient Management',
       description: 'Comprehensive patient record system with HIPAA compliance',
       componentPath: '@/lib/industries/healthcare/features/patient-management',
-      requiredTier: 'PRO',
+      requiredTier: 'GROWTH',
     },
     {
       id: 'hipaa-compliance',
@@ -38,7 +38,7 @@ export const healthcareConfig: IndustryConfig = {
       name: 'Appointment Scheduling',
       description: 'Patient appointment scheduling with automated reminders',
       componentPath: '@/lib/industries/healthcare/features/scheduling',
-      requiredTier: 'BASIC',
+      requiredTier: 'STARTER',
     },
   ],
 
@@ -51,7 +51,7 @@ export const healthcareConfig: IndustryConfig = {
       category: 'engagement',
       pricing: 'paid',
       basePrice: 9900, // $99/month (PLACEHOLDER - TBD)
-      requiredTier: 'PRO',
+      requiredTier: 'GROWTH',
     },
     {
       id: 'prescription-tracker',

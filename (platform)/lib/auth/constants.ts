@@ -1,17 +1,19 @@
 export const USER_ROLES = {
+  SUPER_ADMIN: 'SUPER_ADMIN',
   ADMIN: 'ADMIN',
   MODERATOR: 'MODERATOR',
-  EMPLOYEE: 'EMPLOYEE',
-  CLIENT: 'CLIENT',
+  USER: 'USER',
 } as const;
 
 export type UserRole = keyof typeof USER_ROLES;
 
 export const SUBSCRIPTION_TIERS = {
   FREE: 'FREE',
-  TIER_1: 'TIER_1',
-  TIER_2: 'TIER_2',
-  TIER_3: 'TIER_3',
+  CUSTOM: 'CUSTOM',
+  STARTER: 'STARTER',
+  GROWTH: 'GROWTH',
+  ELITE: 'ELITE',
+  ENTERPRISE: 'ENTERPRISE',
 } as const;
 
 export type SubscriptionTier = keyof typeof SUBSCRIPTION_TIERS;
@@ -38,8 +40,19 @@ export const PUBLIC_ROUTES = [
 ] as const;
 
 export const ROLE_PERMISSIONS = {
-  ADMIN: {
+  SUPER_ADMIN: {
     canViewAllOrganizations: true,
+    canManageUsers: true,
+    canManageOrganizations: true,
+    canManageProjects: true,
+    canManageCustomers: true,
+    canManageAI: true,
+    canManageBilling: true,
+    canViewAnalytics: true,
+    canManageSettings: true,
+  },
+  ADMIN: {
+    canViewAllOrganizations: false,
     canManageUsers: true,
     canManageOrganizations: true,
     canManageProjects: true,
@@ -60,7 +73,7 @@ export const ROLE_PERMISSIONS = {
     canViewAnalytics: true,
     canManageSettings: true,
   },
-  EMPLOYEE: {
+  USER: {
     canViewAllOrganizations: false,
     canManageUsers: false,
     canManageOrganizations: false,
@@ -69,17 +82,6 @@ export const ROLE_PERMISSIONS = {
     canManageAI: true,
     canManageBilling: false,
     canViewAnalytics: true,
-    canManageSettings: false,
-  },
-  CLIENT: {
-    canViewAllOrganizations: false,
-    canManageUsers: false,
-    canManageOrganizations: false,
-    canManageProjects: false,
-    canManageCustomers: false,
-    canManageAI: false,
-    canManageBilling: false,
-    canViewAnalytics: false,
     canManageSettings: false,
   },
 } as const;

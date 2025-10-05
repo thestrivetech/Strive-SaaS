@@ -140,13 +140,13 @@ Strive-SaaS/                    # Root (this is NOT a Next.js project)
 **Deployment:** Production SaaS application
 
 **Key Features:**
-- Role-based dashboards (Admin, Employee, Client)
+- Role-based dashboards (SUPER_ADMIN: platform-admin, ADMIN: org-admin, MODERATOR, USER)
 - CRM system with industry customizations
 - Project management
 - AI Assistant (Sai) - embeds (chatbot)
 - Tool marketplace
 - Multi-industry support (Real Estate, Healthcare, etc.)
-- 4-tier subscription model -> (Starter, Growth, Elite, & Custom -> Last option is "Enterprise" which is requires a sales call and will be fully custom solutions dependant on clients needs)
+- 6-tier per-seat pricing: FREE, CUSTOM, STARTER ($299), GROWTH ($699), ELITE ($999), ENTERPRISE (custom)
 
 **📖 Documentation:**
 - Project rules: [`(platform)/CLAUDE.md`]((platform)/CLAUDE.md)

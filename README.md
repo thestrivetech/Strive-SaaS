@@ -145,13 +145,13 @@ Enterprise B2B multi-tenant SaaS platform with AI-powered tools for business man
 ### Key Features
 
 - 👥 **Multi-tenant architecture** with Row Level Security
-- 🎭 **Role-based access** (Admin, Employee, Client)
+- 🎭 **Role-based access** (SUPER_ADMIN: platform-admin, ADMIN: org-admin, MODERATOR, USER)
 - 📊 **CRM system** with industry customizations
 - 📁 **Project management** with tasks & collaboration
 - 🤖 **AI assistant (Sai)** - embedded chatbot
 - 🛠️ **Tool marketplace** with shared & industry tools
 - 🏭 **Multi-industry support** with plugin architecture
-- 💳 **4-tier subscriptions** (Starter, Growth, Elite, & Custom -> Last option is Enterprise which is requires a sales call and will be fully custom solutions dependant on clients needs)
+- 💳 **6-tier per-seat pricing** (FREE, CUSTOM, STARTER $299, GROWTH $699, ELITE $999, ENTERPRISE custom)
 
 ### Tech Stack
 

@@ -13,7 +13,7 @@
 The **Platform** is the core SaaS application providing enterprise business management tools with AI-powered automation across multiple industries.
 
 ### Core Features
-- **Role-based dashboards** - Admin, Employee, Client portals
+- **Role-based dashboards** - SUPER_ADMIN (platform-admin), ADMIN (org-admin), MODERATOR, USER
 - **CRM System** - Customer relationship management
 - **Project Management** - Tasks, timelines, collaboration
 - **AI Assistant (Sai)** - Intelligent automation & insights
@@ -340,10 +340,10 @@ type Permission =
   | 'admin:access' | 'tools:install';
 
 const ROLE_PERMISSIONS: Record<UserRole, Permission[]> = {
+  SUPER_ADMIN: ['*'], // Unrestricted platform access
   ADMIN: ['admin:access', 'crm:*', 'projects:*', 'tools:*'],
   MODERATOR: ['crm:*', 'projects:write', 'projects:read'],
-  EMPLOYEE: ['crm:read', 'crm:write', 'projects:read', 'projects:write'],
-  CLIENT: ['projects:read'],
+  USER: ['crm:read', 'crm:write', 'projects:read', 'projects:write'],
 };
 
 export function hasPermission(
@@ -453,9 +453,9 @@ export function Providers({ children }: { children: React.ReactNode }) {
 ### 3.2: Dashboard Layouts by Role
 
 Create `components/(platform)/layouts/`:
-- `AdminLayout.tsx` - For ADMIN users
-- `EmployeeLayout.tsx` - For EMPLOYEE users
-- `ClientLayout.tsx` - For CLIENT users
+- `PlatformAdminLayout.tsx` - For SUPER_ADMIN users (platform-admin dashboard)
+- `OrgAdminLayout.tsx` - For ADMIN users (org-admin dashboard)
+- `UserLayout.tsx` - For USER role (standard workspace)
 
 Each with:
 - Sidebar navigation (role-specific links)

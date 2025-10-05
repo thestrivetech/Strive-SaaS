@@ -72,7 +72,7 @@ export async function createTestUser(overrides: Partial<{
     data: {
       email: overrides.email || `test-${Date.now()}@example.com`,
       name: overrides.name || 'Test User',
-      role: overrides.role || UserRole.EMPLOYEE,
+      role: overrides.role || UserRole.USER,
       subscription_tier: overrides.subscriptionTier || SubscriptionTier.FREE,
       is_active: overrides.isActive ?? true,
     },

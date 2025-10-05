@@ -14,26 +14,26 @@ export const testUsers = {
     isActive: true,
   },
 
-  employee: {
-    email: 'employee@test.com',
-    name: 'Test Employee',
-    role: UserRole.EMPLOYEE,
-    subscriptionTier: SubscriptionTier.PRO,
+  user: {
+    email: 'user@test.com',
+    name: 'Test User',
+    role: UserRole.USER,
+    subscriptionTier: SubscriptionTier.STARTER,
     isActive: true,
   },
 
   manager: {
     email: 'manager@test.com',
     name: 'Test Manager',
-    role: UserRole.EMPLOYEE,
-    subscriptionTier: SubscriptionTier.PRO,
+    role: UserRole.USER,
+    subscriptionTier: SubscriptionTier.GROWTH,
     isActive: true,
   },
 
   customer: {
     email: 'customer@test.com',
     name: 'Test Customer',
-    role: UserRole.CLIENT,
+    role: UserRole.USER,
     subscriptionTier: SubscriptionTier.FREE,
     isActive: true,
   },
@@ -41,7 +41,7 @@ export const testUsers = {
   inactiveUser: {
     email: 'inactive@test.com',
     name: 'Inactive User',
-    role: UserRole.EMPLOYEE,
+    role: UserRole.USER,
     subscriptionTier: SubscriptionTier.FREE,
     isActive: false,
   },

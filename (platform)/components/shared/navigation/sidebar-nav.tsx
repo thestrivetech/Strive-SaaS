@@ -6,6 +6,7 @@ import {
   LayoutDashboard,
   Users,
   FolderKanban,
+  FileText,
   Bot,
   Wrench,
   Shield,
@@ -44,6 +45,12 @@ export const defaultNavItems: NavItem[] = [
     href: '/projects',
     icon: FolderKanban,
     permission: 'canManageProjects',
+  },
+  {
+    title: 'Transactions',
+    href: '/real-estate/transactions',
+    icon: FileText,
+    permission: 'canManageCustomers',
   },
   {
     title: 'AI Assistant',

@@ -17,31 +17,30 @@
 
 ### User Types & Dashboards
 
-**1. Admin Dashboard** (Global ADMIN role)
-- System management and configuration
-- User and organization administration
-- Analytics and reporting
-- Billing and subscription management
+**1. Platform Admin** (SUPER_ADMIN - Platform Dev)
+- `/platform-admin` - Platform-wide system administration
+- All organizations access
+- Platform settings and configuration
+- FREE tier assignment
 
-**2. Employee Workspace** (EMPLOYEE role)
+**2. Organization Admin** (ADMIN - Org Admin)
+- `/admin` - Organization management dashboard
+- Member management
+- Org settings and billing
+- Org-specific analytics
+
+**3. User Workspace** (USER role)
 - Projects and task management
 - CRM system
 - AI assistant (Sai)
-- Tool marketplace
-- Time tracking
-
-**3. Client Portal** (CLIENT role)
-- Project visibility
-- Invoices and payments
-- Support tickets
-- Communication hub
+- Tool marketplace (tier-based)
 
 ### Key Features
 
 - **Multi-Tenancy** - Organizations isolated via Row Level Security (RLS)
 - **Multiple Dashboards/Modules** - Industry specific dashboards and modules that will be available for users to use
 - **Dual-Role RBAC** - Global + organization roles
-- **Subscription Tiers** - STARTER, GROWTH, ELITE, Custom, Enterprise
+- **Subscription Tiers (per-seat)** - FREE, CUSTOM, STARTER ($299), GROWTH ($699), ELITE ($999), ENTERPRISE (custom)
 - **Module Architecture** - Self-contained feature modules
 - **AI Integration** - Embedded from the Chatbot project
 - **Tool Marketplace** - Installable add-on tools
@@ -175,78 +174,89 @@ stripe listen --forward-to localhost:3000/api/webhooks/stripe
 
 ```
 (platform)/
-├── app/                      # Next.js App Router
-│   ├── layout.tsx           # Root layout
-│   ├── page.tsx             # Root page (role-based redirect)
-│   ├── globals.css          # Global styles
+├── app/                          # Next.js App Router
+│   ├── layout.tsx               # Root layout
+│   ├── page.tsx                 # Root redirect (role-based routing)
+│   ├── globals.css              # Global styles
+│   ├── favicon.ico              # Favicon
 │   │
-│   ├── (platform)/          # Protected platform routes
-│   │   ├── dashboard/       # Role-based dashboards
-│   │   │   ├── admin/      # Admin-only views
-│   │   │   ├── employee/   # Employee workspace
-│   │   │   └── client/     # Client portal
-│   │   ├── crm/            # CRM system
-│   │   │   ├── page.tsx   # Customer list
-│   │   │   └── [customerId]/
-│   │   ├── projects/       # Project management
-│   │   ├── ai/             # Sai AI assistant
-│   │   ├── tools/          # Tool marketplace
-│   │   └── settings/       # User/org settings
+│   ├── (auth)/                  # Authentication routes (route group)
+│   │   ├── login/               # Login page
+│   │   └── onboarding/          # Post-signup onboarding
 │   │
-│   ├── (auth)/             # Auth routes
-│   │   ├── login/
-│   │   ├── signup/
-│   │   └── reset/
+│   ├── (marketing)/             # Marketing routes (route group)
+│   │   └── page.tsx            # App landing page
 │   │
-│   └── api/                # API routes (webhooks only)
-│       └── webhooks/
-│           └── stripe/     # Stripe webhook handler
+│   ├── real-estate/             # Real Estate industry vertical
+│   │   ├── crm/                # CRM system
+│   │   ├── dashboard/          # Role-based dashboards
+│   │   └── transactions/       # Transaction management
+│   │
+│   └── api/                     # API routes
+│       ├── auth/               # Auth endpoints
+│       ├── health/             # Health checks
+│       ├── onboarding/         # Onboarding endpoints
+│       └── v1/                 # Versioned API
 │
 ├── components/
-│   ├── ui/                 # shadcn/ui components
-│   ├── features/           # Feature-specific components
+│   ├── layouts/                 # Layout components
+│   ├── real-estate/             # Real Estate-specific components
+│   │   ├── ai/
 │   │   ├── crm/
 │   │   ├── projects/
-│   │   └── ai/
-│   └── shared/             # Shared components
-│       ├── layouts/
-│       │   ├── dashboard-shell.tsx
-│       │   └── sidebar.tsx
-│       ├── navigation/
-│       └── errors/
+│   │   └── transactions/
+│   ├── shared/                  # Shared components
+│   │   └── navigation/
+│   ├── subscription/            # Subscription & billing components
+│   └── ui/                      # shadcn/ui primitives
 │
 ├── lib/
-│   ├── modules/            # Feature modules (self-contained)
+│   ├── modules/                 # Feature modules (13 total)
+│   │   ├── activities/
+│   │   ├── ai/
+│   │   ├── analytics/
+│   │   ├── appointments/
+│   │   ├── attachments/
+│   │   ├── compliance/
 │   │   ├── crm/
-│   │   │   ├── actions.ts  # Server Actions
-│   │   │   ├── queries.ts  # Data queries
-│   │   │   ├── schemas.ts  # Zod schemas
-│   │   │   └── index.ts    # Public API
+│   │   ├── dashboard/
+│   │   ├── notifications/
+│   │   ├── organization/
 │   │   ├── projects/
 │   │   ├── tasks/
-│   │   └── dashboard/
+│   │   └── transactions/
 │   │
-│   ├── auth/
-│   │   ├── middleware.ts   # Auth middleware
-│   │   ├── rbac.ts         # Role-based access control
-│   │   └── utils.ts        # Auth utilities
+│   ├── industries/              # Industry-specific logic
+│   │   ├── _core/              # Core industry utilities
+│   │   ├── configs/            # Industry configs
+│   │   ├── healthcare/
+│   │   └── real-estate/
 │   │
-│   ├── database/
-│   │   └── prisma.ts       # Prisma client
+│   ├── tools/                   # Tool marketplace
+│   │   ├── registry/
+│   │   └── shared/
 │   │
-│   └── utils/              # Shared utilities
+│   ├── auth/                    # Auth & RBAC
+│   ├── database/                # Prisma client
+│   ├── types/                   # TypeScript types
+│   │   ├── real-estate/
+│   │   ├── shared/
+│   │   └── web/
+│   └── utils/                   # Shared utilities
 │
-├── prisma/
-│   ├── schema.prisma       # Database schema (13 models)
-│   ├── migrations/         # Migration history
-│   └── seed.ts             # Seed data
+├── prisma/                      # Database
+│   ├── schema.prisma           # Shared schema (13 models)
+│   ├── migrations/
+│   └── seed.ts
 │
-├── __tests__/              # Test suites
-│   ├── auth/               # Auth & RBAC tests
-│   ├── modules/            # Module tests
-│   └── integration/        # Integration tests
+├── __tests__/                   # Test suites
+│   ├── modules/
+│   ├── lib/
+│   └── integration/
 │
-└── middleware.ts           # Next.js middleware (auth + RBAC)
+├── public/assets/               # Static assets
+├── scripts/                     # Utility scripts
+└── middleware.ts                # Next.js middleware
 ```
 
 ---
@@ -311,10 +321,10 @@ const customers = await prisma.customer.findMany({
 Users have **two roles**:
 
 **1. Global Role** (System-wide)
-- `ADMIN` - Full system access
-- `MODERATOR` - Limited admin privileges
-- `EMPLOYEE` - Internal team member
-- `CLIENT` - External customer
+- `SUPER_ADMIN` - Platform developer (unrestricted, all orgs)
+- `ADMIN` - Organization administrator
+- `MODERATOR` - Content/support moderator
+- `USER` - Standard user
 
 **2. Organization Role** (Per-organization)
 - `OWNER` - Organization creator
@@ -328,10 +338,10 @@ Users have **two roles**:
 // lib/auth/rbac.ts
 export function canAccessCRM(user: User): boolean {
   // Check both global AND org role
-  const isEmployee = ['ADMIN', 'MODERATOR', 'EMPLOYEE'].includes(user.globalRole);
+  const hasGlobalAccess = ['SUPER_ADMIN', 'ADMIN', 'MODERATOR', 'USER'].includes(user.globalRole);
   const hasOrgAccess = ['OWNER', 'ADMIN', 'MEMBER'].includes(user.organizationRole);
 
-  return isEmployee && hasOrgAccess;
+  return hasGlobalAccess && hasOrgAccess;
 }
 
 export function canManageUsers(user: User): boolean {
@@ -642,14 +652,14 @@ npm start                       # Start production server
 ```typescript
 // __tests__/auth/rbac.test.ts
 describe('RBAC - CRM Access', () => {
-  it('should allow EMPLOYEE with MEMBER org role', () => {
-    const user = { globalRole: 'EMPLOYEE', organizationRole: 'MEMBER' };
+  it('should allow USER with MEMBER org role', () => {
+    const user = { globalRole: 'USER', organizationRole: 'MEMBER' };
     expect(canAccessCRM(user)).toBe(true);
   });
 
-  it('should deny CLIENT users', () => {
-    const user = { globalRole: 'CLIENT', organizationRole: 'MEMBER' };
-    expect(canAccessCRM(user)).toBe(false);
+  it('should allow SUPER_ADMIN regardless of org role', () => {
+    const user = { globalRole: 'SUPER_ADMIN', organizationRole: 'VIEWER' };
+    expect(canAccessCRM(user)).toBe(true); // SUPER_ADMIN bypasses all
   });
 });
 ```
@@ -666,11 +676,6 @@ describe('CRM Actions', () => {
     });
 
     expect(customer.organizationId).toBe('org-123');
-  });
-
-  it('should throw error for unauthorized user', async () => {
-    // Mock session with CLIENT role
-    await expect(createCustomer({ ... })).rejects.toThrow('Unauthorized');
   });
 });
 ```

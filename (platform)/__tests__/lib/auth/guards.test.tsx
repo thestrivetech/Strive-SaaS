@@ -43,7 +43,7 @@ describe('Auth Component Guards', () => {
       mockGetCurrentUser.mockResolvedValue({
         id: '1',
         email: 'user@test.com',
-        role: 'EMPLOYEE',
+        role: 'USER',
         organizationMembers: [],
       } as never);
 
@@ -93,8 +93,8 @@ describe('Auth Component Guards', () => {
     it('should redirect when user does not have required role', async () => {
       mockGetCurrentUser.mockResolvedValue({
         id: '1',
-        email: 'employee@test.com',
-        role: 'EMPLOYEE',
+        email: 'user@test.com',
+        role: 'USER',
         organizationMembers: [],
       } as never);
 
@@ -143,8 +143,8 @@ describe('Auth Component Guards', () => {
     it('should use custom fallbackUrl', async () => {
       mockGetCurrentUser.mockResolvedValue({
         id: '1',
-        email: 'employee@test.com',
-        role: 'EMPLOYEE',
+        email: 'user@test.com',
+        role: 'USER',
         organizationMembers: [],
       } as never);
 
@@ -164,8 +164,8 @@ describe('Auth Component Guards', () => {
     it('should render children when user has permission', async () => {
       mockGetCurrentUser.mockResolvedValue({
         id: '1',
-        email: 'employee@test.com',
-        role: 'EMPLOYEE',
+        email: 'user@test.com',
+        role: 'USER',
         organizationMembers: [],
       } as never);
 
@@ -186,8 +186,8 @@ describe('Auth Component Guards', () => {
     it('should redirect when user lacks permission', async () => {
       mockGetCurrentUser.mockResolvedValue({
         id: '1',
-        email: 'client@test.com',
-        role: 'CLIENT',
+        email: 'user@test.com',
+        role: 'USER',
         organizationMembers: [],
       } as never);
 
@@ -219,8 +219,8 @@ describe('Auth Component Guards', () => {
     it('should use custom fallbackUrl', async () => {
       mockGetCurrentUser.mockResolvedValue({
         id: '1',
-        email: 'client@test.com',
-        role: 'CLIENT',
+        email: 'user@test.com',
+        role: 'USER',
         organizationMembers: [],
       } as never);
 
@@ -242,8 +242,8 @@ describe('Auth Component Guards', () => {
     it('should render children when user has org permission', async () => {
       mockGetCurrentUser.mockResolvedValue({
         id: '1',
-        email: 'employee@test.com',
-        role: 'EMPLOYEE',
+        email: 'user@test.com',
+        role: 'USER',
         organizationMembers: [
           {
             role: 'ADMIN',
@@ -266,8 +266,8 @@ describe('Auth Component Guards', () => {
     it('should redirect when user lacks org permission', async () => {
       mockGetCurrentUser.mockResolvedValue({
         id: '1',
-        email: 'employee@test.com',
-        role: 'EMPLOYEE',
+        email: 'user@test.com',
+        role: 'USER',
         organizationMembers: [
           {
             role: 'VIEWER',
@@ -289,8 +289,8 @@ describe('Auth Component Guards', () => {
     it('should redirect to org onboarding when user has no organization', async () => {
       mockGetCurrentUser.mockResolvedValue({
         id: '1',
-        email: 'employee@test.com',
-        role: 'EMPLOYEE',
+        email: 'user@test.com',
+        role: 'USER',
         organizationMembers: [],
       } as never);
 
@@ -346,8 +346,8 @@ describe('Auth Component Guards', () => {
     it('should render children when user is in an organization', async () => {
       mockGetCurrentUser.mockResolvedValue({
         id: '1',
-        email: 'employee@test.com',
-        role: 'EMPLOYEE',
+        email: 'user@test.com',
+        role: 'USER',
         organizationMembers: [
           {
             role: 'MEMBER',
@@ -369,8 +369,8 @@ describe('Auth Component Guards', () => {
     it('should redirect when user is not in an organization', async () => {
       mockGetCurrentUser.mockResolvedValue({
         id: '1',
-        email: 'employee@test.com',
-        role: 'EMPLOYEE',
+        email: 'user@test.com',
+        role: 'USER',
         organizationMembers: [],
       } as never);
 
@@ -401,7 +401,7 @@ describe('Auth Component Guards', () => {
       mockGetCurrentUser.mockResolvedValue({
         id: '1',
         email: 'user@test.com',
-        role: 'EMPLOYEE',
+        role: 'USER',
         subscriptionTier: 'TIER_2',
         organizationMembers: [],
       } as never);
@@ -421,7 +421,7 @@ describe('Auth Component Guards', () => {
       mockGetCurrentUser.mockResolvedValue({
         id: '1',
         email: 'user@test.com',
-        role: 'EMPLOYEE',
+        role: 'USER',
         subscriptionTier: 'TIER_3',
         organizationMembers: [],
       } as never);
@@ -441,7 +441,7 @@ describe('Auth Component Guards', () => {
       mockGetCurrentUser.mockResolvedValue({
         id: '1',
         email: 'user@test.com',
-        role: 'EMPLOYEE',
+        role: 'USER',
         subscriptionTier: 'FREE',
         organizationMembers: [],
       } as never);
@@ -460,7 +460,7 @@ describe('Auth Component Guards', () => {
       mockGetCurrentUser.mockResolvedValue({
         id: '1',
         email: 'user@test.com',
-        role: 'EMPLOYEE',
+        role: 'USER',
         subscriptionTier: 'FREE',
         organizationMembers: [],
       } as never);

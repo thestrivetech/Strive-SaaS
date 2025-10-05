@@ -8,7 +8,7 @@ export const TRANSACTION_PERMISSIONS = {
   CREATE_LOOPS: 'transactions:create_loops',
   UPDATE_LOOPS: 'transactions:update_loops',
   DELETE_LOOPS: 'transactions:delete_loops',
-  MANAGE_ALL: 'transactions:manage_all', // Admin only
+  MANAGE_ALL: 'transactions:manage_all', // Super Admin only
 } as const;
 
 export type TransactionPermission = typeof TRANSACTION_PERMISSIONS[keyof typeof TRANSACTION_PERMISSIONS];
@@ -24,7 +24,7 @@ interface UserWithRole extends users {
  * Check if user has permission for transactions module
  *
  * Implements dual-role RBAC:
- * - Global UserRole (ADMIN, EMPLOYEE, etc.)
+ * - Global UserRole (SUPER_ADMIN, ADMIN, MODERATOR, USER)
  * - Organization OrgRole (OWNER, ADMIN, MEMBER, VIEWER)
  *
  * @param user - User with organization memberships
@@ -35,13 +35,14 @@ export function hasTransactionPermission(
   user: UserWithRole,
   permission: TransactionPermission
 ): boolean {
-  // ADMIN role has all permissions
-  if (user.role === 'ADMIN') {
+  // SUPER_ADMIN role has all permissions
+  if (user.role === 'SUPER_ADMIN') {
     return true;
   }
 
-  // Only EMPLOYEE can access transactions (ADMIN already handled above)
-  if (user.role !== 'EMPLOYEE') {
+  // USER, MODERATOR, and ADMIN can access transactions
+  const allowedRoles = ['USER', 'MODERATOR', 'ADMIN'];
+  if (!allowedRoles.includes(user.role)) {
     return false;
   }
 
