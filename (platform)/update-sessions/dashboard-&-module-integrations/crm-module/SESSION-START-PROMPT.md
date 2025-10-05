@@ -7,7 +7,7 @@ Use this prompt at the beginning of each session. Simply replace `{SESSION_NUMBE
 ## 📋 Session Start Prompt
 
 ```
-I'm starting Session {1} of the CRM integration project.
+I'm starting Session {10} of the CRM integration project.
 
 Please follow these steps to begin:
 
@@ -17,7 +17,7 @@ Please follow these steps to begin:
    - Understand and follow all development rules, security requirements, and architectural patterns
 
 2. **Read Session Plan:**
-   - Read the session plan file at: C:\Users\zochr\Desktop\GitHub\Strive-SaaS\(platform)\update-sessions\dashboard-&-module-integrations\crm\session{1}.plan.md
+   - Read the session plan file at: C:\Users\zochr\Desktop\GitHub\Strive-SaaS\(platform)\update-sessions\dashboard-&-module-integrations\crm\session{10}.plan.md
    - Understand the objectives, requirements, and implementation steps
    - Note all dependencies and prerequisites
 
@@ -53,7 +53,7 @@ Please follow these steps to begin:
 
 6. **Session End Requirements:**
    When the session is complete, create a session summary file:
-   - File path: C:\Users\zochr\Desktop\GitHub\Strive-SaaS\(platform)\update-sessions\dashboard-&-module-integrations\crm\session{1}-summary.md
+   - File path: C:\Users\zochr\Desktop\GitHub\Strive-SaaS\(platform)\update-sessions\dashboard-&-module-integrations\crm\session{10}-summary.md
    - Include:
      * Session objectives (completed/partial/not started)
      * Files created (full list with paths)
@@ -64,81 +64,7 @@ Please follow these steps to begin:
      * Next steps / what's ready for next session
      * Overall progress percentage for the entire CRM integration
 
-Let's begin Session {1}!
-```
-
----
-
-## 🔢 Quick Reference by Session
-
-### Session 1: Database Foundation
-**Focus:** Schema extensions, migrations, RLS policies
-**Key Tools:** Supabase MCP (apply_migration, list_tables)
-**Estimated Time:** 2-3 hours
-
-### Session 2: Leads Module - Backend
-**Focus:** Schemas, queries, actions, RBAC
-**Key Files:** lib/modules/leads/*
-**Estimated Time:** 3-4 hours
-
-### Session 3: Leads Module - UI
-**Focus:** Components, pages, forms
-**Key Files:** components/(platform)/crm/leads/*, app/(platform)/crm/leads/*
-**Estimated Time:** 4-5 hours
-
-### Session 4: Contacts Module
-**Focus:** Backend + UI, communication tracking
-**Key Files:** lib/modules/contacts/*, components/contacts/*
-**Estimated Time:** 3-4 hours
-
-### Session 5: Deals Pipeline
-**Focus:** Kanban board, drag-and-drop
-**Key Files:** lib/modules/deals/*, components/deals/*
-**Estimated Time:** 4-5 hours
-
-### Session 6: Listings Module
-**Focus:** Property management, search
-**Key Files:** lib/modules/listings/*, components/listings/*
-**Estimated Time:** 3-4 hours
-
-### Session 7: Calendar & Appointments
-**Focus:** Scheduling, calendar views
-**Key Files:** lib/modules/appointments/*, components/calendar/*
-**Estimated Time:** 3-4 hours
-
-### Session 8: Analytics & Reporting
-**Focus:** KPIs, charts, metrics
-**Key Files:** lib/modules/analytics/*, components/analytics/*
-**Estimated Time:** 3-4 hours
-
-### Session 9: CRM Dashboard Integration
-**Focus:** Unified dashboard, navigation
-**Key Files:** app/(platform)/crm/dashboard/*, components/crm/dashboard/*
-**Estimated Time:** 2-3 hours
-
-### Session 10: Testing & Go-Live
-**Focus:** Testing, optimization, deployment
-**Key Files:** __tests__/*, error boundaries, documentation
-**Estimated Time:** 4-6 hours
-
----
-
-## 📝 Example Usage
-
-**Starting Session 1:**
-```
-I'm starting Session 1 of the CRM integration project.
-
-Please follow these steps to begin:
-[... rest of prompt with {SESSION_NUMBER} replaced with 1 ...]
-```
-
-**Starting Session 5:**
-```
-I'm starting Session 5 of the CRM integration project.
-
-Please follow these steps to begin:
-[... rest of prompt with {SESSION_NUMBER} replaced with 5 ...]
+Let's begin Session {10}!
 ```
 
 ---
@@ -173,24 +99,3 @@ Before marking a session as complete, ensure:
 8. **Don't hardcode values** - Use environment variables and configs
 
 ---
-
-## 📊 Progress Tracking
-
-Keep track of overall CRM integration progress:
-
-- Session 1: Database Foundation (✅/⏳/❌)
-- Session 2: Leads Backend (✅/⏳/❌)
-- Session 3: Leads UI (✅/⏳/❌)
-- Session 4: Contacts Module (✅/⏳/❌)
-- Session 5: Deals Pipeline (✅/⏳/❌)
-- Session 6: Listings Module (✅/⏳/❌)
-- Session 7: Calendar & Appointments (✅/⏳/❌)
-- Session 8: Analytics & Reporting (✅/⏳/❌)
-- Session 9: CRM Dashboard (✅/⏳/❌)
-- Session 10: Testing & Go-Live (✅/⏳/❌)
-
-**Overall Progress:** X/10 sessions complete
-
----
-
-**Note:** This template ensures consistency across all sessions and helps maintain the high quality standards defined in the platform's CLAUDE.md files.
