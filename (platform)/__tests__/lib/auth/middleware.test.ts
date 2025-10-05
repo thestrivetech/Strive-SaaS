@@ -189,14 +189,14 @@ describe('Platform Auth Middleware', () => {
     it('should redirect non-ADMIN user from /admin routes', async () => {
       mockRequest = createMockRequest('/admin');
 
-      const mockUser = { id: '1', email: 'employee@test.com' };
+      const mockUser = { id: '1', email: 'user@test.com' };
       const mockClient = createMockSupabaseClient(mockUser);
       mockCreateServerClient.mockReturnValue(mockClient as never);
 
       // Mock prisma with non-admin user
       const mockPrisma = {
         user: {
-          findUnique: jest.fn().mockResolvedValue({ role: 'EMPLOYEE' }),
+          findUnique: jest.fn().mockResolvedValue({ role: 'USER' }),
         },
       };
       jest.doMock('@/lib/prisma', () => ({ prisma: mockPrisma }));
@@ -210,14 +210,14 @@ describe('Platform Auth Middleware', () => {
     it('should protect /api/admin/* routes', async () => {
       mockRequest = createMockRequest('/api/admin/users');
 
-      const mockUser = { id: '1', email: 'employee@test.com' };
+      const mockUser = { id: '1', email: 'user@test.com' };
       const mockClient = createMockSupabaseClient(mockUser);
       mockCreateServerClient.mockReturnValue(mockClient as never);
 
       // Mock prisma with non-admin user
       const mockPrisma = {
         user: {
-          findUnique: jest.fn().mockResolvedValue({ role: 'EMPLOYEE' }),
+          findUnique: jest.fn().mockResolvedValue({ role: 'USER' }),
         },
       };
       jest.doMock('@/lib/prisma', () => ({ prisma: mockPrisma }));

@@ -83,20 +83,22 @@ export async function canAccessRoute(route: string): Promise<boolean> {
 
   const role = user.role as UserRole;
 
-  // Admin can access everything
-  if (role === 'ADMIN') {
+  // Super admin and admin can access everything
+  if (role === 'SUPER_ADMIN' || role === 'ADMIN') {
     return true;
   }
 
   // Route-specific permissions
   const routePermissions: Record<string, UserRole[]> = {
-    '/dashboard': ['ADMIN', 'MODERATOR', 'EMPLOYEE', 'CLIENT'],
-    '/crm': ['ADMIN', 'MODERATOR', 'EMPLOYEE'],
-    '/projects': ['ADMIN', 'MODERATOR', 'EMPLOYEE'],
-    '/ai': ['ADMIN', 'MODERATOR', 'EMPLOYEE'],
-    '/tools': ['ADMIN', 'MODERATOR', 'EMPLOYEE'],
-    '/settings': ['ADMIN', 'MODERATOR'],
-    '/admin': ['ADMIN'],
+    '/dashboard': ['SUPER_ADMIN', 'ADMIN', 'MODERATOR', 'USER'],
+    '/crm': ['SUPER_ADMIN', 'ADMIN', 'MODERATOR', 'USER'],
+    '/projects': ['SUPER_ADMIN', 'ADMIN', 'MODERATOR', 'USER'],
+    '/transactions': ['SUPER_ADMIN', 'ADMIN', 'MODERATOR', 'USER'],
+    '/real-estate/transactions': ['SUPER_ADMIN', 'ADMIN', 'MODERATOR', 'USER'],
+    '/ai': ['SUPER_ADMIN', 'ADMIN', 'MODERATOR', 'USER'],
+    '/tools': ['SUPER_ADMIN', 'ADMIN', 'MODERATOR', 'USER'],
+    '/settings': ['SUPER_ADMIN', 'ADMIN', 'MODERATOR'],
+    '/admin': ['SUPER_ADMIN'],
   };
 
   // Check if route has specific permissions
@@ -116,63 +118,98 @@ export function getNavigationItems(role: UserRole) {
       title: 'Dashboard',
       href: '/dashboard',
       icon: 'LayoutDashboard',
-      roles: ['ADMIN', 'MODERATOR', 'EMPLOYEE', 'CLIENT'] as UserRole[],
+      roles: ['SUPER_ADMIN', 'ADMIN', 'MODERATOR', 'USER'] as UserRole[],
     },
     {
       title: 'CRM',
       href: '/crm',
       icon: 'Users',
-      roles: ['ADMIN', 'MODERATOR', 'EMPLOYEE'] as UserRole[],
+      roles: ['SUPER_ADMIN', 'ADMIN', 'MODERATOR', 'USER'] as UserRole[],
     },
     {
       title: 'Projects',
       href: '/projects',
       icon: 'FolderKanban',
-      roles: ['ADMIN', 'MODERATOR', 'EMPLOYEE'] as UserRole[],
+      roles: ['SUPER_ADMIN', 'ADMIN', 'MODERATOR', 'USER'] as UserRole[],
+    },
+    {
+      title: 'Transactions',
+      href: '/real-estate/transactions',
+      icon: 'FileText',
+      roles: ['SUPER_ADMIN', 'ADMIN', 'MODERATOR', 'USER'] as UserRole[],
     },
     {
       title: 'AI Assistant',
       href: '/ai',
       icon: 'Bot',
-      roles: ['ADMIN', 'MODERATOR', 'EMPLOYEE'] as UserRole[],
+      roles: ['SUPER_ADMIN', 'ADMIN', 'MODERATOR', 'USER'] as UserRole[],
     },
     {
       title: 'Tools',
       href: '/tools',
       icon: 'Wrench',
-      roles: ['ADMIN', 'MODERATOR', 'EMPLOYEE'] as UserRole[],
+      roles: ['SUPER_ADMIN', 'ADMIN', 'MODERATOR', 'USER'] as UserRole[],
     },
     {
       title: 'Settings',
       href: '/settings',
       icon: 'Settings',
-      roles: ['ADMIN', 'MODERATOR'] as UserRole[],
+      roles: ['SUPER_ADMIN', 'ADMIN', 'MODERATOR'] as UserRole[],
     },
     {
-      title: 'Admin',
+      title: 'Org Admin',
       href: '/admin',
       icon: 'Shield',
-      roles: ['ADMIN'] as UserRole[],
+      roles: ['SUPER_ADMIN', 'ADMIN'] as UserRole[],
+    },
+    {
+      title: 'Platform Admin',
+      href: '/platform-admin',
+      icon: 'Server',
+      roles: ['SUPER_ADMIN'] as UserRole[],
     },
   ];
 
   return allItems.filter(item => item.roles.includes(role));
 }
 
+/**
+ * Platform-wide functions (SUPER_ADMIN only)
+ */
+export function canAccessPlatformAdmin(role: UserRole): boolean {
+  return role === 'SUPER_ADMIN';
+}
+
+export function canViewAllOrganizations(role: UserRole): boolean {
+  return role === 'SUPER_ADMIN';
+}
+
+export function canManagePlatformSettings(role: UserRole): boolean {
+  return role === 'SUPER_ADMIN';
+}
+
+export function canAssignFreeTier(role: UserRole): boolean {
+  return role === 'SUPER_ADMIN';
+}
+
+export function canViewPlatformAnalytics(role: UserRole): boolean {
+  return role === 'SUPER_ADMIN';
+}
+
 export function canManageOrganization(role: UserRole): boolean {
-  return role === 'ADMIN' || role === 'MODERATOR';
+  return role === 'SUPER_ADMIN' || role === 'ADMIN' || role === 'MODERATOR';
 }
 
 export function canInviteMembers(role: UserRole): boolean {
-  return role === 'ADMIN' || role === 'MODERATOR';
+  return role === 'SUPER_ADMIN' || role === 'ADMIN' || role === 'MODERATOR';
 }
 
 export function canDeleteMembers(role: UserRole): boolean {
-  return role === 'ADMIN';
+  return role === 'SUPER_ADMIN' || role === 'ADMIN';
 }
 
 export function canEditProject(role: UserRole): boolean {
-  return role === 'ADMIN' || role === 'MODERATOR' || role === 'EMPLOYEE';
+  return role === 'SUPER_ADMIN' || role === 'ADMIN' || role === 'MODERATOR' || role === 'USER';
 }
 
 export function canViewProject(role: UserRole): boolean {
@@ -180,23 +217,34 @@ export function canViewProject(role: UserRole): boolean {
 }
 
 export function canManageCustomer(role: UserRole): boolean {
-  return role === 'ADMIN' || role === 'MODERATOR' || role === 'EMPLOYEE';
+  return role === 'SUPER_ADMIN' || role === 'ADMIN' || role === 'MODERATOR' || role === 'USER';
 }
 
 export function canViewCustomer(role: UserRole): boolean {
-  return role !== 'CLIENT';
+  return true; // All roles can view customers (CLIENT removed)
 }
 
-export function canUsePremiumTools(tier: string): boolean {
-  return tier !== 'FREE';
+export function canUsePremiumTools(tier: string, role?: UserRole): boolean {
+  // SUPER_ADMIN bypasses tier restrictions
+  if (role === 'SUPER_ADMIN') {
+    return true;
+  }
+  return tier !== 'FREE' && tier !== 'STARTER';
 }
 
-export function getToolLimit(tier: string): number {
+export function getToolLimit(tier: string, role?: UserRole): number {
+  // SUPER_ADMIN has unlimited tools
+  if (role === 'SUPER_ADMIN') {
+    return Infinity;
+  }
+
   const limits: Record<string, number> = {
     FREE: 0,
-    TIER_1: 3,
-    TIER_2: 10,
-    TIER_3: Infinity,
+    CUSTOM: 0, // Pay per tool
+    STARTER: 0,
+    GROWTH: 3,
+    ELITE: 10,
+    ENTERPRISE: Infinity,
   };
 
   return limits[tier] || 0;
@@ -206,61 +254,82 @@ export function getToolLimit(tier: string): number {
  * Check if user can access CRM module
  */
 export function canAccessCRM(role: UserRole): boolean {
-  return role === 'ADMIN' || role === 'MODERATOR' || role === 'EMPLOYEE';
+  return role === 'SUPER_ADMIN' || role === 'ADMIN' || role === 'MODERATOR' || role === 'USER';
 }
 
 /**
  * Check if user can manage leads (create, edit)
  */
 export function canManageLeads(role: UserRole): boolean {
-  return role === 'ADMIN' || role === 'MODERATOR' || role === 'EMPLOYEE';
+  return role === 'SUPER_ADMIN' || role === 'ADMIN' || role === 'MODERATOR' || role === 'USER';
 }
 
 /**
  * Check if user can delete leads
  */
 export function canDeleteLeads(role: UserRole): boolean {
-  return role === 'ADMIN' || role === 'MODERATOR';
+  return role === 'SUPER_ADMIN' || role === 'ADMIN' || role === 'MODERATOR';
 }
 
 /**
  * Check if user can manage contacts (create, edit)
  */
 export function canManageContacts(role: UserRole): boolean {
-  return role === 'ADMIN' || role === 'MODERATOR' || role === 'EMPLOYEE';
+  return role === 'SUPER_ADMIN' || role === 'ADMIN' || role === 'MODERATOR' || role === 'USER';
 }
 
 /**
  * Check if user can delete contacts
  */
 export function canDeleteContacts(role: UserRole): boolean {
-  return role === 'ADMIN' || role === 'MODERATOR';
+  return role === 'SUPER_ADMIN' || role === 'ADMIN' || role === 'MODERATOR';
 }
 
 /**
  * Check if user can manage deals (create, edit)
  */
 export function canManageDeals(role: UserRole): boolean {
-  return role === 'ADMIN' || role === 'MODERATOR' || role === 'EMPLOYEE';
+  return role === 'SUPER_ADMIN' || role === 'ADMIN' || role === 'MODERATOR' || role === 'USER';
 }
 
 /**
  * Check if user can delete deals
  */
 export function canDeleteDeals(role: UserRole): boolean {
-  return role === 'ADMIN' || role === 'MODERATOR';
+  return role === 'SUPER_ADMIN' || role === 'ADMIN' || role === 'MODERATOR';
 }
 
 /**
  * Check if user can manage listings (create, edit)
  */
 export function canManageListings(role: UserRole): boolean {
-  return role === 'ADMIN' || role === 'MODERATOR' || role === 'EMPLOYEE';
+  return role === 'SUPER_ADMIN' || role === 'ADMIN' || role === 'MODERATOR' || role === 'USER';
 }
 
 /**
  * Check if user can delete listings
  */
 export function canDeleteListings(role: UserRole): boolean {
-  return role === 'ADMIN' || role === 'MODERATOR';
+  return role === 'SUPER_ADMIN' || role === 'ADMIN' || role === 'MODERATOR';
+}
+
+/**
+ * Check if user can access Transactions module
+ */
+export function canAccessTransactions(role: UserRole): boolean {
+  return role === 'SUPER_ADMIN' || role === 'ADMIN' || role === 'MODERATOR' || role === 'USER';
+}
+
+/**
+ * Check if user can manage transaction loops (create, edit)
+ */
+export function canManageTransactionLoops(role: UserRole): boolean {
+  return role === 'SUPER_ADMIN' || role === 'ADMIN' || role === 'MODERATOR' || role === 'USER';
+}
+
+/**
+ * Check if user can delete transaction loops
+ */
+export function canDeleteTransactionLoops(role: UserRole): boolean {
+  return role === 'SUPER_ADMIN' || role === 'ADMIN' || role === 'MODERATOR';
 }

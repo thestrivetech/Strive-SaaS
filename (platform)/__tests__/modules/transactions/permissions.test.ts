@@ -17,10 +17,10 @@ describe('Transaction Permissions', () => {
         expect(hasTransactionPermission(user as any, TRANSACTION_PERMISSIONS.VIEW_LOOPS)).toBe(true);
       });
 
-      it('should allow EMPLOYEE with any org role to view', () => {
+      it('should allow USER with any org role to view', () => {
         const user = {
           id: 'user-1',
-          role: 'EMPLOYEE' as const,
+          role: 'USER' as const,
           organization_members: [{ role: 'VIEWER' as const }],
         };
 
@@ -37,10 +37,10 @@ describe('Transaction Permissions', () => {
         expect(hasTransactionPermission(user as any, TRANSACTION_PERMISSIONS.VIEW_LOOPS)).toBe(false);
       });
 
-      it('should deny EMPLOYEE without org membership', () => {
+      it('should deny USER without org membership', () => {
         const user = {
           id: 'user-1',
-          role: 'EMPLOYEE' as const,
+          role: 'USER' as const,
           organization_members: [],
         };
 
@@ -49,40 +49,40 @@ describe('Transaction Permissions', () => {
     });
 
     describe('CREATE_LOOPS permission', () => {
-      it('should allow EMPLOYEE with MEMBER role', () => {
+      it('should allow USER with MEMBER role', () => {
         const user = {
           id: 'user-1',
-          role: 'EMPLOYEE' as const,
+          role: 'USER' as const,
           organization_members: [{ role: 'MEMBER' as const }],
         };
 
         expect(hasTransactionPermission(user as any, TRANSACTION_PERMISSIONS.CREATE_LOOPS)).toBe(true);
       });
 
-      it('should allow EMPLOYEE with ADMIN role', () => {
+      it('should allow USER with ADMIN role', () => {
         const user = {
           id: 'user-1',
-          role: 'EMPLOYEE' as const,
+          role: 'USER' as const,
           organization_members: [{ role: 'ADMIN' as const }],
         };
 
         expect(hasTransactionPermission(user as any, TRANSACTION_PERMISSIONS.CREATE_LOOPS)).toBe(true);
       });
 
-      it('should allow EMPLOYEE with OWNER role', () => {
+      it('should allow USER with OWNER role', () => {
         const user = {
           id: 'user-1',
-          role: 'EMPLOYEE' as const,
+          role: 'USER' as const,
           organization_members: [{ role: 'OWNER' as const }],
         };
 
         expect(hasTransactionPermission(user as any, TRANSACTION_PERMISSIONS.CREATE_LOOPS)).toBe(true);
       });
 
-      it('should deny EMPLOYEE with VIEWER role', () => {
+      it('should deny USER with VIEWER role', () => {
         const user = {
           id: 'user-1',
-          role: 'EMPLOYEE' as const,
+          role: 'USER' as const,
           organization_members: [{ role: 'VIEWER' as const }],
         };
 
@@ -101,20 +101,20 @@ describe('Transaction Permissions', () => {
     });
 
     describe('UPDATE_LOOPS permission', () => {
-      it('should allow EMPLOYEE with MEMBER role', () => {
+      it('should allow USER with MEMBER role', () => {
         const user = {
           id: 'user-1',
-          role: 'EMPLOYEE' as const,
+          role: 'USER' as const,
           organization_members: [{ role: 'MEMBER' as const }],
         };
 
         expect(hasTransactionPermission(user as any, TRANSACTION_PERMISSIONS.UPDATE_LOOPS)).toBe(true);
       });
 
-      it('should deny EMPLOYEE with VIEWER role', () => {
+      it('should deny USER with VIEWER role', () => {
         const user = {
           id: 'user-1',
-          role: 'EMPLOYEE' as const,
+          role: 'USER' as const,
           organization_members: [{ role: 'VIEWER' as const }],
         };
 
@@ -123,30 +123,30 @@ describe('Transaction Permissions', () => {
     });
 
     describe('DELETE_LOOPS permission', () => {
-      it('should allow EMPLOYEE with OWNER role', () => {
+      it('should allow USER with OWNER role', () => {
         const user = {
           id: 'user-1',
-          role: 'EMPLOYEE' as const,
+          role: 'USER' as const,
           organization_members: [{ role: 'OWNER' as const }],
         };
 
         expect(hasTransactionPermission(user as any, TRANSACTION_PERMISSIONS.DELETE_LOOPS)).toBe(true);
       });
 
-      it('should allow EMPLOYEE with ADMIN role', () => {
+      it('should allow USER with ADMIN role', () => {
         const user = {
           id: 'user-1',
-          role: 'EMPLOYEE' as const,
+          role: 'USER' as const,
           organization_members: [{ role: 'ADMIN' as const }],
         };
 
         expect(hasTransactionPermission(user as any, TRANSACTION_PERMISSIONS.DELETE_LOOPS)).toBe(true);
       });
 
-      it('should deny EMPLOYEE with MEMBER role', () => {
+      it('should deny USER with MEMBER role', () => {
         const user = {
           id: 'user-1',
-          role: 'EMPLOYEE' as const,
+          role: 'USER' as const,
           organization_members: [{ role: 'MEMBER' as const }],
         };
 
@@ -178,7 +178,7 @@ describe('Transaction Permissions', () => {
       it('should allow org OWNER', () => {
         const user = {
           id: 'user-1',
-          role: 'EMPLOYEE' as const,
+          role: 'USER' as const,
           organization_members: [{ role: 'OWNER' as const }],
         };
 
@@ -188,7 +188,7 @@ describe('Transaction Permissions', () => {
       it('should deny org ADMIN', () => {
         const user = {
           id: 'user-1',
-          role: 'EMPLOYEE' as const,
+          role: 'USER' as const,
           organization_members: [{ role: 'ADMIN' as const }],
         };
 
@@ -201,7 +201,7 @@ describe('Transaction Permissions', () => {
     it('should allow creator to modify their own loop', () => {
       const user = {
         id: 'user-1',
-        role: 'EMPLOYEE' as const,
+        role: 'USER' as const,
         organization_members: [{ role: 'VIEWER' as const }],
       };
 
@@ -215,7 +215,7 @@ describe('Transaction Permissions', () => {
     it('should allow org ADMIN to modify any loop', () => {
       const user = {
         id: 'user-1',
-        role: 'EMPLOYEE' as const,
+        role: 'USER' as const,
         organization_members: [{ role: 'ADMIN' as const }],
       };
 
@@ -229,7 +229,7 @@ describe('Transaction Permissions', () => {
     it('should allow org OWNER to modify any loop', () => {
       const user = {
         id: 'user-1',
-        role: 'EMPLOYEE' as const,
+        role: 'USER' as const,
         organization_members: [{ role: 'OWNER' as const }],
       };
 
@@ -243,7 +243,7 @@ describe('Transaction Permissions', () => {
     it('should deny non-creator MEMBER from modifying', () => {
       const user = {
         id: 'user-1',
-        role: 'EMPLOYEE' as const,
+        role: 'USER' as const,
         organization_members: [{ role: 'MEMBER' as const }],
       };
 

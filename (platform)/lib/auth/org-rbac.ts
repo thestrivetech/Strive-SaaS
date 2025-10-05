@@ -3,7 +3,7 @@
  *
  * This module handles organization-specific permissions separate from global user roles.
  * Users have TWO roles:
- * 1. Global Role (UserRole) - ADMIN, MODERATOR, EMPLOYEE, CLIENT
+ * 1. Global Role (UserRole) - SUPER_ADMIN, ADMIN, MODERATOR, USER
  * 2. Organization Role (OrgRole) - OWNER, ADMIN, MEMBER, VIEWER
  *
  * Both roles are checked together to determine final permissions.
@@ -95,24 +95,28 @@ export type OrgRole = keyof typeof ORG_ROLE_PERMISSIONS;
  * Check if a user has a specific organization permission
  *
  * This function implements dual-role checking:
- * 1. Global ADMINs bypass all org-level checks (super admins)
- * 2. Otherwise, check the user's organization role permissions
+ * 1. SUPER_ADMIN (platform dev) bypasses all org-level checks - can access ANY organization
+ * 2. ADMIN (org admin) must have proper org role - limited to their organization
+ * 3. Otherwise, check the user's organization role permissions
  *
- * @param userRole - Global user role (ADMIN, EMPLOYEE, etc.)
+ * @param userRole - Global user role (SUPER_ADMIN, ADMIN, MODERATOR, USER)
  * @param orgRole - Organization-specific role (OWNER, ADMIN, MEMBER, VIEWER)
  * @param permission - The org permission to check
  * @returns true if user has permission, false otherwise
  *
  * @example
  * ```typescript
- * const canInvite = hasOrgPermission('EMPLOYEE', 'ADMIN', 'members:invite');
+ * const canInvite = hasOrgPermission('USER', 'ADMIN', 'members:invite');
  * // Returns: true (org ADMIN can invite)
  *
- * const canBill = hasOrgPermission('EMPLOYEE', 'MEMBER', 'settings:billing');
+ * const canBill = hasOrgPermission('USER', 'MEMBER', 'settings:billing');
  * // Returns: false (org MEMBER cannot access billing)
  *
- * const canDelete = hasOrgPermission('ADMIN', 'VIEWER', 'org:delete');
- * // Returns: true (global ADMIN bypasses org role)
+ * const canDelete = hasOrgPermission('SUPER_ADMIN', 'VIEWER', 'org:delete');
+ * // Returns: true (SUPER_ADMIN bypasses org role - platform dev access)
+ *
+ * const canDelete2 = hasOrgPermission('ADMIN', 'VIEWER', 'org:delete');
+ * // Returns: false (ADMIN must have proper org role)
  * ```
  */
 export function hasOrgPermission(
@@ -120,8 +124,9 @@ export function hasOrgPermission(
   orgRole: OrgRole,
   permission: OrgPermission
 ): boolean {
-  // Global admins bypass all organization-level permissions
-  if (userRole === 'ADMIN') {
+  // ONLY SUPER_ADMIN (platform dev) bypasses organization-level permissions
+  // ADMIN is organization-level and must have proper org role
+  if (userRole === 'SUPER_ADMIN') {
     return true;
   }
 
@@ -146,7 +151,7 @@ export function hasOrgPermission(
  *
  * @example
  * ```typescript
- * requireOrgPermission('EMPLOYEE', 'MEMBER', 'settings:billing');
+ * requireOrgPermission('USER', 'MEMBER', 'settings:billing');
  * // Throws: "Forbidden: Missing organization permission settings:billing"
  * ```
  */

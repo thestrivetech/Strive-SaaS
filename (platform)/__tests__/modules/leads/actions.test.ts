@@ -393,7 +393,7 @@ describe('Leads Actions', () => {
   describe('bulkAssignLeads', () => {
     it('should assign multiple leads to an agent', async () => {
       const { organization, user } = await createTestOrgWithUser();
-      const agent = await createTestUser({ role: UserRole.EMPLOYEE });
+      const agent = await createTestUser({ role: UserRole.USER });
       await createOrganizationMember(agent.id, organization.id, 'MEMBER' as OrgRole);
 
       const { getCurrentUser } = require('@/lib/auth/auth-helpers');

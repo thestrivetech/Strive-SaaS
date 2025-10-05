@@ -36,20 +36,20 @@ describe('Organization RBAC System', () => {
       const role: OrgRole = 'OWNER';
 
       it('should have full access to all org permissions', () => {
-        expect(hasOrgPermission('EMPLOYEE', role, 'members:invite')).toBe(true);
-        expect(hasOrgPermission('EMPLOYEE', role, 'members:remove')).toBe(true);
-        expect(hasOrgPermission('EMPLOYEE', role, 'members:updateRole')).toBe(true);
-        expect(hasOrgPermission('EMPLOYEE', role, 'settings:edit')).toBe(true);
-        expect(hasOrgPermission('EMPLOYEE', role, 'settings:billing')).toBe(true);
-        expect(hasOrgPermission('EMPLOYEE', role, 'settings:integrations')).toBe(true);
-        expect(hasOrgPermission('EMPLOYEE', role, 'industry:enable')).toBe(true);
-        expect(hasOrgPermission('EMPLOYEE', role, 'industry:disable')).toBe(true);
-        expect(hasOrgPermission('EMPLOYEE', role, 'industry:configure')).toBe(true);
-        expect(hasOrgPermission('EMPLOYEE', role, 'org:delete')).toBe(true);
-        expect(hasOrgPermission('EMPLOYEE', role, 'org:transfer')).toBe(true);
-        expect(hasOrgPermission('EMPLOYEE', role, 'tools:install')).toBe(true);
-        expect(hasOrgPermission('EMPLOYEE', role, 'tools:uninstall')).toBe(true);
-        expect(hasOrgPermission('EMPLOYEE', role, 'tools:configure')).toBe(true);
+        expect(hasOrgPermission('USER', role, 'members:invite')).toBe(true);
+        expect(hasOrgPermission('USER', role, 'members:remove')).toBe(true);
+        expect(hasOrgPermission('USER', role, 'members:updateRole')).toBe(true);
+        expect(hasOrgPermission('USER', role, 'settings:edit')).toBe(true);
+        expect(hasOrgPermission('USER', role, 'settings:billing')).toBe(true);
+        expect(hasOrgPermission('USER', role, 'settings:integrations')).toBe(true);
+        expect(hasOrgPermission('USER', role, 'industry:enable')).toBe(true);
+        expect(hasOrgPermission('USER', role, 'industry:disable')).toBe(true);
+        expect(hasOrgPermission('USER', role, 'industry:configure')).toBe(true);
+        expect(hasOrgPermission('USER', role, 'org:delete')).toBe(true);
+        expect(hasOrgPermission('USER', role, 'org:transfer')).toBe(true);
+        expect(hasOrgPermission('USER', role, 'tools:install')).toBe(true);
+        expect(hasOrgPermission('USER', role, 'tools:uninstall')).toBe(true);
+        expect(hasOrgPermission('USER', role, 'tools:configure')).toBe(true);
       });
     });
 
@@ -57,17 +57,17 @@ describe('Organization RBAC System', () => {
       const role: OrgRole = 'ADMIN';
 
       it('should have most permissions except ownership-level ones', () => {
-        expect(hasOrgPermission('EMPLOYEE', role, 'members:invite')).toBe(true);
-        expect(hasOrgPermission('EMPLOYEE', role, 'members:remove')).toBe(true);
-        expect(hasOrgPermission('EMPLOYEE', role, 'settings:edit')).toBe(true);
-        expect(hasOrgPermission('EMPLOYEE', role, 'industry:enable')).toBe(true);
-        expect(hasOrgPermission('EMPLOYEE', role, 'tools:install')).toBe(true);
+        expect(hasOrgPermission('USER', role, 'members:invite')).toBe(true);
+        expect(hasOrgPermission('USER', role, 'members:remove')).toBe(true);
+        expect(hasOrgPermission('USER', role, 'settings:edit')).toBe(true);
+        expect(hasOrgPermission('USER', role, 'industry:enable')).toBe(true);
+        expect(hasOrgPermission('USER', role, 'tools:install')).toBe(true);
       });
 
       it('should NOT have owner-only permissions', () => {
-        expect(hasOrgPermission('EMPLOYEE', role, 'settings:billing')).toBe(false);
-        expect(hasOrgPermission('EMPLOYEE', role, 'org:delete')).toBe(false);
-        expect(hasOrgPermission('EMPLOYEE', role, 'org:transfer')).toBe(false);
+        expect(hasOrgPermission('USER', role, 'settings:billing')).toBe(false);
+        expect(hasOrgPermission('USER', role, 'org:delete')).toBe(false);
+        expect(hasOrgPermission('USER', role, 'org:transfer')).toBe(false);
       });
     });
 
@@ -75,16 +75,16 @@ describe('Organization RBAC System', () => {
       const role: OrgRole = 'MEMBER';
 
       it('should have limited permissions', () => {
-        expect(hasOrgPermission('EMPLOYEE', role, 'members:invite')).toBe(true);
-        expect(hasOrgPermission('EMPLOYEE', role, 'tools:configure')).toBe(true);
+        expect(hasOrgPermission('USER', role, 'members:invite')).toBe(true);
+        expect(hasOrgPermission('USER', role, 'tools:configure')).toBe(true);
       });
 
       it('should NOT have management permissions', () => {
-        expect(hasOrgPermission('EMPLOYEE', role, 'members:remove')).toBe(false);
-        expect(hasOrgPermission('EMPLOYEE', role, 'settings:edit')).toBe(false);
-        expect(hasOrgPermission('EMPLOYEE', role, 'settings:billing')).toBe(false);
-        expect(hasOrgPermission('EMPLOYEE', role, 'org:delete')).toBe(false);
-        expect(hasOrgPermission('EMPLOYEE', role, 'tools:install')).toBe(false);
+        expect(hasOrgPermission('USER', role, 'members:remove')).toBe(false);
+        expect(hasOrgPermission('USER', role, 'settings:edit')).toBe(false);
+        expect(hasOrgPermission('USER', role, 'settings:billing')).toBe(false);
+        expect(hasOrgPermission('USER', role, 'org:delete')).toBe(false);
+        expect(hasOrgPermission('USER', role, 'tools:install')).toBe(false);
       });
     });
 
@@ -92,16 +92,16 @@ describe('Organization RBAC System', () => {
       const role: OrgRole = 'VIEWER';
 
       it('should have NO org-level permissions', () => {
-        expect(hasOrgPermission('EMPLOYEE', role, 'members:invite')).toBe(false);
-        expect(hasOrgPermission('EMPLOYEE', role, 'tools:configure')).toBe(false);
-        expect(hasOrgPermission('EMPLOYEE', role, 'settings:edit')).toBe(false);
-        expect(hasOrgPermission('EMPLOYEE', role, 'org:delete')).toBe(false);
+        expect(hasOrgPermission('USER', role, 'members:invite')).toBe(false);
+        expect(hasOrgPermission('USER', role, 'tools:configure')).toBe(false);
+        expect(hasOrgPermission('USER', role, 'settings:edit')).toBe(false);
+        expect(hasOrgPermission('USER', role, 'org:delete')).toBe(false);
       });
     });
 
     describe('Edge cases', () => {
       it('should return false for invalid org role', () => {
-        expect(hasOrgPermission('EMPLOYEE', 'INVALID' as OrgRole, 'members:invite')).toBe(false);
+        expect(hasOrgPermission('USER', 'INVALID' as OrgRole, 'members:invite')).toBe(false);
       });
 
       it('should work with MODERATOR global role', () => {
@@ -109,10 +109,10 @@ describe('Organization RBAC System', () => {
         expect(hasOrgPermission('MODERATOR', 'VIEWER', 'members:invite')).toBe(false);
       });
 
-      it('should work with CLIENT global role', () => {
-        // Clients can still be org owners/admins if invited
-        expect(hasOrgPermission('CLIENT', 'OWNER', 'settings:billing')).toBe(true);
-        expect(hasOrgPermission('CLIENT', 'MEMBER', 'members:invite')).toBe(true);
+      it('should work with USER global role', () => {
+        // Users can still be org owners/admins if invited
+        expect(hasOrgPermission('USER', 'OWNER', 'settings:billing')).toBe(true);
+        expect(hasOrgPermission('USER', 'MEMBER', 'members:invite')).toBe(true);
       });
     });
   });
@@ -120,13 +120,13 @@ describe('Organization RBAC System', () => {
   describe('requireOrgPermission', () => {
     it('should not throw for user with org permission', () => {
       expect(() => {
-        requireOrgPermission('EMPLOYEE', 'OWNER', 'org:delete');
+        requireOrgPermission('USER', 'OWNER', 'org:delete');
       }).not.toThrow();
     });
 
     it('should throw for user without org permission', () => {
       expect(() => {
-        requireOrgPermission('EMPLOYEE', 'VIEWER', 'org:delete');
+        requireOrgPermission('USER', 'VIEWER', 'org:delete');
       }).toThrow('Forbidden: Missing organization permission org:delete');
     });
 
@@ -140,13 +140,13 @@ describe('Organization RBAC System', () => {
   describe('Helper Functions', () => {
     describe('canManageMembers', () => {
       it('should return true for OWNER and ADMIN org roles', () => {
-        expect(canManageMembers('EMPLOYEE', 'OWNER')).toBe(true);
-        expect(canManageMembers('EMPLOYEE', 'ADMIN')).toBe(true);
+        expect(canManageMembers('USER', 'OWNER')).toBe(true);
+        expect(canManageMembers('USER', 'ADMIN')).toBe(true);
       });
 
       it('should return false for MEMBER and VIEWER', () => {
-        expect(canManageMembers('EMPLOYEE', 'MEMBER')).toBe(false);
-        expect(canManageMembers('EMPLOYEE', 'VIEWER')).toBe(false);
+        expect(canManageMembers('USER', 'MEMBER')).toBe(false);
+        expect(canManageMembers('USER', 'VIEWER')).toBe(false);
       });
 
       it('should return true for global ADMIN regardless of org role', () => {
@@ -156,25 +156,25 @@ describe('Organization RBAC System', () => {
 
     describe('canInviteMembers', () => {
       it('should return true for OWNER, ADMIN, and MEMBER', () => {
-        expect(canInviteMembers('EMPLOYEE', 'OWNER')).toBe(true);
-        expect(canInviteMembers('EMPLOYEE', 'ADMIN')).toBe(true);
-        expect(canInviteMembers('EMPLOYEE', 'MEMBER')).toBe(true);
+        expect(canInviteMembers('USER', 'OWNER')).toBe(true);
+        expect(canInviteMembers('USER', 'ADMIN')).toBe(true);
+        expect(canInviteMembers('USER', 'MEMBER')).toBe(true);
       });
 
       it('should return false for VIEWER', () => {
-        expect(canInviteMembers('EMPLOYEE', 'VIEWER')).toBe(false);
+        expect(canInviteMembers('USER', 'VIEWER')).toBe(false);
       });
     });
 
     describe('canManageBilling', () => {
       it('should return true only for OWNER', () => {
-        expect(canManageBilling('EMPLOYEE', 'OWNER')).toBe(true);
+        expect(canManageBilling('USER', 'OWNER')).toBe(true);
       });
 
       it('should return false for non-owners', () => {
-        expect(canManageBilling('EMPLOYEE', 'ADMIN')).toBe(false);
-        expect(canManageBilling('EMPLOYEE', 'MEMBER')).toBe(false);
-        expect(canManageBilling('EMPLOYEE', 'VIEWER')).toBe(false);
+        expect(canManageBilling('USER', 'ADMIN')).toBe(false);
+        expect(canManageBilling('USER', 'MEMBER')).toBe(false);
+        expect(canManageBilling('USER', 'VIEWER')).toBe(false);
       });
 
       it('should return true for global ADMIN', () => {
@@ -184,25 +184,25 @@ describe('Organization RBAC System', () => {
 
     describe('canManageOrgSettings', () => {
       it('should return true for OWNER and ADMIN', () => {
-        expect(canManageOrgSettings('EMPLOYEE', 'OWNER')).toBe(true);
-        expect(canManageOrgSettings('EMPLOYEE', 'ADMIN')).toBe(true);
+        expect(canManageOrgSettings('USER', 'OWNER')).toBe(true);
+        expect(canManageOrgSettings('USER', 'ADMIN')).toBe(true);
       });
 
       it('should return false for MEMBER and VIEWER', () => {
-        expect(canManageOrgSettings('EMPLOYEE', 'MEMBER')).toBe(false);
-        expect(canManageOrgSettings('EMPLOYEE', 'VIEWER')).toBe(false);
+        expect(canManageOrgSettings('USER', 'MEMBER')).toBe(false);
+        expect(canManageOrgSettings('USER', 'VIEWER')).toBe(false);
       });
     });
 
     describe('canDeleteOrganization', () => {
       it('should return true only for OWNER', () => {
-        expect(canDeleteOrganization('EMPLOYEE', 'OWNER')).toBe(true);
+        expect(canDeleteOrganization('USER', 'OWNER')).toBe(true);
       });
 
       it('should return false for non-owners', () => {
-        expect(canDeleteOrganization('EMPLOYEE', 'ADMIN')).toBe(false);
-        expect(canDeleteOrganization('EMPLOYEE', 'MEMBER')).toBe(false);
-        expect(canDeleteOrganization('EMPLOYEE', 'VIEWER')).toBe(false);
+        expect(canDeleteOrganization('USER', 'ADMIN')).toBe(false);
+        expect(canDeleteOrganization('USER', 'MEMBER')).toBe(false);
+        expect(canDeleteOrganization('USER', 'VIEWER')).toBe(false);
       });
 
       it('should return true for global ADMIN', () => {
@@ -212,25 +212,25 @@ describe('Organization RBAC System', () => {
 
     describe('canInstallTools', () => {
       it('should return true for OWNER and ADMIN', () => {
-        expect(canInstallTools('EMPLOYEE', 'OWNER')).toBe(true);
-        expect(canInstallTools('EMPLOYEE', 'ADMIN')).toBe(true);
+        expect(canInstallTools('USER', 'OWNER')).toBe(true);
+        expect(canInstallTools('USER', 'ADMIN')).toBe(true);
       });
 
       it('should return false for MEMBER and VIEWER', () => {
-        expect(canInstallTools('EMPLOYEE', 'MEMBER')).toBe(false);
-        expect(canInstallTools('EMPLOYEE', 'VIEWER')).toBe(false);
+        expect(canInstallTools('USER', 'MEMBER')).toBe(false);
+        expect(canInstallTools('USER', 'VIEWER')).toBe(false);
       });
     });
 
     describe('canManageIndustries', () => {
       it('should return true for OWNER and ADMIN', () => {
-        expect(canManageIndustries('EMPLOYEE', 'OWNER')).toBe(true);
-        expect(canManageIndustries('EMPLOYEE', 'ADMIN')).toBe(true);
+        expect(canManageIndustries('USER', 'OWNER')).toBe(true);
+        expect(canManageIndustries('USER', 'ADMIN')).toBe(true);
       });
 
       it('should return false for MEMBER and VIEWER', () => {
-        expect(canManageIndustries('EMPLOYEE', 'MEMBER')).toBe(false);
-        expect(canManageIndustries('EMPLOYEE', 'VIEWER')).toBe(false);
+        expect(canManageIndustries('USER', 'MEMBER')).toBe(false);
+        expect(canManageIndustries('USER', 'VIEWER')).toBe(false);
       });
     });
   });
@@ -297,9 +297,9 @@ describe('Organization RBAC System', () => {
   });
 
   describe('Dual-Role Permission Scenarios', () => {
-    it('should handle EMPLOYEE + OWNER correctly', () => {
-      expect(hasOrgPermission('EMPLOYEE', 'OWNER', 'org:delete')).toBe(true);
-      expect(hasOrgPermission('EMPLOYEE', 'OWNER', 'settings:billing')).toBe(true);
+    it('should handle USER + OWNER correctly', () => {
+      expect(hasOrgPermission('USER', 'OWNER', 'org:delete')).toBe(true);
+      expect(hasOrgPermission('USER', 'OWNER', 'settings:billing')).toBe(true);
     });
 
     it('should handle MODERATOR + ADMIN correctly', () => {
@@ -307,16 +307,16 @@ describe('Organization RBAC System', () => {
       expect(hasOrgPermission('MODERATOR', 'ADMIN', 'settings:billing')).toBe(false);
     });
 
-    it('should handle CLIENT + MEMBER correctly', () => {
-      // CLIENTs can still be org members and invite
-      expect(hasOrgPermission('CLIENT', 'MEMBER', 'members:invite')).toBe(true);
-      expect(hasOrgPermission('CLIENT', 'MEMBER', 'settings:edit')).toBe(false);
+    it('should handle USER + MEMBER correctly', () => {
+      // Users can still be org members and invite
+      expect(hasOrgPermission('USER', 'MEMBER', 'members:invite')).toBe(true);
+      expect(hasOrgPermission('USER', 'MEMBER', 'settings:edit')).toBe(false);
     });
 
-    it('should handle CLIENT + VIEWER correctly', () => {
+    it('should handle USER + VIEWER correctly', () => {
       // Lowest permission combination
-      expect(hasOrgPermission('CLIENT', 'VIEWER', 'members:invite')).toBe(false);
-      expect(hasOrgPermission('CLIENT', 'VIEWER', 'tools:configure')).toBe(false);
+      expect(hasOrgPermission('USER', 'VIEWER', 'members:invite')).toBe(false);
+      expect(hasOrgPermission('USER', 'VIEWER', 'tools:configure')).toBe(false);
     });
   });
 
@@ -341,7 +341,7 @@ describe('Organization RBAC System', () => {
     it('should check all org permissions', () => {
       allPermissions.forEach(permission => {
         // OWNER should have all
-        expect(hasOrgPermission('EMPLOYEE', 'OWNER', permission)).toBe(true);
+        expect(hasOrgPermission('USER', 'OWNER', permission)).toBe(true);
 
         // Global ADMIN should bypass
         expect(hasOrgPermission('ADMIN', 'VIEWER', permission)).toBe(true);

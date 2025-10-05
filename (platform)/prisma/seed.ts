@@ -111,7 +111,7 @@ async function main() {
       description: 'Analyze and visualize data with AI insights',
       toolType: 'ANALYSIS' as const,
       is_active: true,
-      required_tier: 'PRO' as const,
+      required_tier: 'GROWTH' as const,
     },
     {
       id: 'tool-email-assistant',

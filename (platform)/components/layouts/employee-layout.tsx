@@ -15,7 +15,7 @@ export async function EmployeeLayout({ children }: EmployeeLayoutProps) {
     return null;
   }
 
-  // Filter nav items based on employee permissions
+  // Filter nav items based on user permissions
   const filteredNavItems = defaultNavItems.filter((item) => {
     // Hide admin-only items
     if (item.adminOnly) {
@@ -32,7 +32,7 @@ export async function EmployeeLayout({ children }: EmployeeLayoutProps) {
   });
 
   return (
-    <RequireRole role="EMPLOYEE">
+    <RequireRole role="USER">
       <BasePlatformLayout navItems={filteredNavItems}>
         {children}
       </BasePlatformLayout>

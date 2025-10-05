@@ -24,14 +24,14 @@ export const realEstateConfig: IndustryConfig = {
       name: 'Property Management',
       description: 'Manage property listings, showings, and transactions',
       componentPath: '@/lib/industries/real-estate/features/property-management',
-      requiredTier: 'BASIC',
+      requiredTier: 'STARTER',
     },
     {
       id: 'mls-integration',
       name: 'MLS Integration',
       description: 'Connect to Multiple Listing Service for property data',
       componentPath: '@/lib/industries/real-estate/features/mls-integration',
-      requiredTier: 'PRO',
+      requiredTier: 'GROWTH',
     },
     {
       id: 'market-analysis',
@@ -51,7 +51,7 @@ export const realEstateConfig: IndustryConfig = {
       category: 'lead-management',
       pricing: 'paid',
       basePrice: 4900, // $49/month (PLACEHOLDER - TBD)
-      requiredTier: 'BASIC',
+      requiredTier: 'STARTER',
     },
     {
       id: 'virtual-tours',
@@ -60,7 +60,7 @@ export const realEstateConfig: IndustryConfig = {
       category: 'marketing',
       pricing: 'paid',
       basePrice: 9900, // $99/month (PLACEHOLDER - TBD)
-      requiredTier: 'PRO',
+      requiredTier: 'GROWTH',
     },
     {
       id: 'cma-generator',

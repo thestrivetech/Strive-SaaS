@@ -32,15 +32,25 @@ export async function handlePlatformAuth(request: NextRequest): Promise<NextResp
 
   const { data: { user } } = await supabase.auth.getUser();
 
+  // Platform-admin routes (SUPER_ADMIN only - platform dev access)
+  const isPlatformAdminRoute = path.startsWith('/platform-admin') || path.startsWith('/api/platform-admin/');
+
+  // Org-admin routes (SUPER_ADMIN + ADMIN - organization management)
   const isAdminRoute = path.startsWith('/admin') || path.startsWith('/api/admin/');
+
+  const isTransactionRoute = path.startsWith('/transactions') || path.startsWith('/real-estate/transactions');
   const isProtectedRoute = path.startsWith('/dashboard') ||
+    path.startsWith('/real-estate/dashboard') ||
     path.startsWith('/crm') ||
+    path.startsWith('/real-estate/crm') ||
     path.startsWith('/projects') ||
     path.startsWith('/ai') ||
     path.startsWith('/tools') ||
     path.startsWith('/settings') ||
     path.startsWith('/onboarding') ||
-    isAdminRoute;
+    isTransactionRoute ||
+    isAdminRoute ||
+    isPlatformAdminRoute;
 
   if (!user && isProtectedRoute) {
     const redirectUrl = new URL('/login', request.url);
@@ -50,6 +60,22 @@ export async function handlePlatformAuth(request: NextRequest): Promise<NextResp
     return redirectResponse;
   }
 
+  // Platform-admin route protection (SUPER_ADMIN only - platform dev)
+  if (user && isPlatformAdminRoute) {
+    const { prisma } = await import('@/lib/prisma');
+    const dbUser = await prisma.users.findUnique({
+      where: { email: user.email! },
+      select: { role: true },
+    });
+
+    if (!dbUser || dbUser.role !== 'SUPER_ADMIN') {
+      const redirectResponse = NextResponse.redirect(new URL('/real-estate/dashboard', request.url));
+      setNoCacheHeaders(redirectResponse);
+      return redirectResponse;
+    }
+  }
+
+  // Org-admin route protection (SUPER_ADMIN + ADMIN - organization management)
   if (user && isAdminRoute) {
     const { prisma } = await import('@/lib/prisma');
     const dbUser = await prisma.users.findUnique({
@@ -57,21 +83,53 @@ export async function handlePlatformAuth(request: NextRequest): Promise<NextResp
       select: { role: true },
     });
 
-    if (!dbUser || dbUser.role !== 'ADMIN') {
-      const redirectResponse = NextResponse.redirect(new URL('/dashboard', request.url));
+    if (!dbUser || (dbUser.role !== 'SUPER_ADMIN' && dbUser.role !== 'ADMIN')) {
+      const redirectResponse = NextResponse.redirect(new URL('/real-estate/dashboard', request.url));
+      setNoCacheHeaders(redirectResponse);
+      return redirectResponse;
+    }
+  }
+
+  // Transaction route protection - role and tier check
+  if (user && isTransactionRoute) {
+    const { prisma } = await import('@/lib/prisma');
+    const dbUser = await prisma.users.findUnique({
+      where: { email: user.email! },
+      select: { role: true, subscription_tier: true },
+    });
+
+    // Check user role (only USER, MODERATOR, ADMIN, SUPER_ADMIN can access)
+    if (!dbUser || !['USER', 'MODERATOR', 'ADMIN', 'SUPER_ADMIN'].includes(dbUser.role)) {
+      const redirectResponse = NextResponse.redirect(new URL('/real-estate/dashboard', request.url));
+      setNoCacheHeaders(redirectResponse);
+      return redirectResponse;
+    }
+
+    // Check subscription tier (STARTER or higher required)
+    // Tier hierarchy: FREE < CUSTOM < STARTER < GROWTH < ELITE < ENTERPRISE
+    const tierAccess = ['STARTER', 'GROWTH', 'ELITE', 'ENTERPRISE']; // Transaction module requires STARTER+
+    if (!tierAccess.includes(dbUser.subscription_tier)) {
+      const redirectResponse = NextResponse.redirect(new URL('/real-estate/dashboard?upgrade=starter', request.url));
       setNoCacheHeaders(redirectResponse);
       return redirectResponse;
     }
   }
 
   if (user && path === '/login') {
-    const redirectResponse = NextResponse.redirect(new URL('/dashboard', request.url));
+    const redirectResponse = NextResponse.redirect(new URL('/real-estate/dashboard', request.url));
     setNoCacheHeaders(redirectResponse);
     return redirectResponse;
   }
 
   if (user && path === '/') {
-    const redirectResponse = NextResponse.redirect(new URL('/dashboard', request.url));
+    const redirectResponse = NextResponse.redirect(new URL('/real-estate/dashboard', request.url));
+    setNoCacheHeaders(redirectResponse);
+    return redirectResponse;
+  }
+
+  // Redirect old /dashboard to new /real-estate/dashboard
+  if (user && path === '/dashboard') {
+    const redirectResponse = NextResponse.redirect(new URL('/real-estate/dashboard', request.url));
     setNoCacheHeaders(redirectResponse);
     return redirectResponse;
   }

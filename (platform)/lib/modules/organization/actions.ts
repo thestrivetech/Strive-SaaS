@@ -89,7 +89,7 @@ export async function inviteTeamMember(input: InviteTeamMemberInput) {
     invitedUser = await prisma.users.create({
       data: {
         email: validated.email,
-        role: 'EMPLOYEE',
+        role: 'USER',
       },
     });
   }

@@ -43,7 +43,7 @@ describe('Signature Actions', () => {
     id: 'cm1usr123456789012345',
     email: 'test@example.com',
     name: 'Test User',
-    role: 'EMPLOYEE' as const,
+    role: 'USER' as const,
     subscription_tier: 'FREE' as const,
     organization_members: [
       {
