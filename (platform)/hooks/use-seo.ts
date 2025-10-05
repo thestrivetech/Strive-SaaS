@@ -1,7 +1,7 @@
 import { useMemo } from 'react';
 import { useLocation } from 'wouter';
 import { getPageSEO } from '@/lib/seo-config';
-import type { SEOConfig } from '@/types/seo';
+import type { SEOConfig } from '@/lib/types/real-estate/seo';
 
 interface UseSEOOptions {
   title?: string;

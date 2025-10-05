@@ -12,7 +12,7 @@ import {
   connectTestDb,
   disconnectTestDb,
 } from '@/__tests__/utils/test-helpers';
-import { createCustomer, updateCustomer, deleteCustomer } from '@/lib/modules/crm/actions';
+import { createCustomer, updateCustomer, deleteCustomer } from '@/lib/modules/crm/core/actions';
 
 // Mock Supabase auth
 jest.mock('@/lib/supabase-server', () => ({

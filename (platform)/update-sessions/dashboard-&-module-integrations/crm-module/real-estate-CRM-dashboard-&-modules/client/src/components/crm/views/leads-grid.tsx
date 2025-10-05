@@ -9,7 +9,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { PhaseBadge } from "@/components/crm/shared/phase-badge";
 import { Badge } from "@/components/ui/badge";
-import { Lead } from "@/types/crm";
+import { Lead } from "@/lib/types/real-estate/crm";
 import { formatDistanceToNow } from "date-fns";
 import { MoreHorizontal, Phone, Mail, Calendar } from "lucide-react";
 

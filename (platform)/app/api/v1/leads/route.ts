@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { requireAuth, getCurrentUser } from '@/lib/auth/auth-helpers';
-import { getLeads, getLeadsCount } from '@/lib/modules/leads';
-import { leadFiltersSchema } from '@/lib/modules/leads/schemas';
+import { getLeads, getLeadsCount } from '@/lib/modules/crm/leads';
+import { leadFiltersSchema } from '@/lib/modules/crm/leads/schemas';
 import { canAccessCRM } from '@/lib/auth/rbac';
 
 export async function GET(req: NextRequest) {

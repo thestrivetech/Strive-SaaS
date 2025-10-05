@@ -2,7 +2,7 @@
 
 import { createBrowserClient } from '@supabase/ssr';
 import { useMemo } from 'react';
-import type { Database } from '@/types/supabase';
+import type { Database } from '@/lib/types/shared/supabase';
 
 /**
  * Browser client for Supabase

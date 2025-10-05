@@ -14,6 +14,84 @@
 > **ALWAYS navigate to the correct project directory before working!**
 
 ---
+# 🤖 AGENTS - CRITICAL USAGE REQUIREMENTS
+
+> **⚠️ MANDATORY READING BEFORE EVERY AGENT INVOCATION:**
+>
+> **📖 Read this file FIRST:** `.claude/agents/USAGE-GUIDE.md`
+>
+> **NO EXCEPTIONS** - The usage guide MUST be read before invoking agents on ANY multi-step task.
+> It contains comprehensive patterns, anti-patterns, and lessons learned from failures.
+
+## 🔴 CRITICAL RULES (Quick Reference)
+
+**Agent Definitions:** `.claude/agents/strive-dev-[1-10].md` (all identical, full-stack experts)
+**Memory File:** All agents use this CLAUDE.md as their base knowledge
+
+### Before Invoking Agents:
+
+1. **✅ READ AGENT-USAGE-GUIDE.md** (no exceptions - it's your checklist)
+2. **✅ Structure tasks with explicit verification requirements**
+3. **✅ Use blocking language:** "DO NOT report success unless..."
+4. **✅ Require proof:** Command outputs in agent reports
+5. **✅ Include final validation agent** for multi-agent tasks
+
+### Core Pattern (Summary - See AGENT-USAGE-GUIDE.md for details):
+
+```
+Every agent task MUST include:
+- Exact scope (wildcards, explicit directories)
+- Comprehensive search first (grep for complete list)
+- Verification commands with expected outputs
+- Blocking requirement (what prevents success)
+- Return format (files changed + verification proof)
+
+Example:
+  Agent 1: Find ALL files → Complete list
+  Agent 2: Fix ALL from list → Verify changes
+  Agent 3: VALIDATION → Final check (block if fail)
+```
+
+### Lessons Learned:
+
+**What went wrong:** Agents reported success but:
+- Missed 40% of affected files
+- Created TypeScript errors
+- Updated wrong config files
+- Claimed "all done" without verification
+
+**What works:**
+- Explicit verification commands in task prompts
+- Blocking language ("DO NOT report success unless...")
+- Require command outputs as proof
+- Final validation agent that blocks on errors
+
+### Quick Anti-Patterns:
+
+❌ **DON'T:** "Fix the imports" (vague)
+✅ **DO:** "Fix ALL imports in app/**/*.tsx - use grep to find complete list first"
+
+❌ **DON'T:** Trust "✅ All done" without proof
+✅ **DO:** Require verification command outputs in report
+
+❌ **DON'T:** Parallel agents with overlapping scope
+✅ **DO:** Clear non-overlapping boundaries
+
+## 📋 Mandatory Pre-Flight Checklist
+
+Before invoking agents:
+
+- [ ] **Read AGENT-USAGE-GUIDE.md** (in root directory)
+- [ ] Task has clear, bounded scopes
+- [ ] Verification commands specified
+- [ ] Blocking language included
+- [ ] Return format with proof required
+- [ ] Final validation agent planned (multi-agent tasks)
+- [ ] Prompt <250 lines per agent
+
+**If you haven't read AGENT-USAGE-GUIDE.md → STOP and read it now.**
+
+---
 
 ## 📁 Repository Structure
 
@@ -449,3 +527,4 @@ Each project has complete documentation in its directory:
 
 **Last Updated:** 2025-10-04
 **Version:** 4.0 (Tri-Fold Architecture)
+- memory

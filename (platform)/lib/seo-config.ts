@@ -1,4 +1,4 @@
-import { SEOConfig, OrganizationSchema, ServiceSchema } from '@/types/seo';
+import { SEOConfig, OrganizationSchema, ServiceSchema } from '@/lib/types/real-estate/seo';
 
 // Base SEO configuration
 export const baseSEO: SEOConfig = {

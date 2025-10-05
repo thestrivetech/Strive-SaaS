@@ -23,10 +23,10 @@ import {
   connectTestDb,
   disconnectTestDb,
 } from '@/__tests__/utils/test-helpers';
-import { createLead, updateLeadScore, convertLead } from '@/lib/modules/leads/actions';
-import { createDeal, updateDealStage } from '@/lib/modules/deals/actions';
-import { getLeadById } from '@/lib/modules/leads/queries';
-import { getDealById } from '@/lib/modules/deals/queries';
+import { createLead, updateLeadScore, convertLead } from '@/lib/modules/crm/leads/actions';
+import { createDeal, updateDealStage } from '@/lib/modules/crm/deals/actions';
+import { getLeadById } from '@/lib/modules/crm/leads/queries';
+import { getDealById } from '@/lib/modules/crm/deals/queries';
 
 // Mock dependencies
 jest.mock('@/lib/auth/auth-helpers', () => ({
@@ -114,7 +114,6 @@ describe('Lead-to-Deal Workflow Integration', () => {
         lead_id: lead.id,
         organization_id: organization.id,
         created_by_id: agent.id,
-        scheduled_at: new Date(),
         completed_at: new Date(),
       },
     });
@@ -128,7 +127,6 @@ describe('Lead-to-Deal Workflow Integration', () => {
         lead_id: lead.id,
         organization_id: organization.id,
         created_by_id: agent.id,
-        scheduled_at: new Date(),
         completed_at: new Date(),
       },
     });
@@ -190,7 +188,8 @@ describe('Lead-to-Deal Workflow Integration', () => {
     const dealData = {
       title: 'TechCorp Enterprise License',
       value: 50000,
-      stage: 'PROPOSAL',
+      stage: 'PROPOSAL' as const,
+      status: 'ACTIVE' as const,
       probability: 50,
       expected_close_date: new Date(Date.now() + 90 * 24 * 60 * 60 * 1000), // 90 days
       contact_id: contact.id,
@@ -223,14 +222,14 @@ describe('Lead-to-Deal Workflow Integration', () => {
     expect(currentDeal.stage).toBe('NEGOTIATION');
     expect(currentDeal.probability).toBe(75);
 
-    // Move to CONTRACT (90%)
+    // Move to CLOSING (90%)
     currentDeal = await updateDealStage({
       id: currentDeal.id,
-      stage: 'CONTRACT',
+      stage: 'CLOSING',
       probability: 90,
     });
 
-    expect(currentDeal.stage).toBe('CONTRACT');
+    expect(currentDeal.stage).toBe('CLOSING');
     expect(currentDeal.probability).toBe(90);
 
     // === STEP 7: Close Deal as WON ===

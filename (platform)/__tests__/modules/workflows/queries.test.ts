@@ -2,7 +2,7 @@ import {
   getWorkflowTemplates,
   getWorkflowTemplateById,
   getWorkflowsByLoopId,
-} from '@/lib/modules/workflows/queries';
+} from '@/lib/modules/transactions/workflows/queries';
 import { getCurrentUser } from '@/lib/auth/auth-helpers';
 import { prisma } from '@/lib/prisma';
 

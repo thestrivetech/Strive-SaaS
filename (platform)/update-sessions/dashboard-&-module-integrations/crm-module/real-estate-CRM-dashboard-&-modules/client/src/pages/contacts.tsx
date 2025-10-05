@@ -8,7 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Plus, Download } from "lucide-react";
 import { useLeadsState } from "@/hooks/use-leads-state";
-import { Lead } from "@/types/crm";
+import { Lead } from "@/lib/types/real-estate/crm";
 import avatar1 from "@assets/generated_images/Female_agent_professional_headshot_0351dc22.png";
 import avatar2 from "@assets/generated_images/Male_agent_professional_headshot_a558128b.png";
 

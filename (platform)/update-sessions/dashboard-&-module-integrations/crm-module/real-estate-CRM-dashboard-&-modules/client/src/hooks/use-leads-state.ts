@@ -1,5 +1,5 @@
 import { useState, useCallback } from "react";
-import { Lead, Client, FollowUp, Note } from "@/types/crm";
+import { Lead, Client, FollowUp, Note } from "@/lib/types/real-estate/crm";
 import { PhaseStatus } from "@/lib/phase-status";
 
 export function useLeadsState(initialLeads: Lead[]) {

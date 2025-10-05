@@ -14,7 +14,7 @@ import {
   updateLeadScoreSchema,
   updateLeadStatusSchema,
   bulkAssignLeadsSchema,
-} from '@/lib/modules/leads/schemas';
+} from '@/lib/modules/crm/leads/schemas';
 
 describe('Leads Schemas', () => {
   describe('createLeadSchema', () => {

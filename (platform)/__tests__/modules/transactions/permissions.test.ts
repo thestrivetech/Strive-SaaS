@@ -2,7 +2,7 @@ import {
   hasTransactionPermission,
   canModifyLoop,
   TRANSACTION_PERMISSIONS,
-} from '@/lib/modules/transactions/permissions';
+} from '@/lib/modules/transactions/core/permissions';
 
 describe('Transaction Permissions', () => {
   describe('hasTransactionPermission', () => {

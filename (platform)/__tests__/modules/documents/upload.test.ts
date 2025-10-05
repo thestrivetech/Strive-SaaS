@@ -1,4 +1,4 @@
-import { uploadDocument, getDocumentDownloadUrl, updateDocument, deleteDocument } from '@/lib/modules/documents/actions';
+import { uploadDocument, getDocumentDownloadUrl, updateDocument, deleteDocument } from '@/lib/modules/transactions/documents/actions';
 import { getCurrentUser } from '@/lib/auth/auth-helpers';
 import { prisma } from '@/lib/prisma';
 import { storageService } from '@/lib/storage/supabase-storage';

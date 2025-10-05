@@ -1,6 +1,6 @@
 # CLAUDE-PLATFORM.md
 
-**Claude's Session Memory | v1.0 | Platform Project Standards**
+**Claude's Session Memory | v2.0 | Platform Project Standards - Multi-Industry Architecture**
 
 > ## 🔴 CRITICAL: READ-BEFORE-EDIT MANDATE
 >
@@ -77,56 +77,103 @@ Coverage: 80% minimum
 
 ## 📁 STRUCTURE
 
+> **Multi-Industry Scalable Architecture:**
+> - Platform designed to support multiple industries (Real Estate, Healthcare, Legal, etc.)
+> - Each industry has isolated routes, components, and business logic
+> - Shared infrastructure (auth, payments, AI) used across all industries
+> - Currently: Real Estate vertical fully implemented
+
 ```
 (platform)/
-├── app/                      # Next.js App Router
-│   ├── layout.tsx           # Root layout
-│   ├── page.tsx             # Root page (redirects based on role)
-│   ├── globals.css          # Global styles
-│   ├── (platform)/          # Protected platform routes
-│   │   ├── dashboard/       # Role-based dashboards
-│   │   │   ├── admin/      # Admin-only
-│   │   │   ├── employee/   # Employee view
-│   │   │   └── client/     # Client portal
-│   │   ├── crm/            # CRM system
-│   │   ├── projects/       # Project management
-│   │   ├── ai/             # Sai AI assistant
-│   │   ├── tools/          # Tool marketplace
-│   │   └── settings/       # User/org settings
-│   ├── (auth)/             # Auth routes
-│   │   ├── login/
-│   │   ├── signup/
-│   │   └── reset/
-│   └── api/                # API routes
-│       └── webhooks/       # Stripe, Supabase webhooks
+├── app/                          # Next.js App Router
+│   ├── layout.tsx               # Root layout
+│   ├── page.tsx                 # Root redirect (role-based routing)
+│   ├── globals.css              # Global styles
+│   │
+│   ├── (auth)/                  # Authentication routes
+│   │   ├── login/               # Login page
+│   │   ├── signup/              # Signup + industry selection
+│   │   ├── onboarding/          # Post-signup onboarding
+│   │   └── reset-password/      # Password reset
+│   │
+│   ├── (marketing)/             # SaaS app marketing (NOT website project)
+│   │   ├── page.tsx            # Landing page (app.strivetech.ai)
+│   │   ├── pricing/            # Pricing page
+│   │   └── features/           # Features showcase
+│   │
+│   ├── real-estate/             # Real Estate Industry App
+│   │   ├── layout.tsx          # Industry-specific layout
+│   │   ├── dashboard/          # Role-based dashboards
+│   │   │   ├── admin/         # Admin dashboard
+│   │   │   ├── employee/      # Employee workspace
+│   │   │   └── client/        # Client portal
+│   │   ├── crm/               # CRM (contacts, leads, deals)
+│   │   ├── transactions/      # Transaction management
+│   │   ├── listings/          # Property listings
+│   │   ├── tasks/             # Task management
+│   │   ├── analytics/         # Analytics & reporting
+│   │   ├── ai/                # Sai AI assistant
+│   │   └── settings/          # User/org settings
+│   │
+│   └── api/                     # API routes
+│       ├── webhooks/           # Stripe, Supabase webhooks
+│       └── ai/                 # AI endpoints
+│
 ├── components/
-│   ├── ui/                 # shadcn components
-│   ├── features/           # Feature components
-│   │   ├── crm/
-│   │   ├── projects/
-│   │   └── ai/
-│   └── shared/             # Shared components
-│       ├── layouts/
-│       ├── navigation/
-│       └── errors/
+│   ├── ui/                      # shadcn/ui primitives
+│   ├── shared/                  # Shared across all features
+│   │   ├── navigation/         # Nav components
+│   │   ├── forms/              # Reusable forms
+│   │   └── data-display/       # Tables, cards, etc.
+│   ├── layouts/                 # Layout components
+│   │   ├── DashboardLayout.tsx
+│   │   ├── AuthLayout.tsx
+│   │   └── MarketingLayout.tsx
+│   └── real-estate/             # Real Estate-specific components
+│       ├── crm/                # CRM components
+│       ├── transactions/       # Transaction components
+│       ├── listings/           # Listing components
+│       └── analytics/          # Analytics components
+│
 ├── lib/
-│   ├── modules/            # Feature modules (self-contained)
-│   │   └── [feature]/
-│   │       ├── actions.ts  # Server Actions
-│   │       ├── queries.ts  # Data queries
-│   │       ├── schemas.ts  # Zod schemas
-│   │       └── index.ts    # Public API
+│   ├── modules/                 # Feature modules (15 consolidated)
+│   │   ├── crm/                # CRM module
+│   │   │   ├── contacts/      # Contact management
+│   │   │   ├── leads/         # Lead management
+│   │   │   └── deals/         # Deal management
+│   │   ├── transactions/       # Transaction module
+│   │   │   ├── tasks/         # Transaction tasks
+│   │   │   ├── activity/      # Activity tracking
+│   │   │   ├── analytics/     # Analytics
+│   │   │   └── listings/      # Property listings
+│   │   ├── ai/                 # AI module
+│   │   ├── analytics/          # Analytics module
+│   │   └── [other-modules]/    # Other consolidated modules
+│   │       ├── actions.ts      # Server Actions
+│   │       ├── queries.ts      # Data queries
+│   │       ├── schemas.ts      # Zod schemas
+│   │       └── index.ts        # Public API
+│   │
 │   ├── auth/
-│   │   ├── middleware.ts   # Auth middleware
-│   │   └── rbac.ts         # Role-based access
+│   │   ├── middleware.ts       # Auth middleware
+│   │   └── rbac.ts             # Role-based access control
 │   ├── database/
-│   │   └── prisma.ts       # Prisma client
-│   └── utils/              # Shared utilities
+│   │   └── prisma.ts           # Prisma client singleton
+│   ├── types/
+│   │   ├── real-estate/        # Real Estate types
+│   │   └── shared/             # Shared types
+│   └── utils/                   # Shared utilities
+│
 ├── prisma/
-│   ├── schema.prisma       # Database schema (13 models)
-│   └── migrations/         # Migration history
-├── __tests__/              # Test suites
-└── middleware.ts           # Next.js middleware (auth + RBAC)
+│   ├── schema.prisma            # Database schema (13 models)
+│   └── migrations/              # Migration history
+│
+├── __tests__/                   # Test suites
+│   ├── modules/                # Module tests
+│   ├── components/             # Component tests
+│   └── integration/            # Integration tests
+│
+└── middleware.ts                # Next.js middleware (auth + RBAC)
 ```
 
 ---
@@ -306,20 +353,23 @@ export async function trackUsage(
 **1. Module Self-Containment**
 ```typescript
 // lib/modules/crm/
-// ├── actions.ts     - Server Actions (mutations)
-// ├── queries.ts     - Data fetching
-// ├── schemas.ts     - Zod schemas
-// ├── types.ts       - TypeScript types
-// └── index.ts       - Public API
+// ├── contacts/
+// │   ├── actions.ts     - Contact Server Actions
+// │   ├── queries.ts     - Contact data fetching
+// │   ├── schemas.ts     - Contact Zod schemas
+// │   └── index.ts       - Public API
+// ├── leads/             - Lead management
+// ├── deals/             - Deal management
+// └── index.ts           - Module exports
 
 // ✅ index.ts exports ONLY what's needed
-export { createCustomer, updateCustomer } from './actions';
-export { getCustomers, getCustomerById } from './queries';
-export { CustomerSchema } from './schemas';
-export type { Customer } from '@prisma/client';
+export { createContact, updateContact } from './contacts/actions';
+export { getContacts, getContactById } from './contacts/queries';
+export { ContactSchema } from './contacts/schemas';
+export type { Contact } from '@prisma/client';
 
 // ❌ NEVER cross-import between modules
-import { getProjects } from '@/lib/modules/projects/queries'; // FORBIDDEN
+import { getTransactions } from '@/lib/modules/transactions/queries'; // FORBIDDEN
 ```
 
 **2. Shared Types Only**
@@ -531,16 +581,70 @@ npm start
 6. **Type safety** - TypeScript + Zod everywhere
 7. **Security by default** - Never trust input
 8. **Production mindset** - Every line matters
+9. **Industry scalability** - Multi-industry architecture for horizontal expansion
+
+---
+
+## 🏭 MULTI-INDUSTRY ARCHITECTURE
+
+**Current State:**
+- **Real Estate vertical:** Fully implemented (CRM, Transactions, Listings, Analytics)
+- **Future verticals:** Healthcare, Legal, Construction, etc.
+
+**Scalability Pattern:**
+```typescript
+// Each industry gets isolated route structure
+app/
+├── real-estate/        // Industry 1
+│   ├── dashboard/
+│   ├── crm/
+│   └── transactions/
+├── healthcare/         // Industry 2 (future)
+│   ├── dashboard/
+│   ├── patients/
+│   └── appointments/
+└── legal/              // Industry 3 (future)
+    ├── dashboard/
+    ├── cases/
+    └── clients/
+
+// Shared infrastructure used across all industries
+lib/
+├── auth/               // Shared auth
+├── payments/           // Shared payments
+├── ai/                 // Shared AI
+└── modules/
+    ├── crm/           // Shared when applicable
+    └── real-estate/   // Industry-specific modules
+```
+
+**Adding a New Industry:**
+1. Create industry route group: `app/[industry-name]/`
+2. Industry-specific components: `components/[industry-name]/`
+3. Industry-specific types: `lib/types/[industry-name]/`
+4. Industry-specific modules (if needed): `lib/modules/[industry-name]/`
+5. Reuse shared infrastructure (auth, payments, AI)
+6. Industry selection during signup: `app/(auth)/signup/`
+
+**Benefits:**
+- **Horizontal scaling** - Add industries without touching existing code
+- **Code reuse** - Shared infrastructure (auth, payments, AI)
+- **Industry isolation** - Industry-specific features don't pollute shared code
+- **Clear boundaries** - Easy to understand what's industry-specific vs shared
 
 ---
 
 ## 📋 MODULE DEVELOPMENT WORKFLOW
 
-**Creating a New Module:**
+**Creating a New Module (or Sub-module):**
 
-1. **Create module directory**
+1. **Create module directory structure**
 ```bash
+# For a new top-level module
 mkdir -p lib/modules/my-feature
+
+# For a sub-module within existing module (preferred for consolidation)
+mkdir -p lib/modules/existing-module/my-subfeature
 ```
 
 2. **Create schemas** (schemas.ts)
@@ -618,6 +722,11 @@ describe('MyFeature Module', () => {
 });
 ```
 
+**Note on Module Organization:**
+- **Prefer consolidation** - Group related features under a parent module (e.g., `crm/contacts/`, `crm/leads/`)
+- **Current count:** 15 consolidated modules (down from 26)
+- **Before creating new module:** Check if it belongs under existing module structure
+
 ---
 
 ## ❌ NEVER DO THIS - PLATFORM
@@ -634,9 +743,15 @@ describe('MyFeature Module', () => {
 ❌ // No permission check in Server Action
 
 // Module Anti-patterns
-❌ import { ... } from '@/lib/modules/other-module'; // Cross-import
+❌ import { ... } from '@/lib/modules/other-module'; // Cross-module import
 ❌ export { prismaClient }; // Exposing internals
 ❌ // Missing Zod validation on input
+❌ mkdir lib/modules/orphan-feature // Create without checking consolidation
+
+// Routing Anti-patterns
+❌ app/(platform)/crm/ // OLD structure - use app/real-estate/crm/
+❌ components/(platform)/ // OLD - use components/real-estate/
+❌ app/dashboard/ // Missing industry prefix (real-estate/)
 
 // Security Anti-patterns
 ❌ const apiKey = process.env.STRIPE_SECRET_KEY; // Exposed to client
@@ -684,10 +799,11 @@ describe('MyFeature Module', () => {
 ## 🎯 DECISION TREE - PLATFORM
 
 **Before you start:**
-1. **Check RLS** → Are RLS policies enabled for table?
-2. **Check RBAC** → What roles can access this?
-3. **Check tier** → What subscription tier required?
-4. **Check module** → Does similar functionality exist?
+1. **Check industry** → Is this Real Estate-specific or shared?
+2. **Check RLS** → Are RLS policies enabled for table?
+3. **Check RBAC** → What roles can access this?
+4. **Check tier** → What subscription tier required?
+5. **Check module** → Does similar functionality exist?
 
 **During implementation:**
 - **Need to query data?** → Add organizationId filter
@@ -696,6 +812,9 @@ describe('MyFeature Module', () => {
 - **Need webhook?** → Verify signature first
 - **Cross-module data?** → Use @prisma/client types only
 - **New feature?** → Check subscription tier
+- **New route?** → Place in correct industry folder (`app/real-estate/`)
+- **New component?** → Shared or industry-specific? (`components/shared/` vs `components/real-estate/`)
+- **New module?** → Can it be consolidated under existing module?
 
 **Before committing:**
 - [ ] RLS context set for queries
@@ -705,7 +824,34 @@ describe('MyFeature Module', () => {
 - [ ] Input validated
 - [ ] 80%+ test coverage
 - [ ] No secrets exposed
+- [ ] Correct industry directory used
+- [ ] No duplicate routes (check old `app/(platform)/` removed)
 
 ---
 
 **Remember:** This is multi-tenant SaaS. Isolation > Speed > Features. One data leak = catastrophic failure.
+
+---
+
+## 📝 VERSION HISTORY
+
+**v2.0 (2025-10-05)** - Multi-Industry Architecture
+- Updated directory structure to reflect multi-industry scalability
+- Changed `app/(platform)/` → `app/real-estate/` (industry-specific routes)
+- Added `app/(auth)/` and `app/(marketing)/` route groups
+- Changed `components/(platform)/` → `components/real-estate/`
+- Added `components/shared/` and `components/layouts/`
+- Updated module structure to reflect consolidation (26 → 15 modules)
+- Added `lib/types/real-estate/` for industry-specific types
+- Added Multi-Industry Architecture section
+- Updated Decision Tree with industry considerations
+
+**v1.0 (2025-10-04)** - Initial Platform Standards
+- Initial platform-specific standards
+- Multi-tenancy and RLS rules
+- RBAC enforcement patterns
+- Module architecture guidelines
+- Security mandates
+- Performance targets
+
+**Last Updated:** 2025-10-05

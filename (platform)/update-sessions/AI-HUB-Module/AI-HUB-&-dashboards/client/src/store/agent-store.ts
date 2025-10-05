@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import { AgentPersonality, ModelConfig } from '@/types/agent';
+import { AgentPersonality, ModelConfig } from '@/lib/types/real-estate/agent';
 
 interface AIAgent {
   id: string;

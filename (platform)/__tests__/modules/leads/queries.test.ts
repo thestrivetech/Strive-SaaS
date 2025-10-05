@@ -24,7 +24,7 @@ import {
   getLeadStats,
   searchLeads,
   getLeadsByAssignee,
-} from '@/lib/modules/leads/queries';
+} from '@/lib/modules/crm/leads/queries';
 
 // Mock tenant context
 jest.mock('@/lib/database/utils', () => ({
@@ -82,11 +82,21 @@ describe('Leads Queries', () => {
         },
       });
 
-      const newLeads = await getLeads({ status: LeadStatus.NEW_LEAD });
+      const newLeads = await getLeads({
+        status: LeadStatus.NEW_LEAD,
+        limit: 50,
+        offset: 0,
+        sort_order: 'desc'
+      });
       expect(newLeads).toHaveLength(1);
       expect(newLeads[0].status).toBe(LeadStatus.NEW_LEAD);
 
-      const qualifiedLeads = await getLeads({ status: LeadStatus.QUALIFIED });
+      const qualifiedLeads = await getLeads({
+        status: LeadStatus.QUALIFIED,
+        limit: 50,
+        offset: 0,
+        sort_order: 'desc'
+      });
       expect(qualifiedLeads).toHaveLength(1);
       expect(qualifiedLeads[0].status).toBe(LeadStatus.QUALIFIED);
     });
@@ -118,6 +128,9 @@ describe('Leads Queries', () => {
 
       const leads = await getLeads({
         status: [LeadStatus.NEW_LEAD, LeadStatus.QUALIFIED],
+        limit: 50,
+        offset: 0,
+        sort_order: 'desc'
       });
 
       expect(leads).toHaveLength(2);
@@ -143,7 +156,12 @@ describe('Leads Queries', () => {
         },
       });
 
-      const websiteLeads = await getLeads({ source: LeadSource.WEBSITE });
+      const websiteLeads = await getLeads({
+        source: LeadSource.WEBSITE,
+        limit: 50,
+        offset: 0,
+        sort_order: 'desc'
+      });
       expect(websiteLeads).toHaveLength(1);
       expect(websiteLeads[0].source).toBe(LeadSource.WEBSITE);
     });
@@ -166,7 +184,12 @@ describe('Leads Queries', () => {
         },
       });
 
-      const hotLeads = await getLeads({ score: LeadScore.HOT });
+      const hotLeads = await getLeads({
+        score: LeadScore.HOT,
+        limit: 50,
+        offset: 0,
+        sort_order: 'desc'
+      });
       expect(hotLeads).toHaveLength(1);
       expect(hotLeads[0].score).toBe(LeadScore.HOT);
     });
@@ -196,7 +219,12 @@ describe('Leads Queries', () => {
         },
       });
 
-      const searchResults = await getLeads({ search: 'alice' });
+      const searchResults = await getLeads({
+        search: 'alice',
+        limit: 50,
+        offset: 0,
+        sort_order: 'desc'
+      });
 
       // Should match name, company, or phone containing 'alice'
       expect(searchResults.length).toBeGreaterThanOrEqual(1);
@@ -220,7 +248,12 @@ describe('Leads Queries', () => {
         },
       });
 
-      const vipLeads = await getLeads({ tags: ['vip'] });
+      const vipLeads = await getLeads({
+        tags: ['vip'],
+        limit: 50,
+        offset: 0,
+        sort_order: 'desc'
+      });
       expect(vipLeads).toHaveLength(1);
       expect(vipLeads[0].tags).toContain('vip');
     });
@@ -243,7 +276,12 @@ describe('Leads Queries', () => {
         },
       });
 
-      const assignedLeads = await getLeads({ assigned_to_id: agent.id });
+      const assignedLeads = await getLeads({
+        assigned_to_id: agent.id,
+        limit: 50,
+        offset: 0,
+        sort_order: 'desc'
+      });
       expect(assignedLeads).toHaveLength(1);
       expect(assignedLeads[0].assigned_to_id).toBe(agent.id);
     });
@@ -271,6 +309,9 @@ describe('Leads Queries', () => {
 
       const recentLeads = await getLeads({
         created_from: new Date('2024-01-01'),
+        limit: 50,
+        offset: 0,
+        sort_order: 'desc'
       });
 
       expect(recentLeads).toHaveLength(1);
@@ -290,9 +331,9 @@ describe('Leads Queries', () => {
         });
       }
 
-      const page1 = await getLeads({ limit: 10, offset: 0 });
-      const page2 = await getLeads({ limit: 10, offset: 10 });
-      const page3 = await getLeads({ limit: 10, offset: 20 });
+      const page1 = await getLeads({ limit: 10, offset: 0, sort_order: 'desc' });
+      const page2 = await getLeads({ limit: 10, offset: 10, sort_order: 'desc' });
+      const page3 = await getLeads({ limit: 10, offset: 20, sort_order: 'desc' });
 
       expect(page1).toHaveLength(10);
       expect(page2).toHaveLength(10);
@@ -324,10 +365,10 @@ describe('Leads Queries', () => {
         },
       });
 
-      const byName = await getLeads({ sort_by: 'name', sort_order: 'asc' });
+      const byName = await getLeads({ sort_by: 'name', sort_order: 'asc', limit: 50, offset: 0 });
       expect(byName[0].name).toBe('Alice');
 
-      const byScore = await getLeads({ sort_by: 'score_value', sort_order: 'desc' });
+      const byScore = await getLeads({ sort_by: 'score_value', sort_order: 'desc', limit: 50, offset: 0 });
       expect(byScore[0].score_value).toBe(95);
     });
 
@@ -387,7 +428,12 @@ describe('Leads Queries', () => {
         },
       });
 
-      const hotCount = await getLeadsCount({ score: LeadScore.HOT });
+      const hotCount = await getLeadsCount({
+        score: LeadScore.HOT,
+        limit: 50,
+        offset: 0,
+        sort_order: 'desc'
+      });
       expect(hotCount).toBe(1);
     });
   });

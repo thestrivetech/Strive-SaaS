@@ -1,4 +1,4 @@
-import { createLoop, updateLoop, deleteLoop, updateLoopProgress } from '@/lib/modules/transactions/actions';
+import { createLoop, updateLoop, deleteLoop, updateLoopProgress } from '@/lib/modules/transactions/core/actions';
 import { getCurrentUser } from '@/lib/auth/auth-helpers';
 import { prisma } from '@/lib/prisma';
 
