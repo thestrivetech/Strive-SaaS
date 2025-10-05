@@ -1079,7 +1079,8 @@ enum ToolType {
 }
 
 enum UserRole {
-  ADMIN
+  SUPER_ADMIN
+  ORG_ADMIN
   MODERATOR
   EMPLOYEE
   CLIENT
