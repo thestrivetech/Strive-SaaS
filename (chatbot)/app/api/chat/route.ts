@@ -3,17 +3,30 @@
 import { NextRequest, NextResponse } from 'next/server';
 import Groq from 'groq-sdk/index.mjs';
 import { z } from 'zod';
-import { loadIndustryConfig } from '@/lib/industries/configs';
-import { RAGService } from '@/lib/services/rag-service';
-import { RentCastService, PropertySearchParams } from '@/lib/modules/real-estate/services/rentcast-service';
-import { IndustryType } from '@strive/shared/types/industry';
-import { Message } from '@strive/shared/types/conversation';
-import { ChatRequestSchema } from '@strive/shared/schemas/chat-request';
-import { RAGContext } from '@strive/shared/types/rag';
+import { loadIndustryConfig } from '@/app/industries';
+import { RAGService } from '@/app/services/rag-service';
+import { RentCastService, PropertySearchParams } from '@/app/services/rentcast-service';
+import { IndustryType } from '@/types/industry';
+import { ChatRequestSchema } from '@/app/schemas/chat-request';
+import {
+  extractDataFromMessage,
+  mergeExtractedData,
+  hasMinimumSearchCriteria,
+  formatPreferences,
+  PropertyPreferences,
+} from '@/lib/ai/data-extraction';
+import {
+  syncLeadToCRM,
+  logActivity,
+  trackPropertyView,
+} from '@/lib/services/crm-integration';
 
 const groq = new Groq({
   apiKey: process.env.GROQ_API_KEY,
 });
+
+// Session state cache (in production, use Redis or database)
+const sessionStateCache = new Map<string, PropertyPreferences>();
 
 export async function POST(req: NextRequest) {
   try {
@@ -25,6 +38,7 @@ export async function POST(req: NextRequest) {
       messages,
       industry = 'strive',
       sessionId,
+      organizationId = 'default_org', // TODO: Get from auth context
     } = validated;
 
     // Load industry configuration
@@ -33,11 +47,40 @@ export async function POST(req: NextRequest) {
     // Get the latest user message
     const latestUserMessage = messages[messages.length - 1];
 
+    // 🎯 PHASE 1: INTELLIGENT DATA EXTRACTION
+    console.log('🧠 Extracting data from user message...');
+    const extraction = await extractDataFromMessage(
+      latestUserMessage.content,
+      messages.slice(-5).map(m => ({ role: m.role as 'user' | 'assistant', content: m.content }))
+    );
+
+    console.log('✅ Extracted:', {
+      fields: extraction.extractedFields,
+      confidence: extraction.confidence,
+      preferences: formatPreferences(extraction.propertyPreferences),
+    });
+
+    // Get or initialize session state
+    let sessionPreferences = sessionStateCache.get(sessionId) || {};
+
+    // Merge extracted data with existing session state
+    sessionPreferences = mergeExtractedData(sessionPreferences, extraction.propertyPreferences);
+    sessionStateCache.set(sessionId, sessionPreferences);
+
+    console.log('💾 Current session state:', formatPreferences(sessionPreferences));
+
+    // Check if we can search now
+    const canSearchNow = hasMinimumSearchCriteria(sessionPreferences);
+    console.log('🔍 Can search:', canSearchNow);
+
     // Build conversation history context
     const conversationHistory = {
       stage: determineConversationStage(messages as unknown as Message[]),
       messageCount: messages.length,
       problemsDiscussed: extractProblemsDiscussed(messages as unknown as Message[]),
+      currentPreferences: sessionPreferences,
+      extractedThisMessage: extraction.extractedFields,
+      canSearch: canSearchNow,
     };
 
     // 🔥 RAG ENHANCEMENT: Get semantic context
@@ -54,10 +97,13 @@ export async function POST(req: NextRequest) {
       suggestedApproach: ragContext.guidance.suggestedApproach,
     });
 
-    // Build enhanced system prompt with RAG context
+    // Build enhanced system prompt with RAG context AND extracted data
     const enhancedSystemPrompt = buildEnhancedSystemPrompt(
       config.systemPrompt,
-      ragContext
+      ragContext,
+      sessionPreferences,
+      extraction.extractedFields,
+      canSearchNow
     );
 
     // Prepare messages for Groq
@@ -100,33 +146,55 @@ export async function POST(req: NextRequest) {
             );
           }
 
-          // 🏠 PROPERTY SEARCH: Check if response contains property search request
-          if (industry === 'real-estate' && fullResponse.includes('<property_search>')) {
+          // 🏠 PROPERTY SEARCH: Check if response contains property search request OR if we can auto-search
+          const shouldSearch = industry === 'real-estate' && (
+            fullResponse.includes('<property_search>') || canSearchNow
+          );
+
+          if (shouldSearch) {
             try {
-              console.log('🏠 Property search detected in response');
-              
-              // Extract search parameters from LLM response
+              console.log('🏠 Property search triggered');
+
+              let searchParams: PropertySearchParams;
+
+              // Check if AI provided explicit search parameters
               const searchMatch = fullResponse.match(/<property_search>([\s\S]*?)<\/property_search>/);
-              
+
               if (searchMatch) {
-                const searchParams: PropertySearchParams = JSON.parse(searchMatch[1]);
-                console.log('🔍 Searching properties with params:', searchParams);
-
-                // Fetch properties from RentCast
-                const properties = await RentCastService.searchProperties(searchParams);
-                console.log(`✅ Found ${properties.length} properties`);
-
-                // Match and score properties
-                const matches = RentCastService.matchProperties(properties, searchParams);
-                console.log(`🎯 Top ${matches.length} matches selected`);
-
-                // Send property results to client
-                const propertyData = JSON.stringify({
-                  type: 'property_results',
-                  properties: matches,
-                });
-                controller.enqueue(encoder.encode(`data: ${propertyData}\n\n`));
+                // AI provided explicit search params
+                searchParams = JSON.parse(searchMatch[1]);
+                console.log('🔍 Using AI-provided search params:', searchParams);
+              } else if (canSearchNow) {
+                // Auto-search using extracted session state
+                searchParams = {
+                  location: sessionPreferences.location!,
+                  maxPrice: sessionPreferences.maxPrice!,
+                  minBedrooms: sessionPreferences.minBedrooms || 2, // Default: 2+ beds
+                  minBathrooms: sessionPreferences.minBathrooms || 1, // Default: 1+ baths
+                  mustHaveFeatures: sessionPreferences.mustHaveFeatures || [],
+                  niceToHaveFeatures: sessionPreferences.niceToHaveFeatures,
+                  propertyType: sessionPreferences.propertyType === 'any' ? undefined : sessionPreferences.propertyType,
+                };
+                console.log('🔍 Auto-searching with extracted params:', searchParams);
+              } else {
+                // Skip search
+                throw new Error('Cannot search: minimum criteria not met');
               }
+
+              // Fetch properties from RentCast
+              const properties = await RentCastService.searchProperties(searchParams);
+              console.log(`✅ Found ${properties.length} properties`);
+
+              // Match and score properties
+              const matches = RentCastService.matchProperties(properties, searchParams);
+              console.log(`🎯 Top ${matches.length} matches selected`);
+
+              // Send property results to client
+              const propertyData = JSON.stringify({
+                type: 'property_results',
+                properties: matches,
+              });
+              controller.enqueue(encoder.encode(`data: ${propertyData}\n\n`));
             } catch (propertyError) {
               console.error('❌ Property search error:', propertyError);
               const errorData = JSON.stringify({
@@ -150,6 +218,55 @@ export async function POST(req: NextRequest) {
             problemDetected: ragContext.searchResults.detectedProblems[0],
             solutionPresented: ragContext.searchResults.recommendedSolutions[0],
           });
+
+          // 💼 CRM INTEGRATION: Sync lead to platform CRM
+          if (industry === 'real-estate') {
+            try {
+              console.log('💼 Syncing lead to CRM...');
+
+              const { leadId, isNew } = await syncLeadToCRM({
+                sessionId,
+                organizationId,
+                contactInfo: extraction.contactInfo,
+                propertyPreferences: sessionPreferences,
+                messageCount: messages.length,
+                hasSearched: shouldSearch,
+                viewedProperties: [], // Updated via separate tracking
+                lastMessage: latestUserMessage.content,
+              });
+
+              console.log(`✅ ${isNew ? 'Created' : 'Updated'} lead ${leadId} in CRM`);
+
+              // Log conversation activity
+              await logActivity({
+                organizationId,
+                leadId,
+                activityType: 'message',
+                description: `Chatbot conversation: "${latestUserMessage.content.slice(0, 100)}..."`,
+                metadata: {
+                  extracted_fields: extraction.extractedFields,
+                  can_search: canSearchNow,
+                  preferences: sessionPreferences,
+                },
+              });
+
+              // Log property search activity if triggered
+              if (shouldSearch) {
+                await logActivity({
+                  organizationId,
+                  leadId,
+                  activityType: 'property_search',
+                  description: `Searched properties in ${sessionPreferences.location} under $${sessionPreferences.maxPrice?.toLocaleString()}`,
+                  metadata: {
+                    search_params: sessionPreferences,
+                  },
+                });
+              }
+            } catch (crmError) {
+              console.error('❌ CRM sync error (non-critical):', crmError);
+              // Don't fail the request if CRM sync fails
+            }
+          }
 
           // Send completion signal
           controller.enqueue(encoder.encode('data: [DONE]\n\n'));
@@ -193,53 +310,67 @@ export async function POST(req: NextRequest) {
 }
 
 /**
- * Build enhanced system prompt with RAG context
+ * Build enhanced system prompt with RAG context AND conversation state
  */
 function buildEnhancedSystemPrompt(
   basePrompt: string,
-  ragContext: RAGContext
+  ragContext: RAGContext,
+  sessionPreferences: PropertyPreferences,
+  extractedFields: string[],
+  canSearch: boolean
 ): string {
   const { searchResults, guidance } = ragContext;
 
-  let enhancement = '\n\n## 🎯 CONTEXTUAL INTELLIGENCE (RAG-Enhanced)\n\n';
+  let enhancement = '\n\n## 🎯 CONTEXTUAL INTELLIGENCE\n\n';
 
-  // Add detected problems
+  // Add conversation state awareness
+  enhancement += `### 📊 Current Conversation State:\n\n`;
+
+  if (Object.keys(sessionPreferences).length > 0) {
+    enhancement += `**Information Already Collected:**\n`;
+    if (sessionPreferences.location) enhancement += `- 📍 Location: ${sessionPreferences.location}\n`;
+    if (sessionPreferences.maxPrice) enhancement += `- 💰 Budget: $${sessionPreferences.maxPrice.toLocaleString()}\n`;
+    if (sessionPreferences.minBedrooms) enhancement += `- 🛏️ Bedrooms: ${sessionPreferences.minBedrooms}+\n`;
+    if (sessionPreferences.minBathrooms) enhancement += `- 🛁 Bathrooms: ${sessionPreferences.minBathrooms}+\n`;
+    if (sessionPreferences.propertyType) enhancement += `- 🏠 Type: ${sessionPreferences.propertyType}\n`;
+    if (sessionPreferences.mustHaveFeatures && sessionPreferences.mustHaveFeatures.length > 0) {
+      enhancement += `- ✨ Must-have features: ${sessionPreferences.mustHaveFeatures.join(', ')}\n`;
+    }
+    enhancement += '\n';
+  }
+
+  if (extractedFields.length > 0) {
+    enhancement += `**Just Extracted from Last Message:** ${extractedFields.join(', ')}\n\n`;
+  }
+
+  // Search readiness
+  if (canSearch) {
+    enhancement += `🚀 **READY TO SEARCH!** You have location + budget. You can trigger a property search NOW by outputting the <property_search> format!\n\n`;
+  } else {
+    const missing: string[] = [];
+    if (!sessionPreferences.location) missing.push('location');
+    if (!sessionPreferences.maxPrice) missing.push('budget');
+    if (missing.length > 0) {
+      enhancement += `❌ **Cannot search yet.** Missing: ${missing.join(', ')}\n`;
+      enhancement += `Ask for these naturally in your next response!\n\n`;
+    }
+  }
+
+  // RAG-Enhanced Guidance
   if (searchResults.detectedProblems.length > 0) {
-    enhancement += `**Similar Conversations Detected These Problems:**\n`;
+    enhancement += `### 💡 Similar Conversations:\n`;
     searchResults.detectedProblems.forEach((problem: string) => {
       enhancement += `- ${problem}\n`;
     });
     enhancement += '\n';
   }
 
-  // Add proven approach
-  if (searchResults.bestPattern) {
-    enhancement += `**Proven Approach (${Math.round(searchResults.bestPattern.conversionScore * 100)}% conversion rate):**\n`;
-    enhancement += `This type of conversation typically succeeds when you focus on quantifying the problem's impact and showing clear ROI.\n\n`;
+  if (guidance.suggestedApproach) {
+    enhancement += `### 🎯 Recommended Approach:\n${guidance.suggestedApproach}\n\n`;
   }
 
-  // Add guidance
-  enhancement += `**Recommended Strategy:**\n`;
-  enhancement += `${guidance.suggestedApproach}\n\n`;
-
-  if (guidance.keyPoints.length > 0) {
-    enhancement += `**Key Points to Include:**\n`;
-    guidance.keyPoints.forEach((point: string) => {
-      enhancement += `- ${point}\n`;
-    });
-    enhancement += '\n';
-  }
-
-  if (guidance.avoidTopics && guidance.avoidTopics.length > 0) {
-    enhancement += `**Topics to Avoid:**\n`;
-    guidance.avoidTopics.forEach((topic: string) => {
-      enhancement += `- ${topic}\n`;
-    });
-    enhancement += '\n';
-  }
-
-  enhancement += `**Confidence Level:** ${Math.round(searchResults.confidence.overallConfidence * 100)}%\n`;
-  enhancement += `**Urgency:** ${guidance.urgencyLevel}\n`;
+  enhancement += `**REMEMBER:** Don't ask for information you already have! Reference it naturally instead.\n`;
+  enhancement += `**REMEMBER:** If you can search now, do it! Don't keep asking unnecessary questions.\n`;
 
   return basePrompt + enhancement;
 }

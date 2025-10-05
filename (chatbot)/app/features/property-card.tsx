@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Home, Bed, Bath, Maximize2, Calendar, Image, MapPin, Star, TrendingUp, X } from 'lucide-react';
+import { Home, Bed, Bath, Maximize2, Calendar, Image, MapPin, Star, TrendingUp, X, Heart, Share2, Info } from 'lucide-react';
 
 interface Property {
   id: string;
@@ -14,10 +14,19 @@ interface Property {
   propertyType: string;
   images: string[];
   daysOnMarket: number;
+  yearBuilt?: number;
+  lotSize?: number;
+  description?: string;
+  mlsId?: string;
   schoolRatings?: {
     elementary?: number;
     middle?: number;
     high?: number;
+  };
+  agentInfo?: {
+    name: string;
+    phone: string;
+    email: string;
   };
 }
 
@@ -30,13 +39,27 @@ interface PropertyMatch {
 
 interface PropertyCardProps {
   match: PropertyMatch;
-  onScheduleShowing: (propertyId: string) => void;
+  onScheduleShowing: (propertyId: string, propertyAddress: string) => void;
+  onSaveFavorite?: (propertyId: string, propertyAddress: string) => void;
+  onViewDetails?: (propertyId: string) => void;
+  onShare?: (propertyId: string, propertyAddress: string) => void;
 }
 
-const PropertyCard: React.FC<PropertyCardProps> = ({ match, onScheduleShowing }) => {
+const PropertyCard: React.FC<PropertyCardProps> = ({
+  match,
+  onScheduleShowing,
+  onSaveFavorite,
+  onViewDetails,
+  onShare,
+}) => {
   const [showPhotos, setShowPhotos] = useState(false);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
-  const { property, matchReasons } = match;
+  const [isFavorited, setIsFavorited] = useState(false);
+  const { property, matchReasons, matchScore } = match;
+
+  // Calculate match percentage (0-100%)
+  const maxScore = 200; // From enhanced matching algorithm
+  const matchPercentage = Math.min(Math.round((matchScore / maxScore) * 100), 100);
 
   const handleNextImage = () => {
     setCurrentImageIndex((prev) => 
@@ -73,18 +96,46 @@ const PropertyCard: React.FC<PropertyCardProps> = ({ match, onScheduleShowing })
             </div>
           )}
           
+          {/* Match Percentage Badge */}
+          <div className={`absolute top-3 left-3 px-4 py-2 rounded-full font-bold text-lg shadow-lg ${
+            matchPercentage >= 90 ? 'bg-green-600 text-white' :
+            matchPercentage >= 75 ? 'bg-blue-600 text-white' :
+            matchPercentage >= 60 ? 'bg-yellow-600 text-white' :
+            'bg-gray-600 text-white'
+          }`}>
+            {matchPercentage}% Match
+          </div>
+
           {/* Price Badge */}
-          <div className="absolute top-3 left-3 bg-blue-600 text-white px-4 py-2 rounded-full font-bold text-lg shadow-lg">
+          <div className="absolute top-14 left-3 bg-white/90 backdrop-blur-sm text-gray-800 px-3 py-1.5 rounded-full font-bold text-base shadow-lg">
             ${property.price.toLocaleString()}
           </div>
 
           {/* Days on Market Badge */}
           {property.daysOnMarket <= 7 && (
-            <div className="absolute top-3 right-3 bg-green-500 text-white px-3 py-1 rounded-full text-sm font-semibold flex items-center gap-1">
+            <div className="absolute top-3 right-3 bg-green-500 text-white px-3 py-1 rounded-full text-sm font-semibold flex items-center gap-1 shadow-lg">
               <TrendingUp size={14} />
               {property.daysOnMarket === 0 ? 'Just Listed!' : `${property.daysOnMarket}d ago`}
             </div>
           )}
+
+          {/* Favorite Button */}
+          <button
+            onClick={(e) => {
+              e.stopPropagation();
+              setIsFavorited(!isFavorited);
+              if (onSaveFavorite) {
+                onSaveFavorite(property.id, property.address);
+              }
+            }}
+            className={`absolute top-14 right-3 p-2 rounded-full shadow-lg transition-all ${
+              isFavorited
+                ? 'bg-red-500 text-white'
+                : 'bg-white/90 backdrop-blur-sm text-gray-600 hover:bg-red-500 hover:text-white'
+            }`}
+          >
+            <Heart size={20} className={isFavorited ? 'fill-current' : ''} />
+          </button>
         </div>
 
         {/* Property Details */}
@@ -142,22 +193,62 @@ const PropertyCard: React.FC<PropertyCardProps> = ({ match, onScheduleShowing })
             </div>
           )}
 
-          {/* Action Buttons */}
+          {/* Property Type & Year Built */}
+          <div className="flex items-center gap-3 mb-3 text-sm text-gray-600">
+            <span className="font-medium capitalize">{property.propertyType?.replace(/-/g, ' ')}</span>
+            {property.yearBuilt && (
+              <>
+                <span>•</span>
+                <span>Built {property.yearBuilt}</span>
+              </>
+            )}
+            {property.lotSize && (
+              <>
+                <span>•</span>
+                <span>{(property.lotSize / 43560).toFixed(2)} acres</span>
+              </>
+            )}
+          </div>
+
+          {/* Primary Action Buttons */}
           <div className="flex gap-2 mt-4">
             <button
               onClick={() => setShowPhotos(true)}
-              className="flex-1 bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-semibold py-3 px-4 rounded-lg transition-all duration-300 flex items-center justify-center gap-2 shadow-md hover:shadow-lg"
+              disabled={!property.images || property.images.length === 0}
+              className="flex-1 bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 disabled:from-gray-400 disabled:to-gray-500 disabled:cursor-not-allowed text-white font-semibold py-3 px-4 rounded-lg transition-all duration-300 flex items-center justify-center gap-2 shadow-md hover:shadow-lg"
             >
               <Image size={18} />
-              View Photos ({property.images.length || 0})
+              Photos ({property.images?.length || 0})
             </button>
             <button
-              onClick={() => onScheduleShowing(property.id)}
+              onClick={() => onScheduleShowing(property.id, property.address)}
               className="flex-1 bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white font-semibold py-3 px-4 rounded-lg transition-all duration-300 flex items-center justify-center gap-2 shadow-md hover:shadow-lg"
             >
               <Calendar size={18} />
-              Schedule Showing
+              Schedule Tour
             </button>
+          </div>
+
+          {/* Secondary Action Buttons */}
+          <div className="flex gap-2 mt-2">
+            {onViewDetails && (
+              <button
+                onClick={() => onViewDetails(property.id)}
+                className="flex-1 bg-white border-2 border-blue-200 hover:border-blue-400 hover:bg-blue-50 text-blue-700 font-medium py-2 px-3 rounded-lg transition-all duration-300 flex items-center justify-center gap-2"
+              >
+                <Info size={16} />
+                Details
+              </button>
+            )}
+            {onShare && (
+              <button
+                onClick={() => onShare(property.id, property.address)}
+                className="flex-1 bg-white border-2 border-blue-200 hover:border-blue-400 hover:bg-blue-50 text-blue-700 font-medium py-2 px-3 rounded-lg transition-all duration-300 flex items-center justify-center gap-2"
+              >
+                <Share2 size={16} />
+                Share
+              </button>
+            )}
           </div>
         </div>
       </div>

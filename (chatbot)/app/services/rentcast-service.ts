@@ -126,7 +126,7 @@ export class RentCastService {
   }
 
   /**
-   * Match properties to user preferences with scoring algorithm
+   * Enhanced property matching algorithm with intelligent scoring
    */
   static matchProperties(
     properties: Property[],
@@ -139,101 +139,207 @@ export class RentCastService {
       const matchReasons: string[] = [];
       const missingFeatures: string[] = [];
 
-      // 1. Price matching (hard constraint + scoring)
-      if (property.price > params.maxPrice) continue; // Skip if over budget
+      // ========================================
+      // 1. PRICE MATCHING (Max 35 points)
+      // ========================================
+      if (property.price > params.maxPrice) continue; // Hard filter - over budget
 
       const priceDiff = params.maxPrice - property.price;
-      const priceScore = Math.min((priceDiff / params.maxPrice) * 30, 30); // Max 30 points
-      score += priceScore;
-      
-      if (priceDiff > params.maxPrice * 0.1) {
-        matchReasons.push(`Great value - $${priceDiff.toLocaleString()} under budget`);
+      const pricePercentUnderBudget = (priceDiff / params.maxPrice) * 100;
+
+      // Sweet spot: 5-15% under budget gets maximum points
+      if (pricePercentUnderBudget >= 5 && pricePercentUnderBudget <= 15) {
+        score += 35; // Perfect price range
+        matchReasons.push(`Perfect price - $${priceDiff.toLocaleString()} under budget`);
+      } else if (pricePercentUnderBudget > 15) {
+        score += 25; // Way under budget (might be missing features)
+        matchReasons.push(`Great value - well under budget`);
+      } else if (pricePercentUnderBudget >= 0) {
+        score += 20; // At or slightly under budget
       }
 
-      // 2. Bedroom matching (hard constraint)
-      if (property.bedrooms < params.minBedrooms) continue;
-      score += 20;
-      if (property.bedrooms > params.minBedrooms) {
-        matchReasons.push(`Extra bedroom (${property.bedrooms} total)`);
-        score += 5;
+      // ========================================
+      // 2. BEDROOM MATCHING (Max 25 points)
+      // ========================================
+      if (property.bedrooms < params.minBedrooms) continue; // Hard filter
+
+      if (property.bedrooms === params.minBedrooms) {
+        score += 25; // Exact match
+      } else if (property.bedrooms === params.minBedrooms + 1) {
+        score += 30; // One extra bedroom (bonus!)
+        matchReasons.push(`${property.bedrooms} bedrooms (bonus room)`);
+      } else if (property.bedrooms > params.minBedrooms + 1) {
+        score += 20; // Too many bedrooms might mean higher maintenance
+        matchReasons.push(`${property.bedrooms} bedrooms (spacious)`);
       }
 
-      // 3. Bathroom matching (soft constraint)
-      if (params.minBathrooms && property.bathrooms >= params.minBathrooms) {
-        score += 15;
-        if (property.bathrooms > params.minBathrooms) {
-          matchReasons.push(`${property.bathrooms} bathrooms`);
-          score += 5;
-        }
-      }
-
-      // 4. Must-have features (critical)
-      let mustHaveScore = 0;
-      for (const feature of params.mustHaveFeatures) {
-        const hasFeature = this.propertyHasFeature(property, feature);
-        if (hasFeature) {
-          mustHaveScore += 10;
-          matchReasons.push(this.formatFeature(feature));
-        } else {
-          missingFeatures.push(this.formatFeature(feature));
-          mustHaveScore -= 5; // Penalty for missing must-have
-        }
-      }
-      score += mustHaveScore;
-
-      // 5. Nice-to-have features (bonus points)
-      if (params.niceToHaveFeatures) {
-        for (const feature of params.niceToHaveFeatures) {
-          if (this.propertyHasFeature(property, feature)) {
+      // ========================================
+      // 3. BATHROOM MATCHING (Max 20 points)
+      // ========================================
+      if (params.minBathrooms) {
+        if (property.bathrooms >= params.minBathrooms) {
+          score += 15;
+          if (property.bathrooms > params.minBathrooms) {
             score += 5;
-            matchReasons.push(this.formatFeature(feature));
+            matchReasons.push(`${property.bathrooms} bathrooms`);
           }
         }
+      } else {
+        // No bathroom preference - still reward more bathrooms
+        if (property.bathrooms >= 2) {
+          score += 10;
+        }
       }
 
-      // 6. Days on market (newer = better)
-      if (property.daysOnMarket <= 3) {
+      // ========================================
+      // 4. MUST-HAVE FEATURES (Max 40 points)
+      // ========================================
+      const mustHaveFeatures = params.mustHaveFeatures || [];
+      let mustHaveMatches = 0;
+      let mustHaveMisses = 0;
+
+      for (const feature of mustHaveFeatures) {
+        const hasFeature = this.propertyHasFeature(property, feature);
+        if (hasFeature) {
+          mustHaveMatches++;
+          score += 15; // High value for must-haves
+          matchReasons.push(`✓ ${this.formatFeature(feature)}`);
+        } else {
+          mustHaveMisses++;
+          missingFeatures.push(this.formatFeature(feature));
+          score -= 10; // Heavy penalty for missing must-haves
+        }
+      }
+
+      // Bonus for having ALL must-haves
+      if (mustHaveFeatures.length > 0 && mustHaveMisses === 0) {
         score += 10;
-        matchReasons.push('Just listed!');
+        matchReasons.push('Has all must-have features!');
+      }
+
+      // ========================================
+      // 5. NICE-TO-HAVE FEATURES (Max 15 points)
+      // ========================================
+      const niceToHaves = params.niceToHaveFeatures || [];
+      let niceToHaveCount = 0;
+
+      for (const feature of niceToHaves) {
+        if (this.propertyHasFeature(property, feature)) {
+          niceToHaveCount++;
+          score += 5; // Smaller bonus for nice-to-haves
+          matchReasons.push(`+ ${this.formatFeature(feature)}`);
+        }
+      }
+
+      // ========================================
+      // 6. PROPERTY TYPE MATCHING (Max 15 points)
+      // ========================================
+      if (params.propertyType && params.propertyType !== 'any') {
+        const propertyTypeNormalized = property.propertyType?.toLowerCase().replace(/[-\s]/g, '');
+        const targetTypeNormalized = params.propertyType.toLowerCase().replace(/[-\s]/g, '');
+
+        if (propertyTypeNormalized?.includes(targetTypeNormalized) ||
+            targetTypeNormalized?.includes(propertyTypeNormalized || '')) {
+          score += 15;
+        } else {
+          score -= 5; // Small penalty for wrong type
+        }
+      }
+
+      // ========================================
+      // 7. DAYS ON MARKET (Max 15 points)
+      // ========================================
+      if (property.daysOnMarket <= 3) {
+        score += 15;
+        matchReasons.push('🔥 Just listed!');
       } else if (property.daysOnMarket <= 7) {
-        score += 5;
+        score += 10;
         matchReasons.push('Recently listed');
-      }
-
-      // 7. Property condition indicators
-      if (property.yearBuilt && property.yearBuilt >= 2010) {
+      } else if (property.daysOnMarket <= 30) {
         score += 5;
-        matchReasons.push('Modern construction');
+      } else if (property.daysOnMarket > 90) {
+        score -= 5; // Been on market a while - might be overpriced
       }
 
-      // 8. School ratings (if available)
+      // ========================================
+      // 8. PROPERTY CONDITION (Max 10 points)
+      // ========================================
+      if (property.yearBuilt) {
+        const age = new Date().getFullYear() - property.yearBuilt;
+
+        if (age <= 5) {
+          score += 10;
+          matchReasons.push('Brand new construction');
+        } else if (age <= 15) {
+          score += 7;
+          matchReasons.push('Modern build');
+        } else if (age <= 30) {
+          score += 3;
+        } else if (age > 50) {
+          score -= 3; // Older homes might need work
+        }
+      }
+
+      // ========================================
+      // 9. SCHOOL RATINGS (Max 15 points)
+      // ========================================
       if (property.schoolRatings) {
         const avgRating = (
           (property.schoolRatings.elementary || 0) +
           (property.schoolRatings.middle || 0) +
           (property.schoolRatings.high || 0)
         ) / 3;
-        
-        if (avgRating >= 8) {
-          score += 10;
-          matchReasons.push('Top-rated schools nearby');
+
+        if (avgRating >= 9) {
+          score += 15;
+          matchReasons.push('⭐ Exceptional schools nearby');
+        } else if (avgRating >= 8) {
+          score += 12;
+          matchReasons.push('Top-rated schools');
+        } else if (avgRating >= 7) {
+          score += 8;
+          matchReasons.push('Great schools');
         } else if (avgRating >= 6) {
-          score += 5;
+          score += 4;
         }
       }
 
-      // 9. Price per sqft (efficiency score)
-      const pricePerSqft = property.price / property.sqft;
-      const marketAvg = 200; // Example: adjust based on market data
-      if (pricePerSqft < marketAvg * 0.9) {
-        score += 5;
-        matchReasons.push('Excellent price per sqft');
+      // ========================================
+      // 10. PRICE PER SQFT EFFICIENCY (Max 10 points)
+      // ========================================
+      if (property.sqft > 0) {
+        const pricePerSqft = property.price / property.sqft;
+
+        // Market average varies by location - using $200 as baseline
+        const marketAvg = 200;
+
+        if (pricePerSqft < marketAvg * 0.75) {
+          score += 10;
+          matchReasons.push('Excellent value per sqft');
+        } else if (pricePerSqft < marketAvg * 0.9) {
+          score += 7;
+          matchReasons.push('Good value');
+        } else if (pricePerSqft > marketAvg * 1.2) {
+          score -= 5; // Overpriced per sqft
+        }
       }
+
+      // ========================================
+      // 11. LOT SIZE (Max 5 points)
+      // ========================================
+      if (property.lotSize && property.lotSize > 10000) {
+        score += 5;
+        matchReasons.push('Large lot');
+      }
+
+      // Calculate match percentage (0-100%)
+      const maxPossibleScore = 200; // Approximate max from all categories
+      const matchPercentage = Math.min(Math.round((score / maxPossibleScore) * 100), 100);
 
       matches.push({
         property,
         matchScore: score,
-        matchReasons,
+        matchReasons: matchReasons.slice(0, 5), // Limit to top 5 reasons
         missingFeatures,
       });
     }
@@ -241,7 +347,12 @@ export class RentCastService {
     // Sort by match score (highest first) and return top 5
     return matches
       .sort((a, b) => b.matchScore - a.matchScore)
-      .slice(0, 5);
+      .slice(0, 5)
+      .map(match => ({
+        ...match,
+        // Add match percentage for display
+        matchScore: Math.max(match.matchScore, 0), // Ensure non-negative
+      }));
   }
 
   /**

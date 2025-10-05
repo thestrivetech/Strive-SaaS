@@ -11,6 +11,7 @@ export const ChatRequestSchema = z.object({
   messages: z.array(MessageSchema).min(1).max(50),
   industry: z.string().default('strive'),
   sessionId: z.string().min(1),
+  organizationId: z.string().optional(), // For CRM integration
   conversationStage: z.string().optional(),
   detectedProblems: z.array(z.string()).optional(),
   clientId: z.string().optional()

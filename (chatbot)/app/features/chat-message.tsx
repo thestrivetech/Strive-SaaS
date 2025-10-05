@@ -4,16 +4,8 @@
 import React, { memo } from 'react';
 import { User, AlertCircle, Clock, ExternalLink, Calendar } from 'lucide-react';
 import { motion } from 'framer-motion';
-<<<<<<<< HEAD:app/components/(web)/features/chatbot/chat-message.tsx
-import { MessageSaiAvatar, UserAvatar } from '@/components/(web)/features/chatbot/avatars';
-import { URLS } from '@/lib/modules/chatbot/constants';
-========
-import { MessageSaiAvatar, UserAvatar } from '@/app/(chatbot)/features/avatars';
-import { URLS } from '@/app/(chatbot)/constants';
-
-// ✨ NEW: Import PropertyCard component (you need to create this separately)
-// Uncomment this line after you create the PropertyCard component:
-// import PropertyCard from './property-card';
+import { MessageSaiAvatar, UserAvatar } from '@/app/features/avatars';
+import { URLS } from '@/app/constants';
 
 // ✨ NEW: Property Match interface
 interface PropertyMatch {
@@ -40,7 +32,6 @@ interface PropertyMatch {
   matchReasons: string[];
   missingFeatures: string[];
 }
->>>>>>>> origin/ceo_dev:app/app/(chatbot)/features/chat-message.tsx
 
 interface ChatMessageProps {
   message: {
