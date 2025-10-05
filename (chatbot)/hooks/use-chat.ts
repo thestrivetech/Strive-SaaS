@@ -266,16 +266,17 @@ export const useChat = (industry: string = 'strive') => {
           const data = line.slice(6).trim();
           
           if (data === '[DONE]') {
-            // Stream complete
-            const checkedResponse = performBasicGrammarCheck(accumulatedResponse);
-            
-            setMessages(prev => prev.map(msg => 
-              msg.id === assistantMessageId 
-                ? { 
-                    ...msg, 
+            // Stream complete - remove internal XML tags before displaying
+            const cleanedResponse = accumulatedResponse.replace(/<property_search>[\s\S]*?<\/property_search>/g, '').trim();
+            const checkedResponse = performBasicGrammarCheck(cleanedResponse);
+
+            setMessages(prev => prev.map(msg =>
+              msg.id === assistantMessageId
+                ? {
+                    ...msg,
                     content: checkedResponse,
                     propertyResults, // ✨ NEW: Attach property results
-                    isStreaming: false, 
+                    isStreaming: false,
                     isThinking: false
                   }
                 : msg
@@ -292,11 +293,14 @@ export const useChat = (industry: string = 'strive') => {
               // ✨ NEW: Handle regular content
               if (parsed.content) {
                 accumulatedResponse += parsed.content;
-                
+
+                // Clean XML tags from display while streaming
+                const displayContent = accumulatedResponse.replace(/<property_search>[\s\S]*?<\/property_search>/g, '').trim();
+
                 // Update streaming message in real-time
-                setMessages(prev => prev.map(msg => 
-                  msg.id === assistantMessageId 
-                    ? { ...msg, content: accumulatedResponse, isThinking: false }
+                setMessages(prev => prev.map(msg =>
+                  msg.id === assistantMessageId
+                    ? { ...msg, content: displayContent, isThinking: false }
                     : msg
                 ));
               }

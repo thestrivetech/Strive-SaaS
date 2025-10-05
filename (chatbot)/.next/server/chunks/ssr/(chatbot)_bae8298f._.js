@@ -506,7 +506,7 @@ var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$lucide$2d$re
 ;
 ;
 ;
-const PropertyCard = ({ match, rank, onScheduleShowing = ()=>{}, onSaveFavorite, onViewDetails, onShare })=>{
+const PropertyCard = ({ match, onScheduleShowing = ()=>{}, onSaveFavorite, onViewDetails, onShare })=>{
     const [showPhotos, setShowPhotos] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useState"])(false);
     const [currentImageIndex, setCurrentImageIndex] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useState"])(0);
     const [isFavorited, setIsFavorited] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useState"])(false);
@@ -529,78 +529,62 @@ const PropertyCard = ({ match, rank, onScheduleShowing = ()=>{}, onSaveFavorite,
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                         className: "relative h-48 bg-gradient-to-br from-blue-50 to-blue-100",
                         children: [
-                            property.images && property.images.length > 0 ? /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("img", {
-                                src: property.images[0],
-                                alt: property.address,
-                                className: "w-full h-full object-cover"
-                            }, void 0, false, {
-                                fileName: "[project]/(chatbot)/app/features/property-card.tsx",
-                                lineNumber: 92,
-                                columnNumber: 13
-                            }, ("TURBOPACK compile-time value", void 0)) : /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                            property.images && property.images.length > 0 ? /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Fragment"], {
+                                children: [
+                                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("img", {
+                                        src: property.images[0],
+                                        alt: property.address,
+                                        className: "w-full h-full object-cover"
+                                    }, void 0, false, {
+                                        fileName: "[project]/(chatbot)/app/features/property-card.tsx",
+                                        lineNumber: 91,
+                                        columnNumber: 15
+                                    }, ("TURBOPACK compile-time value", void 0)),
+                                    property.images[0].includes('unsplash.com') && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                                        className: "absolute bottom-2 right-2 bg-black/60 text-white text-[10px] px-2 py-0.5 rounded",
+                                        children: "Stock Photo"
+                                    }, void 0, false, {
+                                        fileName: "[project]/(chatbot)/app/features/property-card.tsx",
+                                        lineNumber: 98,
+                                        columnNumber: 17
+                                    }, ("TURBOPACK compile-time value", void 0))
+                                ]
+                            }, void 0, true) : /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                                 className: "w-full h-full flex items-center justify-center",
                                 children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$lucide$2d$react$2f$dist$2f$esm$2f$icons$2f$house$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__$3c$export__default__as__Home$3e$__["Home"], {
                                     size: 64,
                                     className: "text-blue-300"
                                 }, void 0, false, {
                                     fileName: "[project]/(chatbot)/app/features/property-card.tsx",
-                                    lineNumber: 99,
+                                    lineNumber: 105,
                                     columnNumber: 15
                                 }, ("TURBOPACK compile-time value", void 0))
                             }, void 0, false, {
                                 fileName: "[project]/(chatbot)/app/features/property-card.tsx",
-                                lineNumber: 98,
-                                columnNumber: 13
-                            }, ("TURBOPACK compile-time value", void 0)),
-                            rank && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                                className: "absolute top-3 left-3 bg-white text-gray-900 px-3 py-1.5 rounded-full font-bold shadow-lg",
-                                children: [
-                                    "#",
-                                    rank
-                                ]
-                            }, void 0, true, {
-                                fileName: "[project]/(chatbot)/app/features/property-card.tsx",
-                                lineNumber: 105,
+                                lineNumber: 104,
                                 columnNumber: 13
                             }, ("TURBOPACK compile-time value", void 0)),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                                className: `absolute ${rank ? 'top-14' : 'top-3'} left-3 px-4 py-2 rounded-full font-bold text-lg shadow-lg ${matchPercentage >= 90 ? 'bg-green-600 text-white' : matchPercentage >= 75 ? 'bg-blue-600 text-white' : matchPercentage >= 60 ? 'bg-yellow-600 text-white' : 'bg-gray-600 text-white'}`,
-                                children: [
-                                    matchPercentage,
-                                    "% Match"
-                                ]
-                            }, void 0, true, {
-                                fileName: "[project]/(chatbot)/app/features/property-card.tsx",
-                                lineNumber: 111,
-                                columnNumber: 11
-                            }, ("TURBOPACK compile-time value", void 0)),
-                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                                className: "absolute top-14 left-3 bg-white/90 backdrop-blur-sm text-gray-800 px-3 py-1.5 rounded-full font-bold text-base shadow-lg",
+                                className: "absolute top-3 left-3 bg-white/95 backdrop-blur-sm text-gray-900 px-4 py-2 rounded-full font-bold text-lg shadow-lg",
                                 children: [
                                     "$",
                                     property.price.toLocaleString()
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/(chatbot)/app/features/property-card.tsx",
-                                lineNumber: 121,
+                                lineNumber: 110,
                                 columnNumber: 11
                             }, ("TURBOPACK compile-time value", void 0)),
-                            property.daysOnMarket <= 7 && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                                className: "absolute top-3 right-3 bg-green-500 text-white px-3 py-1 rounded-full text-sm font-semibold flex items-center gap-1 shadow-lg",
+                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                                className: `absolute top-16 left-3 px-3 py-1.5 rounded-full font-semibold text-sm shadow-lg ${matchPercentage >= 90 ? 'bg-green-600 text-white' : matchPercentage >= 75 ? 'bg-blue-600 text-white' : matchPercentage >= 60 ? 'bg-yellow-600 text-white' : 'bg-gray-600 text-white'}`,
                                 children: [
-                                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$lucide$2d$react$2f$dist$2f$esm$2f$icons$2f$trending$2d$up$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__$3c$export__default__as__TrendingUp$3e$__["TrendingUp"], {
-                                        size: 14
-                                    }, void 0, false, {
-                                        fileName: "[project]/(chatbot)/app/features/property-card.tsx",
-                                        lineNumber: 128,
-                                        columnNumber: 15
-                                    }, ("TURBOPACK compile-time value", void 0)),
-                                    property.daysOnMarket === 0 ? 'Just Listed!' : `${property.daysOnMarket}d ago`
+                                    matchPercentage,
+                                    "% Match"
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/(chatbot)/app/features/property-card.tsx",
-                                lineNumber: 127,
-                                columnNumber: 13
+                                lineNumber: 115,
+                                columnNumber: 11
                             }, ("TURBOPACK compile-time value", void 0)),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
                                 onClick: (e)=>{
@@ -610,24 +594,41 @@ const PropertyCard = ({ match, rank, onScheduleShowing = ()=>{}, onSaveFavorite,
                                         onSaveFavorite(property.id, property.address);
                                     }
                                 },
-                                className: `absolute top-14 right-3 p-2 rounded-full shadow-lg transition-all ${isFavorited ? 'bg-red-500 text-white' : 'bg-white/90 backdrop-blur-sm text-gray-600 hover:bg-red-500 hover:text-white'}`,
+                                className: `absolute top-3 right-3 p-2 rounded-full shadow-lg transition-all ${isFavorited ? 'bg-red-500 text-white' : 'bg-white/90 backdrop-blur-sm text-gray-600 hover:bg-red-500 hover:text-white'}`,
                                 children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$lucide$2d$react$2f$dist$2f$esm$2f$icons$2f$heart$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__$3c$export__default__as__Heart$3e$__["Heart"], {
                                     size: 20,
                                     className: isFavorited ? 'fill-current' : ''
                                 }, void 0, false, {
                                     fileName: "[project]/(chatbot)/app/features/property-card.tsx",
-                                    lineNumber: 148,
+                                    lineNumber: 139,
                                     columnNumber: 13
                                 }, ("TURBOPACK compile-time value", void 0))
                             }, void 0, false, {
                                 fileName: "[project]/(chatbot)/app/features/property-card.tsx",
-                                lineNumber: 134,
+                                lineNumber: 125,
                                 columnNumber: 11
+                            }, ("TURBOPACK compile-time value", void 0)),
+                            property.daysOnMarket <= 7 && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                                className: "absolute top-14 right-3 bg-green-500 text-white px-3 py-1 rounded-full text-xs font-semibold flex items-center gap-1 shadow-lg",
+                                children: [
+                                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$lucide$2d$react$2f$dist$2f$esm$2f$icons$2f$trending$2d$up$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__$3c$export__default__as__TrendingUp$3e$__["TrendingUp"], {
+                                        size: 12
+                                    }, void 0, false, {
+                                        fileName: "[project]/(chatbot)/app/features/property-card.tsx",
+                                        lineNumber: 145,
+                                        columnNumber: 15
+                                    }, ("TURBOPACK compile-time value", void 0)),
+                                    property.daysOnMarket === 0 ? 'New!' : `${property.daysOnMarket}d`
+                                ]
+                            }, void 0, true, {
+                                fileName: "[project]/(chatbot)/app/features/property-card.tsx",
+                                lineNumber: 144,
+                                columnNumber: 13
                             }, ("TURBOPACK compile-time value", void 0))
                         ]
                     }, void 0, true, {
                         fileName: "[project]/(chatbot)/app/features/property-card.tsx",
-                        lineNumber: 90,
+                        lineNumber: 88,
                         columnNumber: 9
                     }, ("TURBOPACK compile-time value", void 0)),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -641,7 +642,7 @@ const PropertyCard = ({ match, rank, onScheduleShowing = ()=>{}, onSaveFavorite,
                                         size: 20
                                     }, void 0, false, {
                                         fileName: "[project]/(chatbot)/app/features/property-card.tsx",
-                                        lineNumber: 156,
+                                        lineNumber: 155,
                                         columnNumber: 13
                                     }, ("TURBOPACK compile-time value", void 0)),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -651,7 +652,7 @@ const PropertyCard = ({ match, rank, onScheduleShowing = ()=>{}, onSaveFavorite,
                                                 children: property.address
                                             }, void 0, false, {
                                                 fileName: "[project]/(chatbot)/app/features/property-card.tsx",
-                                                lineNumber: 158,
+                                                lineNumber: 157,
                                                 columnNumber: 15
                                             }, ("TURBOPACK compile-time value", void 0)),
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -665,19 +666,19 @@ const PropertyCard = ({ match, rank, onScheduleShowing = ()=>{}, onSaveFavorite,
                                                 ]
                                             }, void 0, true, {
                                                 fileName: "[project]/(chatbot)/app/features/property-card.tsx",
-                                                lineNumber: 159,
+                                                lineNumber: 158,
                                                 columnNumber: 15
                                             }, ("TURBOPACK compile-time value", void 0))
                                         ]
                                     }, void 0, true, {
                                         fileName: "[project]/(chatbot)/app/features/property-card.tsx",
-                                        lineNumber: 157,
+                                        lineNumber: 156,
                                         columnNumber: 13
                                     }, ("TURBOPACK compile-time value", void 0))
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/(chatbot)/app/features/property-card.tsx",
-                                lineNumber: 155,
+                                lineNumber: 154,
                                 columnNumber: 11
                             }, ("TURBOPACK compile-time value", void 0)),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -691,7 +692,7 @@ const PropertyCard = ({ match, rank, onScheduleShowing = ()=>{}, onSaveFavorite,
                                                 className: "text-blue-500"
                                             }, void 0, false, {
                                                 fileName: "[project]/(chatbot)/app/features/property-card.tsx",
-                                                lineNumber: 168,
+                                                lineNumber: 167,
                                                 columnNumber: 15
                                             }, ("TURBOPACK compile-time value", void 0)),
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
@@ -699,7 +700,7 @@ const PropertyCard = ({ match, rank, onScheduleShowing = ()=>{}, onSaveFavorite,
                                                 children: property.bedrooms
                                             }, void 0, false, {
                                                 fileName: "[project]/(chatbot)/app/features/property-card.tsx",
-                                                lineNumber: 169,
+                                                lineNumber: 168,
                                                 columnNumber: 15
                                             }, ("TURBOPACK compile-time value", void 0)),
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
@@ -707,13 +708,13 @@ const PropertyCard = ({ match, rank, onScheduleShowing = ()=>{}, onSaveFavorite,
                                                 children: "bed"
                                             }, void 0, false, {
                                                 fileName: "[project]/(chatbot)/app/features/property-card.tsx",
-                                                lineNumber: 170,
+                                                lineNumber: 169,
                                                 columnNumber: 15
                                             }, ("TURBOPACK compile-time value", void 0))
                                         ]
                                     }, void 0, true, {
                                         fileName: "[project]/(chatbot)/app/features/property-card.tsx",
-                                        lineNumber: 167,
+                                        lineNumber: 166,
                                         columnNumber: 13
                                     }, ("TURBOPACK compile-time value", void 0)),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -724,7 +725,7 @@ const PropertyCard = ({ match, rank, onScheduleShowing = ()=>{}, onSaveFavorite,
                                                 className: "text-blue-500"
                                             }, void 0, false, {
                                                 fileName: "[project]/(chatbot)/app/features/property-card.tsx",
-                                                lineNumber: 173,
+                                                lineNumber: 172,
                                                 columnNumber: 15
                                             }, ("TURBOPACK compile-time value", void 0)),
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
@@ -732,7 +733,7 @@ const PropertyCard = ({ match, rank, onScheduleShowing = ()=>{}, onSaveFavorite,
                                                 children: property.bathrooms
                                             }, void 0, false, {
                                                 fileName: "[project]/(chatbot)/app/features/property-card.tsx",
-                                                lineNumber: 174,
+                                                lineNumber: 173,
                                                 columnNumber: 15
                                             }, ("TURBOPACK compile-time value", void 0)),
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
@@ -740,13 +741,13 @@ const PropertyCard = ({ match, rank, onScheduleShowing = ()=>{}, onSaveFavorite,
                                                 children: "bath"
                                             }, void 0, false, {
                                                 fileName: "[project]/(chatbot)/app/features/property-card.tsx",
-                                                lineNumber: 175,
+                                                lineNumber: 174,
                                                 columnNumber: 15
                                             }, ("TURBOPACK compile-time value", void 0))
                                         ]
                                     }, void 0, true, {
                                         fileName: "[project]/(chatbot)/app/features/property-card.tsx",
-                                        lineNumber: 172,
+                                        lineNumber: 171,
                                         columnNumber: 13
                                     }, ("TURBOPACK compile-time value", void 0)),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -757,7 +758,7 @@ const PropertyCard = ({ match, rank, onScheduleShowing = ()=>{}, onSaveFavorite,
                                                 className: "text-blue-500"
                                             }, void 0, false, {
                                                 fileName: "[project]/(chatbot)/app/features/property-card.tsx",
-                                                lineNumber: 178,
+                                                lineNumber: 177,
                                                 columnNumber: 15
                                             }, ("TURBOPACK compile-time value", void 0)),
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
@@ -765,7 +766,7 @@ const PropertyCard = ({ match, rank, onScheduleShowing = ()=>{}, onSaveFavorite,
                                                 children: property.sqft.toLocaleString()
                                             }, void 0, false, {
                                                 fileName: "[project]/(chatbot)/app/features/property-card.tsx",
-                                                lineNumber: 179,
+                                                lineNumber: 178,
                                                 columnNumber: 15
                                             }, ("TURBOPACK compile-time value", void 0)),
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
@@ -773,19 +774,19 @@ const PropertyCard = ({ match, rank, onScheduleShowing = ()=>{}, onSaveFavorite,
                                                 children: "sqft"
                                             }, void 0, false, {
                                                 fileName: "[project]/(chatbot)/app/features/property-card.tsx",
-                                                lineNumber: 180,
+                                                lineNumber: 179,
                                                 columnNumber: 15
                                             }, ("TURBOPACK compile-time value", void 0))
                                         ]
                                     }, void 0, true, {
                                         fileName: "[project]/(chatbot)/app/features/property-card.tsx",
-                                        lineNumber: 177,
+                                        lineNumber: 176,
                                         columnNumber: 13
                                     }, ("TURBOPACK compile-time value", void 0))
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/(chatbot)/app/features/property-card.tsx",
-                                lineNumber: 166,
+                                lineNumber: 165,
                                 columnNumber: 11
                             }, ("TURBOPACK compile-time value", void 0)),
                             matchReasons.length > 0 && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -798,25 +799,25 @@ const PropertyCard = ({ match, rank, onScheduleShowing = ()=>{}, onSaveFavorite,
                                                 children: "✓"
                                             }, void 0, false, {
                                                 fileName: "[project]/(chatbot)/app/features/property-card.tsx",
-                                                lineNumber: 189,
+                                                lineNumber: 188,
                                                 columnNumber: 19
                                             }, ("TURBOPACK compile-time value", void 0)),
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
                                                 children: reason
                                             }, void 0, false, {
                                                 fileName: "[project]/(chatbot)/app/features/property-card.tsx",
-                                                lineNumber: 190,
+                                                lineNumber: 189,
                                                 columnNumber: 19
                                             }, ("TURBOPACK compile-time value", void 0))
                                         ]
                                     }, index, true, {
                                         fileName: "[project]/(chatbot)/app/features/property-card.tsx",
-                                        lineNumber: 188,
+                                        lineNumber: 187,
                                         columnNumber: 17
                                     }, ("TURBOPACK compile-time value", void 0)))
                             }, void 0, false, {
                                 fileName: "[project]/(chatbot)/app/features/property-card.tsx",
-                                lineNumber: 186,
+                                lineNumber: 185,
                                 columnNumber: 13
                             }, ("TURBOPACK compile-time value", void 0)),
                             avgSchoolRating > 0 && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -827,7 +828,7 @@ const PropertyCard = ({ match, rank, onScheduleShowing = ()=>{}, onSaveFavorite,
                                         size: 16
                                     }, void 0, false, {
                                         fileName: "[project]/(chatbot)/app/features/property-card.tsx",
-                                        lineNumber: 199,
+                                        lineNumber: 198,
                                         columnNumber: 15
                                     }, ("TURBOPACK compile-time value", void 0)),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
@@ -838,7 +839,7 @@ const PropertyCard = ({ match, rank, onScheduleShowing = ()=>{}, onSaveFavorite,
                                         ]
                                     }, void 0, true, {
                                         fileName: "[project]/(chatbot)/app/features/property-card.tsx",
-                                        lineNumber: 200,
+                                        lineNumber: 199,
                                         columnNumber: 15
                                     }, ("TURBOPACK compile-time value", void 0)),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
@@ -846,13 +847,13 @@ const PropertyCard = ({ match, rank, onScheduleShowing = ()=>{}, onSaveFavorite,
                                         children: "School Rating"
                                     }, void 0, false, {
                                         fileName: "[project]/(chatbot)/app/features/property-card.tsx",
-                                        lineNumber: 203,
+                                        lineNumber: 202,
                                         columnNumber: 15
                                     }, ("TURBOPACK compile-time value", void 0))
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/(chatbot)/app/features/property-card.tsx",
-                                lineNumber: 198,
+                                lineNumber: 197,
                                 columnNumber: 13
                             }, ("TURBOPACK compile-time value", void 0)),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -863,7 +864,7 @@ const PropertyCard = ({ match, rank, onScheduleShowing = ()=>{}, onSaveFavorite,
                                         children: property.propertyType?.replace(/-/g, ' ')
                                     }, void 0, false, {
                                         fileName: "[project]/(chatbot)/app/features/property-card.tsx",
-                                        lineNumber: 209,
+                                        lineNumber: 208,
                                         columnNumber: 13
                                     }, ("TURBOPACK compile-time value", void 0)),
                                     property.yearBuilt && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Fragment"], {
@@ -872,7 +873,7 @@ const PropertyCard = ({ match, rank, onScheduleShowing = ()=>{}, onSaveFavorite,
                                                 children: "•"
                                             }, void 0, false, {
                                                 fileName: "[project]/(chatbot)/app/features/property-card.tsx",
-                                                lineNumber: 212,
+                                                lineNumber: 211,
                                                 columnNumber: 17
                                             }, ("TURBOPACK compile-time value", void 0)),
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
@@ -882,7 +883,7 @@ const PropertyCard = ({ match, rank, onScheduleShowing = ()=>{}, onSaveFavorite,
                                                 ]
                                             }, void 0, true, {
                                                 fileName: "[project]/(chatbot)/app/features/property-card.tsx",
-                                                lineNumber: 213,
+                                                lineNumber: 212,
                                                 columnNumber: 17
                                             }, ("TURBOPACK compile-time value", void 0))
                                         ]
@@ -893,7 +894,7 @@ const PropertyCard = ({ match, rank, onScheduleShowing = ()=>{}, onSaveFavorite,
                                                 children: "•"
                                             }, void 0, false, {
                                                 fileName: "[project]/(chatbot)/app/features/property-card.tsx",
-                                                lineNumber: 218,
+                                                lineNumber: 217,
                                                 columnNumber: 17
                                             }, ("TURBOPACK compile-time value", void 0)),
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
@@ -903,7 +904,7 @@ const PropertyCard = ({ match, rank, onScheduleShowing = ()=>{}, onSaveFavorite,
                                                 ]
                                             }, void 0, true, {
                                                 fileName: "[project]/(chatbot)/app/features/property-card.tsx",
-                                                lineNumber: 219,
+                                                lineNumber: 218,
                                                 columnNumber: 17
                                             }, ("TURBOPACK compile-time value", void 0))
                                         ]
@@ -911,7 +912,7 @@ const PropertyCard = ({ match, rank, onScheduleShowing = ()=>{}, onSaveFavorite,
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/(chatbot)/app/features/property-card.tsx",
-                                lineNumber: 208,
+                                lineNumber: 207,
                                 columnNumber: 11
                             }, ("TURBOPACK compile-time value", void 0)),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -926,7 +927,7 @@ const PropertyCard = ({ match, rank, onScheduleShowing = ()=>{}, onSaveFavorite,
                                                 size: 18
                                             }, void 0, false, {
                                                 fileName: "[project]/(chatbot)/app/features/property-card.tsx",
-                                                lineNumber: 231,
+                                                lineNumber: 230,
                                                 columnNumber: 15
                                             }, ("TURBOPACK compile-time value", void 0)),
                                             "Photos (",
@@ -935,7 +936,7 @@ const PropertyCard = ({ match, rank, onScheduleShowing = ()=>{}, onSaveFavorite,
                                         ]
                                     }, void 0, true, {
                                         fileName: "[project]/(chatbot)/app/features/property-card.tsx",
-                                        lineNumber: 226,
+                                        lineNumber: 225,
                                         columnNumber: 13
                                     }, ("TURBOPACK compile-time value", void 0)),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
@@ -946,20 +947,20 @@ const PropertyCard = ({ match, rank, onScheduleShowing = ()=>{}, onSaveFavorite,
                                                 size: 18
                                             }, void 0, false, {
                                                 fileName: "[project]/(chatbot)/app/features/property-card.tsx",
-                                                lineNumber: 238,
+                                                lineNumber: 237,
                                                 columnNumber: 15
                                             }, ("TURBOPACK compile-time value", void 0)),
                                             "Schedule Tour"
                                         ]
                                     }, void 0, true, {
                                         fileName: "[project]/(chatbot)/app/features/property-card.tsx",
-                                        lineNumber: 234,
+                                        lineNumber: 233,
                                         columnNumber: 13
                                     }, ("TURBOPACK compile-time value", void 0))
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/(chatbot)/app/features/property-card.tsx",
-                                lineNumber: 225,
+                                lineNumber: 224,
                                 columnNumber: 11
                             }, ("TURBOPACK compile-time value", void 0)),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -973,14 +974,14 @@ const PropertyCard = ({ match, rank, onScheduleShowing = ()=>{}, onSaveFavorite,
                                                 size: 16
                                             }, void 0, false, {
                                                 fileName: "[project]/(chatbot)/app/features/property-card.tsx",
-                                                lineNumber: 250,
+                                                lineNumber: 249,
                                                 columnNumber: 17
                                             }, ("TURBOPACK compile-time value", void 0)),
                                             "Details"
                                         ]
                                     }, void 0, true, {
                                         fileName: "[project]/(chatbot)/app/features/property-card.tsx",
-                                        lineNumber: 246,
+                                        lineNumber: 245,
                                         columnNumber: 15
                                     }, ("TURBOPACK compile-time value", void 0)),
                                     onShare && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
@@ -991,32 +992,32 @@ const PropertyCard = ({ match, rank, onScheduleShowing = ()=>{}, onSaveFavorite,
                                                 size: 16
                                             }, void 0, false, {
                                                 fileName: "[project]/(chatbot)/app/features/property-card.tsx",
-                                                lineNumber: 259,
+                                                lineNumber: 258,
                                                 columnNumber: 17
                                             }, ("TURBOPACK compile-time value", void 0)),
                                             "Share"
                                         ]
                                     }, void 0, true, {
                                         fileName: "[project]/(chatbot)/app/features/property-card.tsx",
-                                        lineNumber: 255,
+                                        lineNumber: 254,
                                         columnNumber: 15
                                     }, ("TURBOPACK compile-time value", void 0))
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/(chatbot)/app/features/property-card.tsx",
-                                lineNumber: 244,
+                                lineNumber: 243,
                                 columnNumber: 11
                             }, ("TURBOPACK compile-time value", void 0))
                         ]
                     }, void 0, true, {
                         fileName: "[project]/(chatbot)/app/features/property-card.tsx",
-                        lineNumber: 153,
+                        lineNumber: 152,
                         columnNumber: 9
                     }, ("TURBOPACK compile-time value", void 0))
                 ]
             }, void 0, true, {
                 fileName: "[project]/(chatbot)/app/features/property-card.tsx",
-                lineNumber: 88,
+                lineNumber: 86,
                 columnNumber: 7
             }, ("TURBOPACK compile-time value", void 0)),
             showPhotos && property.images.length > 0 && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1031,12 +1032,12 @@ const PropertyCard = ({ match, rank, onScheduleShowing = ()=>{}, onSaveFavorite,
                                 size: 24
                             }, void 0, false, {
                                 fileName: "[project]/(chatbot)/app/features/property-card.tsx",
-                                lineNumber: 276,
+                                lineNumber: 275,
                                 columnNumber: 15
                             }, ("TURBOPACK compile-time value", void 0))
                         }, void 0, false, {
                             fileName: "[project]/(chatbot)/app/features/property-card.tsx",
-                            lineNumber: 272,
+                            lineNumber: 271,
                             columnNumber: 13
                         }, ("TURBOPACK compile-time value", void 0)),
                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1048,8 +1049,16 @@ const PropertyCard = ({ match, rank, onScheduleShowing = ()=>{}, onSaveFavorite,
                                     className: "w-full h-auto max-h-[80vh] object-contain"
                                 }, void 0, false, {
                                     fileName: "[project]/(chatbot)/app/features/property-card.tsx",
-                                    lineNumber: 281,
+                                    lineNumber: 280,
                                     columnNumber: 15
+                                }, ("TURBOPACK compile-time value", void 0)),
+                                property.images[currentImageIndex].includes('unsplash.com') && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                                    className: "absolute top-4 right-20 bg-black/70 text-white text-xs px-3 py-1 rounded",
+                                    children: "Stock Photo"
+                                }, void 0, false, {
+                                    fileName: "[project]/(chatbot)/app/features/property-card.tsx",
+                                    lineNumber: 287,
+                                    columnNumber: 17
                                 }, ("TURBOPACK compile-time value", void 0)),
                                 property.images.length > 1 && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Fragment"], {
                                     children: [
@@ -1059,7 +1068,7 @@ const PropertyCard = ({ match, rank, onScheduleShowing = ()=>{}, onSaveFavorite,
                                             children: "←"
                                         }, void 0, false, {
                                             fileName: "[project]/(chatbot)/app/features/property-card.tsx",
-                                            lineNumber: 290,
+                                            lineNumber: 295,
                                             columnNumber: 19
                                         }, ("TURBOPACK compile-time value", void 0)),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
@@ -1068,7 +1077,7 @@ const PropertyCard = ({ match, rank, onScheduleShowing = ()=>{}, onSaveFavorite,
                                             children: "→"
                                         }, void 0, false, {
                                             fileName: "[project]/(chatbot)/app/features/property-card.tsx",
-                                            lineNumber: 296,
+                                            lineNumber: 301,
                                             columnNumber: 19
                                         }, ("TURBOPACK compile-time value", void 0))
                                     ]
@@ -1082,24 +1091,24 @@ const PropertyCard = ({ match, rank, onScheduleShowing = ()=>{}, onSaveFavorite,
                                     ]
                                 }, void 0, true, {
                                     fileName: "[project]/(chatbot)/app/features/property-card.tsx",
-                                    lineNumber: 306,
+                                    lineNumber: 311,
                                     columnNumber: 15
                                 }, ("TURBOPACK compile-time value", void 0))
                             ]
                         }, void 0, true, {
                             fileName: "[project]/(chatbot)/app/features/property-card.tsx",
-                            lineNumber: 280,
+                            lineNumber: 279,
                             columnNumber: 13
                         }, ("TURBOPACK compile-time value", void 0))
                     ]
                 }, void 0, true, {
                     fileName: "[project]/(chatbot)/app/features/property-card.tsx",
-                    lineNumber: 270,
+                    lineNumber: 269,
                     columnNumber: 11
                 }, ("TURBOPACK compile-time value", void 0))
             }, void 0, false, {
                 fileName: "[project]/(chatbot)/app/features/property-card.tsx",
-                lineNumber: 269,
+                lineNumber: 268,
                 columnNumber: 9
             }, ("TURBOPACK compile-time value", void 0))
         ]
@@ -1191,9 +1200,8 @@ function PropertyResults({ properties, searchParams }) {
             }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                 className: "grid gap-4 md:grid-cols-2",
-                children: properties.map((match, index)=>/*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f28$chatbot$292f$app$2f$features$2f$property$2d$card$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["default"], {
-                        match: match,
-                        rank: index + 1
+                children: properties.map((match)=>/*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f28$chatbot$292f$app$2f$features$2f$property$2d$card$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["default"], {
+                        match: match
                     }, match.property.id, false, {
                         fileName: "[project]/(chatbot)/app/features/property-results.tsx",
                         lineNumber: 52,
@@ -1212,7 +1220,7 @@ function PropertyResults({ properties, searchParams }) {
                         children: "Want to see more properties or adjust your criteria?"
                     }, void 0, false, {
                         fileName: "[project]/(chatbot)/app/features/property-results.tsx",
-                        lineNumber: 62,
+                        lineNumber: 61,
                         columnNumber: 9
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -1220,13 +1228,13 @@ function PropertyResults({ properties, searchParams }) {
                         children: "Just ask me to search again with different preferences!"
                     }, void 0, false, {
                         fileName: "[project]/(chatbot)/app/features/property-results.tsx",
-                        lineNumber: 65,
+                        lineNumber: 64,
                         columnNumber: 9
                     }, this)
                 ]
             }, void 0, true, {
                 fileName: "[project]/(chatbot)/app/features/property-results.tsx",
-                lineNumber: 61,
+                lineNumber: 60,
                 columnNumber: 7
             }, this)
         ]
@@ -2723,8 +2731,8 @@ const getCurrentDateContext = ()=>{
 const getWelcomeMessage = (showContinueOption = false)=>{
     const hour = new Date().getHours();
     const greeting = hour < 12 ? 'morning' : hour < 17 ? 'afternoon' : 'evening';
-    const baseMessage = `Welcome to STRIVE REAL ESTATE AI! I'm Sai, your real estate AI consultant.\n\nHope you're having a good ${greeting}!`;
-    const continueMessage = showContinueOption ? '\n\nI see we have a previous conversation. Would you like to continue where we left off?\n\nType "yes" to resume, or just tell me about your current real estate needs.' : "\n\nI help real estate professionals attract more qualified leads, match buyers with perfect properties, and stay ahead of market trends. Whether you're a real estate agent, broker, or property developer - what brings you here today? Are you facing a specific challenge, or just curious about what AI can do for your business?";
+    const baseMessage = `Good ${greeting}! I'm Sai, your AI real estate assistant. 🏡\n\nI'm here to help you find your perfect home!`;
+    const continueMessage = showContinueOption ? '\n\nI see we have a previous conversation. Would you like to continue where we left off?\n\nType "yes" to resume, or tell me about the home you\'re looking for!' : "\n\n**What kind of home are you looking for?**\n\nTell me about your ideal property - location, budget, bedrooms, must-have features - and I'll search for the best matches in real-time!";
     return {
         id: 'welcome-message',
         role: 'assistant',
@@ -3010,8 +3018,9 @@ const useChat = (industry = 'strive')=>{
                     if (!line.startsWith('data: ')) continue;
                     const data = line.slice(6).trim();
                     if (data === '[DONE]') {
-                        // Stream complete
-                        const checkedResponse = (0, __TURBOPACK__imported__module__$5b$project$5d2f28$chatbot$292f$hooks$2f$use$2d$chat$2d$helpers$2e$ts__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["performBasicGrammarCheck"])(accumulatedResponse);
+                        // Stream complete - remove internal XML tags before displaying
+                        const cleanedResponse = accumulatedResponse.replace(/<property_search>[\s\S]*?<\/property_search>/g, '').trim();
+                        const checkedResponse = (0, __TURBOPACK__imported__module__$5b$project$5d2f28$chatbot$292f$hooks$2f$use$2d$chat$2d$helpers$2e$ts__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["performBasicGrammarCheck"])(cleanedResponse);
                         setMessages((prev)=>prev.map((msg)=>msg.id === assistantMessageId ? {
                                     ...msg,
                                     content: checkedResponse,
@@ -3029,10 +3038,12 @@ const useChat = (industry = 'strive')=>{
                             // ✨ NEW: Handle regular content
                             if (parsed.content) {
                                 accumulatedResponse += parsed.content;
+                                // Clean XML tags from display while streaming
+                                const displayContent = accumulatedResponse.replace(/<property_search>[\s\S]*?<\/property_search>/g, '').trim();
                                 // Update streaming message in real-time
                                 setMessages((prev)=>prev.map((msg)=>msg.id === assistantMessageId ? {
                                             ...msg,
-                                            content: accumulatedResponse,
+                                            content: displayContent,
                                             isThinking: false
                                         } : msg));
                             }

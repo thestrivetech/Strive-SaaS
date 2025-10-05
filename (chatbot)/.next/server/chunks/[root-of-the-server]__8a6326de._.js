@@ -777,6 +777,12 @@ Everything else is OPTIONAL - you'll use smart defaults:
 When you have location + budget, immediately think:
 "Can I search now? YES!"
 
+**LOCATION PARSING - CRITICAL:**
+- Always use the EXACT spelling the user provides for city names
+- Format as "City, STATE" (e.g., "Nashville, TN", "Greers Ferry, AR")
+- For Arkansas locations, note: "Greers Ferry" (with 's') not "Greer Ferry"
+- If search returns no results, the city spelling might be incorrect - suggest nearby cities or ask user to verify spelling
+
 Examples of WHEN TO SEARCH:
 
 User: "Show me houses in Nashville under $500k"
@@ -1936,16 +1942,27 @@ class RentCastService {
                     price: data[0].price,
                     city: data[0].city,
                     mlsId: data[0].mlsId,
+                    hasPhotos: !!data[0].photos,
+                    photoCount: data[0].photos?.length || 0,
+                    photoStructure: data[0].photos?.[0] ? Object.keys(data[0].photos[0]) : 'No photos',
                     isSynthetic: data[0].isSample || data[0].isTest || false
                 } : 'No results'
             });
             // Transform RentCast response to our Property format
             const properties = Array.isArray(data) ? data.map((listing)=>this.transformListing(listing)) : [];
+            // If no results, throw helpful error
+            if (properties.length === 0) {
+                throw new Error(`No properties found in ${city}, ${state} matching your criteria. Try:\n• Adjusting your budget or bedrooms\n• Searching nearby cities\n• Checking the spelling of the city name`);
+            }
             // Cache results for 15 minutes
             __TURBOPACK__imported__module__$5b$project$5d2f28$chatbot$292f$app$2f$services$2f$cache$2d$service$2e$ts__$5b$app$2d$route$5d$__$28$ecmascript$29$__["CacheService"].set(cacheKey, properties, 900);
             return properties;
         } catch (error) {
             console.error('RentCast API error:', error);
+            // Re-throw our custom error messages
+            if (error instanceof Error && error.message.includes('No properties found')) {
+                throw error;
+            }
             throw new Error('Failed to fetch property listings. Please try again.');
         }
     }
@@ -2238,8 +2255,49 @@ class RentCastService {
         };
     }
     /**
+   * Get placeholder images for properties (until we have real photos)
+   */ static getPlaceholderImages(propertyType) {
+        // High-quality Unsplash real estate images (royalty-free)
+        const imagesByType = {
+            'single-family': [
+                'https://images.unsplash.com/photo-1568605114967-8130f3a36994?w=1200&q=80',
+                'https://images.unsplash.com/photo-1570129477492-45c003edd2be?w=1200&q=80',
+                'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=1200&q=80',
+                'https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=1200&q=80'
+            ],
+            'condo': [
+                'https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?w=1200&q=80',
+                'https://images.unsplash.com/photo-1580587771525-78b9dba3b914?w=1200&q=80',
+                'https://images.unsplash.com/photo-1512917774080-9991f1c4c750?w=1200&q=80'
+            ],
+            'townhouse': [
+                'https://images.unsplash.com/photo-1564013799919-ab600027ffc6?w=1200&q=80',
+                'https://images.unsplash.com/photo-1582268611958-ebfd161ef9cf?w=1200&q=80',
+                'https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?w=1200&q=80'
+            ],
+            'multi-family': [
+                'https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?w=1200&q=80',
+                'https://images.unsplash.com/photo-1494145904049-0dca59b4bbad?w=1200&q=80',
+                'https://images.unsplash.com/photo-1515263487990-61b07816b324?w=1200&q=80'
+            ],
+            'default': [
+                'https://images.unsplash.com/photo-1570129477492-45c003edd2be?w=1200&q=80',
+                'https://images.unsplash.com/photo-1568605114967-8130f3a36994?w=1200&q=80',
+                'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=1200&q=80'
+            ]
+        };
+        // Normalize property type
+        const typeKey = propertyType?.toLowerCase().replace(/[_\s]/g, '-') || 'default';
+        const images = imagesByType[typeKey] || imagesByType['default'];
+        // Return 3-4 random images from the set
+        const count = 3 + Math.floor(Math.random() * 2); // 3 or 4 images
+        return images.slice(0, count);
+    }
+    /**
    * Transform RentCast listing to our Property format
    */ static transformListing(listing) {
+        // Use RentCast photos if available, otherwise use high-quality placeholders
+        const images = listing.photos && listing.photos.length > 0 ? listing.photos.map((p)=>p.href || p.url) : this.getPlaceholderImages(listing.propertyType);
         return {
             id: listing.id || listing.listingId,
             address: listing.addressLine1 || listing.address,
@@ -2254,9 +2312,9 @@ class RentCastService {
             propertyType: listing.propertyType,
             yearBuilt: listing.yearBuilt,
             features: listing.features || this.extractFeatures(listing.description),
-            images: listing.photos?.map((p)=>p.href || p.url) || [],
-            daysOnMarket: this.calculateDaysOnMarket(listing.listDate),
-            listingDate: listing.listDate,
+            images,
+            daysOnMarket: this.calculateDaysOnMarket(listing.listedDate || listing.listDate),
+            listingDate: listing.listedDate || listing.listDate,
             description: listing.description,
             schoolRatings: listing.schools ? {
                 elementary: listing.schools.elementary?.rating,
@@ -3232,10 +3290,16 @@ async function POST(req) {
                             // Match and score properties
                             const matches = __TURBOPACK__imported__module__$5b$project$5d2f28$chatbot$292f$app$2f$services$2f$rentcast$2d$service$2e$ts__$5b$app$2d$route$5d$__$28$ecmascript$29$__["RentCastService"].matchProperties(properties, searchParams);
                             console.log(`🎯 Top ${matches.length} matches selected`);
+                            console.log('🏘️ Property addresses:', matches.map((m)=>m.property.address));
                             // Send property results to client
                             const propertyData = JSON.stringify({
                                 type: 'property_results',
                                 properties: matches
+                            });
+                            console.log('📤 Sending to client:', {
+                                type: 'property_results',
+                                count: matches.length,
+                                firstAddress: matches[0]?.property.address
                             });
                             controller.enqueue(encoder.encode(`data: ${propertyData}\n\n`));
                         } catch (propertyError) {

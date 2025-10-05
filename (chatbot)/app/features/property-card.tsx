@@ -41,7 +41,6 @@ interface PropertyMatch {
 
 interface PropertyCardProps {
   match: PropertyMatch;
-  rank?: number; // ✅ Added rank prop for "Top #1" badge
   onScheduleShowing?: (propertyId: string, propertyAddress: string) => void;
   onSaveFavorite?: (propertyId: string, propertyAddress: string) => void;
   onViewDetails?: (propertyId: string) => void;
@@ -50,7 +49,6 @@ interface PropertyCardProps {
 
 const PropertyCard: React.FC<PropertyCardProps> = ({
   match,
-  rank,
   onScheduleShowing = () => {}, // ✅ Default handler
   onSaveFavorite,
   onViewDetails,
@@ -89,26 +87,32 @@ const PropertyCard: React.FC<PropertyCardProps> = ({
         {/* Property Image */}
         <div className="relative h-48 bg-gradient-to-br from-blue-50 to-blue-100">
           {property.images && property.images.length > 0 ? (
-            <img
-              src={property.images[0]}
-              alt={property.address}
-              className="w-full h-full object-cover"
-            />
+            <>
+              <img
+                src={property.images[0]}
+                alt={property.address}
+                className="w-full h-full object-cover"
+              />
+              {/* Placeholder image indicator */}
+              {property.images[0].includes('unsplash.com') && (
+                <div className="absolute bottom-2 right-2 bg-black/60 text-white text-[10px] px-2 py-0.5 rounded">
+                  Stock Photo
+                </div>
+              )}
+            </>
           ) : (
             <div className="w-full h-full flex items-center justify-center">
               <Home size={64} className="text-blue-300" />
             </div>
           )}
-          
-          {/* Rank Badge - NEW */}
-          {rank && (
-            <div className="absolute top-3 left-3 bg-white text-gray-900 px-3 py-1.5 rounded-full font-bold shadow-lg">
-              #{rank}
-            </div>
-          )}
 
-          {/* Match Percentage Badge */}
-          <div className={`absolute ${rank ? 'top-14' : 'top-3'} left-3 px-4 py-2 rounded-full font-bold text-lg shadow-lg ${
+          {/* Price Badge - Top Left */}
+          <div className="absolute top-3 left-3 bg-white/95 backdrop-blur-sm text-gray-900 px-4 py-2 rounded-full font-bold text-lg shadow-lg">
+            ${property.price.toLocaleString()}
+          </div>
+
+          {/* Match Percentage Badge - Below Price */}
+          <div className={`absolute top-16 left-3 px-3 py-1.5 rounded-full font-semibold text-sm shadow-lg ${
             matchPercentage >= 90 ? 'bg-green-600 text-white' :
             matchPercentage >= 75 ? 'bg-blue-600 text-white' :
             matchPercentage >= 60 ? 'bg-yellow-600 text-white' :
@@ -117,20 +121,7 @@ const PropertyCard: React.FC<PropertyCardProps> = ({
             {matchPercentage}% Match
           </div>
 
-          {/* Price Badge */}
-          <div className="absolute top-14 left-3 bg-white/90 backdrop-blur-sm text-gray-800 px-3 py-1.5 rounded-full font-bold text-base shadow-lg">
-            ${property.price.toLocaleString()}
-          </div>
-
-          {/* Days on Market Badge */}
-          {property.daysOnMarket <= 7 && (
-            <div className="absolute top-3 right-3 bg-green-500 text-white px-3 py-1 rounded-full text-sm font-semibold flex items-center gap-1 shadow-lg">
-              <TrendingUp size={14} />
-              {property.daysOnMarket === 0 ? 'Just Listed!' : `${property.daysOnMarket}d ago`}
-            </div>
-          )}
-
-          {/* Favorite Button */}
+          {/* Favorite Button - Top Right */}
           <button
             onClick={(e) => {
               e.stopPropagation();
@@ -139,7 +130,7 @@ const PropertyCard: React.FC<PropertyCardProps> = ({
                 onSaveFavorite(property.id, property.address);
               }
             }}
-            className={`absolute top-14 right-3 p-2 rounded-full shadow-lg transition-all ${
+            className={`absolute top-3 right-3 p-2 rounded-full shadow-lg transition-all ${
               isFavorited
                 ? 'bg-red-500 text-white'
                 : 'bg-white/90 backdrop-blur-sm text-gray-600 hover:bg-red-500 hover:text-white'
@@ -147,6 +138,14 @@ const PropertyCard: React.FC<PropertyCardProps> = ({
           >
             <Heart size={20} className={isFavorited ? 'fill-current' : ''} />
           </button>
+
+          {/* Days on Market Badge - Below Heart */}
+          {property.daysOnMarket <= 7 && (
+            <div className="absolute top-14 right-3 bg-green-500 text-white px-3 py-1 rounded-full text-xs font-semibold flex items-center gap-1 shadow-lg">
+              <TrendingUp size={12} />
+              {property.daysOnMarket === 0 ? 'New!' : `${property.daysOnMarket}d`}
+            </div>
+          )}
         </div>
 
         {/* Property Details */}
@@ -283,6 +282,12 @@ const PropertyCard: React.FC<PropertyCardProps> = ({
                 alt={`${property.address} - Photo ${currentImageIndex + 1}`}
                 className="w-full h-auto max-h-[80vh] object-contain"
               />
+              {/* Placeholder indicator in gallery */}
+              {property.images[currentImageIndex].includes('unsplash.com') && (
+                <div className="absolute top-4 right-20 bg-black/70 text-white text-xs px-3 py-1 rounded">
+                  Stock Photo
+                </div>
+              )}
 
               {/* Navigation Arrows */}
               {property.images.length > 1 && (

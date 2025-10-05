@@ -48,11 +48,10 @@ export function PropertyResults({ properties, searchParams }: PropertyResultsPro
 
       {/* Property Cards Grid */}
       <div className="grid gap-4 md:grid-cols-2">
-        {properties.map((match, index) => (
+        {properties.map((match) => (
           <PropertyCard
             key={match.property.id}
             match={match}
-            rank={index + 1}
           />
         ))}
       </div>

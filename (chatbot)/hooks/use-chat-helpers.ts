@@ -39,11 +39,11 @@ export const getWelcomeMessage = (showContinueOption = false): Message => {
   const hour = new Date().getHours();
   const greeting = hour < 12 ? 'morning' : hour < 17 ? 'afternoon' : 'evening';
 
-  const baseMessage = `Welcome to STRIVE REAL ESTATE AI! I'm Sai, your real estate AI consultant.\n\nHope you're having a good ${greeting}!`;
+  const baseMessage = `Good ${greeting}! I'm Sai, your AI real estate assistant. 🏡\n\nI'm here to help you find your perfect home!`;
 
   const continueMessage = showContinueOption
-    ? '\n\nI see we have a previous conversation. Would you like to continue where we left off?\n\nType "yes" to resume, or just tell me about your current real estate needs.'
-    : "\n\nI help real estate professionals attract more qualified leads, match buyers with perfect properties, and stay ahead of market trends. Whether you're a real estate agent, broker, or property developer - what brings you here today? Are you facing a specific challenge, or just curious about what AI can do for your business?";
+    ? '\n\nI see we have a previous conversation. Would you like to continue where we left off?\n\nType "yes" to resume, or tell me about the home you\'re looking for!'
+    : "\n\n**What kind of home are you looking for?**\n\nTell me about your ideal property - location, budget, bedrooms, must-have features - and I'll search for the best matches in real-time!";
 
   return {
     id: 'welcome-message',
