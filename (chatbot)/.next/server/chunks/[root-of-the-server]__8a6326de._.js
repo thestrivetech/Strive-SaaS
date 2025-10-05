@@ -2224,35 +2224,58 @@ class RentCastService {
     /**
    * Parse location string into components
    */ static parseLocation(location) {
-        // Handle formats: "Nashville, TN", "37209", "Nashville TN 37209"
-        const parts = location.split(/[,\s]+/).filter(Boolean);
+        // Handle formats: "Nashville, TN", "Greers Ferry, AR", "37209", "Nashville TN 37209"
+        // First, check if it's just a zip code
+        if (/^\d{5}$/.test(location.trim())) {
+            return {
+                city: '',
+                state: '',
+                zipCode: location.trim()
+            };
+        }
+        // Split by comma first (most common format: "City Name, ST")
+        if (location.includes(',')) {
+            const [cityPart, ...rest] = location.split(',').map((s)=>s.trim());
+            const remaining = rest.join(',').trim().split(/\s+/);
+            return {
+                city: cityPart,
+                state: remaining[0] || '',
+                zipCode: remaining[1] && /^\d{5}$/.test(remaining[1]) ? remaining[1] : undefined
+            };
+        }
+        // No comma - split by spaces
+        const parts = location.trim().split(/\s+/);
         if (parts.length === 1) {
-            // Could be just a zip code
-            if (/^\d{5}$/.test(parts[0])) {
-                return {
-                    city: '',
-                    state: '',
-                    zipCode: parts[0]
-                };
-            }
-            // Or just a city name
+            // Just a city name
             return {
                 city: parts[0],
                 state: ''
             };
         }
         if (parts.length === 2) {
+            // "Nashville TN" or "City ST"
             return {
                 city: parts[0],
                 state: parts[1]
             };
         }
-        // "Nashville TN 37209"
-        return {
-            city: parts[0],
-            state: parts[1],
-            zipCode: parts[2]
-        };
+        // 3+ parts - last part might be zip, second-to-last is state, rest is city
+        const lastPart = parts[parts.length - 1];
+        const isZip = /^\d{5}$/.test(lastPart);
+        if (isZip) {
+            // "Nashville TN 37209"
+            return {
+                city: parts.slice(0, -2).join(' '),
+                state: parts[parts.length - 2],
+                zipCode: lastPart
+            };
+        } else {
+            // "Greers Ferry AR" (no zip)
+            return {
+                city: parts.slice(0, -1).join(' '),
+                state: parts[parts.length - 1]
+            };
+        }
     }
     /**
    * Get placeholder images for properties (until we have real photos)
@@ -3256,7 +3279,15 @@ async function POST(req) {
                         })}\n\n`));
                     }
                     // 🏠 PROPERTY SEARCH: Check if response contains property search request OR if we can auto-search
+                    console.log('🔍 Property search check:', {
+                        industry,
+                        hasSearchTag: fullResponse.includes('<property_search>'),
+                        canSearchNow,
+                        sessionPreferences,
+                        fullResponsePreview: fullResponse.substring(0, 200)
+                    });
                     const shouldSearch = industry === 'real-estate' && (fullResponse.includes('<property_search>') || canSearchNow);
+                    console.log('🎯 Should search?', shouldSearch);
                     if (shouldSearch) {
                         try {
                             console.log('🏠 Property search triggered');
@@ -3285,23 +3316,26 @@ async function POST(req) {
                                 throw new Error('Cannot search: minimum criteria not met');
                             }
                             // Fetch properties from RentCast
+                            console.log('🔍 Calling RentCast API with params:', searchParams);
                             const properties = await __TURBOPACK__imported__module__$5b$project$5d2f28$chatbot$292f$app$2f$services$2f$rentcast$2d$service$2e$ts__$5b$app$2d$route$5d$__$28$ecmascript$29$__["RentCastService"].searchProperties(searchParams);
-                            console.log(`✅ Found ${properties.length} properties`);
+                            console.log(`✅ RentCast returned ${properties.length} properties`);
                             // Match and score properties
                             const matches = __TURBOPACK__imported__module__$5b$project$5d2f28$chatbot$292f$app$2f$services$2f$rentcast$2d$service$2e$ts__$5b$app$2d$route$5d$__$28$ecmascript$29$__["RentCastService"].matchProperties(properties, searchParams);
-                            console.log(`🎯 Top ${matches.length} matches selected`);
+                            console.log(`🎯 Top ${matches.length} matches selected after scoring`);
                             console.log('🏘️ Property addresses:', matches.map((m)=>m.property.address));
                             // Send property results to client
                             const propertyData = JSON.stringify({
                                 type: 'property_results',
                                 properties: matches
                             });
-                            console.log('📤 Sending to client:', {
+                            console.log('📤 Sending property_results to client:', {
                                 type: 'property_results',
                                 count: matches.length,
-                                firstAddress: matches[0]?.property.address
+                                firstAddress: matches[0]?.property.address,
+                                dataSize: propertyData.length
                             });
                             controller.enqueue(encoder.encode(`data: ${propertyData}\n\n`));
+                            console.log('✅ Property results sent successfully');
                         } catch (propertyError) {
                             console.error('❌ Property search error:', propertyError);
                             const errorData = JSON.stringify({

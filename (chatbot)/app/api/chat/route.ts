@@ -149,9 +149,19 @@ export async function POST(req: NextRequest) {
           }
 
           // 🏠 PROPERTY SEARCH: Check if response contains property search request OR if we can auto-search
+          console.log('🔍 Property search check:', {
+            industry,
+            hasSearchTag: fullResponse.includes('<property_search>'),
+            canSearchNow,
+            sessionPreferences,
+            fullResponsePreview: fullResponse.substring(0, 200)
+          });
+
           const shouldSearch = industry === 'real-estate' && (
             fullResponse.includes('<property_search>') || canSearchNow
           );
+
+          console.log('🎯 Should search?', shouldSearch);
 
           if (shouldSearch) {
             try {
@@ -185,12 +195,13 @@ export async function POST(req: NextRequest) {
               }
 
               // Fetch properties from RentCast
+              console.log('🔍 Calling RentCast API with params:', searchParams);
               const properties = await RentCastService.searchProperties(searchParams);
-              console.log(`✅ Found ${properties.length} properties`);
+              console.log(`✅ RentCast returned ${properties.length} properties`);
 
               // Match and score properties
               const matches = RentCastService.matchProperties(properties, searchParams);
-              console.log(`🎯 Top ${matches.length} matches selected`);
+              console.log(`🎯 Top ${matches.length} matches selected after scoring`);
               console.log('🏘️ Property addresses:', matches.map(m => m.property.address));
 
               // Send property results to client
@@ -198,12 +209,14 @@ export async function POST(req: NextRequest) {
                 type: 'property_results',
                 properties: matches,
               });
-              console.log('📤 Sending to client:', {
+              console.log('📤 Sending property_results to client:', {
                 type: 'property_results',
                 count: matches.length,
-                firstAddress: matches[0]?.property.address
+                firstAddress: matches[0]?.property.address,
+                dataSize: propertyData.length
               });
               controller.enqueue(encoder.encode(`data: ${propertyData}\n\n`));
+              console.log('✅ Property results sent successfully');
             } catch (propertyError) {
               console.error('❌ Property search error:', propertyError);
               const errorData = JSON.stringify({

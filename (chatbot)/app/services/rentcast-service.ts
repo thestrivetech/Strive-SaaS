@@ -426,28 +426,56 @@ export class RentCastService {
     state: string;
     zipCode?: string;
   } {
-    // Handle formats: "Nashville, TN", "37209", "Nashville TN 37209"
-    const parts = location.split(/[,\s]+/).filter(Boolean);
+    // Handle formats: "Nashville, TN", "Greers Ferry, AR", "37209", "Nashville TN 37209"
+
+    // First, check if it's just a zip code
+    if (/^\d{5}$/.test(location.trim())) {
+      return { city: '', state: '', zipCode: location.trim() };
+    }
+
+    // Split by comma first (most common format: "City Name, ST")
+    if (location.includes(',')) {
+      const [cityPart, ...rest] = location.split(',').map(s => s.trim());
+      const remaining = rest.join(',').trim().split(/\s+/);
+
+      return {
+        city: cityPart,
+        state: remaining[0] || '',
+        zipCode: remaining[1] && /^\d{5}$/.test(remaining[1]) ? remaining[1] : undefined,
+      };
+    }
+
+    // No comma - split by spaces
+    const parts = location.trim().split(/\s+/);
 
     if (parts.length === 1) {
-      // Could be just a zip code
-      if (/^\d{5}$/.test(parts[0])) {
-        return { city: '', state: '', zipCode: parts[0] };
-      }
-      // Or just a city name
+      // Just a city name
       return { city: parts[0], state: '' };
     }
 
     if (parts.length === 2) {
+      // "Nashville TN" or "City ST"
       return { city: parts[0], state: parts[1] };
     }
 
-    // "Nashville TN 37209"
-    return {
-      city: parts[0],
-      state: parts[1],
-      zipCode: parts[2],
-    };
+    // 3+ parts - last part might be zip, second-to-last is state, rest is city
+    const lastPart = parts[parts.length - 1];
+    const isZip = /^\d{5}$/.test(lastPart);
+
+    if (isZip) {
+      // "Nashville TN 37209"
+      return {
+        city: parts.slice(0, -2).join(' '),
+        state: parts[parts.length - 2],
+        zipCode: lastPart,
+      };
+    } else {
+      // "Greers Ferry AR" (no zip)
+      return {
+        city: parts.slice(0, -1).join(' '),
+        state: parts[parts.length - 1],
+      };
+    }
   }
 
   /**
