@@ -34,16 +34,16 @@ export const getCurrentDateContext = (): string => {
   return `Current date: ${dayNames[now.getDay()]}, ${monthNames[now.getMonth()]} ${now.getDate()}, ${now.getFullYear()}. Q${quarter} ${now.getFullYear()}.`;
 };
 
-// Welcome message generator
+// Welcome message generator - REAL ESTATE
 export const getWelcomeMessage = (showContinueOption = false): Message => {
   const hour = new Date().getHours();
   const greeting = hour < 12 ? 'morning' : hour < 17 ? 'afternoon' : 'evening';
 
-  const baseMessage = `Welcome to STRIVE TECH! I'm Sai, your AI solutions consultant.\n\nHope you're having a good ${greeting}!`;
+  const baseMessage = `Welcome to STRIVE REAL ESTATE AI! I'm Sai, your real estate AI consultant.\n\nHope you're having a good ${greeting}!`;
 
   const continueMessage = showContinueOption
-    ? '\n\nI see we have a previous conversation. Would you like to continue where we left off?\n\nType "yes" to resume, or just tell me about your current business needs.'
-    : "\n\nI help businesses leverage AI to solve operational challenges and drive growth. Before we dive in - what brings you here today? Are you exploring solutions for a specific challenge, or just curious about what's possible with AI?";
+    ? '\n\nI see we have a previous conversation. Would you like to continue where we left off?\n\nType "yes" to resume, or just tell me about your current real estate needs.'
+    : "\n\nI help real estate professionals attract more qualified leads, match buyers with perfect properties, and stay ahead of market trends. Whether you're a real estate agent, broker, or property developer - what brings you here today? Are you facing a specific challenge, or just curious about what AI can do for your business?";
 
   return {
     id: 'welcome-message',

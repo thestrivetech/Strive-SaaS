@@ -13,7 +13,7 @@ export default function FullPage() {
     setMounted(true);
     document.documentElement.classList.add('dark');
     document.body.classList.add('fullpage-mode');
-    
+
     if (typeof window !== 'undefined') {
       parentComm.initializeWhenReady();
     }
@@ -24,11 +24,11 @@ export default function FullPage() {
       <div className="h-screen bg-gradient-to-br from-gray-900 to-gray-800 flex items-center justify-center">
         <div className="text-center">
           <div className="w-16 h-16 mx-auto mb-4">
-            <img 
+            <img
               src="/images/strive-triangle.svg"
               alt="Loading"
               className="w-full h-full animate-spin"
-              style={{ 
+              style={{
                 filter: 'drop-shadow(0 8px 20px rgba(245, 104, 52, 0.5))'
               }}
             />

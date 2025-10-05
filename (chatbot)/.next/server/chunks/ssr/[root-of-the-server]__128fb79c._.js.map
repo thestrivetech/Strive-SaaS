@@ -1,0 +1,6 @@
+{
+  "version": 3,
+  "sources": [],
+  "sections": [
+    {"offset": {"line": 14, "column": 0}, "map": {"version":3,"sources":["file:///C:/Users/garre/STRIVE/Strive-SaaS/%28chatbot%29/app/page.tsx"],"sourcesContent":["import { redirect } from 'next/navigation';\r\n\r\nexport default function HomePage() {\r\n  redirect('/full');\r\n}\r\n"],"names":[],"mappings":";;;;AAAA;AAAA;;AAEe,SAAS;IACtB,IAAA,iMAAQ,EAAC;AACX","debugId":null}}]
+}

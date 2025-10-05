@@ -9,7 +9,7 @@ import {
   detectProblemsClientSide,
   determineConversationStage,
   getCurrentDateContext
-} from '../../(platform)/hooks/use-chat-helpers';
+} from './use-chat-helpers';
 
 // ✨ NEW: Property Match interface for real estate
 interface PropertyMatch {
