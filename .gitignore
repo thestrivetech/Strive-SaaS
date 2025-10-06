@@ -81,3 +81,5 @@ archive/app-backup/.vercel/project.json
 (platform)/.env.test
 .vercel/
 .mcp.json
+.ignore/
+.next/
