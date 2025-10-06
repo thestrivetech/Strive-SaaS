@@ -1,4 +1,4 @@
-import { prisma } from '@/lib/prisma';
+import { prisma } from '@/lib/database/prisma';
 import type { organizations, organization_members, users } from '@prisma/client';
 
 export async function getOrganization(orgId: string): Promise<organizations | null> {

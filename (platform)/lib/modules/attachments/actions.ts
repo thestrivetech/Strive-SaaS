@@ -3,7 +3,7 @@
 import { revalidatePath } from 'next/cache';
 import { createServerClient } from '@supabase/ssr';
 import { cookies } from 'next/headers';
-import { prisma } from '@/lib/prisma';
+import { prisma } from '@/lib/database/prisma';
 import { Prisma } from '@prisma/client';
 import { getCurrentUser } from '@/lib/auth/utils';
 import { getUserOrganizationId } from '@/lib/auth/user-helpers';

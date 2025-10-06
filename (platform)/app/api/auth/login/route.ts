@@ -1,7 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createServerClient } from '@supabase/ssr';
 import { z } from 'zod';
-import { prisma } from '@/lib/prisma';
 
 // Force dynamic rendering and prevent caching
 export const dynamic = 'force-dynamic';
@@ -52,30 +51,15 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Check if user exists in our database
-    let user = await prisma.users.findUnique({
-      where: { email },
-    });
-
-    // If user doesn't exist in our database, create them
-    if (!user && data.user) {
-      user = await prisma.users.create({
-        data: {
-          email: data.user.email!,
-          name: data.user.user_metadata?.full_name || email.split('@')[0],
-          avatar_url: data.user.user_metadata?.avatar_url,
-        },
-      });
-    }
-
-    // Create the final response with user data
+    // Return Supabase Auth user data directly
+    // Database sync for roles/organizations happens on protected routes
     const response = NextResponse.json(
       {
         user: {
-          id: user?.id,
-          email: user?.email,
-          name: user?.name,
-          role: user?.role,
+          id: data.user.id,
+          email: data.user.email,
+          name: data.user.user_metadata?.full_name || data.user.email?.split('@')[0],
+          avatar_url: data.user.user_metadata?.avatar_url,
         },
         session: data.session,
       },

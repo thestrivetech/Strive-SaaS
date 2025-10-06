@@ -2,7 +2,7 @@
 
 import { getCurrentUser } from '@/lib/auth/auth-helpers';
 import { getUserOrganizationId } from '@/lib/auth/user-helpers';
-import { prisma } from '@/lib/prisma';
+import { prisma } from '@/lib/database/prisma';
 import type { QueryDocumentsInput } from './schemas';
 
 /**

@@ -22,6 +22,14 @@ export default function LoginPage() {
 
   const redirectTo = searchParams.get('redirect') || '/dashboard';
 
+  // Check for tab query parameter and switch to signup tab if present
+  useEffect(() => {
+    const tab = searchParams.get('tab');
+    if (tab === 'signup') {
+      setActiveTab('signup');
+    }
+  }, [searchParams]);
+
   const loginForm = useForm<LoginFormData>({
     resolver: zodResolver(loginSchema),
     defaultValues: {

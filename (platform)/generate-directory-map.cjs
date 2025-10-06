@@ -18,7 +18,7 @@ const path = require('path');
 // Configuration
 // ============================================================================
 
-const ROOT_DIR = path.resolve(__dirname, '..');
+const ROOT_DIR = path.resolve(__dirname);
 const OUTPUT_TXT = path.join(ROOT_DIR, 'project-directory-map.txt');
 const OUTPUT_JSON = path.join(ROOT_DIR, 'project-directory-map.json');
 
@@ -267,7 +267,7 @@ function generateTextTree(items, prefix = '', isLast = true) {
  */
 function generateTextHeader() {
   const now = new Date().toISOString();
-  return `STRIVE SAAS - PROJECT DIRECTORY STRUCTURE
+  return `STRIVE SAAS - PLATFORM PROJECT DIRECTORY STRUCTURE
 Generated: ${now}
 Root Path: ${ROOT_DIR}
 ${'='.repeat(80)}
