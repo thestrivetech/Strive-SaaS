@@ -7,7 +7,7 @@ Use this prompt at the beginning of each session. Simply replace `{SESSION_NUMBE
 ## 📋 Session Start Prompt
 
 ```
-I'm starting Session {SESSION_NUMBER} of the REID Dashboard integration project.
+I'm starting Session 2 of the REID Dashboard integration project.
 
 Please follow these steps to begin:
 
@@ -22,7 +22,7 @@ Please follow these steps to begin:
    - Note the 8 core modules and their requirements
 
 3. **Read Session Plan:**
-   - Read the session plan file at: C:\Users\zochr\Desktop\GitHub\Strive-SaaS\(platform)\update-sessions\dashboard-&-module-integrations\REIDashboard\session-{SESSION_NUMBER}.plan.md
+   - Read the session plan file at: C:\Users\zochr\Desktop\GitHub\Strive-SaaS\(platform)\update-sessions\dashboard-&-module-integrations\REIDashboard\session-2.plan.md
    - Understand the objectives, requirements, and implementation steps
    - Note all dependencies and prerequisites
 
@@ -71,7 +71,7 @@ Please follow these steps to begin:
 
 8. **Session End Requirements:**
    When the session is complete, create a session summary file:
-   - File path: C:\Users\zochr\Desktop\GitHub\Strive-SaaS\(platform)\update-sessions\dashboard-&-module-integrations\REIDashboard\session-{SESSION_NUMBER}-summary.md
+   - File path: C:\Users\zochr\Desktop\GitHub\Strive-SaaS\(platform)\update-sessions\dashboard-&-module-integrations\REIDashboard\session-2-summary.md
    - Include:
      * Session objectives (completed/partial/not started)
      * Files created (full list with paths)
@@ -84,7 +84,7 @@ Please follow these steps to begin:
      * Next steps / what's ready for next session
      * Overall progress percentage for REID integration
 
-Let's begin Session {SESSION_NUMBER} of the REID Dashboard integration!
+Let's begin Session 2 of the REID Dashboard integration!
 ```
 
 ---

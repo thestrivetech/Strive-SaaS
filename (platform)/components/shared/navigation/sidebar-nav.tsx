@@ -11,10 +11,15 @@ import {
   Wrench,
   Shield,
   Settings,
+  BarChart,
+  Calculator,
+  Megaphone,
+  ShoppingBag,
   type LucideIcon,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import type { Permission } from '@/lib/auth/rbac';
+import { Badge } from '@/components/ui/badge';
 
 interface NavItem {
   title: string;
@@ -22,6 +27,7 @@ interface NavItem {
   icon: LucideIcon;
   permission?: Permission;
   adminOnly?: boolean;
+  badge?: string;
 }
 
 interface SidebarNavProps {
@@ -31,7 +37,7 @@ interface SidebarNavProps {
 export const defaultNavItems: NavItem[] = [
   {
     title: 'Dashboard',
-    href: '/dashboard',
+    href: '/real-estate/dashboard',
     icon: LayoutDashboard,
   },
   {
@@ -47,22 +53,45 @@ export const defaultNavItems: NavItem[] = [
     permission: 'canManageProjects',
   },
   {
-    title: 'Transactions',
-    href: '/real-estate/transactions',
+    title: 'Workspace',
+    href: '/real-estate/workspace/dashboard',
     icon: FileText,
     permission: 'canManageCustomers',
   },
   {
-    title: 'AI Assistant',
-    href: '/ai',
+    title: 'AI Hub',
+    href: '/real-estate/ai-hub/dashboard',
     icon: Bot,
     permission: 'canManageAI',
+    badge: 'Coming Soon',
   },
   {
-    title: 'Tools',
-    href: '/tools',
-    icon: Wrench,
+    title: 'Analytics',
+    href: '/real-estate/rei-analytics/dashboard',
+    icon: BarChart,
+    permission: 'canManageCustomers',
+    badge: 'Coming Soon',
+  },
+  {
+    title: 'Expense & Tax',
+    href: '/real-estate/expense-tax/dashboard',
+    icon: Calculator,
+    permission: 'canManageCustomers',
+    badge: 'Coming Soon',
+  },
+  {
+    title: 'CMS & Marketing',
+    href: '/real-estate/cms-marketing/dashboard',
+    icon: Megaphone,
+    permission: 'canManageCustomers',
+    badge: 'Coming Soon',
+  },
+  {
+    title: 'Marketplace',
+    href: '/real-estate/marketplace/dashboard',
+    icon: ShoppingBag,
     permission: 'canManageAI',
+    badge: 'Coming Soon',
   },
   {
     title: 'Settings',
@@ -72,7 +101,7 @@ export const defaultNavItems: NavItem[] = [
   },
   {
     title: 'Admin',
-    href: '/dashboard/admin',
+    href: '/admin',
     icon: Shield,
     adminOnly: true,
   },
@@ -84,7 +113,7 @@ export function SidebarNav({ items }: SidebarNavProps) {
   return (
     <aside className="flex h-screen w-64 flex-col border-r bg-background">
       <div className="flex h-14 items-center border-b px-4">
-        <Link href="/dashboard" className="flex items-center gap-2 font-semibold">
+        <Link href="/real-estate/dashboard" className="flex items-center gap-2 font-semibold">
           <div className="h-8 w-8 rounded-lg bg-primary" />
           <span>Strive Tech</span>
         </Link>
@@ -100,14 +129,21 @@ export function SidebarNav({ items }: SidebarNavProps) {
               key={item.href}
               href={item.href}
               className={cn(
-                'flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors',
+                'flex items-center justify-between gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors',
                 isActive
                   ? 'bg-primary text-primary-foreground'
                   : 'text-muted-foreground hover:bg-accent hover:text-accent-foreground'
               )}
             >
-              <Icon className="h-5 w-5" />
-              {item.title}
+              <div className="flex items-center gap-3">
+                <Icon className="h-5 w-5" />
+                {item.title}
+              </div>
+              {item.badge && (
+                <Badge variant="secondary" className="text-xs">
+                  {item.badge}
+                </Badge>
+              )}
             </Link>
           );
         })}

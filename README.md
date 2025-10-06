@@ -142,6 +142,15 @@ npm run dev
 
 Enterprise B2B multi-tenant SaaS platform with AI-powered tools for business management. Supports multiple industries (Real Estate, Healthcare, etc.) with customizable dashboards and tools.
 
+### Architecture: 3-Level Hierarchy
+
+**Scalable structure designed for growth:**
+- **Level 1: Industries** - Real Estate (live), Healthcare (future), Legal (future)
+- **Level 2: Modules** - CRM, Transactions, Analytics (complete functional areas)
+- **Level 3: Pages** - Dashboards, feature pages, detail pages
+
+Pattern: `/real-estate/crm/contacts` = Industry > Module > Page
+
 ### Key Features
 
 - 👥 **Multi-tenant architecture** with Row Level Security

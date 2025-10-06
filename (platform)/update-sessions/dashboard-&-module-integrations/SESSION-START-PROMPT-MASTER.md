@@ -1,329 +1,289 @@
-# Master Session Start Prompt - All Module Integrations
+# Master Session Coordination Prompt - Multi-Agent Integration
 
-**Version:** 1.0
-**Last Updated:** 2025-10-05
-**Purpose:** Unified entry point for all module integration sessions
-
----
-
-## 📋 Quick Start Guide
-
-This master prompt provides a consolidated workflow for starting any module integration session across all 9 modules in the Strive SaaS platform.
+**Version:** 2.0
+**Purpose:** Coordinate 7 parallel agents to continue all module integrations
+**Usage:** Change `{CURRENT_SESSION}` below, paste entire prompt to Claude
 
 ---
 
-## 🎯 Available Modules
+## 🚀 SESSION INITIALIZATION
 
-### ✅ Completed Reference Modules (Use as Examples)
-1. **CRM Module** - Customer Relationship Management
-   - Location: `crm-module/`
-   - Sessions: 10
-   - Status: ✅ Integrated (Reference Implementation)
+```
+I'm starting integration work for Session {2}.
 
-2. **Transaction Workspace** - Real Estate Transaction Management
-   - Location: `transaction-workspace-&-modules/`
-   - Sessions: 10
-   - Status: ✅ Integrated (Reference Implementation)
+CONTEXT:
+This is a coordinated multi-agent session to advance 7 module integrations in parallel.
+Each module has its own session plans, and we're currently on Session {2}.
 
-### 🚀 Ready for Integration Modules
-3. **AI Garage & Shop** - AI Agent Marketplace
-   - Location: `AI-Garage-&-shop/`
-   - Sessions: 8
-   - Start: [SESSION-START-PROMPT.md](AI-Garage-&-shop/SESSION-START-PROMPT.md)
+YOUR TASK - PHASE 1: READ CONTEXT & PREPARE
+Read these files for context (DO NOT summarize them to me - just read and understand):
 
-4. **Landing/Admin/Pricing/Onboarding** - Public & Admin Pages
-   - Location: `landing-onboard-price-admin/`
-   - Sessions: 3 (expandable to 12)
-   - Start: [SESSION-START-PROMPT.md](landing-onboard-price-admin/SESSION-START-PROMPT.md)
+1. Agent Best Practices:
+   C:\Users\zochr\Desktop\GitHub\Strive-SaaS\.claude\agents\claude-orchestration-master-guide.md
+   - Follow all patterns for parallel agent execution
+   - Use verification requirements and blocking language
+   - Apply efficiency best practices
 
-5. **CMS & Marketing** - Content Management System
-   - Location: `cms&marketing-module/`
-   - Sessions: 8
-   - Start: [SESSION-START-PROMPT.md](cms&marketing-module/SESSION-START-PROMPT.md)
+2. Project Memory (optional - you may already have this loaded):
+   C:\Users\zochr\Desktop\GitHub\Strive-SaaS\CLAUDE.md & C:\Users\zochr\Desktop\GitHub\Strive-SaaS\(platform)\CLAUDE.md
+   - Repository structure and standards
+   - Tri-fold architecture understanding
 
-6. **Expenses & Taxes** - Financial Management
-   - Location: `expenses-&-taxes-module/`
-   - Sessions: 10
-   - Start: [SESSION-START-PROMPT.md](expenses-&-taxes-module/SESSION-START-PROMPT.md)
+3. Repository Overview for (project):
+   C:\Users\zochr\Desktop\GitHub\Strive-SaaS\(platform)\README.md
+   - Project setup and structure
 
-7. **Main Dashboard** - Central Hub Dashboard
-   - Location: `main-dash/`
-   - Sessions: 7
-   - Start: [SESSION-START-PROMPT.md](main-dash/SESSION-START-PROMPT.md)
+YOUR TASK - PHASE 2: UPDATE SESSION NUMBERS
+Before launching agents, update session numbers in all 7 integration start prompts:
 
-8. **REID Dashboard** - Real Estate Intelligence Dashboard
-   - Location: `REIDashboard/`
-   - Sessions: 12
-   - Start: [SESSION-START-PROMPT.md](REIDashboard/SESSION-START-PROMPT.md)
+CRITICAL: Update ONLY the "SESSION-START-PROMPT.md" files (NOT the -SHORT.md versions)
 
-9. **Tool Marketplace** - Tool & Dashboard Marketplace
-   - Location: `tool&dashboard-marketplace/`
-   - Sessions: 8
-   - Start: [SESSION-START-PROMPT.md](tool&dashboard-marketplace/SESSION-START-PROMPT.md)
+Update these files by replacing the CURRENT session number with {}:
+1. (platform)/update-sessions/dashboard-&-module-integrations/AI-Garage-&-shop/SESSION-START-PROMPT.md
+2. (platform)/update-sessions/dashboard-&-module-integrations/cms&marketing-module/SESSION-START-PROMPT.md
+3. (platform)/update-sessions/dashboard-&-module-integrations/expenses-&-taxes-module/SESSION-START-PROMPT.md
+4. (platform)/update-sessions/dashboard-&-module-integrations/landing-onboard-price-admin/SESSION-START-PROMPT.md
+5. (platform)/update-sessions/dashboard-&-module-integrations/main-dash/SESSION-START-PROMPT.md
+6. (platform)/update-sessions/dashboard-&-module-integrations/REIDashboard/SESSION-START-PROMPT.md
+7. (platform)/update-sessions/dashboard-&-module-integrations/tool&dashboard-marketplace/SESSION-START-PROMPT.md
 
----
+How to update each file:
+- Read the current file
+- Find the template section that says `{SESSION_NUMBER}` placeholder
+- The actual session numbers appear in file paths and prompts
+- Update OLD session number → {CURRENT_SESSION}
+- Save the file
 
-## 🚀 Universal Session Start Template
+Example: If current session is 4 and file shows session-3.plan.md, change to session-{CURRENT_SESSION}.plan.md
 
-Use this template at the beginning of **EVERY** session. Replace variables with your specific values:
+After updates, confirm:
+"✅ Updated all 7 SESSION-START-PROMPT.md files to Session {2}"
 
-```markdown
-I'm starting Session {SESSION_NUMBER} of the {MODULE_NAME} integration project.
+YOUR TASK - PHASE 3: LAUNCH 7 PARALLEL AGENTS
+Launch 7 strive-dev agents IN PARALLEL (single message, 7 Task tool calls).
 
-Please follow these steps to begin:
+Each agent receives:
+- The updated SESSION-START-PROMPT.md content for their module
+- Their specific session-{CURRENT_SESSION}.plan.md file path to read
+- Clear instruction to follow the prompt exactly
 
-1. **Read Development Rules:**
-   - Root CLAUDE.md: C:\Users\zochr\Desktop\GitHub\Strive-SaaS\CLAUDE.md
-   - Platform CLAUDE.md: C:\Users\zochr\Desktop\GitHub\Strive-SaaS\(platform)\CLAUDE.md
-   - Understand and follow all rules, security requirements, and architectural patterns
+AGENT ASSIGNMENTS:
+- Agent 1 (strive-dev-1): AI Garage & Shop
+- Agent 2 (strive-dev-2): CMS & Marketing
+- Agent 3 (strive-dev-3): Expenses & Taxes
+- Agent 4 (strive-dev-4): Landing/Admin/Pricing/Onboarding
+- Agent 5 (strive-dev-5): Main Dashboard
+- Agent 6 (strive-dev-6): REID Dashboard
+- Agent 7 (strive-dev-7): Tool & Dashboard Marketplace
 
-2. **Read Session Plan:**
-   - Session plan: C:\Users\zochr\Desktop\GitHub\Strive-SaaS\(platform)\update-sessions\dashboard-&-module-integrations\{MODULE_DIR}\session-{SESSION_NUMBER}.plan.md
-   - Understand objectives, requirements, and implementation steps
+AGENT TASK TEMPLATE (customize per agent):
+```
+You are working on the [MODULE_NAME] integration - Session {CURRENT_SESSION}.
+
+INSTRUCTIONS:
+1. Read your session start prompt:
+   C:\Users\zochr\Desktop\GitHub\Strive-SaaS\(platform)\update-sessions\dashboard-&-module-integrations\[MODULE_DIR]\SESSION-START-PROMPT.md
+
+2. Follow the prompt EXACTLY as written
+   - It will instruct you to read CLAUDE.md files
+   - It will instruct you to read your session plan
+   - It will give you important reminders
+   - It will require you to create a session summary at the end of the session once you've finished everything and validated
+
+3. Read your session plan:
+   C:\Users\zochr\Desktop\GitHub\Strive-SaaS\(platform)\update-sessions\dashboard-&-module-integrations\[MODULE_DIR]\session-{CURRENT_SESSION}.plan.md
+   - Understand ALL objectives and requirements
    - Note all dependencies and prerequisites
+   - Identify all implementation steps
 
-3. **Create Detailed Todo List:**
-   - Use TodoWrite tool to create granular tasks
-   - Include specific tasks for:
-     * Reading/analyzing existing code
-     * Creating new files
-     * Modifying existing files
-     * Testing implementations
-     * Validating security/RBAC/multi-tenancy
-     * Additional tasks from session plan
+4. MANDATORY - CREATE IN-DEPTH TODO LIST (BEFORE starting work):
+   Use the TodoWrite tool to create a comprehensive todo list with,
+   You're just creating your own to-do list to follow, not an actual file:
 
-4. **Important Reminders:**
-   - ✅ ALWAYS read files before editing (READ-BEFORE-EDIT MANDATE)
-   - ✅ Maintain multi-tenancy (organizationId on ALL queries)
-   - ✅ Enforce RBAC permissions on ALL Server Actions
-   - ✅ Use Supabase MCP tools for database operations (NOT Prisma CLI)
-   - ✅ Validate input with Zod schemas
-   - ✅ Add proper error handling and loading states
-   - ✅ Ensure mobile responsiveness
+   Required Details:
+   - Break down the session plan into specific, granular tasks
+   - Each task should be actionable (not vague like "implement feature")
+   - Include proper status: pending/in_progress/completed
+   - Use active form for in-progress items ("Creating X", "Implementing Y")
 
-5. **Database Operations (CRITICAL):**
-   - Schema changes: Use `mcp__supabase__apply_migration` tool
-   - Queries: Use `mcp__supabase__execute_sql` tool
-   - Inspections: Use `mcp__supabase__list_tables` tool
-   - ❌ DO NOT use `npx prisma` commands directly
+   Your todo list MUST include tasks for:
+   - Reading/analyzing existing code
+   - Creating new files (list specific files from session plan)
+   - Modifying existing files (list specific files)
+   - Database operations (if applicable)
+   - Testing implementations
+   - Validating security/RBAC/multi-tenancy
+   - Running verification commands
+   - Creating session summary
+   - Any module-specific tasks from session plan
 
-6. **Session End Requirements:**
-   When complete, create session summary:
-   - Path: C:\Users\zochr\Desktop\GitHub\Strive-SaaS\(platform)\update-sessions\dashboard-&-module-integrations\{MODULE_DIR}\session-{SESSION_NUMBER}-summary.md
-   - Include:
-     * Objectives completion status
-     * Files created (full list with paths)
-     * Files modified (full list with paths)
-     * Key implementations and features
-     * Issues encountered and resolutions
-     * Testing performed
-     * Next steps
-     * Overall progress percentage
+   Example Good Todo:
+   ✅ "Create lib/modules/expenses/actions.ts with RBAC-protected server actions"
+   ✅ "Update shared/prisma/schema.prisma - add Expense model with RLS"
+   ✅ "Verify: Run npx tsc --noEmit - expect 0 errors"
 
-Let's begin Session {SESSION_NUMBER} of {MODULE_NAME}!
+   Example Bad Todo:
+   ❌ "Work on backend"
+   ❌ "Fix stuff"
+   ❌ "Implement features"
+
+   DO NOT proceed with implementation until TodoWrite list is created.
+
+CRITICAL REQUIREMENTS:
+- Complete ALL objectives in the session plan (no partial work)
+- Create session summary at end: session-{2}-summary.md
+- Include verification proof (command outputs) in summary
+- DO NOT report success without completing the full session plan
+- If you cannot complete the session, report specific blockers
+
+VERIFICATION REQUIRED:
+In your session summary, include:
+- All files created (full paths)
+- All files modified (full paths)
+- TypeScript check output: npx tsc --noEmit (if code changes)
+- Verification commands relevant to your module
+
+BLOCKING:
+- DO NOT start implementation without creating TodoWrite list first
+- DO NOT report "Session {1} complete" unless session summary file exists
+- DO NOT skip objectives from session plan
+- DO NOT skip verification commands
+- DO NOT use vague todos ("fix stuff", "implement features")
+
+Report back when Session {1} is complete with summary file path.
+```
+
+MODULE DIRECTORIES:
+1. AI-Garage-&-shop (10 sessions total)
+2. cms&marketing-module (8 sessions total)
+3. expenses-&-taxes-module (10 sessions total)
+4. landing-onboard-price-admin (12 sessions total)
+5. main-dash (7 sessions total)
+6. REIDashboard (12 sessions total)
+7. tool&dashboard-marketplace (8 sessions total)
+
+PARALLEL EXECUTION REQUIREMENTS (from claude-orchestration-master-guide.md):
+✅ All scopes non-overlapping (each module has separate directories)
+✅ Each agent has exact deliverable: 1 session completion + 1 summary file
+✅ Agents cannot ask questions (everything in session plan)
+✅ Forcing language: "Complete ALL objectives"
+✅ Validation: Each agent must verify their work
+✅ Immediate validation: Check each agent report as it completes
+✅ Repair strategy: If agent fails, deploy repair agent immediately
+
+YOUR TASK - PHASE 4: MONITOR & VALIDATE
+As each agent reports completion:
+
+1. Verify agent created TodoWrite list BEFORE implementation
+   - If skipped, note this as process violation
+
+2. Verify session summary file exists
+
+3. Check summary includes:
+   - ✅ All objectives marked complete
+   - ✅ Files created/modified listed
+   - ✅ Verification command outputs included
+   - ✅ Next steps documented
+
+4. If agent reports issues or incomplete work:
+   - Note specific blockers
+   - Assess if repair agent needed
+   - Track for my review
+
+YOUR TASK - PHASE 5: FINAL REPORT
+After all 7 agents complete (or report blockers), provide:
+
+COMPLETION SUMMARY:
+✅ Session {1} Progress:
+- AI Garage: [COMPLETE/BLOCKED: reason]
+- CMS & Marketing: [COMPLETE/BLOCKED: reason]
+- Expenses & Taxes: [COMPLETE/BLOCKED: reason]
+- Landing/Admin: [COMPLETE/BLOCKED: reason]
+- Main Dashboard: [COMPLETE/BLOCKED: reason]
+- REID Dashboard: [COMPLETE/BLOCKED: reason]
+- Tool Marketplace: [COMPLETE/BLOCKED: reason]
+
+Session Summary Files Created:
+[List all 7 summary file paths]
+
+Issues Requiring Attention:
+[List any blockers, errors, or incomplete work]
+
+Ready for Session {CURRENT_SESSION + 1}:
+[List which modules are ready vs blocked]
+
+AGENT-USAGE-GUIDE.md Updates Needed:
+[If you noticed any improvements to agent best practices during this session]
+
+---
+
+EXECUTION CHECKLIST (for you to follow):
+□ Phase 1: Read context files (AGENT-USAGE-GUIDE.md, CLAUDE.md, README.md)
+□ Phase 2: Update all 7 SESSION-START-PROMPT.md files to Session {CURRENT_SESSION}
+□ Phase 3: Launch 7 parallel agents with mandatory TodoWrite requirement
+□ Phase 4: Validate each agent created TodoWrite list + session summary
+□ Phase 5: Provide final completion summary
+
+Let's begin Session {2} integration work!
 ```
 
 ---
 
-## 🔧 Module-Specific Variables
 
-### AI Garage & Shop
-- `{MODULE_NAME}`: AI Garage & Shop
-- `{MODULE_DIR}`: AI-Garage-&-shop
-- `{SESSION_NUMBER}`: 1-8
 
-### Landing/Admin/Pricing/Onboarding
-- `{MODULE_NAME}`: Landing/Admin/Pricing/Onboarding
-- `{MODULE_DIR}`: landing-onboard-price-admin
-- `{SESSION_NUMBER}`: 1-12
 
-### CMS & Marketing
-- `{MODULE_NAME}`: CMS & Marketing
-- `{MODULE_DIR}`: cms&marketing-module
-- `{SESSION_NUMBER}`: 1-8
 
-### Expenses & Taxes
-- `{MODULE_NAME}`: Expenses & Taxes
-- `{MODULE_DIR}`: expenses-&-taxes-module
-- `{SESSION_NUMBER}`: 1-10
 
-### Main Dashboard
-- `{MODULE_NAME}`: Main Dashboard
-- `{MODULE_DIR}`: main-dash
-- `{SESSION_NUMBER}`: 1-7
 
-### REID Dashboard
-- `{MODULE_NAME}`: REID Dashboard
-- `{MODULE_DIR}`: REIDashboard
-- `{SESSION_NUMBER}`: 1-12
-
-### Tool Marketplace
-- `{MODULE_NAME}`: Tool Marketplace
-- `{MODULE_DIR}`: tool&dashboard-marketplace
-- `{SESSION_NUMBER}`: 1-8
 
 ---
 
-## ✅ Universal Pre-Session Checklist
+## 📋 USAGE INSTRUCTIONS
 
-Before starting ANY session:
+**For User (You):**
+1. Change `{CURRENT_SESSION}` to actual session number (e.g., 3, 4, 5...)
+2. Copy the entire prompt above (inside the code block)
+3. Paste to Claude
+4. Claude will handle the rest
 
-- [ ] Read root CLAUDE.md (repository standards)
-- [ ] Read platform CLAUDE.md (platform-specific rules)
-- [ ] Read module SESSION-START-PROMPT.md (module-specific guidance)
-- [ ] Read current session plan file
-- [ ] Understand previous session completion (if not Session 1)
-- [ ] Create TodoWrite list with all tasks
-- [ ] Have Supabase MCP tools ready
-- [ ] Know the session objectives
-- [ ] Understand completion criteria
+**What Claude Will Do:**
+1. Read context files for understanding
+2. Update session numbers in all 7 integration prompts
+3. Launch 7 agents in parallel (each MUST create TodoWrite list first)
+4. Monitor progress and validate each agent's work
+5. Ensure all agents created in-depth todo lists before implementing
+6. Provide comprehensive completion summary
+7. Flag any improvements needed to AGENT-USAGE-GUIDE.md
 
----
+**Expected Duration:**
+- Phase 1-2: 5-10 minutes (reading + updating files)
+- Phase 3-4: 20-60 minutes (parallel agent execution + validation)
+- Phase 5: 5 minutes (final report)
+- **Total:** ~30-75 minutes depending on session complexity
 
-## ✅ Universal Session Completion Checklist
-
-Before marking ANY session as complete:
-
-- [ ] All objectives from session plan completed
-- [ ] All files created/modified as specified
-- [ ] Multi-tenancy enforced (organizationId checks)
-- [ ] RBAC permissions added and tested
-- [ ] Input validation with Zod implemented
-- [ ] Error handling added
-- [ ] Loading states implemented
-- [ ] Mobile responsive
-- [ ] Code follows platform standards (CLAUDE.md)
-- [ ] Session summary file created
-- [ ] Ready to proceed to next session
+**Expected Output:**
+- 7 in-depth TodoWrite lists (created by agents before implementation)
+- 7 session summary files (one per module)
+- Final completion report showing progress across all modules
+- Any blockers or issues flagged for review
+- Process violations noted (if any agent skipped TodoWrite)
 
 ---
 
-## 🚨 Universal Pitfalls to Avoid
+## 🔧 MAINTENANCE
 
-### Database & Architecture
-1. ❌ Don't use Prisma CLI - Use Supabase MCP tools
-2. ❌ Don't forget organizationId - Every model needs multi-tenancy
-3. ❌ Don't skip RLS policies - Database-level security is critical
-4. ❌ Don't bypass RBAC - Every Server Action needs permission validation
+**When to Update This Prompt:**
+- Session count changes for any module
+- New module added to integration queue
+- Agent usage patterns evolve
+- New best practices discovered
 
-### Code Quality
-5. ❌ Don't skip reading files - Always Read before Edit
-6. ❌ Don't create duplicates - Check if components/modules exist
-7. ❌ Don't hardcode values - Use environment variables
-8. ❌ Don't skip error handling - Wrap database calls in try/catch
-
-### Development Workflow
-9. ❌ Don't forget revalidatePath - Call after mutations
-10. ❌ Don't commit secrets - Never commit .env files
-11. ❌ Don't skip tests - Maintain 80%+ coverage
-12. ❌ Don't ignore file size limits - Keep files under 500 lines
-
----
-
-## 📊 Module Integration Progress Tracker
-
-Track overall platform integration progress:
-
-| Module | Sessions | Status | Progress |
-|--------|----------|--------|----------|
-| CRM | 10/10 | ✅ Complete | 100% |
-| Transactions | 10/10 | ✅ Complete | 100% |
-| AI Garage | 0/8 | 📋 Planned | 0% |
-| Landing/Admin | 0/3+ | 📋 Planned | 0% |
-| CMS & Marketing | 0/8 | 📋 Planned | 0% |
-| Expenses & Taxes | 0/10 | 📋 Planned | 0% |
-| Main Dashboard | 0/7 | 📋 Planned | 0% |
-| REID Dashboard | 0/12 | 📋 Planned | 0% |
-| Tool Marketplace | 0/8 | 📋 Planned | 0% |
-
-**Overall Platform Completion:** 20/76 sessions (26%)
-
----
-
-## 🎓 Best Practices (From Successful CRM/Transaction Integrations)
-
-### 1. Database First
-- Define schema in Session 1
-- Apply migrations via Supabase MCP
-- Test RLS policies immediately
-- Verify multi-tenancy isolation
-
-### 2. Backend Before Frontend
-- Build module structure (schemas, queries, actions)
-- Create API routes with proper auth
-- Test with curl/Postman before UI
-- Ensure RBAC works correctly
-
-### 3. Component Hierarchy
-- Shared components first
-- Feature-specific components second
-- Page composition last
-- Test responsive design throughout
-
-### 4. Incremental Testing
-- Test after each major component
-- Don't wait until the end
-- Fix issues immediately
-- Maintain 80%+ coverage
-
-### 5. Security Throughout
-- RLS policies from Session 1
-- RBAC checks in every action
-- Input validation with Zod
-- Never expose secrets
-
----
-
-## 🔗 Quick Reference Links
-
-### Documentation
-- [Root CLAUDE.md](../../CLAUDE.md) - Repository standards
-- [Platform CLAUDE.md](../../(platform)/CLAUDE.md) - Platform-specific rules
-- [Agent Usage Guide](../../.claude/agents/AGENT-USAGE-GUIDE.md) - Agent patterns
-
-### Reference Implementations
-- [CRM Module](crm-module/) - Complete integration example
-- [Transaction Module](transaction-workspace-&-modules/) - Complete integration example
-
-### Module Session Plans
-- [AI Garage](AI-Garage-&-shop/)
-- [Landing/Admin](landing-onboard-price-admin/)
-- [CMS & Marketing](cms&marketing-module/)
-- [Expenses & Taxes](expenses-&-taxes-module/)
-- [Main Dashboard](main-dash/)
-- [REID Dashboard](REIDashboard/)
-- [Tool Marketplace](tool&dashboard-marketplace/)
-
----
-
-## 🎯 Getting Started
-
-### For New Developers:
-1. Read this master prompt
-2. Study CRM module (reference implementation)
-3. Choose a module to integrate
-4. Read module's SESSION-START-PROMPT.md
-5. Start with Session 1
-
-### For Continuing Work:
-1. Check progress tracker above
-2. Read last session's summary
-3. Use session start template
-4. Continue from next session
-
----
-
-## 📞 Support & Questions
-
-When stuck:
-1. Check module SESSION-START-PROMPT.md for module-specific guidance
-2. Review CRM/Transaction modules for examples
-3. Refer to CLAUDE.md for platform standards
-4. Check Agent Usage Guide for multi-agent patterns
+**Version History:**
+- v2.0 (2025-10-05): Multi-agent coordination with parallel execution
+- v1.0 (2025-10-04): Initial master prompt
 
 ---
 
 **Last Updated:** 2025-10-05
-**Version:** 1.0
-**Modules Covered:** 9 (2 complete, 7 planned)
-**Total Sessions:** 76 across all modules
+**Modules Covered:** 7 active integrations
+**Agent Pool:** strive-dev-1 through strive-dev-10

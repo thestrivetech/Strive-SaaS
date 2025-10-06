@@ -75,6 +75,82 @@ Coverage: 80% minimum
 
 ---
 
+## 🏗️ ARCHITECTURE: 3-LEVEL HIERARCHY
+
+**Understanding the Platform Structure:**
+
+### Level 1: INDUSTRY
+- **Definition:** Top-level business vertical
+- **Examples:** Real Estate, Healthcare, Legal, Construction
+- **Location:** `app/{industry}/`
+- **URL Pattern:** `/real-estate/*`, `/healthcare/*`
+- **Contains:** Industry dashboard + Multiple modules
+
+### Level 2: MODULE
+- **Definition:** Complete functional area within an industry
+- **Examples:** CRM, Transactions, Analytics, AI Hub
+- **Location:** `app/{industry}/{module}/`
+- **URL Pattern:** `/real-estate/crm/*`, `/real-estate/workspace/*`
+- **Contains:** Module dashboard + Multiple feature pages
+
+### Level 3: PAGE
+- **Definition:** Individual pages within a module
+- **Types:**
+  - **Dashboard Page:** Overview/summary (e.g., `/crm/dashboard`)
+  - **Feature Pages:** Specific functionality (e.g., `/crm/contacts`)
+  - **Detail Pages:** Dynamic routes (e.g., `/crm/contacts/[id]`)
+
+**Terminology Clarity:**
+- ✅ `/real-estate/dashboard/` = "Real Estate Industry Dashboard"
+- ✅ `/real-estate/crm/` = "CRM Module"
+- ✅ `/real-estate/crm/dashboard/` = "CRM Module Dashboard"
+- ✅ `/real-estate/crm/contacts/` = "Contacts Page (within CRM Module)"
+- ❌ `/real-estate/crm/contacts/` = ~~"Contacts Dashboard"~~ (INCORRECT)
+
+---
+
+### 🔑 Understanding "Modules" - Backend vs Frontend
+
+**CRITICAL:** The term "module" refers to TWO different concepts in this architecture:
+
+#### Frontend Modules (Routes)
+- **Location:** `app/real-estate/{module}/`
+- **Purpose:** User-facing routes and UI components
+- **Examples:** `/real-estate/crm/`, `/real-estate/workspace/`
+- **What they do:** Display pages, handle user interactions, render components
+- **Technology:** Next.js App Router pages, React Server Components
+
+#### Backend Modules (Business Logic)
+- **Location:** `lib/modules/{module}/`
+- **Purpose:** Server-side business logic, database queries, Server Actions
+- **Examples:** `lib/modules/crm/`, `lib/modules/transactions/`
+- **What they do:** Process data, enforce business rules, interact with database
+- **Technology:** Server Actions, Prisma queries, Zod validation
+
+**How They Work Together:**
+```
+User visits:  app/real-estate/crm/contacts/page.tsx (Frontend Route)
+                     ↓ (imports and calls)
+Server Action: lib/modules/crm/contacts/actions.ts (Backend Logic)
+                     ↓ (queries)
+Database:      Supabase via Prisma
+```
+
+**Key Point:** `lib/modules/` provides the backend "kitchen" where business logic happens. `app/real-estate/` provides the frontend "menu" that users interact with.
+
+**Common Confusion:**
+- ❌ "The CRM module is in `app/real-estate/crm/`" - This is the frontend route
+- ✅ "The CRM frontend is in `app/real-estate/crm/`, backend logic is in `lib/modules/crm/`"
+
+**Naming Note:**
+- Some modules have different names in frontend vs backend for UX reasons
+- Example: Transaction Management
+  - Frontend: `app/real-estate/workspace/` (user-friendly name)
+  - Backend: `lib/modules/transactions/` (technical accuracy)
+  - This prevents confusion and avoids breaking changes
+
+---
+
 ## 📁 STRUCTURE
 
 > **Multi-Industry Scalable Architecture:**
@@ -101,10 +177,52 @@ Coverage: 80% minimum
 │   │   ├── pricing/            # Pricing page
 │   │   └── features/           # Features showcase
 │   │
-│   ├── real-estate/             # Real Estate Industry App
-│   │   ├── crm/                # CRM (contacts, leads, deals)
-│   │   ├── dashboard/          # Role-based dashboards
-│   │   └── transactions/       # Transaction management
+│   ├── settings/                # ✅ SHARED - User/org settings (ALL industries)
+│   │   ├── page.tsx            # Settings main page
+│   │   ├── profile/            # User profile settings
+│   │   ├── team/               # Team management
+│   │   ├── billing/            # Billing & subscription
+│   │   └── organization/       # Organization settings
+│   │
+│   ├── real-estate/             # INDUSTRY: Real Estate
+│   │   ├── dashboard/          # ✅ PAGE: Industry main dashboard
+│   │   │
+│   │   ├── crm/                # ✅ MODULE: Customer Relationship Management
+│   │   │   ├── dashboard/      # PAGE: CRM module dashboard
+│   │   │   ├── contacts/       # PAGE: Contacts management
+│   │   │   ├── leads/          # PAGE: Leads management
+│   │   │   ├── deals/          # PAGE: Deals management
+│   │   │   ├── analytics/      # PAGE: CRM analytics
+│   │   │   └── calendar/       # PAGE: CRM calendar
+│   │   │
+│   │   ├── workspace/          # ✅ MODULE: Transaction Management
+│   │   │   ├── dashboard/      # PAGE: Workspace dashboard
+│   │   │   ├── [loopId]/       # PAGE: Transaction detail
+│   │   │   ├── listings/       # PAGE: Property listings
+│   │   │   │   └── [id]/       # PAGE: Listing detail
+│   │   │   ├── sign/           # PAGE: Signature flow
+│   │   │   │   └── [signatureId]/ # PAGE: Document signing
+│   │   │   └── analytics/      # 📋 PAGE: Transaction analytics (coming soon)
+│   │   │
+│   │   ├── ai-hub/             # 📋 MODULE: AI Hub (skeleton)
+│   │   │   ├── dashboard/      # PAGE: AI Hub dashboard (skeleton)
+│   │   │   └── page.tsx        # Redirect to dashboard
+│   │   │
+│   │   ├── rei-analytics/      # 📋 MODULE: REI Intelligence (skeleton)
+│   │   │   ├── dashboard/      # PAGE: Analytics dashboard (skeleton)
+│   │   │   └── page.tsx        # Redirect to dashboard
+│   │   │
+│   │   ├── expense-tax/        # 📋 MODULE: Expense & Tax (skeleton)
+│   │   │   ├── dashboard/      # PAGE: Expense dashboard (skeleton)
+│   │   │   └── page.tsx        # Redirect to dashboard
+│   │   │
+│   │   ├── cms-marketing/      # 📋 MODULE: CMS & Marketing (skeleton)
+│   │   │   ├── dashboard/      # PAGE: CMS dashboard (skeleton)
+│   │   │   └── page.tsx        # Redirect to dashboard
+│   │   │
+│   │   └── marketplace/        # 📋 MODULE: Tool Marketplace (skeleton)
+│   │       ├── dashboard/      # PAGE: Marketplace dashboard (skeleton)
+│   │       └── page.tsx        # Redirect to dashboard
 │   │
 │   └── api/                     # API routes
 │       ├── webhooks/           # Stripe, Supabase webhooks
@@ -122,23 +240,31 @@ Coverage: 80% minimum
 │   │   └── MarketingLayout.tsx
 │   └── real-estate/             # Real Estate-specific components
 │       ├── crm/                # CRM components
-│       ├── transactions/       # Transaction components
-│       ├── listings/           # Listing components
-│       └── analytics/          # Analytics components
+│       ├── workspace/          # Transaction/workspace components
+│       ├── ai-hub/             # 📋 AI Hub components (skeleton)
+│       ├── rei-analytics/      # 📋 REI Analytics components (skeleton)
+│       ├── expense-tax/        # 📋 Expense & Tax components (skeleton)
+│       ├── cms-marketing/      # 📋 CMS & Marketing components (skeleton)
+│       └── marketplace/        # 📋 Marketplace components (skeleton)
 │
 ├── lib/
-│   ├── modules/                 # Feature modules (15 consolidated)
-│   │   ├── crm/                # CRM module
+│   ├── modules/                 # Feature modules (13 consolidated)
+│   │   ├── crm/                # ✅ CRM module (implemented)
 │   │   │   ├── contacts/      # Contact management
 │   │   │   ├── leads/         # Lead management
 │   │   │   └── deals/         # Deal management
-│   │   ├── transactions/       # Transaction module
+│   │   ├── transactions/       # ✅ Transaction module (implemented)
 │   │   │   ├── tasks/         # Transaction tasks
 │   │   │   ├── activity/      # Activity tracking
 │   │   │   ├── analytics/     # Analytics
 │   │   │   └── listings/      # Property listings
-│   │   ├── ai/                 # AI module
-│   │   ├── analytics/          # Analytics module
+│   │   ├── ai/                 # ✅ AI module (implemented)
+│   │   ├── analytics/          # ✅ Analytics module (implemented)
+│   │   ├── ai-hub/             # 📋 AI Hub module (skeleton)
+│   │   ├── rei-analytics/      # 📋 REI Analytics module (skeleton)
+│   │   ├── expense-tax/        # 📋 Expense & Tax module (skeleton)
+│   │   ├── cms-marketing/      # 📋 CMS & Marketing module (skeleton)
+│   │   ├── marketplace/        # 📋 Marketplace module (skeleton)
 │   │   └── [other-modules]/    # Other consolidated modules
 │   │       ├── actions.ts      # Server Actions
 │   │       ├── queries.ts      # Data queries
@@ -588,18 +714,20 @@ npm start
 ```typescript
 // Each industry gets isolated route structure
 app/
-├── real-estate/        // Industry 1
-│   ├── dashboard/
-│   ├── crm/
-│   └── transactions/
-├── healthcare/         // Industry 2 (future)
-│   ├── dashboard/
-│   ├── patients/
-│   └── appointments/
-└── legal/              // Industry 3 (future)
-    ├── dashboard/
-    ├── cases/
-    └── clients/
+├── real-estate/        // INDUSTRY 1 (implemented)
+│   ├── dashboard/      // Industry dashboard
+│   ├── crm/            // MODULE: CRM
+│   └── transactions/   // MODULE: Transactions
+│
+├── healthcare/         // INDUSTRY 2 (future)
+│   ├── dashboard/      // Industry dashboard
+│   ├── patients/       // MODULE: Patient Management
+│   └── appointments/   // MODULE: Scheduling
+│
+└── legal/              // INDUSTRY 3 (future)
+    ├── dashboard/      // Industry dashboard
+    ├── cases/          // MODULE: Case Management
+    └── clients/        // MODULE: Client Management
 
 // Shared infrastructure used across all industries
 lib/
@@ -717,7 +845,7 @@ describe('MyFeature Module', () => {
 
 **Note on Module Organization:**
 - **Prefer consolidation** - Group related features under a parent module (e.g., `crm/contacts/`, `crm/leads/`)
-- **Current count:** 15 consolidated modules (down from 26)
+- **Current count:** 13 consolidated modules (down from 26)
 - **Before creating new module:** Check if it belongs under existing module structure
 
 ---
@@ -745,6 +873,7 @@ describe('MyFeature Module', () => {
 ❌ app/(platform)/crm/ // OLD structure - use app/real-estate/crm/
 ❌ components/(platform)/ // OLD - use components/real-estate/
 ❌ app/dashboard/ // Missing industry prefix (real-estate/)
+❌ app/real-estate/transactions/ // OLD name - use workspace/ for frontend routes
 
 // Security Anti-patterns
 ❌ const apiKey = process.env.STRIPE_SECRET_KEY; // Exposed to client
@@ -830,13 +959,35 @@ describe('MyFeature Module', () => {
 
 ## 📝 VERSION HISTORY
 
+**v2.2 (2025-10-05)** - Session 3 Refactoring Updates
+- Added workspace dashboard (`app/real-estate/workspace/dashboard/`)
+- Added 5 module skeletons:
+  - `ai-hub/` - AI Hub module (skeleton structure)
+  - `rei-analytics/` - REI Intelligence module (skeleton structure)
+  - `expense-tax/` - Expense & Tax module (skeleton structure)
+  - `cms-marketing/` - CMS & Marketing module (skeleton structure)
+  - `marketplace/` - Tool Marketplace module (skeleton structure)
+- Added settings module (`app/settings/`) - shared across all industries
+- Updated component structure to include new module directories
+- Updated lib/modules/ to show new backend module skeletons
+- Marked implemented vs skeleton modules with ✅ and 📋
+
+**v2.1 (2025-10-05)** - Architecture Clarifications
+- Added "Understanding Modules - Backend vs Frontend" section
+- Clarified distinction between `lib/modules/` (backend) and `app/real-estate/` (frontend)
+- Renamed transactions frontend route to workspace (`app/real-estate/workspace/`)
+- Backend logic remains in `lib/modules/transactions/` for clarity
+- Added planned settings module (`app/settings/`) as shared functionality
+- Updated module count to 13 consolidated modules (corrected from 15)
+- Added routing anti-patterns for workspace naming
+
 **v2.0 (2025-10-05)** - Multi-Industry Architecture
 - Updated directory structure to reflect multi-industry scalability
 - Changed `app/(platform)/` → `app/real-estate/` (industry-specific routes)
 - Added `app/(auth)/` and `app/(marketing)/` route groups
 - Changed `components/(platform)/` → `components/real-estate/`
 - Added `components/shared/` and `components/layouts/`
-- Updated module structure to reflect consolidation (26 → 15 modules)
+- Updated module structure to reflect consolidation (26 → 13 modules)
 - Added `lib/types/real-estate/` for industry-specific types
 - Added Multi-Industry Architecture section
 - Updated Decision Tree with industry considerations
