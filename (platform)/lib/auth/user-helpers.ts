@@ -1,4 +1,5 @@
-import type { users, organization_members, organizations } from '@prisma/client';
+import type { users, organization_members, organizations, subscriptions } from '@prisma/client';
+import type { OrgRole } from './constants';
 
 /**
  * User type with loaded organization member relationship
@@ -7,7 +8,9 @@ import type { users, organization_members, organizations } from '@prisma/client'
 export type UserWithOrganization = users & {
   organization_members: Array<
     organization_members & {
-      organizations: organizations;
+      organizations: organizations & {
+        subscriptions: subscriptions | null;
+      };
     }
   >;
 };
@@ -68,4 +71,38 @@ export function userBelongsToOrganization(
   return user.organization_members.some(
     member => member.organizations.id === organizationId
   );
+}
+
+/**
+ * Get the user's subscription tier
+ *
+ * Priority:
+ * 1. Organization subscription tier (from subscriptions table)
+ * 2. User's individual subscription tier (from users table)
+ *
+ * @param user - User with organization memberships loaded
+ * @returns Subscription tier string
+ */
+export function getUserSubscriptionTier(user: UserWithOrganization): string {
+  if (!user.organization_members || user.organization_members.length === 0) {
+    return user.subscription_tier;
+  }
+
+  const orgSubscription = user.organization_members[0].organizations.subscriptions;
+  return orgSubscription?.tier || user.subscription_tier;
+}
+
+/**
+ * Get the user's organization role
+ *
+ * @param user - User with organization memberships loaded
+ * @returns Organization role (OWNER, ADMIN, MEMBER, VIEWER)
+ * @throws Error if user has no organization memberships
+ */
+export function getUserOrganizationRole(user: UserWithOrganization): OrgRole {
+  if (!user.organization_members || user.organization_members.length === 0) {
+    throw new Error('User has no organization memberships');
+  }
+
+  return user.organization_members[0].role;
 }

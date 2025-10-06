@@ -7,7 +7,7 @@ Use this prompt at the beginning of each session. Simply replace `{SESSION_NUMBE
 ## 📋 Session Start Prompt
 
 ```
-I'm starting Session 2 of the Expenses & Taxes integration project.
+I'm starting Session 3 of the Expenses & Taxes integration project.
 
 Please follow these steps to begin:
 
@@ -21,7 +21,7 @@ Please follow these steps to begin:
    - Understand the UI design requirements and module architecture
 
 3. **Read Session Plan:**
-   - Read the session plan file at: C:\Users\zochr\Desktop\GitHub\Strive-SaaS\(platform)\update-sessions\dashboard-&-module-integrations\expenses-&-taxes-module\session-2.plan.md
+   - Read the session plan file at: C:\Users\zochr\Desktop\GitHub\Strive-SaaS\(platform)\update-sessions\dashboard-&-module-integrations\expenses-&-taxes-module\session-3.plan.md
    - Understand the objectives, requirements, and implementation steps
    - Note all dependencies and prerequisites
 
@@ -85,7 +85,7 @@ Please follow these steps to begin:
 
 10. **Session End Requirements:**
     When the session is complete, create a session summary file:
-    - File path: C:\Users\zochr\Desktop\GitHub\Strive-SaaS\(platform)\update-sessions\dashboard-&-module-integrations\expenses-&-taxes-module\session-2-summary.md
+    - File path: C:\Users\zochr\Desktop\GitHub\Strive-SaaS\(platform)\update-sessions\dashboard-&-module-integrations\expenses-&-taxes-module\session-3-summary.md
     - Include:
       * Session objectives (completed/partial/not started)
       * Files created (full list with paths)
@@ -97,7 +97,7 @@ Please follow these steps to begin:
       * Next steps / what's ready for next session
       * Overall progress percentage for the entire Expenses & Taxes integration
 
-Let's begin Session 2!
+Let's begin Session 3!
 ```
 
 ---
@@ -172,7 +172,7 @@ Before marking a session as complete, ensure:
 3. **Don't forget cleanup** - Delete from storage before DB delete
 4. **Don't bypass Supabase Storage** - Use MCP tools for storage operations
 
-### Testing (Session 10)
+### Testing (Session 3)
 1. **Don't skip tests** - Write tests as you code, not after
 2. **Don't test only happy paths** - Test errors, edge cases, RBAC
 3. **Don't ignore coverage** - 80% minimum required
@@ -183,24 +183,24 @@ Before marking a session as complete, ensure:
 ## 📚 Quick Reference
 
 ### Session Breakdown
-- **Session 1:** Database schema (Expense, ExpenseCategory, TaxEstimate, ExpenseReport, Receipt)
-- **Session 2:** Expense module backend (Server Actions, queries, API routes)
+- **Session 3:** Database schema (Expense, ExpenseCategory, TaxEstimate, ExpenseReport, Receipt)
+- **Session 3:** Expense module backend (Server Actions, queries, API routes)
 - **Session 3:** Categories & receipts (CRUD, Supabase Storage upload)
-- **Session 4:** Tax estimates & reports (calculations, report generation)
-- **Session 5:** Dashboard UI (KPI cards, summary display)
-- **Session 6:** Expense table & modal (CRUD UI, receipt upload)
-- **Session 7:** Tax & charts UI (tax calculator, category breakdown)
-- **Session 8:** Analytics & reports pages (trends, report generation UI)
-- **Session 9:** Settings page (category management, preferences)
-- **Session 10:** Testing, polish, documentation (production-ready)
+- **Session 3:** Tax estimates & reports (calculations, report generation)
+- **Session 3:** Dashboard UI (KPI cards, summary display)
+- **Session 3:** Expense table & modal (CRUD UI, receipt upload)
+- **Session 3:** Tax & charts UI (tax calculator, category breakdown)
+- **Session 3:** Analytics & reports pages (trends, report generation UI)
+- **Session 3:** Settings page (category management, preferences)
+- **Session 3:** Testing, polish, documentation (production-ready)
 
 ### Key Files by Session
 
-**Session 1:**
+**Session 3:**
 - `shared/prisma/schema.prisma` (add models)
 - Database migrations via Supabase MCP
 
-**Session 2:**
+**Session 3:**
 - `lib/modules/expenses/expenses/*.ts`
 - `lib/modules/expenses/summary/*.ts`
 - `app/api/v1/expenses/route.ts`
@@ -212,35 +212,35 @@ Before marking a session as complete, ensure:
 - `app/api/v1/expenses/categories/route.ts`
 - `app/api/v1/expenses/receipts/route.ts`
 
-**Session 4:**
+**Session 3:**
 - `lib/modules/expenses/tax-estimates/*.ts`
 - `lib/modules/expenses/reports/*.ts`
 - `app/api/v1/expenses/tax-estimate/route.ts`
 - `app/api/v1/expenses/reports/route.ts`
 
-**Session 5:**
+**Session 3:**
 - `app/real-estate/expenses/page.tsx`
 - `components/real-estate/expenses/dashboard/*.tsx`
 
-**Session 6:**
+**Session 3:**
 - `components/real-estate/expenses/tables/*.tsx`
 - `components/real-estate/expenses/forms/*.tsx`
 
-**Session 7:**
+**Session 3:**
 - `components/real-estate/expenses/tax/*.tsx`
 - `components/real-estate/expenses/charts/*.tsx`
 
-**Session 8:**
+**Session 3:**
 - `app/real-estate/expenses/analytics/page.tsx`
 - `app/real-estate/expenses/reports/page.tsx`
 - `components/real-estate/expenses/analytics/*.tsx`
 - `components/real-estate/expenses/reports/*.tsx`
 
-**Session 9:**
+**Session 3:**
 - `app/real-estate/expenses/settings/page.tsx`
 - `components/real-estate/expenses/settings/*.tsx`
 
-**Session 10:**
+**Session 3:**
 - `__tests__/modules/expenses/*.test.ts`
 - `docs/expenses-taxes/*.md`
 

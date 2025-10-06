@@ -17,10 +17,10 @@ PROJECT CONTEXT:
 - Architecture: Multi-tenant SaaS with RLS and RBAC
 - Integration Guide: tool-marketplace-integration-plan.md
 
-CURRENT SESSION: Session 2
+CURRENT SESSION: Session 3
 
 INSTRUCTIONS:
-1. Read the session plan file: session-2.plan.md
+1. Read the session plan file: session-3.plan.md
 2. Follow the step-by-step implementation exactly as documented
 3. Use Supabase MCP tools for all database operations (migrations, queries)
 4. Maintain multi-tenancy with organizationId on all relevant tables
@@ -38,16 +38,16 @@ CRITICAL RULES:
 - Check RBAC permissions in all actions
 - Use Supabase MCP tools for migrations (NOT Prisma CLI)
 
-Please confirm you're ready to begin Session 2 and summarize the objectives.
+Please confirm you're ready to begin Session 3 and summarize the objectives.
 ```
 
 ---
 
 ## Session-Specific Prompts
 
-### Session 1: Database Foundation
+### Session 3: Database Foundation
 ```
-Starting Session 1: Database Foundation & Marketplace Schema
+Starting Session 3: Database Foundation & Marketplace Schema
 
 OBJECTIVES:
 - Extend Prisma schema with 7 marketplace models
@@ -61,11 +61,11 @@ REMINDER: Use mcp__supabase__apply_migration for ALL database changes.
 Ready to begin?
 ```
 
-### Session 2: Backend & Schemas
+### Session 3: Backend & Schemas
 ```
-Starting Session 2: Marketplace Module - Backend & Schemas
+Starting Session 3: Marketplace Module - Backend & Schemas
 
-PREREQUISITES: Session 1 complete (database schema in place)
+PREREQUISITES: Session 3 complete (database schema in place)
 
 OBJECTIVES:
 - Create lib/modules/marketplace/ module structure
@@ -84,7 +84,7 @@ Ready to begin?
 ```
 Starting Session 3: Marketplace UI - Tool Grid & Filters
 
-PREREQUISITES: Session 2 complete (backend module ready)
+PREREQUISITES: Session 3 complete (backend module ready)
 
 OBJECTIVES:
 - Create main marketplace page with exact UI design
@@ -99,9 +99,9 @@ REMINDER: Match the exact color scheme and layout from integration guide.
 Ready to begin?
 ```
 
-### Session 4: Shopping Cart
+### Session 3: Shopping Cart
 ```
-Starting Session 4: Shopping Cart & Checkout
+Starting Session 3: Shopping Cart & Checkout
 
 PREREQUISITES: Session 3 complete (marketplace UI ready)
 
@@ -118,11 +118,11 @@ REMINDER: Cart should persist across page refreshes using shopping_carts table.
 Ready to begin?
 ```
 
-### Session 5: Tool Bundles
+### Session 3: Tool Bundles
 ```
-Starting Session 5: Tool Bundles & Special Offers
+Starting Session 3: Tool Bundles & Special Offers
 
-PREREQUISITES: Session 4 complete (cart & checkout ready)
+PREREQUISITES: Session 3 complete (cart & checkout ready)
 
 OBJECTIVES:
 - Create bundle display components
@@ -137,11 +137,11 @@ REMINDER: Bundles should show clear value proposition with savings percentages.
 Ready to begin?
 ```
 
-### Session 6: Reviews & Ratings
+### Session 3: Reviews & Ratings
 ```
-Starting Session 6: Reviews & Ratings System
+Starting Session 3: Reviews & Ratings System
 
-PREREQUISITES: Session 5 complete (bundles implemented)
+PREREQUISITES: Session 3 complete (bundles implemented)
 
 OBJECTIVES:
 - Create star rating component
@@ -156,11 +156,11 @@ REMINDER: Only users who purchased a tool can review it.
 Ready to begin?
 ```
 
-### Session 7: Purchased Tools Dashboard
+### Session 3: Purchased Tools Dashboard
 ```
-Starting Session 7: Purchased Tools Dashboard & Management
+Starting Session 3: Purchased Tools Dashboard & Management
 
-PREREQUISITES: Session 6 complete (reviews system ready)
+PREREQUISITES: Session 3 complete (reviews system ready)
 
 OBJECTIVES:
 - Create purchased tools dashboard page
@@ -175,9 +175,9 @@ REMINDER: Dashboard should show per-organization purchases with proper isolation
 Ready to begin?
 ```
 
-### Session 8: Testing & Deployment
+### Session 3: Testing & Deployment
 ```
-Starting Session 8: Testing, Optimization & Final Integration
+Starting Session 3: Testing, Optimization & Final Integration
 
 PREREQUISITES: Sessions 1-7 complete (all features implemented)
 
@@ -206,14 +206,14 @@ TOOL MARKETPLACE PROGRESS TRACKER
 
 ✅ = Completed | 🔄 = In Progress | ⏸️ = Paused | ❌ = Blocked
 
-Session 1: Database Foundation                    [ ]
-Session 2: Backend & Schemas                       [ ]
+Session 3: Database Foundation                    [ ]
+Session 3: Backend & Schemas                       [ ]
 Session 3: Marketplace UI                          [ ]
-Session 4: Shopping Cart & Checkout                [ ]
-Session 5: Tool Bundles                            [ ]
-Session 6: Reviews & Ratings                       [ ]
-Session 7: Purchased Tools Dashboard               [ ]
-Session 8: Testing & Deployment                    [ ]
+Session 3: Shopping Cart & Checkout                [ ]
+Session 3: Tool Bundles                            [ ]
+Session 3: Reviews & Ratings                       [ ]
+Session 3: Purchased Tools Dashboard               [ ]
+Session 3: Testing & Deployment                    [ ]
 
 Current Session: _______
 Blockers: _______

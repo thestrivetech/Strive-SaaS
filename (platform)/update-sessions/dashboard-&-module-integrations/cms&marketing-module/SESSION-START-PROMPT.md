@@ -7,7 +7,7 @@ Use this prompt at the beginning of each session. Simply replace `{SESSION_NUMBE
 ## 📋 Session Start Prompt
 
 ```
-I'm starting Session 2 of the CMS & Marketing (ContentPilot) integration project.
+I'm starting Session 3 of the CMS & Marketing (ContentPilot) integration project.
 
 Please follow these steps to begin:
 
@@ -17,7 +17,7 @@ Please follow these steps to begin:
    - Understand and follow all development rules, security requirements, and architectural patterns
 
 2. **Read Session Plan:**
-   - Read the session plan file at: C:\Users\zochr\Desktop\GitHub\Strive-SaaS\(platform)\update-sessions\dashboard-&-module-integrations\cms&marketing-module\session2.plan.md
+   - Read the session plan file at: C:\Users\zochr\Desktop\GitHub\Strive-SaaS\(platform)\update-sessions\dashboard-&-module-integrations\cms&marketing-module\session3.plan.md
    - Understand the objectives, requirements, and implementation steps
    - Note all dependencies and prerequisites
 
@@ -62,7 +62,7 @@ Please follow these steps to begin:
 
 7. **Session End Requirements:**
    When the session is complete, create a session summary file:
-   - File path: C:\Users\zochr\Desktop\GitHub\Strive-SaaS\(platform)\update-sessions\dashboard-&-module-integrations\cms&marketing-module\session2-summary.md
+   - File path: C:\Users\zochr\Desktop\GitHub\Strive-SaaS\(platform)\update-sessions\dashboard-&-module-integrations\cms&marketing-module\session3-summary.md
    - Include:
      * Session objectives (completed/partial/not started)
      * Files created (full list with paths)
@@ -73,7 +73,7 @@ Please follow these steps to begin:
      * Next steps / what's ready for next session
      * Overall progress percentage for the entire ContentPilot integration
 
-Let's begin Session 2!
+Let's begin Session 3!
 ```
 
 ---
@@ -114,12 +114,12 @@ Before marking a session as complete, ensure:
 
 ## 📊 Session Overview
 
-**Session 1: Database Schema & Foundation**
+**Session 3: Database Schema & Foundation**
 - Add ContentPilot tables to Prisma schema
 - Implement RLS policies
 - Create database migration
 
-**Session 2: Content Module - Backend & Validation**
+**Session 3: Content Module - Backend & Validation**
 - Build content management backend
 - Implement Zod validation
 - Create content server actions
@@ -129,27 +129,27 @@ Before marking a session as complete, ensure:
 - File upload with optimization
 - Folder management system
 
-**Session 4: Content Editor UI - Rich Text & Publishing**
+**Session 3: Content Editor UI - Rich Text & Publishing**
 - Integrate TipTap rich text editor
 - Build content editor UI
 - Implement SEO panel
 
-**Session 5: Campaign Management - Email & Social**
+**Session 3: Campaign Management - Email & Social**
 - Create campaign module
 - Build email campaign builder
 - Implement social media scheduler
 
-**Session 6: Analytics & Reporting - Performance Insights**
+**Session 3: Analytics & Reporting - Performance Insights**
 - Build analytics dashboard
 - Implement performance tracking
 - Create export functionality
 
-**Session 7: Navigation & Dashboard Integration**
+**Session 3: Navigation & Dashboard Integration**
 - Update platform navigation
 - Create main dashboard
 - Implement breadcrumbs
 
-**Session 8: Testing, Polish & Go-Live**
+**Session 3: Testing, Polish & Go-Live**
 - Comprehensive testing
 - Performance optimization
 - Production deployment

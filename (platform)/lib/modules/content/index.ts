@@ -7,13 +7,25 @@
  * - Analytics and tracking
  * - Content calendar and scheduling
  *
- * TODO: Export public API once actions, queries, and schemas are implemented
- *
- * Future exports:
- * export * from './actions';
- * export * from './queries';
- * export * from './schemas';
+ * Session 2 Status: Content submodule complete
+ * Session 3 Status: Media submodule complete
+ * Future sessions: Campaigns
  */
 
-// Placeholder exports to prevent TypeScript errors
-export {};
+// ============================================================================
+// Content Management (Session 2 - COMPLETE)
+// ============================================================================
+
+export * from './content';
+
+// ============================================================================
+// Media Library (Session 3 - COMPLETE)
+// ============================================================================
+
+export * from './media';
+
+// ============================================================================
+// Marketing Campaigns (Session 4 - TODO)
+// ============================================================================
+
+// export * from './campaigns';
