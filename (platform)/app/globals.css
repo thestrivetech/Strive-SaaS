@@ -45,6 +45,11 @@
 
   /* Border Radius */
     --radius: 0.75rem;
+
+  /* Elevation Variables */
+  --elevate-1: rgba(0, 0, 0, 0.03);
+  --elevate-2: rgba(0, 0, 0, 0.08);
+  --shadow-lg: 0px 10px 20px -4px hsl(240 10% 10% / 0.12);
   }
 
   .dark {

@@ -1,4 +1,4 @@
-# Master Session Coordination - Session 3
+# Master Session Coordination - Session 4
 
 **Version:** 3.0 (Token Optimized)
 **Usage:** Replace `3` with session number, copy to Claude
@@ -20,11 +20,11 @@ Launch in **single message** (7 Task calls):
 
 **Agent Prompt Template:**
 ```
-[MODULE_NAME] - Session 3
+[MODULE_NAME] - Session 4
 
 1. Read: (platform)/update-sessions/.../[MODULE_DIR]/SESSION-START-PROMPT-SHORT.md
 2. Follow ALL instructions exactly (TodoWrite first, session plan, verification)
-3. Complete objectives → Create summary: session-3-summary.md
+3. Complete objectives → Create summary: session-4-summary.md
 4. Report: summary file path OR specific blockers
 
 BLOCKING: DO NOT report complete without summary file.
@@ -55,7 +55,7 @@ As agents complete, verify:
 ## 4. FINAL REPORT
 
 ```
-Session 3 Completion Summary:
+Session 4 Completion Summary:
 
 MODULE STATUS:
 ✅/❌ AI Garage: [COMPLETE | BLOCKED: reason]

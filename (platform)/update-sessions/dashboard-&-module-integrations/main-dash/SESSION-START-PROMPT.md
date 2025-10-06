@@ -7,7 +7,7 @@ Use this prompt at the beginning of each session. Simply replace `{SESSION_NUMBE
 ## 📋 Session Start Prompt
 
 ```
-I'm starting Session 3 of the Main Dashboard integration project.
+I'm starting Session 4 of the Main Dashboard integration project.
 
 Please follow these steps to begin:
 
@@ -17,7 +17,7 @@ Please follow these steps to begin:
    - Understand and follow all development rules, security requirements, and architectural patterns
 
 2. **Read Session Plan:**
-   - Read the session plan file at: C:\Users\zochr\Desktop\GitHub\Strive-SaaS\(platform)\update-sessions\dashboard-&-module-integrations\main-dash\session-3.plan.md
+   - Read the session plan file at: C:\Users\zochr\Desktop\GitHub\Strive-SaaS\(platform)\update-sessions\dashboard-&-module-integrations\main-dash\session-4.plan.md
    - Understand the objectives, requirements, and implementation steps
    - Note all dependencies and prerequisites
 
@@ -77,7 +77,7 @@ Please follow these steps to begin:
 
 9. **Session End Requirements:**
    When the session is complete, create a session summary file:
-   - File path: C:\Users\zochr\Desktop\GitHub\Strive-SaaS\(platform)\update-sessions\dashboard-&-module-integrations\main-dash\session-3-summary.md
+   - File path: C:\Users\zochr\Desktop\GitHub\Strive-SaaS\(platform)\update-sessions\dashboard-&-module-integrations\main-dash\session-4-summary.md
    - Include:
      * Session objectives (completed/partial/not started)
      * Files created (full list with paths)
@@ -88,7 +88,7 @@ Please follow these steps to begin:
      * Next steps / what's ready for next session
      * Overall progress percentage for the entire Main Dashboard integration
 
-Let's begin Session 3!
+Let's begin Session 4!
 ```
 
 ---
@@ -121,7 +121,7 @@ Before marking a session as complete, ensure:
 - [ ] Dashboard theme settings work
 - [ ] Customization saves user preferences
 
-### Testing Requirements (Session 3 only)
+### Testing Requirements (Session 4 only)
 - [ ] Unit tests written (80%+ coverage)
 - [ ] Integration tests for API routes
 - [ ] E2E tests for critical flows
@@ -156,13 +156,13 @@ Before marking a session as complete, ensure:
 
 ## 📊 Session Progress Tracking
 
-### Session 3: Database Foundation
+### Session 4: Database Foundation
 - Database models: DashboardWidget, UserDashboard, ActivityFeed, QuickAction, DashboardMetric
 - Enums: WidgetType, DashboardTheme, LayoutDensity, ActivityType, ActivitySeverity, ActionType, MetricCategory
 - RLS policies enabled
 - Prisma client generated
 
-### Session 3: Backend Module Logic
+### Session 4: Backend Module Logic
 - Module structure created
 - Zod schemas for all entities
 - Server Actions with RBAC
@@ -170,7 +170,7 @@ Before marking a session as complete, ensure:
 - Activity tracking system
 - Public API exports
 
-### Session 3: API Routes
+### Session 4: API Routes
 - RESTful endpoints created
 - Metrics CRUD operations
 - Activities CRUD operations
@@ -178,7 +178,7 @@ Before marking a session as complete, ensure:
 - Error handling middleware
 - Proper HTTP status codes
 
-### Session 3: Dashboard UI - Metrics
+### Session 4: Dashboard UI - Metrics
 - KPI Cards component
 - Chart widgets (Line, Bar, Pie)
 - Progress trackers
@@ -187,7 +187,7 @@ Before marking a session as complete, ensure:
 - Loading skeletons
 - Empty states
 
-### Session 3: Dashboard UI - Activities
+### Session 4: Dashboard UI - Activities
 - Activity feed with filtering
 - Activity item actions (read, archive)
 - Quick actions grid
@@ -195,7 +195,7 @@ Before marking a session as complete, ensure:
 - Module shortcuts navigation
 - Real-time updates
 
-### Session 3: Page Integration
+### Session 4: Page Integration
 - Main dashboard page assembled
 - Dashboard layout created
 - Suspense boundaries
@@ -204,7 +204,7 @@ Before marking a session as complete, ensure:
 - Middleware protection
 - Customization page
 
-### Session 3: Testing & Polish
+### Session 4: Testing & Polish
 - Unit tests (80%+ coverage)
 - Integration tests
 - E2E tests (Playwright)
@@ -235,7 +235,7 @@ Before marking a session as complete, ensure:
 - **CRM Module Example:** `../crm-module/`
 - **Platform Standards:** `(platform)/CLAUDE.md`
 - **Root Standards:** `CLAUDE.md`
-- **Deployment Checklist:** Created in Session 3
+- **Deployment Checklist:** Created in Session 4
 
 ---
 
