@@ -3,30 +3,67 @@
  *
  * Consolidated expense tracking and tax management module
  *
- * Features (Planned for Session 3 - Phase 2):
+ * Features:
  * - Expense tracking and categorization
  * - Tax deduction management
  * - Receipt upload and storage
- * - Mileage tracking
  * - Tax reports and summaries
  * - Quarterly tax estimates
  * - Transaction integration
  *
- * TODO:
- * - Implement actions, queries, and schemas
- * - Add expense categories
- * - Integrate with transaction module
- * - Build reporting functionality
+ * SECURITY:
+ * - All operations require authentication
+ * - Multi-tenancy enforced via organizationId
+ * - RBAC permission checks
+ * - Input validation with Zod schemas
  */
 
 // Actions
-export * from './actions';
+export {
+  createExpense,
+  updateExpense,
+  deleteExpense,
+  reviewExpense,
+  upsertTaxEstimate,
+  generateExpenseReport,
+  calculateTaxDeductions,
+} from './actions';
 
 // Queries
-export * from './queries';
+export {
+  getExpenses,
+  getExpenseById,
+  getExpenseSummary,
+  getCategoryBreakdown,
+  getExpenseCategories,
+  getTaxEstimate,
+  getExpenseReports,
+  getMonthlyExpenseTrend,
+} from './queries';
 
 // Schemas
-export * from './schemas';
+export {
+  ExpenseSchema,
+  UpdateExpenseSchema,
+  ExpenseFiltersSchema,
+  ExpenseCategorySchema,
+  TaxEstimateSchema,
+  ExpenseReportSchema,
+} from './schemas';
 
-// Types will be added when Prisma models are created
-// export type { expenses, tax_records } from '@prisma/client';
+// Types
+export type {
+  ExpenseInput,
+  UpdateExpenseInput,
+  ExpenseFilters,
+  ExpenseCategoryInput,
+  TaxEstimateInput,
+  ExpenseReportInput,
+} from './schemas';
+
+// Prisma types
+export type { expenses, tax_estimates, expense_reports, receipts } from '@prisma/client';
+
+// Sub-modules
+export * from './categories';
+export * from './receipts';

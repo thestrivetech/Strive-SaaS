@@ -7,7 +7,7 @@ Use this prompt at the beginning of each session. Simply replace `{SESSION_NUMBE
 ## 📋 Session Start Prompt
 
 ```
-I'm starting Session 2 of the AI Garage & Shop integration project.
+I'm starting Session 3 of the AI Garage & Shop integration project.
 
 Please follow these steps to begin:
 
@@ -17,7 +17,7 @@ Please follow these steps to begin:
    - Understand and follow all development rules, security requirements, and architectural patterns
 
 2. **Read Session Plan:**
-   - Read the session plan file at: C:\Users\zochr\Desktop\GitHub\Strive-SaaS\(platform)\update-sessions\dashboard-&-module-integrations\AI-Garage-&-shop\session-2.plan.md
+   - Read the session plan file at: C:\Users\zochr\Desktop\GitHub\Strive-SaaS\(platform)\update-sessions\dashboard-&-module-integrations\AI-Garage-&-shop\session-3.plan.md
    - Understand the objectives, requirements, and implementation steps
    - Note all dependencies and prerequisites
 
@@ -62,7 +62,7 @@ Please follow these steps to begin:
 
 7. **Session End Requirements:**
    When the session is complete, create a session summary file:
-   - File path: C:\Users\zochr\Desktop\GitHub\Strive-SaaS\(platform)\update-sessions\dashboard-&-module-integrations\AI-Garage-&-shop\session-2-summary.md
+   - File path: C:\Users\zochr\Desktop\GitHub\Strive-SaaS\(platform)\update-sessions\dashboard-&-module-integrations\AI-Garage-&-shop\session-3-summary.md
    - Include:
      * Session objectives (completed/partial/not started)
      * Files created (full list with paths)
@@ -73,7 +73,7 @@ Please follow these steps to begin:
      * Next steps / what's ready for next session
      * Overall progress percentage for AI Garage integration
 
-Let's begin Session 2!
+Let's begin Session 3!
 ```
 
 ---

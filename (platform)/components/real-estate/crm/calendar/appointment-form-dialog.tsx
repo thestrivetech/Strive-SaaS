@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { useForm } from 'react-hook-form';
+import { useForm, type SubmitHandler } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { format } from 'date-fns';
 import { Plus, Loader2, Calendar as CalendarIcon } from 'lucide-react';
@@ -60,16 +60,16 @@ export function AppointmentFormDialog({
   const [open, setOpen] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const form = useForm<CreateAppointmentInput>({
+  const form = useForm({
     resolver: zodResolver(createAppointmentSchema),
     defaultValues: appointment
       ? {
           title: appointment.title,
-          description: appointment.description || '',
+          description: appointment.description || undefined,
           start_time: new Date(appointment.start_time),
           end_time: new Date(appointment.end_time),
-          location: appointment.location || '',
-          meeting_url: appointment.meeting_url || '',
+          location: appointment.location || undefined,
+          meeting_url: appointment.meeting_url || undefined,
           type: appointment.type,
           status: appointment.status,
           lead_id: appointment.lead_id || undefined,
@@ -79,17 +79,17 @@ export function AppointmentFormDialog({
         }
       : {
           title: '',
-          description: '',
+          description: undefined,
           start_time: new Date(),
           end_time: new Date(Date.now() + 60 * 60 * 1000), // 1 hour from now
-          location: '',
-          meeting_url: '',
-          type: 'MEETING',
-          status: 'SCHEDULED',
+          location: undefined,
+          meeting_url: undefined,
+          type: 'MEETING' as const,
+          status: 'SCHEDULED' as const,
         },
   });
 
-  const onSubmit = async (data: CreateAppointmentInput) => {
+  const onSubmit: SubmitHandler<CreateAppointmentInput> = async (data) => {
     setIsSubmitting(true);
 
     try {
@@ -320,6 +320,7 @@ export function AppointmentFormDialog({
                       placeholder="Add appointment notes..."
                       rows={3}
                       {...field}
+                      value={field.value || ''}
                     />
                   </FormControl>
                   <FormMessage />
@@ -336,7 +337,7 @@ export function AppointmentFormDialog({
                   <FormItem>
                     <FormLabel>Location</FormLabel>
                     <FormControl>
-                      <Input placeholder="123 Main St" {...field} />
+                      <Input placeholder="123 Main St" {...field} value={field.value || ''} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -350,7 +351,7 @@ export function AppointmentFormDialog({
                   <FormItem>
                     <FormLabel>Meeting URL</FormLabel>
                     <FormControl>
-                      <Input placeholder="https://zoom.us/..." {...field} />
+                      <Input placeholder="https://zoom.us/..." {...field} value={field.value || ''} />
                     </FormControl>
                     <FormDescription>Zoom, Google Meet, etc.</FormDescription>
                     <FormMessage />

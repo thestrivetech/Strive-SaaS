@@ -6,6 +6,7 @@ import { redirect } from 'next/navigation';
 import { prisma } from '@/lib/prisma';
 import { AUTH_ROUTES, UserRole } from './constants';
 import type { UserWithOrganization } from './user-helpers';
+import { enhanceUser, type EnhancedUser } from './types';
 
 export const createSupabaseServerClient = async () => {
   const cookieStore = await cookies();
@@ -62,7 +63,11 @@ export const getCurrentUser = async (): Promise<UserWithOrganization | null> => 
       include: {
         organization_members: {
           include: {
-            organizations: true,
+            organizations: {
+              include: {
+                subscriptions: true,
+              },
+            },
           },
         },
       },
@@ -75,7 +80,35 @@ export const getCurrentUser = async (): Promise<UserWithOrganization | null> => 
   }
 };
 
-export const requireAuth = async () => {
+/**
+ * Require authentication and return enhanced user object
+ * This function replaces the old requireAuth that returned a session
+ *
+ * @returns Enhanced user with organization data and convenient property accessors
+ * @throws Redirects to login if not authenticated or no organization
+ */
+export const requireAuth = async (): Promise<EnhancedUser> => {
+  const user = await getCurrentUser();
+
+  if (!user) {
+    redirect(AUTH_ROUTES.LOGIN);
+  }
+
+  if (!user.organization_members || user.organization_members.length === 0) {
+    redirect('/onboarding/organization');
+  }
+
+  return enhanceUser(user);
+};
+
+/**
+ * Get current session (Supabase auth session)
+ * Use requireAuth() instead if you need user data with organization
+ *
+ * @returns Supabase session or redirects to login
+ * @deprecated Use requireAuth() for most cases
+ */
+export const requireSession = async () => {
   const session = await getSession();
 
   if (!session) {

@@ -362,3 +362,327 @@ export function canManageTransactionLoops(role: UserRole): boolean {
 export function canDeleteTransactionLoops(role: UserRole): boolean {
   return role === 'SUPER_ADMIN' || role === 'ADMIN' || role === 'MODERATOR';
 }
+
+/**
+ * Admin Panel Access Control (ADMIN role - for platform administrators)
+ */
+export function canAccessAdminPanel(role: UserRole): boolean {
+  return role === 'ADMIN';
+}
+
+export function canViewPlatformMetrics(role: UserRole): boolean {
+  return role === 'ADMIN';
+}
+
+export function canManageUsers(role: UserRole): boolean {
+  return role === 'ADMIN';
+}
+
+export function canManageOrganizations(role: UserRole): boolean {
+  return role === 'ADMIN';
+}
+
+export function canManageFeatureFlags(role: UserRole): boolean {
+  return role === 'ADMIN';
+}
+
+export function canManageSystemAlerts(role: UserRole): boolean {
+  return role === 'ADMIN';
+}
+
+export function canImpersonateUsers(role: UserRole): boolean {
+  // Only super admins can impersonate
+  return role === 'SUPER_ADMIN';
+}
+
+export function canExportData(role: UserRole): boolean {
+  return role === 'ADMIN';
+}
+
+export function canViewAuditLogs(role: UserRole): boolean {
+  return role === 'ADMIN';
+}
+
+/**
+ * Require admin access or throw
+ */
+export function requireAdminRole(role: UserRole): void {
+  if (!canAccessAdminPanel(role)) {
+    throw new Error('Unauthorized: Admin access required');
+  }
+}
+
+/**
+ * REID (Real Estate Intelligence Dashboard) Access Control
+ */
+export function canAccessREID(user: { globalRole?: UserRole; role?: UserRole; organizationRole?: string }): boolean {
+  // Support both globalRole and role fields
+  const userRole = user.globalRole || user.role;
+
+  // Must be Employee with Member+ org role
+  const isEmployee = ['ADMIN', 'MODERATOR', 'USER'].includes(userRole || '');
+  const hasOrgAccess = ['OWNER', 'ADMIN', 'MEMBER'].includes(user.organizationRole || '');
+
+  return isEmployee && hasOrgAccess;
+}
+
+export function canCreateReports(user: { organizationRole?: string }): boolean {
+  return ['OWNER', 'ADMIN', 'MEMBER'].includes(user.organizationRole || '');
+}
+
+export function canManageAlerts(user: { organizationRole?: string }): boolean {
+  return ['OWNER', 'ADMIN', 'MEMBER'].includes(user.organizationRole || '');
+}
+
+export function canAccessAIFeatures(user: { organizationRole?: string }): boolean {
+  // AI features only for Elite tier
+  return ['OWNER', 'ADMIN'].includes(user.organizationRole || '');
+}
+
+/**
+ * Get feature access by subscription tier
+ */
+export function canAccessFeature(user: { subscriptionTier?: string }, feature: string): boolean {
+  const tier = user.subscriptionTier || 'FREE';
+
+  const TIER_FEATURES: Record<string, string[]> = {
+    FREE: ['dashboard', 'profile'],
+    STARTER: ['dashboard', 'profile', 'crm', 'projects'],
+    GROWTH: ['dashboard', 'profile', 'crm', 'projects', 'reid-basic'], // Basic market data
+    ELITE: ['dashboard', 'profile', 'crm', 'projects', 'reid', 'reid-full', 'reid-ai'], // Full analytics + AI
+    ENTERPRISE: ['*'], // All features
+  };
+
+  const allowedFeatures = TIER_FEATURES[tier] || TIER_FEATURES.FREE;
+  return allowedFeatures.includes('*') || allowedFeatures.includes(feature);
+}
+
+/**
+ * Get REID feature limits by subscription tier
+ */
+export function getREIDLimits(tier: string) {
+  const limits: Record<string, { insights: number; alerts: number; reports: number; aiProfiles: number }> = {
+    FREE: { insights: 0, alerts: 0, reports: 0, aiProfiles: 0 },
+    STARTER: { insights: 0, alerts: 0, reports: 0, aiProfiles: 0 },
+    GROWTH: { insights: 50, alerts: 10, reports: 5, aiProfiles: 0 }, // Per month
+    ELITE: { insights: -1, alerts: -1, reports: -1, aiProfiles: -1 }, // Unlimited
+    ENTERPRISE: { insights: -1, alerts: -1, reports: -1, aiProfiles: -1 }, // Unlimited
+  };
+
+  return limits[tier] || limits.FREE;
+}
+
+/**
+ * AI Garage Access Control
+ */
+export const AI_GARAGE_PERMISSIONS = {
+  AI_GARAGE_ACCESS: 'ai-garage:access',
+  ORDERS_VIEW: 'ai-garage:orders:view',
+  ORDERS_CREATE: 'ai-garage:orders:create',
+  ORDERS_EDIT: 'ai-garage:orders:edit',
+  ORDERS_DELETE: 'ai-garage:orders:delete',
+  ORDERS_MANAGE: 'ai-garage:orders:manage',
+} as const;
+
+/**
+ * Check if user can access AI Garage module
+ */
+export function canAccessAIGarage(user: any): boolean {
+  const isEmployee = ['ADMIN', 'MODERATOR', 'USER'].includes(user.globalRole || user.role);
+  const hasOrgAccess = ['OWNER', 'ADMIN', 'MEMBER'].includes(user.organizationRole);
+
+  return isEmployee && hasOrgAccess;
+}
+
+/**
+ * Check if user can manage AI Garage (create, edit, delete)
+ */
+export function canManageAIGarage(user: any): boolean {
+  const isEmployee = ['ADMIN', 'MODERATOR', 'USER'].includes(user.globalRole || user.role);
+  const canManage = ['OWNER', 'ADMIN', 'MEMBER'].includes(user.organizationRole);
+
+  return isEmployee && canManage;
+}
+
+/**
+ * Check if user can assign builders
+ */
+export function canAssignBuilders(user: any): boolean {
+  return user.globalRole === 'ADMIN' || user.organizationRole === 'OWNER';
+}
+
+/**
+ * Get AI Garage feature limits by subscription tier
+ */
+export function getAIGarageLimits(tier: string) {
+  const limits: Record<string, { orders: number; templates: number; blueprints: number }> = {
+    FREE: { orders: 0, templates: 0, blueprints: 0 },
+    STARTER: { orders: 0, templates: 0, blueprints: 0 },
+    GROWTH: { orders: 3, templates: 10, blueprints: 5 }, // Per month
+    ELITE: { orders: -1, templates: -1, blueprints: -1 }, // Unlimited
+    ENTERPRISE: { orders: -1, templates: -1, blueprints: -1 }, // Unlimited
+  };
+
+  return limits[tier] || limits.FREE;
+}
+
+/**
+ * Expense & Tax Module Access Control
+ */
+export function canAccessExpenses(role: UserRole): boolean {
+  // All authenticated users can access expenses
+  return ['SUPER_ADMIN', 'ADMIN', 'MODERATOR', 'USER'].includes(role);
+}
+
+export function canCreateExpenses(role: UserRole): boolean {
+  // All authenticated users can create expenses
+  return ['SUPER_ADMIN', 'ADMIN', 'MODERATOR', 'USER'].includes(role);
+}
+
+export function canReviewExpenses(role: UserRole): boolean {
+  // Only admins can review/approve expenses
+  return ['SUPER_ADMIN', 'ADMIN'].includes(role);
+}
+
+export function canDeleteExpenses(role: UserRole): boolean {
+  // Admins and moderators can delete expenses
+  return ['SUPER_ADMIN', 'ADMIN', 'MODERATOR'].includes(role);
+}
+
+export function canManageExpenseCategories(role: UserRole): boolean {
+  // Only admins can manage expense categories
+  return ['SUPER_ADMIN', 'ADMIN'].includes(role);
+}
+
+export function canGenerateExpenseReports(role: UserRole): boolean {
+  // All authenticated users can generate reports
+  return ['SUPER_ADMIN', 'ADMIN', 'MODERATOR', 'USER'].includes(role);
+}
+
+/**
+ * Get expense feature limits by subscription tier
+ */
+export function getExpenseLimits(tier: string) {
+  const limits: Record<string, { expenses: number; receipts: number; reports: number }> = {
+    FREE: { expenses: 0, receipts: 0, reports: 0 },
+    STARTER: { expenses: 0, receipts: 0, reports: 0 },
+    GROWTH: { expenses: 500, receipts: 500, reports: 5 }, // Per month
+    ELITE: { expenses: -1, receipts: -1, reports: -1 }, // Unlimited
+    ENTERPRISE: { expenses: -1, receipts: -1, reports: -1 }, // Unlimited
+  };
+
+  return limits[tier] || limits.FREE;
+}
+/**
+ * Dashboard Module Permissions
+ */
+export function canAccessDashboard(user: { role?: UserRole }): boolean {
+  // All authenticated users can access basic dashboard
+  return true;
+}
+
+export function canCustomizeDashboard(user: { organizationRole?: string }): boolean {
+  return ['OWNER', 'ADMIN', 'MEMBER'].includes(user.organizationRole || '');
+}
+
+export function canViewOrganizationMetrics(user: { organizationRole?: string }): boolean {
+  return ['OWNER', 'ADMIN'].includes(user.organizationRole || '');
+}
+
+export function canManageWidgets(user: { organizationRole?: string }): boolean {
+  return ['OWNER', 'ADMIN'].includes(user.organizationRole || '');
+}
+
+/**
+ * Content Management (CMS) Permissions
+ */
+export function canAccessContent(user: { globalRole?: UserRole; role?: UserRole; organizationRole?: string }): boolean {
+  // Support both globalRole and role fields
+  const userRole = user.globalRole || user.role;
+
+  // Must be Employee with Member+ org role
+  const isEmployee = ['ADMIN', 'MODERATOR', 'USER'].includes(userRole || '');
+  const hasOrgAccess = ['OWNER', 'ADMIN', 'MEMBER'].includes(user.organizationRole || '');
+
+  return isEmployee && hasOrgAccess;
+}
+
+export function canCreateContent(user: { organizationRole?: string }): boolean {
+  return ['OWNER', 'ADMIN', 'MEMBER'].includes(user.organizationRole || '');
+}
+
+export function canPublishContent(user: { organizationRole?: string }): boolean {
+  // Only owners and admins can publish
+  return ['OWNER', 'ADMIN'].includes(user.organizationRole || '');
+}
+
+export function canDeleteContent(user: { organizationRole?: string }): boolean {
+  return ['OWNER', 'ADMIN'].includes(user.organizationRole || '');
+}
+
+/**
+ * Get content feature limits by subscription tier
+ */
+export function getContentLimits(tier: string) {
+  const limits: Record<string, { content: number; media: number; campaigns: number }> = {
+    FREE: { content: 0, media: 0, campaigns: 0 },
+    STARTER: { content: 0, media: 0, campaigns: 0 }, // No content features
+    GROWTH: { content: 100, media: 500, campaigns: 5 }, // Per month
+    ELITE: { content: -1, media: -1, campaigns: -1 }, // Unlimited
+    ENTERPRISE: { content: -1, media: -1, campaigns: -1 }, // Unlimited
+  };
+
+  return limits[tier] || limits.FREE;
+}
+
+/**
+ * Tool Marketplace Access Control
+ */
+export const MARKETPLACE_PERMISSIONS = {
+  MARKETPLACE_ACCESS: 'marketplace:access',
+  TOOLS_VIEW: 'marketplace:tools:view',
+  TOOLS_PURCHASE: 'marketplace:tools:purchase',
+  TOOLS_REVIEW: 'marketplace:tools:review',
+  BUNDLES_VIEW: 'marketplace:bundles:view',
+  BUNDLES_PURCHASE: 'marketplace:bundles:purchase',
+} as const;
+
+/**
+ * Check if user can access marketplace module
+ */
+export function canAccessMarketplace(role: UserRole): boolean {
+  // All authenticated users can access marketplace
+  return ['SUPER_ADMIN', 'ADMIN', 'MODERATOR', 'USER'].includes(role);
+}
+
+/**
+ * Check if user can purchase tools/bundles
+ */
+export function canPurchaseTools(role: UserRole): boolean {
+  // Only org owners and admins can purchase
+  return ['SUPER_ADMIN', 'ADMIN'].includes(role);
+}
+
+/**
+ * Check if user can review tools
+ */
+export function canReviewTools(role: UserRole): boolean {
+  // All authenticated users can review purchased tools
+  return ['SUPER_ADMIN', 'ADMIN', 'MODERATOR', 'USER'].includes(role);
+}
+
+/**
+ * Get marketplace limits based on subscription tier
+ */
+export function getMarketplaceLimits(tier: string) {
+  const limits: Record<string, { tools: number; bundles: number }> = {
+    FREE: { tools: 0, bundles: 0 },
+    CUSTOM: { tools: -1, bundles: -1 }, // Pay-per-use, unlimited purchases
+    STARTER: { tools: 0, bundles: 0 },
+    GROWTH: { tools: 10, bundles: 1 }, // Per organization
+    ELITE: { tools: -1, bundles: -1 }, // Unlimited
+    ENTERPRISE: { tools: -1, bundles: -1 }, // Unlimited
+  };
+
+  return limits[tier] || limits.FREE;
+}
