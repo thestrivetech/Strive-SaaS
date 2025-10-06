@@ -38,9 +38,15 @@ export async function handlePlatformAuth(request: NextRequest): Promise<NextResp
   // Org-admin routes (SUPER_ADMIN + ADMIN - organization management)
   const isAdminRoute = path.startsWith('/admin') || path.startsWith('/api/admin/');
 
-  const isTransactionRoute = path.startsWith('/transactions') || path.startsWith('/real-estate/transactions');
+  const isTransactionRoute = path.startsWith('/transactions') || path.startsWith('/real-estate/workspace');
   const isProtectedRoute = path.startsWith('/dashboard') ||
     path.startsWith('/real-estate/dashboard') ||
+    path.startsWith('/real-estate/workspace') ||
+    path.startsWith('/real-estate/ai-hub') ||
+    path.startsWith('/real-estate/rei-analytics') ||
+    path.startsWith('/real-estate/expense-tax') ||
+    path.startsWith('/real-estate/cms-marketing') ||
+    path.startsWith('/real-estate/marketplace') ||
     path.startsWith('/crm') ||
     path.startsWith('/real-estate/crm') ||
     path.startsWith('/projects') ||

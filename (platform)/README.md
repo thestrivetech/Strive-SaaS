@@ -170,6 +170,38 @@ stripe listen --forward-to localhost:3000/api/webhooks/stripe
 
 ---
 
+## Architecture: 3-Level Hierarchy
+
+The platform uses a scalable 3-level hierarchy designed to support multiple industries:
+
+### Level 1: INDUSTRY
+**Top-level business vertical**
+- Examples: Real Estate, Healthcare, Legal
+- Location: `app/{industry}/`
+- URLs: `/real-estate/*`, `/healthcare/*`
+- Contains: Industry dashboard + Multiple modules
+
+### Level 2: MODULE
+**Complete functional area within an industry**
+- Examples: CRM, Transactions, Analytics
+- Location: `app/{industry}/{module}/`
+- URLs: `/real-estate/crm/*`, `/real-estate/transactions/*`
+- Contains: Module dashboard + Feature pages
+
+### Level 3: PAGE
+**Individual pages within a module**
+- **Dashboard Page:** Overview/summary (e.g., `/crm/dashboard`)
+- **Feature Pages:** Specific functionality (e.g., `/crm/contacts`, `/crm/leads`)
+- **Detail Pages:** Dynamic routes (e.g., `/crm/contacts/[id]`)
+
+### Terminology Examples
+- ✅ `/real-estate/dashboard/` = Industry Dashboard
+- ✅ `/real-estate/crm/` = CRM Module
+- ✅ `/real-estate/crm/dashboard/` = CRM Module Dashboard
+- ✅ `/real-estate/crm/contacts/` = Contacts Page (within CRM)
+
+---
+
 ## Project Structure
 
 ```
@@ -187,10 +219,40 @@ stripe listen --forward-to localhost:3000/api/webhooks/stripe
 │   ├── (marketing)/             # Marketing routes (route group)
 │   │   └── page.tsx            # App landing page
 │   │
-│   ├── real-estate/             # Real Estate industry vertical
-│   │   ├── crm/                # CRM system
-│   │   ├── dashboard/          # Role-based dashboards
-│   │   └── transactions/       # Transaction management
+│   ├── real-estate/             # INDUSTRY: Real Estate
+│   │   ├── dashboard/          # ✅ PAGE: Industry main dashboard
+│   │   │
+│   │   ├── crm/                # ✅ MODULE: Customer Relationship Management
+│   │   │   ├── dashboard/      # PAGE: CRM module dashboard
+│   │   │   ├── contacts/       # PAGE: Contacts management
+│   │   │   ├── leads/          # PAGE: Leads management
+│   │   │   ├── deals/          # PAGE: Deals management
+│   │   │   ├── analytics/      # PAGE: CRM analytics
+│   │   │   └── calendar/       # PAGE: CRM calendar
+│   │   │
+│   │   ├── workspace/          # ✅ MODULE: Transaction Management (Workspace)
+│   │   │   ├── dashboard/      # PAGE: Workspace dashboard
+│   │   │   ├── [loopId]/       # PAGE: Transaction detail
+│   │   │   ├── listings/       # PAGE: Property listings
+│   │   │   │   └── [id]/       # PAGE: Listing detail
+│   │   │   ├── sign/           # PAGE: Signature flow
+│   │   │   │   └── [signatureId]/ # PAGE: Document signing
+│   │   │   └── analytics/      # 📋 PAGE: Transaction analytics (coming soon)
+│   │   │
+│   │   ├── ai-hub/             # 📋 MODULE: AI Hub (skeleton - coming soon)
+│   │   │   └── dashboard/      # Placeholder dashboard
+│   │   │
+│   │   ├── rei-analytics/      # 📋 MODULE: REI Intelligence (skeleton - coming soon)
+│   │   │   └── dashboard/      # Placeholder dashboard
+│   │   │
+│   │   ├── expense-tax/        # 📋 MODULE: Expense & Tax (skeleton - coming soon)
+│   │   │   └── dashboard/      # Placeholder dashboard
+│   │   │
+│   │   ├── cms-marketing/      # 📋 MODULE: CMS & Marketing (skeleton - coming soon)
+│   │   │   └── dashboard/      # Placeholder dashboard
+│   │   │
+│   │   └── marketplace/        # 📋 MODULE: Tool Marketplace (skeleton - coming soon)
+│   │       └── dashboard/      # Placeholder dashboard
 │   │
 │   └── api/                     # API routes
 │       ├── auth/               # Auth endpoints
@@ -201,10 +263,13 @@ stripe listen --forward-to localhost:3000/api/webhooks/stripe
 ├── components/
 │   ├── layouts/                 # Layout components
 │   ├── real-estate/             # Real Estate-specific components
-│   │   ├── ai/
-│   │   ├── crm/
-│   │   ├── projects/
-│   │   └── transactions/
+│   │   ├── crm/                # ✅ CRM components
+│   │   ├── workspace/          # ✅ Workspace/transaction components
+│   │   ├── ai-hub/             # 📋 AI Hub components (skeleton)
+│   │   ├── rei-analytics/      # 📋 REI Analytics components (skeleton)
+│   │   ├── expense-tax/        # 📋 Expense & Tax components (skeleton)
+│   │   ├── cms-marketing/      # 📋 CMS & Marketing components (skeleton)
+│   │   └── marketplace/        # 📋 Marketplace components (skeleton)
 │   ├── shared/                  # Shared components
 │   │   └── navigation/
 │   ├── subscription/            # Subscription & billing components
@@ -258,6 +323,51 @@ stripe listen --forward-to localhost:3000/api/webhooks/stripe
 ├── scripts/                     # Utility scripts
 └── middleware.ts                # Next.js middleware
 ```
+
+---
+
+## Available Routes
+
+### Real Estate Industry Routes
+
+**✅ Implemented:**
+- `/real-estate/dashboard` - Industry main dashboard
+- `/real-estate/crm/*` - Customer Relationship Management module
+  - `/real-estate/crm/dashboard` - CRM overview
+  - `/real-estate/crm/contacts` - Contact management
+  - `/real-estate/crm/leads` - Lead tracking
+  - `/real-estate/crm/deals` - Deal pipeline
+  - `/real-estate/crm/analytics` - CRM analytics
+  - `/real-estate/crm/calendar` - Calendar view
+- `/real-estate/workspace/*` - Transaction Management module
+  - `/real-estate/workspace/dashboard` - Workspace overview (NEW in Session 3)
+  - `/real-estate/workspace/[loopId]` - Transaction detail view
+  - `/real-estate/workspace/listings` - Property listings
+  - `/real-estate/workspace/listings/[id]` - Listing detail
+  - `/real-estate/workspace/sign/[signatureId]` - Document signing
+  - `/real-estate/workspace/analytics` - Transaction analytics (coming soon)
+
+**📋 Coming Soon (Skeleton Routes):**
+- `/real-estate/ai-hub/*` - AI Hub module (placeholder dashboard)
+- `/real-estate/rei-analytics/*` - REI Intelligence module (placeholder dashboard)
+- `/real-estate/expense-tax/*` - Expense & Tax module (placeholder dashboard)
+- `/real-estate/cms-marketing/*` - CMS & Marketing module (placeholder dashboard)
+- `/real-estate/marketplace/*` - Tool Marketplace module (placeholder dashboard)
+
+### Shared Routes
+
+**Settings Module (All Industries):**
+- `/settings` - Main settings page
+- `/settings/profile` - User profile settings
+- `/settings/team` - Team management
+- `/settings/billing` - Billing & subscription
+- `/settings/organization` - Organization settings
+
+**Authentication:**
+- `/login` - User login
+- `/signup` - User registration
+- `/onboarding` - Post-signup onboarding
+- `/reset-password` - Password reset
 
 ---
 

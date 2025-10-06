@@ -163,7 +163,7 @@ export const realEstateConfig: IndustryConfig = {
       componentPath: '@/lib/industries/real-estate/features/property-management',
     },
     {
-      path: '/industries/real-estate/transactions',
+      path: '/industries/real-estate/workspace',
       name: 'Transactions',
       description: 'Track real estate transactions and closings',
       componentPath: '@/lib/industries/real-estate/features/transactions',

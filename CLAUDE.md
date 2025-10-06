@@ -139,6 +139,11 @@ Strive-SaaS/                    # Root (this is NOT a Next.js project)
 **Tech Stack:** Next.js 15 + React 19 + TypeScript + Prisma + Supabase
 **Deployment:** Production SaaS application
 
+**Architecture:** 3-level hierarchy (Industry > Module > Page)
+- **Industries:** Real Estate (live), Healthcare (future), Legal (future)
+- **Modules:** CRM, Transactions, Analytics (complete functional areas)
+- **Pages:** Dashboards, feature pages, detail pages
+
 **Key Features:**
 - Role-based dashboards (SUPER_ADMIN: platform-admin, ADMIN: org-admin, MODERATOR, USER)
 - CRM system with industry customizations

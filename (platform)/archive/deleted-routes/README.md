@@ -10,44 +10,40 @@ These files were deleted during the multi-industry architecture refactor. They a
 - Old structure: Duplicate routes across `app/dashboard/`, `app/projects/`, `app/crm/`, etc.
 - New structure: Consolidated under `app/real-estate/` with role-based dashboards
 
-## Archived Files (16 total)
+## Status Update (2025-10-05 - Refactor Session 2)
 
-### Dashboard Routes
-- `dashboard-page.tsx` - Old dashboard page
-- `dashboard-layout.tsx` - Old dashboard layout
+### ✅ Restored:
+- **protected-transactions-analytics-page.tsx** → `app/real-estate/workspace/analytics/page.tsx`
 
-### Project Routes
-- `projects-page.tsx` - Project list page
-- `projects-layout.tsx` - Project layout
-- `projects-detail-page.tsx` - Individual project page
+### 🗑️ Deleted (Not Needed):
+- Dashboard routes (dashboard-page.tsx, dashboard-layout.tsx)
+- Project routes (projects-page.tsx, projects-layout.tsx, projects-detail-page.tsx)
+- Tools routes (tools-page.tsx, tools-layout.tsx)
+- AI routes (ai-page.tsx, ai-layout.tsx)
+- CRM routes (crm-page.tsx, crm-layout.tsx, crm-customer-detail-page.tsx)
+- Protected route (protected-transactions-analytics-page.tsx - restored, so deleted from archive)
+- **Reason:** These don't fit the new multi-industry architecture. CRM functionality already exists in `app/real-estate/crm/`.
 
-### Settings Routes
-- `settings-page.tsx` - Settings main page
+### 📋 Kept for Future Implementation:
+- **settings-page.tsx** - Planned as shared module at `app/settings/`
+- **settings-layout.tsx** - Settings layout component
+- **settings-team-page.tsx** - Team management page
+- **Reason:** Settings will be shared across ALL industries (not industry-specific), so will be implemented as a standalone shared module.
+
+## Archived Files (3 remaining)
+
+### Settings Routes (Future Shared Module)
+- `settings-page.tsx` - Settings main page (planned for `app/settings/`)
 - `settings-layout.tsx` - Settings layout
 - `settings-team-page.tsx` - Team settings page
 
-### Tools Routes
-- `tools-page.tsx` - Tools marketplace page
-- `tools-layout.tsx` - Tools layout
-
-### AI Routes
-- `ai-page.tsx` - AI assistant page
-- `ai-layout.tsx` - AI layout
-
-### CRM Routes
-- `crm-page.tsx` - CRM main page
-- `crm-layout.tsx` - CRM layout
-- `crm-customer-detail-page.tsx` - Customer detail page
-
-### Protected Routes
-- `protected-transactions-analytics-page.tsx` - Transaction analytics (was in (protected) group)
-
 ## Recovery
-To restore functionality:
-1. Review archived file
-2. Adapt to new structure under `app/real-estate/`
-3. Update imports to match new paths
-4. Test thoroughly
+To implement settings module:
+1. Create `app/settings/` directory structure
+2. Adapt archived settings files to new architecture
+3. Ensure settings work across all industries (Real Estate, Healthcare, etc.)
+4. Update imports to match new paths
+5. Test thoroughly across different industries and roles
 
 ## References
 - Refactor Plan: `update-sessions/(project)-directory-refactor.md`

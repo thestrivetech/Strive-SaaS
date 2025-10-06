@@ -112,7 +112,7 @@ export default async function DashboardPage() {
 
         {/* Transaction Management Card - Only for employees */}
         {canAccessTransactions && transactionStats && (
-          <Link href="/real-estate/transactions">
+          <Link href="/real-estate/workspace">
             <Card className="cursor-pointer transition-all hover:shadow-lg border-primary/50">
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                 <CardTitle className="text-sm font-medium">
@@ -228,7 +228,7 @@ export default async function DashboardPage() {
           </Link>
 
           {canAccessTransactions && (
-            <Link href="/real-estate/transactions">
+            <Link href="/real-estate/workspace">
               <Card className="cursor-pointer transition-all hover:shadow-md">
                 <CardContent className="pt-6">
                   <FileText className="h-8 w-8 mb-2 text-primary" />

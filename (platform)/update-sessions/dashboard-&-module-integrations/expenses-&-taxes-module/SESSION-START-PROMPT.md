@@ -7,7 +7,7 @@ Use this prompt at the beginning of each session. Simply replace `{SESSION_NUMBE
 ## 📋 Session Start Prompt
 
 ```
-I'm starting Session {SESSION_NUMBER} of the Expenses & Taxes integration project.
+I'm starting Session 2 of the Expenses & Taxes integration project.
 
 Please follow these steps to begin:
 
@@ -21,7 +21,7 @@ Please follow these steps to begin:
    - Understand the UI design requirements and module architecture
 
 3. **Read Session Plan:**
-   - Read the session plan file at: C:\Users\zochr\Desktop\GitHub\Strive-SaaS\(platform)\update-sessions\dashboard-&-module-integrations\expenses-&-taxes-module\session-{SESSION_NUMBER}.plan.md
+   - Read the session plan file at: C:\Users\zochr\Desktop\GitHub\Strive-SaaS\(platform)\update-sessions\dashboard-&-module-integrations\expenses-&-taxes-module\session-2.plan.md
    - Understand the objectives, requirements, and implementation steps
    - Note all dependencies and prerequisites
 
@@ -85,7 +85,7 @@ Please follow these steps to begin:
 
 10. **Session End Requirements:**
     When the session is complete, create a session summary file:
-    - File path: C:\Users\zochr\Desktop\GitHub\Strive-SaaS\(platform)\update-sessions\dashboard-&-module-integrations\expenses-&-taxes-module\session-{SESSION_NUMBER}-summary.md
+    - File path: C:\Users\zochr\Desktop\GitHub\Strive-SaaS\(platform)\update-sessions\dashboard-&-module-integrations\expenses-&-taxes-module\session-2-summary.md
     - Include:
       * Session objectives (completed/partial/not started)
       * Files created (full list with paths)
@@ -97,7 +97,7 @@ Please follow these steps to begin:
       * Next steps / what's ready for next session
       * Overall progress percentage for the entire Expenses & Taxes integration
 
-Let's begin Session {SESSION_NUMBER}!
+Let's begin Session 2!
 ```
 
 ---

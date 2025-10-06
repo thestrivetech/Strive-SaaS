@@ -17,10 +17,10 @@ PROJECT CONTEXT:
 - Architecture: Multi-tenant SaaS with RLS and RBAC
 - Integration Guide: tool-marketplace-integration-plan.md
 
-CURRENT SESSION: [SESSION NUMBER - e.g., "Session 1", "Session 2", etc.]
+CURRENT SESSION: Session 2
 
 INSTRUCTIONS:
-1. Read the session plan file: session-[NUMBER].plan.md
+1. Read the session plan file: session-2.plan.md
 2. Follow the step-by-step implementation exactly as documented
 3. Use Supabase MCP tools for all database operations (migrations, queries)
 4. Maintain multi-tenancy with organizationId on all relevant tables
@@ -38,7 +38,7 @@ CRITICAL RULES:
 - Check RBAC permissions in all actions
 - Use Supabase MCP tools for migrations (NOT Prisma CLI)
 
-Please confirm you're ready to begin [SESSION NAME] and summarize the objectives.
+Please confirm you're ready to begin Session 2 and summarize the objectives.
 ```
 
 ---
