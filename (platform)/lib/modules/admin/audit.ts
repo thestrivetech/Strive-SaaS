@@ -1,6 +1,6 @@
 'use server';
 
-import { prisma } from '@/lib/database/prisma';
+import { prisma } from '@/lib/prisma';
 import { getCurrentUser } from '@/lib/auth/auth-helpers';
 import { canViewAuditLogs } from '@/lib/auth/rbac';
 import type { AdminAction } from '@prisma/client';

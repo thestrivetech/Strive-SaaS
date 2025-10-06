@@ -12,7 +12,7 @@
 import { getCurrentUser } from '@/lib/auth/middleware';
 import { canAccessContent } from '@/lib/auth/rbac';
 import { getUserOrganizationId } from '@/lib/auth/user-helpers';
-import { prisma } from '@/lib/database/prisma';
+import { prisma } from '@/lib/prisma';
 import { revalidatePath } from 'next/cache';
 import {
   MediaFolderSchema,

@@ -3,7 +3,7 @@ import 'server-only';
 import { createServerClient } from '@supabase/ssr';
 import { cookies } from 'next/headers';
 import { redirect } from 'next/navigation';
-import { prisma } from '@/lib/database/prisma';
+import { prisma } from '@/lib/prisma';
 import { AUTH_ROUTES, UserRole } from './constants';
 import type { UserWithOrganization } from './user-helpers';
 import { enhanceUser, type EnhancedUser } from './types';

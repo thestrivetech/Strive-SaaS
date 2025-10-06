@@ -121,6 +121,26 @@ export async function handlePlatformAuth(request: NextRequest): Promise<NextResp
     }
   }
 
+  // Check if user has completed onboarding (has an organization)
+  if (user && path.startsWith('/onboarding')) {
+    const { prisma } = await import('@/lib/prisma');
+    const dbUser = await prisma.users.findUnique({
+      where: { email: user.email! },
+      select: {
+        organization_members: {
+          select: { organization_id: true }
+        }
+      }
+    });
+
+    // If user has organization, redirect to dashboard (onboarding complete)
+    if (dbUser?.organization_members && dbUser.organization_members.length > 0) {
+      const redirectResponse = NextResponse.redirect(new URL('/real-estate/dashboard', request.url));
+      setNoCacheHeaders(redirectResponse);
+      return redirectResponse;
+    }
+  }
+
   if (user && path === '/login') {
     const redirectResponse = NextResponse.redirect(new URL('/real-estate/dashboard', request.url));
     setNoCacheHeaders(redirectResponse);

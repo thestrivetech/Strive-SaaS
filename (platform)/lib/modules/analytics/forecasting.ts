@@ -1,6 +1,6 @@
 import 'server-only';
 
-import { prisma } from '@/lib/database/prisma';
+import { prisma } from '@/lib/prisma';
 import { withTenantContext } from '@/lib/database/utils';
 import { startOfMonth, endOfMonth, subMonths, addMonths, format } from 'date-fns';
 

@@ -1,7 +1,7 @@
 'use server';
 
 import { revalidatePath } from 'next/cache';
-import { prisma } from '@/lib/database/prisma';
+import { prisma } from '@/lib/prisma';
 import { requireAuth, getCurrentUser } from '@/lib/auth/auth-helpers';
 import { canAccessCRM, canManageDeals, canDeleteDeals } from '@/lib/auth/rbac';
 import { withTenantContext } from '@/lib/database/utils';

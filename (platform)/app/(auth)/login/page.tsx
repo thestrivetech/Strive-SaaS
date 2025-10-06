@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter, useSearchParams } from 'next/navigation';
+import { Eye, EyeOff } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
@@ -19,6 +20,9 @@ export default function LoginPage() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const [isLoading, setIsLoading] = useState(false);
+  const [showLoginPassword, setShowLoginPassword] = useState(false);
+  const [showSignupPassword, setShowSignupPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   const redirectTo = searchParams.get('redirect') || '/dashboard';
 
@@ -196,13 +200,23 @@ export default function LoginPage() {
                         <FormItem>
                           <FormLabel style={{ color: '#1e3a8a' }}>Password</FormLabel>
                           <FormControl>
-                            <Input
-                              type="password"
-                              placeholder="Enter your password"
-                              data-testid="input-login-password"
-                              style={{ backgroundColor: '#ffffff', color: '#020a1c', borderColor: '#ff7033' }}
-                              {...field}
-                            />
+                            <div className="relative">
+                              <Input
+                                type={showLoginPassword ? "text" : "password"}
+                                placeholder="Enter your password"
+                                data-testid="input-login-password"
+                                style={{ backgroundColor: '#ffffff', color: '#020a1c', borderColor: '#ff7033' }}
+                                {...field}
+                              />
+                              <button
+                                type="button"
+                                onClick={() => setShowLoginPassword(!showLoginPassword)}
+                                className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700"
+                                aria-label={showLoginPassword ? "Hide password" : "Show password"}
+                              >
+                                {showLoginPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+                              </button>
+                            </div>
                           </FormControl>
                           <FormMessage />
                         </FormItem>
@@ -310,13 +324,23 @@ export default function LoginPage() {
                         <FormItem>
                           <FormLabel style={{ color: '#1e3a8a' }}>Password</FormLabel>
                           <FormControl>
-                            <Input
-                              type="password"
-                              placeholder="Create a password"
-                              data-testid="input-signup-password"
-                              style={{ backgroundColor: '#ffffff', color: '#020a1c', borderColor: '#ff7033' }}
-                              {...field}
-                            />
+                            <div className="relative">
+                              <Input
+                                type={showSignupPassword ? "text" : "password"}
+                                placeholder="Create a password"
+                                data-testid="input-signup-password"
+                                style={{ backgroundColor: '#ffffff', color: '#020a1c', borderColor: '#ff7033' }}
+                                {...field}
+                              />
+                              <button
+                                type="button"
+                                onClick={() => setShowSignupPassword(!showSignupPassword)}
+                                className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700"
+                                aria-label={showSignupPassword ? "Hide password" : "Show password"}
+                              >
+                                {showSignupPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+                              </button>
+                            </div>
                           </FormControl>
                           <FormMessage />
                         </FormItem>
@@ -329,13 +353,23 @@ export default function LoginPage() {
                         <FormItem>
                           <FormLabel style={{ color: '#1e3a8a' }}>Confirm Password</FormLabel>
                           <FormControl>
-                            <Input
-                              type="password"
-                              placeholder="Confirm your password"
-                              data-testid="input-signup-confirm-password"
-                              style={{ backgroundColor: '#ffffff', color: '#020a1c', borderColor: '#ff7033' }}
-                              {...field}
-                            />
+                            <div className="relative">
+                              <Input
+                                type={showConfirmPassword ? "text" : "password"}
+                                placeholder="Confirm your password"
+                                data-testid="input-signup-confirm-password"
+                                style={{ backgroundColor: '#ffffff', color: '#020a1c', borderColor: '#ff7033' }}
+                                {...field}
+                              />
+                              <button
+                                type="button"
+                                onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                                className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700"
+                                aria-label={showConfirmPassword ? "Hide password" : "Show password"}
+                              >
+                                {showConfirmPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+                              </button>
+                            </div>
                           </FormControl>
                           <FormMessage />
                         </FormItem>

@@ -1,6 +1,6 @@
 'use server';
 
-import { prisma } from '@/lib/database/prisma';
+import { prisma } from '@/lib/prisma';
 import { getCurrentUser } from '@/lib/auth/auth-helpers';
 import { getUserOrganizationId } from '@/lib/auth/user-helpers';
 import { QueryLoopsSchema, type QueryLoopsInput } from './schemas';

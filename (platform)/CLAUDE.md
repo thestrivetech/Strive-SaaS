@@ -666,10 +666,24 @@ npm run dev              # Start dev server (Turbopack)
 npx prisma studio        # Database GUI
 npm run lint:fix         # Fix linting issues
 
-# Database
-npx prisma migrate dev --name description    # Create migration
-npx prisma db push                          # Push schema (dev only)
-npx prisma migrate deploy                   # Apply migrations (prod)
+# Database (⚠️ USE HELPER SCRIPTS - See below)
+npm run db:docs         # Generate schema documentation (ALWAYS after schema changes)
+npm run db:status       # Check migration status
+npm run db:migrate      # Create migration (interactive)
+npm run db:sync         # Check for schema drift
+
+# Database - Schema Inspection (99% token savings!)
+# ❌ NEVER: Use MCP list_tables tool (18k tokens!)
+# ✅ ALWAYS: Read local documentation first (500 tokens)
+cat ../shared/prisma/SCHEMA-QUICK-REF.md    # Quick reference
+cat ../shared/prisma/SCHEMA-MODELS.md       # Model details
+cat ../shared/prisma/SCHEMA-ENUMS.md        # Enum values
+
+# Database - Direct Prisma (advanced use only)
+npx prisma generate --schema=../shared/prisma/schema.prisma    # Generate client
+npx prisma migrate dev --name description --schema=../shared/prisma/schema.prisma    # Create migration (manual)
+npx prisma db push --schema=../shared/prisma/schema.prisma     # Push schema (dev only - use with caution)
+npx prisma migrate deploy --schema=../shared/prisma/schema.prisma    # Apply migrations (prod)
 
 # Testing
 npm test                 # Run all tests
@@ -885,6 +899,13 @@ describe('MyFeature Module', () => {
 ❌ for (const item of items) { await prisma... } // N+1 query
 ❌ const allData = await prisma.customer.findMany(); // No pagination
 ❌ "use client"; // Without valid reason
+
+// Database Workflow Anti-patterns (CRITICAL!)
+❌ Use MCP list_tables for schema inspection // 18k tokens wasted!
+❌ Query database to see what models exist // Read SCHEMA-QUICK-REF.md instead
+❌ Create migration without updating docs // Always run npm run db:docs after
+❌ Bypass helper scripts for migrations // Use npm run db:migrate
+❌ Apply migrations without verification // Use npm run db:status first
 ```
 
 ---

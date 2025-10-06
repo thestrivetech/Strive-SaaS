@@ -20,7 +20,7 @@ import { Prisma } from '@prisma/client';
  * @example
  * ```typescript
  * import { PrismaClient } from '@prisma/client';
- * import { createRLSExtension } from '@/lib/database/prisma-extension';
+ * import { createRLSExtension } from '@/lib/prisma-extension';
  *
  * const basePrisma = new PrismaClient();
  * const prisma = basePrisma.$extends(createRLSExtension({
@@ -130,8 +130,8 @@ function sanitizeUUID(uuid: string): string {
  *
  * @example
  * ```typescript
- * import { prisma } from '@/lib/database/prisma';
- * import { withRLSContext } from '@/lib/database/prisma-extension';
+ * import { prisma } from '@/lib/prisma';
+ * import { withRLSContext } from '@/lib/prisma-extension';
  * import { getCurrentUser } from '@/lib/auth/auth-helpers';
  *
  * export async function getCustomers() {
@@ -203,7 +203,7 @@ export async function getRLSContext(
  * @example
  * ```typescript
  * import { PrismaClient } from '@prisma/client';
- * import { createAutoRLSExtension } from '@/lib/database/prisma-extension';
+ * import { createAutoRLSExtension } from '@/lib/prisma-extension';
  *
  * const prisma = new PrismaClient().$extends(createAutoRLSExtension());
  *

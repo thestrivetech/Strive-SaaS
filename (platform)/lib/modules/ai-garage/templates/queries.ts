@@ -1,6 +1,6 @@
 import 'server-only';
 
-import { prisma } from '@/lib/database/prisma';
+import { prisma } from '@/lib/prisma';
 import { withTenantContext, getCurrentTenantContext } from '@/lib/database/utils';
 import { handleDatabaseError } from '@/lib/database/errors';
 import type { agent_templates, Prisma } from '@prisma/client';

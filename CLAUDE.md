@@ -193,21 +193,79 @@ npx prisma generate --schema=../shared/prisma/schema.prisma
 npx prisma migrate dev --schema=../shared/prisma/schema.prisma
 ```
 
-**Database Models (13 total):**
-- User, Organization, OrganizationMember
-- Customer, Project, Task
-- AIConversation, AIMessage, AITool
-- Subscription, UsageTracking
-- Appointment, Content, ActivityLog
+**Database Models (83 total):**
+- See: `shared/prisma/SCHEMA-QUICK-REF.md` for complete list
+- Categories: Core, CRM, Transactions, Content, AI, Analytics, Marketplace, Admin, Dashboard
+
+**⚠️ CRITICAL: Database Operations Workflow**
+
+**NEVER use MCP `list_tables` tool for schema inspection!** (Consumes 18-21k tokens per call)
+
+**ALWAYS follow this workflow:**
+
+1. **Schema Inspection** - Use local documentation (500 tokens vs 18k!)
+   ```bash
+   # Quick reference (model & enum names only)
+   cat shared/prisma/SCHEMA-QUICK-REF.md
+
+   # Detailed model fields
+   cat shared/prisma/SCHEMA-MODELS.md
+
+   # Enum values
+   cat shared/prisma/SCHEMA-ENUMS.md
+   ```
+
+2. **Schema Changes** - Use helper scripts
+   ```bash
+   # From (platform)/ directory:
+   npm run db:migrate      # Create migration interactively
+   npm run db:status       # Check migration status
+   npm run db:docs         # Update schema documentation
+   npm run db:sync         # Check for schema drift
+   ```
+
+3. **Migration Application** - Use MCP tools ONLY for execution
+   ```
+   ✅ DO: Read local schema files first
+   ✅ DO: Use helper scripts for migration creation
+   ✅ DO: Use MCP tools only to APPLY migrations
+   ❌ NEVER: Use list_tables for exploration (huge token waste!)
+   ```
+
+4. **After Any Schema Change**
+   ```bash
+   npm run db:docs         # Regenerate documentation
+   git add shared/prisma/  # Commit schema + migrations + docs
+   ```
+
+**Scripts Location:** `scripts/database/`
+- `generate-schema-docs.js` - Create schema documentation
+- `create-migration.js` - Interactive migration creator
+- `apply-migration.js` - Migration application guide
+- `migration-status.js` - Check migration status
+- `check-schema-sync.js` - Detect schema drift
+
+**Token Savings:** 99% reduction (18k → 500 tokens per schema query)
 
 ### shared/supabase/
-**Shared Supabase Configuration** - Auth, Storage, Realtime setup
+**Shared Supabase Configuration** - Auth, Storage, Realtime, RLS
 
 All three projects use the **SAME Supabase project** for:
 - Authentication (SSO across all apps)
-- File storage
+- File storage (buckets with RLS)
 - Real-time subscriptions
-- Row Level Security (RLS)
+- Row Level Security (RLS) for multi-tenancy
+
+**Documentation:**
+- `SUPABASE-SETUP.md` - Complete Supabase + Prisma integration guide
+- `STORAGE-BUCKETS.md` - File storage bucket setup and RLS policies
+- `RLS-POLICIES.md` - Row Level Security patterns and examples
+
+**Helper Script:**
+- `scripts/database/check-rls-policies.js` - Check RLS policy status
+
+**Critical:** Supabase provides the platform, Prisma handles schema + migrations.
+RLS policies are defined in Prisma migration SQL files.
 
 ---
 
@@ -345,16 +403,22 @@ All three projects connect to the **SAME** Supabase database:
 ```
 
 ### Authentication: Supabase Auth (SSO)
-Users can authenticate once and access all three apps:
+**Status:** ✅ Platform auth implemented (2025-10-06)
+**Architecture:** Supabase Auth → Lazy Sync → Prisma
+
+**Flow:**
 ```
-User logs in on (website)
-  ↓
-Session stored in Supabase Auth
-  ↓
-Can access (platform) without re-login
-  ↓
-Can use (chatbot) with same user context
+1. Sign Up/Login → Supabase Auth (passwords, sessions, tokens)
+2. Protected Route → getCurrentUser() checks Prisma
+3. User not in DB? → Lazy sync creates from Supabase data
+4. No organization? → Redirect to /onboarding/organization
+5. Onboarding complete → Access dashboard
 ```
+
+**Key Principle:** Supabase handles ALL authentication, Prisma handles application data only
+
+**Docs:** `(platform)/AUTH-ONBOARDING-GUIDE.md` - Complete implementation guide
+**Architecture:** `(platform)/AUTH-ARCHITECTURE.md` - Technical flow details
 
 ### Deployment: Independent
 Each project deploys separately to Vercel:

@@ -1,7 +1,7 @@
 import 'server-only';
 
 import { Prisma } from '@prisma/client';
-import { prisma } from '@/lib/database/prisma';
+import { prisma } from '@/lib/prisma';
 import { withTenantContext } from '@/lib/database/utils';
 import { TaskStatus, Priority } from '@prisma/client';
 import { TaskFilters } from './schemas';

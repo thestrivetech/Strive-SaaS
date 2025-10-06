@@ -1,7 +1,7 @@
 'use server';
 
 import { revalidatePath } from 'next/cache';
-import { prisma } from '@/lib/database/prisma';
+import { prisma } from '@/lib/prisma';
 import { requireAuth } from '@/lib/auth/middleware';
 import { QuickActionSchema } from './schemas';
 

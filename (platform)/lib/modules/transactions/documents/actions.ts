@@ -3,7 +3,7 @@
 import { revalidatePath } from 'next/cache';
 import { getCurrentUser } from '@/lib/auth/auth-helpers';
 import { getUserOrganizationId } from '@/lib/auth/user-helpers';
-import { prisma } from '@/lib/database/prisma';
+import { prisma } from '@/lib/prisma';
 import { storageService } from '@/lib/storage/supabase-storage';
 import { validateFile, generateUniqueFilename } from '@/lib/storage/validation';
 import { UploadDocumentSchema, UpdateDocumentSchema } from './schemas';

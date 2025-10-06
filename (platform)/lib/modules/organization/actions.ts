@@ -1,6 +1,6 @@
 'use server';
 
-import { prisma } from '@/lib/database/prisma';
+import { prisma } from '@/lib/prisma';
 import { createServerSupabaseClientWithAuth } from '@/lib/supabase-server';
 import {
   createOrganizationSchema,

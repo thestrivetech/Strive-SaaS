@@ -34,7 +34,7 @@ export default function OrganizationOnboardingPage() {
       }
 
       // Redirect to dashboard after successful creation
-      router.push('/dashboard');
+      router.push('/real-estate/dashboard');
       router.refresh();
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Something went wrong');
