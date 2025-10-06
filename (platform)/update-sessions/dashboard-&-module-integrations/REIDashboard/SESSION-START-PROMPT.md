@@ -7,7 +7,7 @@ Use this prompt at the beginning of each session. Simply replace `{SESSION_NUMBE
 ## 📋 Session Start Prompt
 
 ```
-I'm starting Session 3 of the REID Dashboard integration project.
+I'm starting Session 4 of the REID Dashboard integration project.
 
 Please follow these steps to begin:
 
@@ -22,7 +22,7 @@ Please follow these steps to begin:
    - Note the 8 core modules and their requirements
 
 3. **Read Session Plan:**
-   - Read the session plan file at: C:\Users\zochr\Desktop\GitHub\Strive-SaaS\(platform)\update-sessions\dashboard-&-module-integrations\REIDashboard\session-3.plan.md
+   - Read the session plan file at: C:\Users\zochr\Desktop\GitHub\Strive-SaaS\(platform)\update-sessions\dashboard-&-module-integrations\REIDashboard\session-4.plan.md
    - Understand the objectives, requirements, and implementation steps
    - Note all dependencies and prerequisites
 
@@ -71,7 +71,7 @@ Please follow these steps to begin:
 
 8. **Session End Requirements:**
    When the session is complete, create a session summary file:
-   - File path: C:\Users\zochr\Desktop\GitHub\Strive-SaaS\(platform)\update-sessions\dashboard-&-module-integrations\REIDashboard\session-3-summary.md
+   - File path: C:\Users\zochr\Desktop\GitHub\Strive-SaaS\(platform)\update-sessions\dashboard-&-module-integrations\REIDashboard\session-4-summary.md
    - Include:
      * Session objectives (completed/partial/not started)
      * Files created (full list with paths)
@@ -84,7 +84,7 @@ Please follow these steps to begin:
      * Next steps / what's ready for next session
      * Overall progress percentage for REID integration
 
-Let's begin Session 3 of the REID Dashboard integration!
+Let's begin Session 4 of the REID Dashboard integration!
 ```
 
 ---
@@ -114,8 +114,8 @@ Before marking a session as complete, ensure:
 - [ ] Neon accents on interactive elements
 - [ ] Typography correct (Inter UI, Fira Code data)
 - [ ] Mobile responsive design
-- [ ] Leaflet SSR compatibility (if Session 3)
-- [ ] Charts dark-themed (if Session 3)
+- [ ] Leaflet SSR compatibility (if Session 4)
+- [ ] Charts dark-themed (if Session 4)
 
 ### Database (if applicable)
 - [ ] Supabase MCP tools used for migrations
@@ -171,18 +171,18 @@ Before marking a session as complete, ensure:
 
 Track completion across all sessions:
 
-- [ ] Session 3: Database Foundation & REID Schema
-- [ ] Session 3: REID Module Structure & Core Services
-- [ ] Session 3: Reports & Export Module
-- [ ] Session 3: User Preferences & Dashboard Customization
-- [ ] Session 3: Dark Theme UI Components & Styling
-- [ ] Session 3: AI Profile Generation & Insights Analysis
-- [ ] Session 3: Market Heatmap & Interactive Maps
-- [ ] Session 3: Analytics Charts & ROI Simulator
-- [ ] Session 3: Alerts Management UI
-- [ ] Session 3: Main Dashboard Assembly & Routing
-- [ ] Session 3: Testing & Quality Assurance
-- [ ] Session 3: Documentation & Deployment Preparation
+- [ ] Session 4: Database Foundation & REID Schema
+- [ ] Session 4: REID Module Structure & Core Services
+- [ ] Session 4: Reports & Export Module
+- [ ] Session 4: User Preferences & Dashboard Customization
+- [ ] Session 4: Dark Theme UI Components & Styling
+- [ ] Session 4: AI Profile Generation & Insights Analysis
+- [ ] Session 4: Market Heatmap & Interactive Maps
+- [ ] Session 4: Analytics Charts & ROI Simulator
+- [ ] Session 4: Alerts Management UI
+- [ ] Session 4: Main Dashboard Assembly & Routing
+- [ ] Session 4: Testing & Quality Assurance
+- [ ] Session 4: Documentation & Deployment Preparation
 
 ---
 
