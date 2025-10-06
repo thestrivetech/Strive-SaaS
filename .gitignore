@@ -80,3 +80,4 @@ archive/app-backup/.vercel/project.json
 .serena/
 (platform)/.env.test
 .vercel/
+.mcp.json

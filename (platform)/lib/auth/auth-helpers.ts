@@ -3,7 +3,7 @@ import 'server-only';
 import { createServerClient } from '@supabase/ssr';
 import { cookies } from 'next/headers';
 import { redirect } from 'next/navigation';
-import { prisma } from '@/lib/prisma';
+import { prisma } from '@/lib/database/prisma';
 import { AUTH_ROUTES, UserRole } from './constants';
 import type { UserWithOrganization } from './user-helpers';
 import { enhanceUser, type EnhancedUser } from './types';
@@ -56,7 +56,7 @@ export const getCurrentUser = async (): Promise<UserWithOrganization | null> => 
   }
 
   try {
-    const user = await prisma.users.findUnique({
+    let user = await prisma.users.findUnique({
       where: {
         email: session.user.email!,
       },
@@ -72,6 +72,28 @@ export const getCurrentUser = async (): Promise<UserWithOrganization | null> => 
         },
       },
     });
+
+    // Lazy sync: If user authenticated with Supabase but not in our DB, create them
+    if (!user) {
+      user = await prisma.users.create({
+        data: {
+          email: session.user.email!,
+          name: session.user.user_metadata?.full_name || session.user.email!.split('@')[0],
+          avatar_url: session.user.user_metadata?.avatar_url,
+        },
+        include: {
+          organization_members: {
+            include: {
+              organizations: {
+                include: {
+                  subscriptions: true,
+                },
+              },
+            },
+          },
+        },
+      });
+    }
 
     return user as UserWithOrganization | null;
   } catch (error) {
@@ -171,22 +193,7 @@ export async function signIn(email: string, password: string) {
     throw error;
   }
 
-  // Check if user exists in our database
-  const user = await prisma.users.findUnique({
-    where: { email },
-  });
-
-  // If user doesn't exist in our database, create them
-  if (!user && data.user) {
-    await prisma.users.create({
-      data: {
-        email: data.user.email!,
-        name: data.user.user_metadata?.full_name || email.split('@')[0],
-        avatar_url: data.user.user_metadata?.avatar_url,
-      },
-    });
-  }
-
+  // User sync happens lazily in getCurrentUser() when needed
   return data;
 }
 
@@ -207,16 +214,6 @@ export async function signUp(email: string, password: string, name?: string) {
     throw error;
   }
 
-  // Create user in our database
-  if (data.user) {
-    await prisma.users.create({
-      data: {
-        email: data.user.email!,
-        name: name || email.split('@')[0],
-        avatar_url: data.user.user_metadata?.avatar_url,
-      },
-    });
-  }
-
+  // User sync happens lazily in getCurrentUser() when needed
   return data;
 }
