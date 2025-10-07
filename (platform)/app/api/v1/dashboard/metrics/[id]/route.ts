@@ -14,7 +14,7 @@ import { handleApiError } from '@/lib/api/error-handler';
  */
 export async function GET(
   req: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     await requireAuth();
@@ -27,11 +27,13 @@ export async function GET(
       );
     }
 
-    const metric = await getMetricById(params.id);
+    const { id } = await params;
+    const metric = await getMetricById(id);
 
     return NextResponse.json({ metric });
   } catch (error) {
-    console.error(`[API] GET /api/v1/dashboard/metrics/${params?.id} failed:`, error);
+    const { id } = await params;
+    console.error(`[API] GET /api/v1/dashboard/metrics/${id} failed:`, error);
     return handleApiError(error);
   }
 }
@@ -42,7 +44,7 @@ export async function GET(
  */
 export async function PATCH(
   req: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     await requireAuth();
@@ -55,12 +57,14 @@ export async function PATCH(
       );
     }
 
+    const { id } = await params;
     const body = await req.json();
-    const metric = await updateDashboardMetric({ ...body, id: params.id });
+    const metric = await updateDashboardMetric({ ...body, id });
 
     return NextResponse.json({ metric });
   } catch (error) {
-    console.error(`[API] PATCH /api/v1/dashboard/metrics/${params?.id} failed:`, error);
+    const { id } = await params;
+    console.error(`[API] PATCH /api/v1/dashboard/metrics/${id} failed:`, error);
     return handleApiError(error);
   }
 }
@@ -71,7 +75,7 @@ export async function PATCH(
  */
 export async function DELETE(
   req: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     await requireAuth();
@@ -84,14 +88,16 @@ export async function DELETE(
       );
     }
 
-    await deleteDashboardMetric(params.id);
+    const { id } = await params;
+    await deleteDashboardMetric(id);
 
     return NextResponse.json(
       { message: 'Metric deleted successfully' },
       { status: 200 }
     );
   } catch (error) {
-    console.error(`[API] DELETE /api/v1/dashboard/metrics/${params?.id} failed:`, error);
+    const { id } = await params;
+    console.error(`[API] DELETE /api/v1/dashboard/metrics/${id} failed:`, error);
     return handleApiError(error);
   }
 }

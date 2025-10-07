@@ -145,8 +145,12 @@ export async function getContacts(filters?: Partial<ContactFilters>): Promise<Co
       return contacts;
     } catch (error) {
       const dbError = handleDatabaseError(error);
-      console.error('[Contacts Queries] getContacts failed:', dbError);
-      throw new Error('Failed to fetch contacts');
+      console.error('[CRM:Contacts:Queries] getContacts failed:', dbError);
+      throw new Error(
+        `[CRM:Contacts:Queries] Failed to fetch contacts: ${
+          error instanceof Error ? error.message : 'Unknown error'
+        }`
+      );
     }
   });
 }
@@ -193,8 +197,12 @@ export async function getContactById(id: string): Promise<ContactWithAssignee | 
       return contact;
     } catch (error) {
       const dbError = handleDatabaseError(error);
-      console.error('[Contacts Queries] getContactById failed:', dbError);
-      throw new Error('Failed to fetch contact');
+      console.error('[CRM:Contacts:Queries] getContactById failed:', dbError);
+      throw new Error(
+        `[CRM:Contacts:Queries] Failed to fetch contact: ${
+          error instanceof Error ? error.message : 'Unknown error'
+        }`
+      );
     }
   });
 }
@@ -275,8 +283,12 @@ export async function getContactWithFullHistory(id: string): Promise<ContactWith
       return contact;
     } catch (error) {
       const dbError = handleDatabaseError(error);
-      console.error('[Contacts Queries] getContactWithFullHistory failed:', dbError);
-      throw new Error('Failed to fetch contact with history');
+      console.error('[CRM:Contacts:Queries] getContactWithFullHistory failed:', dbError);
+      throw new Error(
+        `[CRM:Contacts:Queries] Failed to fetch contact with history: ${
+          error instanceof Error ? error.message : 'Unknown error'
+        }`
+      );
     }
   });
 }
@@ -340,8 +352,12 @@ export async function getContactStats() {
       };
     } catch (error) {
       const dbError = handleDatabaseError(error);
-      console.error('[Contacts Queries] getContactStats failed:', dbError);
-      throw new Error('Failed to fetch contact statistics');
+      console.error('[CRM:Contacts:Queries] getContactStats failed:', dbError);
+      throw new Error(
+        `[CRM:Contacts:Queries] Failed to fetch contact statistics: ${
+          error instanceof Error ? error.message : 'Unknown error'
+        }`
+      );
     }
   });
 }
@@ -405,8 +421,12 @@ export async function getContactsCount(filters?: Partial<ContactFilters>): Promi
       return count;
     } catch (error) {
       const dbError = handleDatabaseError(error);
-      console.error('[Contacts Queries] getContactsCount failed:', dbError);
-      throw new Error('Failed to count contacts');
+      console.error('[CRM:Contacts:Queries] getContactsCount failed:', dbError);
+      throw new Error(
+        `[CRM:Contacts:Queries] Failed to count contacts: ${
+          error instanceof Error ? error.message : 'Unknown error'
+        }`
+      );
     }
   });
 }

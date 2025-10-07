@@ -2,9 +2,9 @@
 
 import { prisma } from '@/lib/prisma';
 import { requireAuth, getCurrentUser } from '@/lib/auth/auth-helpers';
-import { canAccessCRM } from '@/lib/auth/rbac';
 import { withTenantContext } from '@/lib/database/utils';
 import { handleDatabaseError } from '@/lib/database/errors';
+import { hasTransactionPermission, TRANSACTION_PERMISSIONS } from '../core/permissions';
 import { listingFiltersSchema, type ListingFilters } from './schemas';
 import type { listings, users, activities, deals } from '@prisma/client';
 
@@ -42,8 +42,9 @@ export async function searchListings(filters?: Partial<ListingFilters>): Promise
     throw new Error('Unauthorized: User not found');
   }
 
-  if (!canAccessCRM(user.role)) {
-    throw new Error('Unauthorized: Insufficient permissions to access CRM');
+  // Check dual-role RBAC permissions
+  if (!hasTransactionPermission(user, TRANSACTION_PERMISSIONS.VIEW_LISTINGS)) {
+    throw new Error('Forbidden: Cannot view listings');
   }
 
   // Validate filters
@@ -217,8 +218,9 @@ export async function getListingById(id: string): Promise<ListingWithAssignee | 
     throw new Error('Unauthorized: User not found');
   }
 
-  if (!canAccessCRM(user.role)) {
-    throw new Error('Unauthorized: Insufficient permissions to access CRM');
+  // Check dual-role RBAC permissions
+  if (!hasTransactionPermission(user, TRANSACTION_PERMISSIONS.VIEW_LISTINGS)) {
+    throw new Error('Forbidden: Cannot view listings');
   }
 
   return withTenantContext(async () => {
@@ -265,8 +267,9 @@ export async function getListingWithFullHistory(id: string): Promise<ListingWith
     throw new Error('Unauthorized: User not found');
   }
 
-  if (!canAccessCRM(user.role)) {
-    throw new Error('Unauthorized: Insufficient permissions to access CRM');
+  // Check dual-role RBAC permissions
+  if (!hasTransactionPermission(user, TRANSACTION_PERMISSIONS.VIEW_LISTINGS)) {
+    throw new Error('Forbidden: Cannot view listings');
   }
 
   return withTenantContext(async () => {
@@ -346,8 +349,9 @@ export async function getListingStats() {
     throw new Error('Unauthorized: User not found');
   }
 
-  if (!canAccessCRM(user.role)) {
-    throw new Error('Unauthorized: Insufficient permissions to access CRM');
+  // Check dual-role RBAC permissions
+  if (!hasTransactionPermission(user, TRANSACTION_PERMISSIONS.VIEW_LISTINGS)) {
+    throw new Error('Forbidden: Cannot view listings');
   }
 
   return withTenantContext(async () => {
@@ -441,8 +445,9 @@ export async function getListingsCount(filters?: Partial<ListingFilters>): Promi
     throw new Error('Unauthorized: User not found');
   }
 
-  if (!canAccessCRM(user.role)) {
-    throw new Error('Unauthorized: Insufficient permissions to access CRM');
+  // Check dual-role RBAC permissions
+  if (!hasTransactionPermission(user, TRANSACTION_PERMISSIONS.VIEW_LISTINGS)) {
+    throw new Error('Forbidden: Cannot view listings');
   }
 
   const validatedFilters = filters

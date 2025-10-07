@@ -7,7 +7,7 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { formatCurrency, getInitials } from '@/lib/utils';
 import { Users, User } from 'lucide-react';
 import Link from 'next/link';
-import type { DealWithAssignee } from '@/lib/modules/crm/deals';
+import type { DealWithAssignee } from '@/lib/modules/crm/deals/queries';
 
 interface DealCardProps {
   deal: DealWithAssignee;

@@ -8,16 +8,30 @@ import { QuickActionSchema } from './schemas';
 export async function createQuickAction(input: unknown) {
   const user = await requireAuth();
 
-  // Check permissions
-  if (!['SUPER_ADMIN', 'ADMIN'].includes(user.role || '')) {
-    throw new Error('Insufficient permissions');
+  // Check both GlobalRole (platform-level) AND OrganizationRole (org-level)
+  const isSuperAdmin = user.role === 'SUPER_ADMIN';
+  const isOrgAdmin = ['ADMIN', 'OWNER'].includes(user.organizationRole || '');
+
+  if (!isSuperAdmin && !isOrgAdmin) {
+    throw new Error('Insufficient permissions - requires SUPER_ADMIN or organization ADMIN/OWNER');
   }
 
   const validated = QuickActionSchema.parse(input);
 
   const action = await prisma.quick_actions.create({
     data: {
-      ...validated,
+      name: validated.name,
+      description: validated.description,
+      icon: validated.icon,
+      action_type: validated.actionType,
+      target_url: validated.targetUrl,
+      api_endpoint: validated.apiEndpoint,
+      form_config: validated.formConfig,
+      color: validated.color,
+      is_enabled: validated.isEnabled,
+      sort_order: validated.sortOrder,
+      required_role: validated.requiredRole,
+      required_tier: validated.requiredTier,
       organization_id: validated.organizationId || user.organizationId,
       created_by: user.id,
     },
@@ -30,9 +44,12 @@ export async function createQuickAction(input: unknown) {
 export async function updateQuickAction(input: { id: string } & Partial<typeof QuickActionSchema._type>) {
   const user = await requireAuth();
 
-  // Check permissions
-  if (!['SUPER_ADMIN', 'ADMIN'].includes(user.role || '')) {
-    throw new Error('Insufficient permissions');
+  // Check both GlobalRole (platform-level) AND OrganizationRole (org-level)
+  const isSuperAdmin = user.role === 'SUPER_ADMIN';
+  const isOrgAdmin = ['ADMIN', 'OWNER'].includes(user.organizationRole || '');
+
+  if (!isSuperAdmin && !isOrgAdmin) {
+    throw new Error('Insufficient permissions - requires SUPER_ADMIN or organization ADMIN/OWNER');
   }
 
   const { id, ...data } = input;
@@ -58,9 +75,12 @@ export async function updateQuickAction(input: { id: string } & Partial<typeof Q
 export async function deleteQuickAction(id: string) {
   const user = await requireAuth();
 
-  // Check permissions
-  if (!['SUPER_ADMIN', 'ADMIN'].includes(user.role || '')) {
-    throw new Error('Insufficient permissions');
+  // Check both GlobalRole (platform-level) AND OrganizationRole (org-level)
+  const isSuperAdmin = user.role === 'SUPER_ADMIN';
+  const isOrgAdmin = ['ADMIN', 'OWNER'].includes(user.organizationRole || '');
+
+  if (!isSuperAdmin && !isOrgAdmin) {
+    throw new Error('Insufficient permissions - requires SUPER_ADMIN or organization ADMIN/OWNER');
   }
 
   // Verify ownership

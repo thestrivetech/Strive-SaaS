@@ -4,15 +4,20 @@ import { prisma } from '@/lib/prisma';
 import { getCurrentUser } from '@/lib/auth/auth-helpers';
 import { getUserOrganizationId } from '@/lib/auth/user-helpers';
 import { QueryTransactionTasksSchema, type QueryTransactionTasksInput } from './schemas';
+import { calculatePagination, createPaginatedResult, type PaginationParams, type PaginatedResult } from '../types/pagination';
 
 /**
  * Get all tasks for a transaction loop
  *
  * @param input - Query parameters with loop ID and optional filters
- * @returns Array of tasks with assignee and creator information
+ * @param paginationParams - Pagination parameters (page, limit)
+ * @returns Paginated array of tasks with assignee and creator information
  * @throws Error if user not authenticated or loop not found
  */
-export async function getTasksByLoop(input: QueryTransactionTasksInput) {
+export async function getTasksByLoop(
+  input: QueryTransactionTasksInput,
+  paginationParams: PaginationParams = {}
+): Promise<PaginatedResult<Awaited<ReturnType<typeof prisma.transaction_tasks.findMany>>[number]>> {
   const user = await getCurrentUser();
 
   if (!user) {
@@ -22,6 +27,7 @@ export async function getTasksByLoop(input: QueryTransactionTasksInput) {
   // Validate input
   const validated = QueryTransactionTasksSchema.parse(input);
   const { loopId, status, priority, assignedTo } = validated;
+  const { page, limit, skip } = calculatePagination(paginationParams);
 
   const organizationId = getUserOrganizationId(user);
 
@@ -45,35 +51,40 @@ export async function getTasksByLoop(input: QueryTransactionTasksInput) {
     ...(assignedTo && { assigned_to: assignedTo }),
   };
 
-  // Get tasks with related data
-  const tasks = await prisma.transaction_tasks.findMany({
-    where,
-    include: {
-      assignee: {
-        select: {
-          id: true,
-          name: true,
-          email: true,
-          role: true,
+  // Parallel query for count and data
+  const [tasks, total] = await Promise.all([
+    prisma.transaction_tasks.findMany({
+      where,
+      include: {
+        assignee: {
+          select: {
+            id: true,
+            name: true,
+            email: true,
+            role: true,
+          },
+        },
+        creator: {
+          select: {
+            id: true,
+            name: true,
+            email: true,
+          },
         },
       },
-      creator: {
-        select: {
-          id: true,
-          name: true,
-          email: true,
-        },
-      },
-    },
-    orderBy: [
-      { status: 'asc' },      // TODO first, then IN_PROGRESS, etc.
-      { priority: 'desc' },    // URGENT/HIGH first
-      { due_date: 'asc' },     // Soonest due date first
-      { created_at: 'desc' },  // Most recent first
-    ],
-  });
+      orderBy: [
+        { status: 'asc' },      // TODO first, then IN_PROGRESS, etc.
+        { priority: 'desc' },    // URGENT/HIGH first
+        { due_date: 'asc' },     // Soonest due date first
+        { created_at: 'desc' },  // Most recent first
+      ],
+      take: limit,
+      skip,
+    }),
+    prisma.transaction_tasks.count({ where }),
+  ]);
 
-  return tasks;
+  return createPaginatedResult(tasks, total, page, limit);
 }
 
 /**
@@ -230,7 +241,7 @@ export async function getTaskStats(loopId: string) {
 /**
  * Type for task with assignee and creator
  */
-export type TaskWithDetails = Awaited<ReturnType<typeof getTasksByLoop>>[number];
+export type TaskWithDetails = Awaited<ReturnType<typeof getTasksByLoop>>['data'][number];
 
 /**
  * Type for single task with full details

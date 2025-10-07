@@ -4,6 +4,8 @@ import { revalidatePath } from 'next/cache';
 import { prisma } from '@/lib/prisma';
 import { requireAuth, getCurrentUser } from '@/lib/auth/auth-helpers';
 import { canAccessCRM, canManageDeals, canDeleteDeals } from '@/lib/auth/rbac';
+import { hasOrgPermission } from '@/lib/auth/org-rbac';
+import { canAccessFeature } from '@/lib/auth/subscription';
 import { withTenantContext } from '@/lib/database/utils';
 import { handleDatabaseError } from '@/lib/database/errors';
 import {
@@ -25,6 +27,7 @@ import {
  * Create a new deal
  *
  * RBAC: Requires CRM access + deal management permission
+ * Subscription: Requires STARTER tier minimum
  *
  * @param input - Deal data
  * @returns Created deal
@@ -37,9 +40,20 @@ export async function createDeal(input: CreateDealInput) {
     throw new Error('Unauthorized: User not found');
   }
 
-  // Check RBAC permissions
+  // 1. Check subscription tier
+  if (!canAccessFeature(user.subscription_tier, 'crm')) {
+    throw new Error('Upgrade to STARTER tier to access CRM features');
+  }
+
+  // 2. Check GlobalRole
   if (!canAccessCRM(user.role) || !canManageDeals(user.role)) {
-    throw new Error('Unauthorized: Insufficient permissions to create deals');
+    throw new Error('Unauthorized: Insufficient global permissions to create deals');
+  }
+
+  // 3. Check OrganizationRole
+  const orgMember = user.organization_members?.[0];
+  if (!orgMember || !hasOrgPermission(user.role, orgMember.role, 'deals:write')) {
+    throw new Error('Unauthorized: Insufficient organization permissions to create deals');
   }
 
   // Validate input
@@ -83,8 +97,12 @@ export async function createDeal(input: CreateDealInput) {
       return deal;
     } catch (error) {
       const dbError = handleDatabaseError(error);
-      console.error('[Deals Actions] createDeal failed:', dbError);
-      throw new Error('Failed to create deal');
+      console.error('[CRM:Deals] createDeal failed:', dbError);
+      throw new Error(
+        `[CRM:Deals] Failed to create deal: ${
+          error instanceof Error ? error.message : 'Unknown error'
+        }`
+      );
     }
   });
 }
@@ -93,6 +111,7 @@ export async function createDeal(input: CreateDealInput) {
  * Update an existing deal
  *
  * RBAC: Requires CRM access + deal management permission
+ * Subscription: Requires STARTER tier minimum
  *
  * @param input - Deal update data
  * @returns Updated deal
@@ -105,14 +124,25 @@ export async function updateDeal(input: UpdateDealInput) {
     throw new Error('Unauthorized: User not found');
   }
 
-  // Check RBAC permissions
+  // 1. Check subscription tier
+  if (!canAccessFeature(user.subscription_tier, 'crm')) {
+    throw new Error('Upgrade to STARTER tier to access CRM features');
+  }
+
+  // 2. Check GlobalRole
   if (!canAccessCRM(user.role) || !canManageDeals(user.role)) {
-    throw new Error('Unauthorized: Insufficient permissions to update deals');
+    throw new Error('Unauthorized: Insufficient global permissions to update deals');
+  }
+
+  // 3. Check OrganizationRole
+  const orgMember = user.organization_members?.[0];
+  if (!orgMember || !hasOrgPermission(user.role, orgMember.role, 'deals:write')) {
+    throw new Error('Unauthorized: Insufficient organization permissions to update deals');
   }
 
   // Validate input
   const validated = updateDealSchema.parse(input);
-  const { id, ...updates } = validated;
+  const { id, ...updates} = validated;
 
   return withTenantContext(async () => {
     try {
@@ -151,8 +181,12 @@ export async function updateDeal(input: UpdateDealInput) {
       return deal;
     } catch (error) {
       const dbError = handleDatabaseError(error);
-      console.error('[Deals Actions] updateDeal failed:', dbError);
-      throw new Error('Failed to update deal');
+      console.error('[CRM:Deals] updateDeal failed:', dbError);
+      throw new Error(
+        `[CRM:Deals] Failed to update deal: ${
+          error instanceof Error ? error.message : 'Unknown error'
+        }`
+      );
     }
   });
 }
@@ -161,6 +195,7 @@ export async function updateDeal(input: UpdateDealInput) {
  * Update deal stage (for pipeline Kanban)
  *
  * RBAC: Requires CRM access + deal management permission
+ * Subscription: Requires STARTER tier minimum
  *
  * @param input - Stage update data
  * @returns Updated deal
@@ -173,9 +208,20 @@ export async function updateDealStage(input: UpdateDealStageInput) {
     throw new Error('Unauthorized: User not found');
   }
 
-  // Check RBAC permissions
+  // 1. Check subscription tier
+  if (!canAccessFeature(user.subscription_tier, 'crm')) {
+    throw new Error('Upgrade to STARTER tier to access CRM features');
+  }
+
+  // 2. Check GlobalRole
   if (!canAccessCRM(user.role) || !canManageDeals(user.role)) {
-    throw new Error('Unauthorized: Insufficient permissions to update deal stage');
+    throw new Error('Unauthorized: Insufficient global permissions to update deal stage');
+  }
+
+  // 3. Check OrganizationRole
+  const orgMember = user.organization_members?.[0];
+  if (!orgMember || !hasOrgPermission(user.role, orgMember.role, 'deals:write')) {
+    throw new Error('Unauthorized: Insufficient organization permissions to update deal stage');
   }
 
   // Validate input
@@ -219,8 +265,12 @@ export async function updateDealStage(input: UpdateDealStageInput) {
       return deal;
     } catch (error) {
       const dbError = handleDatabaseError(error);
-      console.error('[Deals Actions] updateDealStage failed:', dbError);
-      throw new Error('Failed to update deal stage');
+      console.error('[CRM:Deals] updateDealStage failed:', dbError);
+      throw new Error(
+        `[CRM:Deals] Failed to update deal stage: ${
+          error instanceof Error ? error.message : 'Unknown error'
+        }`
+      );
     }
   });
 }
@@ -229,6 +279,7 @@ export async function updateDealStage(input: UpdateDealStageInput) {
  * Close a deal (mark as won or lost)
  *
  * RBAC: Requires CRM access + deal management permission
+ * Subscription: Requires STARTER tier minimum
  *
  * @param input - Close deal data
  * @returns Closed deal
@@ -241,9 +292,20 @@ export async function closeDeal(input: CloseDealInput) {
     throw new Error('Unauthorized: User not found');
   }
 
-  // Check RBAC permissions
+  // 1. Check subscription tier
+  if (!canAccessFeature(user.subscription_tier, 'crm')) {
+    throw new Error('Upgrade to STARTER tier to access CRM features');
+  }
+
+  // 2. Check GlobalRole
   if (!canAccessCRM(user.role) || !canManageDeals(user.role)) {
-    throw new Error('Unauthorized: Insufficient permissions to close deals');
+    throw new Error('Unauthorized: Insufficient global permissions to close deals');
+  }
+
+  // 3. Check OrganizationRole
+  const orgMember = user.organization_members?.[0];
+  if (!orgMember || !hasOrgPermission(user.role, orgMember.role, 'deals:write')) {
+    throw new Error('Unauthorized: Insufficient organization permissions to close deals');
   }
 
   // Validate input
@@ -291,8 +353,12 @@ export async function closeDeal(input: CloseDealInput) {
       return deal;
     } catch (error) {
       const dbError = handleDatabaseError(error);
-      console.error('[Deals Actions] closeDeal failed:', dbError);
-      throw new Error('Failed to close deal');
+      console.error('[CRM:Deals] closeDeal failed:', dbError);
+      throw new Error(
+        `[CRM:Deals] Failed to close deal: ${
+          error instanceof Error ? error.message : 'Unknown error'
+        }`
+      );
     }
   });
 }
@@ -301,6 +367,7 @@ export async function closeDeal(input: CloseDealInput) {
  * Bulk update deals
  *
  * RBAC: Requires CRM access + deal management permission
+ * Subscription: Requires STARTER tier minimum
  *
  * @param input - Bulk update data
  * @returns Updated deals count
@@ -313,9 +380,20 @@ export async function bulkUpdateDeals(input: BulkUpdateDealsInput) {
     throw new Error('Unauthorized: User not found');
   }
 
-  // Check RBAC permissions
+  // 1. Check subscription tier
+  if (!canAccessFeature(user.subscription_tier, 'crm')) {
+    throw new Error('Upgrade to STARTER tier to access CRM features');
+  }
+
+  // 2. Check GlobalRole
   if (!canAccessCRM(user.role) || !canManageDeals(user.role)) {
-    throw new Error('Unauthorized: Insufficient permissions to bulk update deals');
+    throw new Error('Unauthorized: Insufficient global permissions to bulk update deals');
+  }
+
+  // 3. Check OrganizationRole
+  const orgMember = user.organization_members?.[0];
+  if (!orgMember || !hasOrgPermission(user.role, orgMember.role, 'deals:manage')) {
+    throw new Error('Unauthorized: Insufficient organization permissions to bulk update deals');
   }
 
   // Validate input
@@ -350,8 +428,12 @@ export async function bulkUpdateDeals(input: BulkUpdateDealsInput) {
       return result.count;
     } catch (error) {
       const dbError = handleDatabaseError(error);
-      console.error('[Deals Actions] bulkUpdateDeals failed:', dbError);
-      throw new Error('Failed to bulk update deals');
+      console.error('[CRM:Deals] bulkUpdateDeals failed:', dbError);
+      throw new Error(
+        `[CRM:Deals] Failed to bulk update deals: ${
+          error instanceof Error ? error.message : 'Unknown error'
+        }`
+      );
     }
   });
 }
@@ -360,6 +442,7 @@ export async function bulkUpdateDeals(input: BulkUpdateDealsInput) {
  * Delete a deal
  *
  * RBAC: Requires CRM access + delete permission
+ * Subscription: Requires STARTER tier minimum
  *
  * @param input - Delete deal data
  * @returns Success status
@@ -372,9 +455,20 @@ export async function deleteDeal(input: DeleteDealInput) {
     throw new Error('Unauthorized: User not found');
   }
 
-  // Check RBAC permissions
+  // 1. Check subscription tier
+  if (!canAccessFeature(user.subscription_tier, 'crm')) {
+    throw new Error('Upgrade to STARTER tier to access CRM features');
+  }
+
+  // 2. Check GlobalRole
   if (!canAccessCRM(user.role) || !canDeleteDeals(user.role)) {
-    throw new Error('Unauthorized: Insufficient permissions to delete deals');
+    throw new Error('Unauthorized: Insufficient global permissions to delete deals');
+  }
+
+  // 3. Check OrganizationRole
+  const orgMember = user.organization_members?.[0];
+  if (!orgMember || !hasOrgPermission(user.role, orgMember.role, 'deals:manage')) {
+    throw new Error('Unauthorized: Insufficient organization permissions to delete deals');
   }
 
   // Validate input
@@ -415,8 +509,12 @@ export async function deleteDeal(input: DeleteDealInput) {
       return { success: true };
     } catch (error) {
       const dbError = handleDatabaseError(error);
-      console.error('[Deals Actions] deleteDeal failed:', dbError);
-      throw new Error('Failed to delete deal');
+      console.error('[CRM:Deals] deleteDeal failed:', dbError);
+      throw new Error(
+        `[CRM:Deals] Failed to delete deal: ${
+          error instanceof Error ? error.message : 'Unknown error'
+        }`
+      );
     }
   });
 }

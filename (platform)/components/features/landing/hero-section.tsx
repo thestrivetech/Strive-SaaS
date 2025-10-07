@@ -36,15 +36,14 @@ export function HeroSection() {
             </Link>
           </Button>
 
-          {/* TODO Session 5: Re-enable once pricing page is built */}
-          {/* <Button
+          <Button
             variant="outline"
             size="lg"
             asChild
             className="w-full sm:w-auto hover-elevate"
           >
             <Link href="/pricing">View Pricing</Link>
-          </Button> */}
+          </Button>
         </div>
 
         {/* Trust Indicators */}

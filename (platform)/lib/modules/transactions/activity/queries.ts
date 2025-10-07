@@ -4,6 +4,7 @@ import { prisma } from '@/lib/prisma';
 import { withTenantContext } from '@/lib/database/utils';
 import { handleDatabaseError } from '@/lib/database/errors';
 import type { Prisma } from '@prisma/client';
+import type { ActivityFeedParams, Activity } from './types';
 
 /**
  * Transaction Activity Queries Module
@@ -23,28 +24,8 @@ type AuditLogWithUser = Prisma.transaction_audit_logsGetPayload<{
   };
 }>;
 
-export interface ActivityFeedParams {
-  loopId?: string;
-  limit?: number;
-  offset?: number;
-}
-
-export interface Activity {
-  id: string;
-  action: string;
-  entityType: string;
-  entityId: string;
-  user: {
-    id: string;
-    name: string | null;
-    email: string;
-    avatar_url: string | null;
-  };
-  timestamp: Date;
-  description: string;
-  oldValues?: any;
-  newValues?: any;
-}
+// Re-export types for convenience
+export type { ActivityFeedParams, Activity };
 
 /**
  * Get activity feed for transaction loops
@@ -59,15 +40,48 @@ export async function getActivityFeed(
     try {
       const { loopId, limit = 50, offset = 0 } = params;
 
-      const where: Prisma.transaction_audit_logsWhereInput = {};
+      // Get current user for organizationId
+      const { getCurrentUser } = await import('@/lib/auth/auth-helpers');
+      const currentUser = await getCurrentUser();
+
+      if (!currentUser?.organization_members?.[0]?.organization_id) {
+        throw new Error('User organization not found');
+      }
+
+      const organizationId = currentUser.organization_members[0].organization_id;
+
+      // Base where clause - MUST include organizationId for security
+      const where: Prisma.transaction_audit_logsWhereInput = {
+        organization_id: organizationId,
+      };
 
       if (loopId) {
+        // CRITICAL: Verify loop ownership before fetching related activities
+        const loop = await prisma.transaction_loops.findFirst({
+          where: {
+            id: loopId,
+            organization_id: organizationId,
+          },
+        });
+
+        if (!loop) {
+          throw new Error('Loop not found or access denied');
+        }
+
+        // Get related entity IDs (security enforced by loop ownership verification above)
+        const [documentIds, partyIds, taskIds, signatureIds] = await Promise.all([
+          getDocumentIdsByLoop(loopId),
+          getPartyIdsByLoop(loopId),
+          getTaskIdsByLoop(loopId),
+          getSignatureIdsByLoop(loopId),
+        ]);
+
         where.OR = [
           { entity_type: 'loop', entity_id: loopId },
-          { entity_type: 'document', entity_id: { in: await getDocumentIdsByLoop(loopId) } },
-          { entity_type: 'party', entity_id: { in: await getPartyIdsByLoop(loopId) } },
-          { entity_type: 'task', entity_id: { in: await getTaskIdsByLoop(loopId) } },
-          { entity_type: 'signature', entity_id: { in: await getSignatureIdsByLoop(loopId) } },
+          { entity_type: 'document', entity_id: { in: documentIds } },
+          { entity_type: 'party', entity_id: { in: partyIds } },
+          { entity_type: 'task', entity_id: { in: taskIds } },
+          { entity_type: 'signature', entity_id: { in: signatureIds } },
         ];
       }
 
@@ -129,10 +143,21 @@ export async function getActivityByEntity(
 ): Promise<Activity[]> {
   return withTenantContext(async () => {
     try {
+      // Get current user for organizationId
+      const { getCurrentUser } = await import('@/lib/auth/auth-helpers');
+      const currentUser = await getCurrentUser();
+
+      if (!currentUser?.organization_members?.[0]?.organization_id) {
+        throw new Error('User organization not found');
+      }
+
+      const organizationId = currentUser.organization_members[0].organization_id;
+
       const activities = await prisma.transaction_audit_logs.findMany({
         where: {
           entity_type: entityType,
           entity_id: entityId,
+          organization_id: organizationId, // Explicit org filter for security
         },
         include: {
           user: {
@@ -159,6 +184,28 @@ export async function getActivityByEntity(
 export async function getLoopActivityCount(loopId: string): Promise<number> {
   return withTenantContext(async () => {
     try {
+      // Get current user for organizationId
+      const { getCurrentUser } = await import('@/lib/auth/auth-helpers');
+      const currentUser = await getCurrentUser();
+
+      if (!currentUser?.organization_members?.[0]?.organization_id) {
+        throw new Error('User organization not found');
+      }
+
+      const organizationId = currentUser.organization_members[0].organization_id;
+
+      // Verify loop ownership first
+      const loop = await prisma.transaction_loops.findFirst({
+        where: {
+          id: loopId,
+          organization_id: organizationId,
+        },
+      });
+
+      if (!loop) {
+        throw new Error('Loop not found or access denied');
+      }
+
       const [documentIds, partyIds, taskIds, signatureIds] = await Promise.all([
         getDocumentIdsByLoop(loopId),
         getPartyIdsByLoop(loopId),
@@ -168,6 +215,7 @@ export async function getLoopActivityCount(loopId: string): Promise<number> {
 
       return await prisma.transaction_audit_logs.count({
         where: {
+          organization_id: organizationId, // Explicit org filter for security
           OR: [
             { entity_type: 'loop', entity_id: loopId },
             { entity_type: 'document', entity_id: { in: documentIds } },
@@ -198,17 +246,22 @@ function formatActivity(log: AuditLogWithUser): Activity {
     user: log.user,
     timestamp: log.timestamp,
     description: '', // Will be formatted by formatters module
-    oldValues: log.old_values as any,
-    newValues: log.new_values as any,
+    oldValues: log.old_values as Record<string, unknown> | undefined,
+    newValues: log.new_values as Record<string, unknown> | undefined,
   };
 }
 
 /**
  * Helper: Get document IDs for a loop
+ *
+ * SECURITY: Loop ownership is verified before calling this function (in getActivityFeed)
+ * These tables don't have organization_id - they inherit security through loop_id relationship
  */
 async function getDocumentIdsByLoop(loopId: string): Promise<string[]> {
   const documents = await prisma.documents.findMany({
-    where: { loop_id: loopId },
+    where: {
+      loop_id: loopId,
+    },
     select: { id: true },
   });
   return documents.map(d => d.id);
@@ -216,10 +269,15 @@ async function getDocumentIdsByLoop(loopId: string): Promise<string[]> {
 
 /**
  * Helper: Get party IDs for a loop
+ *
+ * SECURITY: Loop ownership is verified before calling this function (in getActivityFeed)
+ * These tables don't have organization_id - they inherit security through loop_id relationship
  */
 async function getPartyIdsByLoop(loopId: string): Promise<string[]> {
   const parties = await prisma.loop_parties.findMany({
-    where: { loop_id: loopId },
+    where: {
+      loop_id: loopId,
+    },
     select: { id: true },
   });
   return parties.map(p => p.id);
@@ -227,10 +285,15 @@ async function getPartyIdsByLoop(loopId: string): Promise<string[]> {
 
 /**
  * Helper: Get task IDs for a loop
+ *
+ * SECURITY: Loop ownership is verified before calling this function (in getActivityFeed)
+ * These tables don't have organization_id - they inherit security through loop_id relationship
  */
 async function getTaskIdsByLoop(loopId: string): Promise<string[]> {
   const tasks = await prisma.transaction_tasks.findMany({
-    where: { loop_id: loopId },
+    where: {
+      loop_id: loopId,
+    },
     select: { id: true },
   });
   return tasks.map(t => t.id);
@@ -238,10 +301,15 @@ async function getTaskIdsByLoop(loopId: string): Promise<string[]> {
 
 /**
  * Helper: Get signature request IDs for a loop
+ *
+ * SECURITY: Loop ownership is verified before calling this function (in getActivityFeed)
+ * These tables don't have organization_id - they inherit security through loop_id relationship
  */
 async function getSignatureIdsByLoop(loopId: string): Promise<string[]> {
   const signatures = await prisma.signature_requests.findMany({
-    where: { loop_id: loopId },
+    where: {
+      loop_id: loopId,
+    },
     select: { id: true },
   });
   return signatures.map(s => s.id);

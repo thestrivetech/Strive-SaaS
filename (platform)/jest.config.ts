@@ -79,6 +79,11 @@ const config: Config = {
 
   // Verbose output
   verbose: true,
+
+  // Transform ES modules from node_modules (including dist folders)
+  transformIgnorePatterns: [
+    'node_modules/(?!(@faker-js|@supabase|@tanstack))',
+  ],
 };
 
 // createJestConfig is exported this way to ensure that next/jest can load the Next.js config which is async

@@ -48,12 +48,9 @@ type DealWithRelations = Prisma.dealsGetPayload<{
   };
 }>;
 
-type DealsByStageResult = {
-  stage: string;
-  deals: DealWithAssignee[];
-  totalValue: number;
-  count: number;
-}[];
+/**
+ * NOTE: DealsByStageResult type moved to queries/pipeline.ts
+ */
 
 /**
  * Get deals with filters and pagination
@@ -233,115 +230,12 @@ export async function getDealById(id: string): Promise<DealWithRelations | null>
 }
 
 /**
- * Get deals grouped by pipeline stage
- * Used for Kanban board view
+ * NOTE: Pipeline and analytics queries have been moved to separate files:
+ * - getDealsByStage() -> queries/pipeline.ts
+ * - getDealMetrics() -> queries/analytics.ts
+ *
+ * Import from index.ts to access all query functions.
  */
-export async function getDealsByStage(): Promise<DealsByStageResult> {
-  return withTenantContext(async () => {
-    try {
-      const stages = ['LEAD', 'QUALIFIED', 'PROPOSAL', 'NEGOTIATION', 'CLOSING'];
-
-      const dealsByStage = await Promise.all(
-        stages.map(async (stage) => {
-          const deals = await prisma.deals.findMany({
-            where: {
-              stage: stage as any,
-              status: 'ACTIVE', // Only show active deals in pipeline
-            },
-            include: {
-              assigned_to: {
-                select: {
-                  id: true,
-                  name: true,
-                  email: true,
-                  avatar_url: true,
-                },
-              },
-              contact: {
-                select: {
-                  id: true,
-                  name: true,
-                },
-              },
-              lead: {
-                select: {
-                  id: true,
-                  name: true,
-                },
-              },
-            },
-            orderBy: {
-              created_at: 'desc',
-            },
-          });
-
-          const totalValue = deals.reduce((sum, deal) => sum + Number(deal.value), 0);
-
-          return {
-            stage,
-            deals,
-            totalValue,
-            count: deals.length,
-          };
-        })
-      );
-
-      return dealsByStage;
-    } catch (error) {
-      const dbError = handleDatabaseError(error);
-      console.error('[Deals Queries] getDealsByStage failed:', dbError);
-      throw new Error('Failed to fetch pipeline data');
-    }
-  });
-}
-
-/**
- * Get deal metrics for dashboard
- */
-export async function getDealMetrics() {
-  return withTenantContext(async () => {
-    try {
-      const [totalValue, wonValue, lostValue, activeDeals, wonDeals, lostDeals, totalDeals] = await Promise.all([
-        prisma.deals.aggregate({
-          where: { status: 'ACTIVE' },
-          _sum: { value: true },
-        }),
-        prisma.deals.aggregate({
-          where: { status: 'WON' },
-          _sum: { value: true },
-        }),
-        prisma.deals.aggregate({
-          where: { status: 'LOST' },
-          _sum: { value: true },
-        }),
-        prisma.deals.count({ where: { status: 'ACTIVE' } }),
-        prisma.deals.count({ where: { status: 'WON' } }),
-        prisma.deals.count({ where: { status: 'LOST' } }),
-        prisma.deals.count(),
-      ]);
-
-      const closedDeals = wonDeals + lostDeals;
-      const winRate = closedDeals > 0 ? (wonDeals / closedDeals) * 100 : 0;
-      const averageDealValue = activeDeals > 0 ? Number(totalValue._sum.value || 0) / activeDeals : 0;
-
-      return {
-        pipelineValue: Number(totalValue._sum.value || 0),
-        wonValue: Number(wonValue._sum.value || 0),
-        lostValue: Number(lostValue._sum.value || 0),
-        activeDeals,
-        wonDeals,
-        lostDeals,
-        totalDeals,
-        winRate,
-        averageDealValue,
-      };
-    } catch (error) {
-      const dbError = handleDatabaseError(error);
-      console.error('[Deals Queries] getDealMetrics failed:', dbError);
-      throw new Error('Failed to fetch deal metrics');
-    }
-  });
-}
 
 /**
  * Get deal count with filters (for pagination)
@@ -500,5 +394,4 @@ export async function getDealsByLead(leadId: string) {
 export type {
   DealWithAssignee,
   DealWithRelations,
-  DealsByStageResult,
 };

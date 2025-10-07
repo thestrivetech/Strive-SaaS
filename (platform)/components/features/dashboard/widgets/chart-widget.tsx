@@ -82,9 +82,11 @@ export function ChartWidget({
           </PieChart>
         )
       default:
-        return null
+        return <div className="text-center text-gray-500">Unsupported chart type</div>
     }
   }
+
+  const chartComponent = renderChart();
 
   return (
     <Card className="bg-white shadow-sm">
@@ -94,9 +96,14 @@ export function ChartWidget({
         </CardTitle>
       </CardHeader>
       <CardContent>
-        <ResponsiveContainer width="100%" height={300}>
-          {renderChart()}
-        </ResponsiveContainer>
+        {chartComponent && (
+          <ResponsiveContainer width="100%" height={300}>
+            {chartComponent}
+          </ResponsiveContainer>
+        )}
+        {!chartComponent && (
+          <div className="text-center text-gray-500">No chart data available</div>
+        )}
       </CardContent>
     </Card>
   )

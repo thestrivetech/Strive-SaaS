@@ -137,7 +137,7 @@ export async function createTestCustomer(
     email: string;
     phone: string;
     company: string;
-    status: any;
+    status: string;
   }> = {}
 ) {
   const timestamp = Date.now();
@@ -178,8 +178,7 @@ export async function waitFor(
  */
 export function createMockFile(
   filename: string = 'test.pdf',
-  type: string = 'application/pdf',
-  size: number = 1024
+  type: string = 'application/pdf'
 ): File {
   const blob = new Blob(['test content'], { type });
   return new File([blob], filename, { type });

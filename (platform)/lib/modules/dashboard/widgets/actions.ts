@@ -8,9 +8,12 @@ import { DashboardWidgetSchema, UpdateWidgetSchema } from './schemas';
 export async function createDashboardWidget(input: unknown) {
   const user = await requireAuth();
 
-  // Check permissions
-  if (!['SUPER_ADMIN', 'ADMIN'].includes(user.role || '')) {
-    throw new Error('Insufficient permissions');
+  // Check both GlobalRole (platform-level) AND OrganizationRole (org-level)
+  const isSuperAdmin = user.role === 'SUPER_ADMIN';
+  const isOrgAdmin = ['ADMIN', 'OWNER'].includes(user.organizationRole || '');
+
+  if (!isSuperAdmin && !isOrgAdmin) {
+    throw new Error('Insufficient permissions - requires SUPER_ADMIN or organization ADMIN/OWNER');
   }
 
   const validated = DashboardWidgetSchema.parse(input);
@@ -30,9 +33,12 @@ export async function createDashboardWidget(input: unknown) {
 export async function updateDashboardWidget(input: unknown) {
   const user = await requireAuth();
 
-  // Check permissions
-  if (!['SUPER_ADMIN', 'ADMIN'].includes(user.role || '')) {
-    throw new Error('Insufficient permissions');
+  // Check both GlobalRole (platform-level) AND OrganizationRole (org-level)
+  const isSuperAdmin = user.role === 'SUPER_ADMIN';
+  const isOrgAdmin = ['ADMIN', 'OWNER'].includes(user.organizationRole || '');
+
+  if (!isSuperAdmin && !isOrgAdmin) {
+    throw new Error('Insufficient permissions - requires SUPER_ADMIN or organization ADMIN/OWNER');
   }
 
   const validated = UpdateWidgetSchema.parse(input);
@@ -59,9 +65,12 @@ export async function updateDashboardWidget(input: unknown) {
 export async function deleteDashboardWidget(id: string) {
   const user = await requireAuth();
 
-  // Check permissions
-  if (!['SUPER_ADMIN', 'ADMIN'].includes(user.role || '')) {
-    throw new Error('Insufficient permissions');
+  // Check both GlobalRole (platform-level) AND OrganizationRole (org-level)
+  const isSuperAdmin = user.role === 'SUPER_ADMIN';
+  const isOrgAdmin = ['ADMIN', 'OWNER'].includes(user.organizationRole || '');
+
+  if (!isSuperAdmin && !isOrgAdmin) {
+    throw new Error('Insufficient permissions - requires SUPER_ADMIN or organization ADMIN/OWNER');
   }
 
   // Verify ownership

@@ -6,7 +6,7 @@
  * @module transaction-activity/formatters
  */
 
-import type { Activity } from './queries';
+import type { Activity } from './types';
 
 /**
  * Format activity into human-readable description

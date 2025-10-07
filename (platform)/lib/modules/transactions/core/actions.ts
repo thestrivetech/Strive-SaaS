@@ -5,7 +5,7 @@ import { prisma } from '@/lib/prisma';
 import { getCurrentUser } from '@/lib/auth/auth-helpers';
 import { getUserOrganizationId } from '@/lib/auth/user-helpers';
 import { CreateLoopSchema, UpdateLoopSchema } from './schemas';
-import { hasTransactionPermission, canModifyLoop, TRANSACTION_PERMISSIONS } from './permissions';
+import { hasTransactionPermission, canModifyLoop, requireTransactionAccess, TRANSACTION_PERMISSIONS } from './permissions';
 import type { CreateLoopInput, UpdateLoopInput } from './schemas';
 
 /**
@@ -21,6 +21,9 @@ export async function createLoop(input: CreateLoopInput) {
   if (!user) {
     throw new Error('Unauthorized: Not authenticated');
   }
+
+  // Check subscription tier access
+  requireTransactionAccess(user);
 
   // Check permission
   if (!hasTransactionPermission(user, TRANSACTION_PERMISSIONS.CREATE_LOOPS)) {
@@ -83,6 +86,9 @@ export async function updateLoop(loopId: string, input: UpdateLoopInput) {
   if (!user) {
     throw new Error('Unauthorized: Not authenticated');
   }
+
+  // Check subscription tier access
+  requireTransactionAccess(user);
 
   // Validate input
   const validated = UpdateLoopSchema.parse(input);
@@ -161,6 +167,9 @@ export async function deleteLoop(loopId: string) {
     throw new Error('Unauthorized: Not authenticated');
   }
 
+  // Check subscription tier access
+  requireTransactionAccess(user);
+
   const organizationId = getUserOrganizationId(user);
 
   // Fetch loop
@@ -217,6 +226,9 @@ export async function updateLoopProgress(loopId: string, progress: number) {
   if (!user) {
     throw new Error('Unauthorized: Not authenticated');
   }
+
+  // Check subscription tier access
+  requireTransactionAccess(user);
 
   if (progress < 0 || progress > 100) {
     throw new Error('Progress must be between 0 and 100');

@@ -27,7 +27,7 @@ describe('Transaction Loop Actions', () => {
     email: 'test@example.com',
     name: 'Test User',
     role: 'USER' as const,
-    subscription_tier: 'FREE' as const,
+    subscription_tier: 'GROWTH' as const, // Transaction Management requires GROWTH tier
     organization_members: [
       {
         id: 'org-member-1',
@@ -37,6 +37,7 @@ describe('Transaction Loop Actions', () => {
         organizations: {
           id: 'org-1',
           name: 'Test Organization',
+          subscription_tier: 'GROWTH' as const, // Org also needs GROWTH tier
         },
       },
     ],
@@ -109,10 +110,15 @@ describe('Transaction Loop Actions', () => {
     it('should enforce permission', async () => {
       (getCurrentUser as jest.Mock).mockResolvedValue({
         ...mockUser,
+        subscription_tier: 'STARTER', // Below GROWTH tier
         organization_members: [
           {
             ...mockUser.organization_members[0],
             role: 'VIEWER', // No create permission
+            organizations: {
+              ...mockUser.organization_members[0].organizations,
+              subscription_tier: 'STARTER', // Below GROWTH tier
+            },
           },
         ],
       });
@@ -123,7 +129,7 @@ describe('Transaction Loop Actions', () => {
           transactionType: 'PURCHASE_AGREEMENT' as const,
           listingPrice: 450000,
         })
-      ).rejects.toThrow('Unauthorized');
+      ).rejects.toThrow('Transaction Management requires GROWTH tier');
     });
 
     it('should reject unauthenticated request', async () => {
@@ -240,6 +246,13 @@ describe('Transaction Loop Actions', () => {
     });
 
     it('should reject delete without permission', async () => {
+      const existingLoop = {
+        id: 'loop-1',
+        organization_id: 'org-1',
+        created_by: 'user-2', // Not the creator
+      };
+
+      (prisma.transaction_loops.findFirst as jest.Mock).mockResolvedValue(existingLoop);
       (getCurrentUser as jest.Mock).mockResolvedValue({
         ...mockUser,
         organization_members: [

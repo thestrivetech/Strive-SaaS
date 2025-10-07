@@ -34,7 +34,31 @@ export type OrgPermission =
   // Tools & marketplace
   | 'tools:install'
   | 'tools:uninstall'
-  | 'tools:configure';
+  | 'tools:configure'
+  // CRM Module - Contacts
+  | 'contacts:read'
+  | 'contacts:write'
+  | 'contacts:manage'
+  // CRM Module - Leads
+  | 'leads:read'
+  | 'leads:write'
+  | 'leads:manage'
+  // CRM Module - Deals
+  | 'deals:read'
+  | 'deals:write'
+  | 'deals:manage'
+  // CRM Module - Listings
+  | 'listings:read'
+  | 'listings:write'
+  | 'listings:manage'
+  // CRM Module - Activities
+  | 'activities:read'
+  | 'activities:write'
+  | 'activities:manage'
+  // CRM Module - Appointments
+  | 'appointments:read'
+  | 'appointments:write'
+  | 'appointments:manage';
 
 /**
  * Organization roles and their permissions
@@ -57,6 +81,25 @@ export const ORG_ROLE_PERMISSIONS = {
     'tools:install',
     'tools:uninstall',
     'tools:configure',
+    // CRM - Full access
+    'contacts:read',
+    'contacts:write',
+    'contacts:manage',
+    'leads:read',
+    'leads:write',
+    'leads:manage',
+    'deals:read',
+    'deals:write',
+    'deals:manage',
+    'listings:read',
+    'listings:write',
+    'listings:manage',
+    'activities:read',
+    'activities:write',
+    'activities:manage',
+    'appointments:read',
+    'appointments:write',
+    'appointments:manage',
   ] as OrgPermission[],
 
   ADMIN: [
@@ -72,6 +115,25 @@ export const ORG_ROLE_PERMISSIONS = {
     'tools:install',
     'tools:uninstall',
     'tools:configure',
+    // CRM - Full access
+    'contacts:read',
+    'contacts:write',
+    'contacts:manage',
+    'leads:read',
+    'leads:write',
+    'leads:manage',
+    'deals:read',
+    'deals:write',
+    'deals:manage',
+    'listings:read',
+    'listings:write',
+    'listings:manage',
+    'activities:read',
+    'activities:write',
+    'activities:manage',
+    'appointments:read',
+    'appointments:write',
+    'appointments:manage',
     // Cannot: settings:billing, org:delete, org:transfer
   ] as OrgPermission[],
 
@@ -79,10 +141,29 @@ export const ORG_ROLE_PERMISSIONS = {
     // Limited permissions - can invite and use tools
     'members:invite',
     'tools:configure',
+    // CRM - Read and write access (no manage/bulk operations)
+    'contacts:read',
+    'contacts:write',
+    'leads:read',
+    'leads:write',
+    'deals:read',
+    'deals:write',
+    'listings:read',
+    'listings:write',
+    'activities:read',
+    'activities:write',
+    'appointments:read',
+    'appointments:write',
   ] as OrgPermission[],
 
   VIEWER: [
-    // Read-only - no org-level permissions
+    // Read-only access to CRM
+    'contacts:read',
+    'leads:read',
+    'deals:read',
+    'listings:read',
+    'activities:read',
+    'appointments:read',
   ] as OrgPermission[],
 } as const;
 

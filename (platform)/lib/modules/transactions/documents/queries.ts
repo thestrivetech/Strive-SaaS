@@ -4,6 +4,7 @@ import { getCurrentUser } from '@/lib/auth/auth-helpers';
 import { getUserOrganizationId } from '@/lib/auth/user-helpers';
 import { prisma } from '@/lib/prisma';
 import type { QueryDocumentsInput } from './schemas';
+import { calculatePagination, createPaginatedResult, type PaginationParams, type PaginatedResult } from '../types/pagination';
 
 /**
  * Get all documents for a transaction loop
@@ -14,23 +15,29 @@ import type { QueryDocumentsInput } from './schemas';
  * - Includes version history
  * - Orders by most recent first
  * - Supports filtering by category and status
+ * - Returns paginated results
  *
  * @param params - Query parameters (loopId, optional filters)
- * @returns {Promise<Array>} List of documents with related data
+ * @param paginationParams - Pagination parameters (page, limit)
+ * @returns {Promise<PaginatedResult>} Paginated list of documents with related data
  *
  * @throws {Error} If user is not authenticated
  * @throws {Error} If loop not found or not owned by user's organization
  *
  * @example
  * ```typescript
- * const documents = await getDocumentsByLoop({
+ * const result = await getDocumentsByLoop({
  *   loopId: 'loop-123',
  *   category: 'contract',
  *   status: 'REVIEWED',
- * });
+ * }, { page: 1, limit: 20 });
+ * console.log(`Showing ${result.data.length} of ${result.pagination.total} documents`);
  * ```
  */
-export async function getDocumentsByLoop(params: QueryDocumentsInput) {
+export async function getDocumentsByLoop(
+  params: QueryDocumentsInput,
+  paginationParams: PaginationParams = {}
+): Promise<PaginatedResult<Awaited<ReturnType<typeof prisma.documents.findMany>>[number]>> {
   const user = await getCurrentUser();
 
   if (!user) {
@@ -38,6 +45,7 @@ export async function getDocumentsByLoop(params: QueryDocumentsInput) {
   }
 
   const { loopId, category, status, search } = params;
+  const { page, limit, skip } = calculatePagination(paginationParams);
 
   // Verify loop ownership (organization isolation)
   const loop = await prisma.transaction_loops.findFirst({
@@ -71,33 +79,38 @@ export async function getDocumentsByLoop(params: QueryDocumentsInput) {
     ];
   }
 
-  // Fetch documents with related data
-  const documents = await prisma.documents.findMany({
-    where,
-    include: {
-      uploader: {
-        select: {
-          id: true,
-          name: true,
-          email: true,
+  // Parallel query for count and data
+  const [documents, total] = await Promise.all([
+    prisma.documents.findMany({
+      where,
+      include: {
+        uploader: {
+          select: {
+            id: true,
+            name: true,
+            email: true,
+          },
         },
-      },
-      versions: {
-        orderBy: { version_number: 'desc' },
-        include: {
-          creator: {
-            select: {
-              id: true,
-              name: true,
+        versions: {
+          orderBy: { version_number: 'desc' },
+          include: {
+            creator: {
+              select: {
+                id: true,
+                name: true,
+              },
             },
           },
         },
       },
-    },
-    orderBy: { created_at: 'desc' },
-  });
+      orderBy: { created_at: 'desc' },
+      take: limit,
+      skip,
+    }),
+    prisma.documents.count({ where }),
+  ]);
 
-  return documents;
+  return createPaginatedResult(documents, total, page, limit);
 }
 
 /**

@@ -4,6 +4,8 @@ import { revalidatePath } from 'next/cache';
 import { prisma } from '@/lib/prisma';
 import { requireAuth, getCurrentUser } from '@/lib/auth/auth-helpers';
 import { canAccessCRM, canManageContacts, canDeleteContacts } from '@/lib/auth/rbac';
+import { hasOrgPermission } from '@/lib/auth/org-rbac';
+import { canAccessFeature } from '@/lib/auth/subscription';
 import { withTenantContext } from '@/lib/database/utils';
 import { handleDatabaseError } from '@/lib/database/errors';
 import {
@@ -22,10 +24,24 @@ import {
 /**
  * Create a new contact
  *
- * RBAC: Requires CRM access + contact creation permission
+ * @param input - Contact data including name, email, phone, company details
+ * @returns The created contact record with generated ID and timestamps
+ * @throws {Error} If user lacks permissions, validation fails, or database error occurs
  *
- * @param input - Contact data
- * @returns Created contact
+ * @security
+ * - Requires SubscriptionTier: STARTER or higher
+ * - Requires GlobalRole: USER or higher with CRM access
+ * - Requires OrganizationRole: MEMBER or higher (contacts:write permission)
+ *
+ * @example
+ * ```typescript
+ * const contact = await createContact({
+ *   name: 'John Doe',
+ *   email: 'john@example.com',
+ *   phone: '+1234567890',
+ *   type: 'CLIENT',
+ * });
+ * ```
  */
 export async function createContact(input: CreateContactInput) {
   await requireAuth();
@@ -35,9 +51,20 @@ export async function createContact(input: CreateContactInput) {
     throw new Error('Unauthorized: User not found');
   }
 
-  // Check RBAC permissions
+  // 1. Check subscription tier
+  if (!canAccessFeature(user.subscription_tier, 'crm')) {
+    throw new Error('Upgrade to STARTER tier to access CRM features');
+  }
+
+  // 2. Check GlobalRole
   if (!canAccessCRM(user.role) || !canManageContacts(user.role)) {
-    throw new Error('Unauthorized: Insufficient permissions to create contacts');
+    throw new Error('Unauthorized: Insufficient global permissions to create contacts');
+  }
+
+  // 3. Check OrganizationRole
+  const orgMember = user.organization_members?.[0];
+  if (!orgMember || !hasOrgPermission(user.role, orgMember.role, 'contacts:write')) {
+    throw new Error('Unauthorized: Insufficient organization permissions to create contacts');
   }
 
   // Validate input
@@ -69,8 +96,12 @@ export async function createContact(input: CreateContactInput) {
       return contact;
     } catch (error) {
       const dbError = handleDatabaseError(error);
-      console.error('[Contacts Actions] createContact failed:', dbError);
-      throw new Error('Failed to create contact');
+      console.error('[CRM:Contacts] createContact failed:', dbError);
+      throw new Error(
+        `[CRM:Contacts] Failed to create contact: ${
+          error instanceof Error ? error.message : 'Unknown error'
+        }`
+      );
     }
   });
 }
@@ -78,8 +109,15 @@ export async function createContact(input: CreateContactInput) {
 /**
  * Update an existing contact
  *
- * @param input - Updated contact data
- * @returns Updated contact
+ * @param input - Updated contact data with ID and fields to modify
+ * @returns Updated contact record with latest data
+ * @throws {Error} If contact not found, access denied, or update fails
+ *
+ * @security
+ * - Requires SubscriptionTier: STARTER or higher
+ * - Requires GlobalRole: USER or higher with CRM access
+ * - Requires OrganizationRole: MEMBER or higher (contacts:write permission)
+ * - Verifies contact belongs to user's organization
  */
 export async function updateContact(input: UpdateContactInput) {
   await requireAuth();
@@ -89,8 +127,20 @@ export async function updateContact(input: UpdateContactInput) {
     throw new Error('Unauthorized: User not found');
   }
 
+  // 1. Check subscription tier
+  if (!canAccessFeature(user.subscription_tier, 'crm')) {
+    throw new Error('Upgrade to STARTER tier to access CRM features');
+  }
+
+  // 2. Check GlobalRole
   if (!canAccessCRM(user.role) || !canManageContacts(user.role)) {
-    throw new Error('Unauthorized: Insufficient permissions to update contacts');
+    throw new Error('Unauthorized: Insufficient global permissions to update contacts');
+  }
+
+  // 3. Check OrganizationRole
+  const orgMember = user.organization_members?.[0];
+  if (!orgMember || !hasOrgPermission(user.role, orgMember.role, 'contacts:write')) {
+    throw new Error('Unauthorized: Insufficient organization permissions to update contacts');
   }
 
   const validated = updateContactSchema.parse(input);
@@ -138,8 +188,12 @@ export async function updateContact(input: UpdateContactInput) {
       return contact;
     } catch (error) {
       const dbError = handleDatabaseError(error);
-      console.error('[Contacts Actions] updateContact failed:', dbError);
-      throw new Error('Failed to update contact');
+      console.error('[CRM:Contacts] updateContact failed:', dbError);
+      throw new Error(
+        `[CRM:Contacts] Failed to update contact: ${
+          error instanceof Error ? error.message : 'Unknown error'
+        }`
+      );
     }
   });
 }
@@ -147,10 +201,15 @@ export async function updateContact(input: UpdateContactInput) {
 /**
  * Delete a contact
  *
- * RBAC: Requires delete permission
+ * @param id - Contact ID to delete
+ * @returns Success status object
+ * @throws {Error} If contact not found, access denied, or deletion fails
  *
- * @param id - Contact ID
- * @returns Success status
+ * @security
+ * - Requires SubscriptionTier: STARTER or higher
+ * - Requires GlobalRole: USER or higher with delete permissions
+ * - Requires OrganizationRole: ADMIN or OWNER (contacts:manage permission)
+ * - Verifies contact belongs to user's organization
  */
 export async function deleteContact(id: string) {
   await requireAuth();
@@ -160,8 +219,20 @@ export async function deleteContact(id: string) {
     throw new Error('Unauthorized: User not found');
   }
 
+  // 1. Check subscription tier
+  if (!canAccessFeature(user.subscription_tier, 'crm')) {
+    throw new Error('Upgrade to STARTER tier to access CRM features');
+  }
+
+  // 2. Check GlobalRole
   if (!canAccessCRM(user.role) || !canDeleteContacts(user.role)) {
-    throw new Error('Unauthorized: Insufficient permissions to delete contacts');
+    throw new Error('Unauthorized: Insufficient global permissions to delete contacts');
+  }
+
+  // 3. Check OrganizationRole (manage permission for delete)
+  const orgMember = user.organization_members?.[0];
+  if (!orgMember || !hasOrgPermission(user.role, orgMember.role, 'contacts:manage')) {
+    throw new Error('Unauthorized: Insufficient organization permissions to delete contacts');
   }
 
   return withTenantContext(async () => {
@@ -191,8 +262,12 @@ export async function deleteContact(id: string) {
       return { success: true };
     } catch (error) {
       const dbError = handleDatabaseError(error);
-      console.error('[Contacts Actions] deleteContact failed:', dbError);
-      throw new Error('Failed to delete contact');
+      console.error('[CRM:Contacts] deleteContact failed:', dbError);
+      throw new Error(
+        `[CRM:Contacts] Failed to delete contact: ${
+          error instanceof Error ? error.message : 'Unknown error'
+        }`
+      );
     }
   });
 }
@@ -200,10 +275,17 @@ export async function deleteContact(id: string) {
 /**
  * Log a communication with a contact
  *
- * Creates an activity and updates last_contact_at
+ * Creates an activity record and updates the contact's last_contact_at timestamp.
  *
- * @param input - Communication data
- * @returns Created activity
+ * @param input - Communication data (type, title, description, contact_id)
+ * @returns Created activity record
+ * @throws {Error} If contact not found, access denied, or logging fails
+ *
+ * @security
+ * - Requires SubscriptionTier: STARTER or higher
+ * - Requires GlobalRole: USER or higher with CRM access
+ * - Requires OrganizationRole: MEMBER or higher (activities:write permission)
+ * - Verifies contact belongs to user's organization
  */
 export async function logCommunication(input: LogCommunicationInput) {
   await requireAuth();
@@ -213,8 +295,20 @@ export async function logCommunication(input: LogCommunicationInput) {
     throw new Error('Unauthorized: User not found');
   }
 
+  // 1. Check subscription tier
+  if (!canAccessFeature(user.subscription_tier, 'crm')) {
+    throw new Error('Upgrade to STARTER tier to access CRM features');
+  }
+
+  // 2. Check GlobalRole
   if (!canAccessCRM(user.role)) {
-    throw new Error('Unauthorized: Insufficient permissions to log communications');
+    throw new Error('Unauthorized: Insufficient global permissions to log communications');
+  }
+
+  // 3. Check OrganizationRole
+  const orgMember = user.organization_members?.[0];
+  if (!orgMember || !hasOrgPermission(user.role, orgMember.role, 'activities:write')) {
+    throw new Error('Unauthorized: Insufficient organization permissions to log communications');
   }
 
   const validated = logCommunicationSchema.parse(input);
@@ -275,8 +369,12 @@ export async function logCommunication(input: LogCommunicationInput) {
       return activity;
     } catch (error) {
       const dbError = handleDatabaseError(error);
-      console.error('[Contacts Actions] logCommunication failed:', dbError);
-      throw new Error('Failed to log communication');
+      console.error('[CRM:Contacts] logCommunication failed:', dbError);
+      throw new Error(
+        `[CRM:Contacts] Failed to log communication: ${
+          error instanceof Error ? error.message : 'Unknown error'
+        }`
+      );
     }
   });
 }
@@ -284,8 +382,15 @@ export async function logCommunication(input: LogCommunicationInput) {
 /**
  * Update contact status
  *
- * @param input - Status update data
- * @returns Updated contact
+ * @param input - Status update data (id, new status, optional notes)
+ * @returns Updated contact record
+ * @throws {Error} If contact not found, access denied, or update fails
+ *
+ * @security
+ * - Requires SubscriptionTier: STARTER or higher
+ * - Requires GlobalRole: USER or higher with CRM access
+ * - Requires OrganizationRole: MEMBER or higher (contacts:write permission)
+ * - Verifies contact belongs to user's organization
  */
 export async function updateContactStatus(input: UpdateContactStatusInput) {
   await requireAuth();
@@ -295,8 +400,20 @@ export async function updateContactStatus(input: UpdateContactStatusInput) {
     throw new Error('Unauthorized: User not found');
   }
 
+  // 1. Check subscription tier
+  if (!canAccessFeature(user.subscription_tier, 'crm')) {
+    throw new Error('Upgrade to STARTER tier to access CRM features');
+  }
+
+  // 2. Check GlobalRole
   if (!canAccessCRM(user.role) || !canManageContacts(user.role)) {
-    throw new Error('Unauthorized: Insufficient permissions to update contact status');
+    throw new Error('Unauthorized: Insufficient global permissions to update contact status');
+  }
+
+  // 3. Check OrganizationRole
+  const orgMember = user.organization_members?.[0];
+  if (!orgMember || !hasOrgPermission(user.role, orgMember.role, 'contacts:write')) {
+    throw new Error('Unauthorized: Insufficient organization permissions to update contact status');
   }
 
   const validated = updateContactStatusSchema.parse(input);
@@ -347,8 +464,12 @@ export async function updateContactStatus(input: UpdateContactStatusInput) {
       return contact;
     } catch (error) {
       const dbError = handleDatabaseError(error);
-      console.error('[Contacts Actions] updateContactStatus failed:', dbError);
-      throw new Error('Failed to update contact status');
+      console.error('[CRM:Contacts] updateContactStatus failed:', dbError);
+      throw new Error(
+        `[CRM:Contacts] Failed to update contact status: ${
+          error instanceof Error ? error.message : 'Unknown error'
+        }`
+      );
     }
   });
 }
@@ -356,8 +477,15 @@ export async function updateContactStatus(input: UpdateContactStatusInput) {
 /**
  * Bulk assign contacts to an agent
  *
- * @param input - Contact IDs and assignee ID
- * @returns Success status
+ * @param input - Contact IDs array and target assignee user ID
+ * @returns Success status with count of assigned contacts
+ * @throws {Error} If access denied or assignment fails
+ *
+ * @security
+ * - Requires SubscriptionTier: STARTER or higher
+ * - Requires GlobalRole: USER or higher with CRM access
+ * - Requires OrganizationRole: ADMIN or OWNER (contacts:manage permission)
+ * - Automatically filters contacts to user's organization
  */
 export async function bulkAssignContacts(input: BulkAssignContactsInput) {
   await requireAuth();
@@ -367,8 +495,20 @@ export async function bulkAssignContacts(input: BulkAssignContactsInput) {
     throw new Error('Unauthorized: User not found');
   }
 
+  // 1. Check subscription tier
+  if (!canAccessFeature(user.subscription_tier, 'crm')) {
+    throw new Error('Upgrade to STARTER tier to access CRM features');
+  }
+
+  // 2. Check GlobalRole
   if (!canAccessCRM(user.role) || !canManageContacts(user.role)) {
-    throw new Error('Unauthorized: Insufficient permissions to assign contacts');
+    throw new Error('Unauthorized: Insufficient global permissions to assign contacts');
+  }
+
+  // 3. Check OrganizationRole (manage permission for bulk operations)
+  const orgMember = user.organization_members?.[0];
+  if (!orgMember || !hasOrgPermission(user.role, orgMember.role, 'contacts:manage')) {
+    throw new Error('Unauthorized: Insufficient organization permissions to bulk assign contacts');
   }
 
   const validated = bulkAssignContactsSchema.parse(input);
@@ -395,8 +535,12 @@ export async function bulkAssignContacts(input: BulkAssignContactsInput) {
       return { success: true, count: validated.contact_ids.length };
     } catch (error) {
       const dbError = handleDatabaseError(error);
-      console.error('[Contacts Actions] bulkAssignContacts failed:', dbError);
-      throw new Error('Failed to assign contacts');
+      console.error('[CRM:Contacts] bulkAssignContacts failed:', dbError);
+      throw new Error(
+        `[CRM:Contacts] Failed to bulk assign contacts: ${
+          error instanceof Error ? error.message : 'Unknown error'
+        }`
+      );
     }
   });
 }

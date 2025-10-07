@@ -152,4 +152,32 @@
       background: linear-gradient(135deg, hsl(222, 84%, 4.9%) 0%, hsl(250, 50%, 10%) 40%, hsl(222, 84%, 4.9%) 100%);
     }
   }
+
+  /* Hover elevation utilities */
+  .hover-elevate {
+    position: relative;
+    transition: transform 0.2s ease;
+  }
+
+  .hover-elevate::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    background-color: transparent;
+    transition: background-color 0.2s ease;
+    pointer-events: none;
+  }
+
+  .hover-elevate:hover {
+    transform: translateY(-2px);
+  }
+
+  .hover-elevate:hover::after {
+    background-color: var(--elevate-1);
+  }
+
+  .hover-elevate:active {
+    transform: translateY(0);
+  }
 }

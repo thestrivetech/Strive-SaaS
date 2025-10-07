@@ -119,6 +119,8 @@ const nextConfig = {
 
   // Experimental features
   experimental: {
+    // Enable instrumentation hook for startup validation
+    instrumentationHook: true,
     // Optimize package imports for smaller bundles
     optimizePackageImports: [
       '@radix-ui/react-icons',

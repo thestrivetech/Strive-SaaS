@@ -9,6 +9,13 @@ export const TRANSACTION_PERMISSIONS = {
   UPDATE_LOOPS: 'transactions:update_loops',
   DELETE_LOOPS: 'transactions:delete_loops',
   MANAGE_ALL: 'transactions:manage_all', // Super Admin only
+
+  // Listing permissions
+  VIEW_LISTINGS: 'transactions:view_listings',
+  CREATE_LISTINGS: 'transactions:create_listings',
+  UPDATE_LISTINGS: 'transactions:update_listings',
+  DELETE_LISTINGS: 'transactions:delete_listings',
+  PUBLISH_LISTINGS: 'transactions:publish_listings',
 } as const;
 
 export type TransactionPermission = typeof TRANSACTION_PERMISSIONS[keyof typeof TRANSACTION_PERMISSIONS];
@@ -71,6 +78,27 @@ export function hasTransactionPermission(
       // Platform admins or org owners (ADMIN role already returned true above)
       return orgRole === 'OWNER';
 
+    // Listing permissions
+    case TRANSACTION_PERMISSIONS.VIEW_LISTINGS:
+      // All employees can view listings (any org role)
+      return orgRole !== undefined;
+
+    case TRANSACTION_PERMISSIONS.CREATE_LISTINGS:
+      // Members and above can create listings
+      return orgRole ? ['OWNER', 'ADMIN', 'MEMBER'].includes(orgRole) : false;
+
+    case TRANSACTION_PERMISSIONS.UPDATE_LISTINGS:
+      // Members and above can update listings
+      return orgRole ? ['OWNER', 'ADMIN', 'MEMBER'].includes(orgRole) : false;
+
+    case TRANSACTION_PERMISSIONS.DELETE_LISTINGS:
+      // Only owners and admins can delete listings
+      return orgRole ? ['OWNER', 'ADMIN'].includes(orgRole) : false;
+
+    case TRANSACTION_PERMISSIONS.PUBLISH_LISTINGS:
+      // Only owners and admins can publish listings
+      return orgRole ? ['OWNER', 'ADMIN'].includes(orgRole) : false;
+
     default:
       return false;
   }
@@ -97,4 +125,38 @@ export function canModifyLoop(
 
   // Org admins/owners can modify any loop
   return hasTransactionPermission(user, TRANSACTION_PERMISSIONS.DELETE_LOOPS);
+}
+
+/**
+ * Check if user can access Transaction Management module
+ * Requires GROWTH tier or higher
+ *
+ * @param user - User with subscription tier
+ * @returns True if user has required subscription tier
+ */
+export function canAccessTransactionModule(user: UserWithRole): boolean {
+  // Check dual-role RBAC first
+  if (!hasTransactionPermission(user, TRANSACTION_PERMISSIONS.VIEW_LOOPS)) {
+    return false;
+  }
+
+  // Check subscription tier (GROWTH minimum)
+  const allowedTiers = ['GROWTH', 'ELITE', 'ENTERPRISE'];
+  return allowedTiers.includes(user.subscription_tier);
+}
+
+/**
+ * Throw error if user cannot access transaction module
+ * Use this in Server Actions to enforce tier access
+ *
+ * @param user - User with subscription tier
+ * @throws Error if user lacks required tier
+ */
+export function requireTransactionAccess(user: UserWithRole): void {
+  if (!canAccessTransactionModule(user)) {
+    throw new Error(
+      'Access denied: Transaction Management requires GROWTH tier or higher. ' +
+      'Please upgrade your subscription to access this feature.'
+    );
+  }
 }

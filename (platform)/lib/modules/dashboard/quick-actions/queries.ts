@@ -2,6 +2,7 @@
 
 import { prisma } from '@/lib/prisma';
 import { requireAuth } from '@/lib/auth/middleware';
+import type { quick_actions } from '@prisma/client';
 
 export async function getQuickActions() {
   const user = await requireAuth();
@@ -18,7 +19,7 @@ export async function getQuickActions() {
   });
 
   // Filter by user role and tier
-  return actions.filter(action => {
+  return actions.filter((action: quick_actions) => {
     // Check role requirements
     if (action.required_role.length > 0) {
       const hasRole = action.required_role.includes(user.organizationRole);

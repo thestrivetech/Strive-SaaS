@@ -4,11 +4,10 @@ import { useState } from 'react';
 import { DndContext, DragOverlay, closestCorners, DragStartEvent, DragEndEvent } from '@dnd-kit/core';
 import { PipelineColumn } from './pipeline-column';
 import { DealCard } from './deal-card';
-import { updateDealStage } from '@/lib/modules/crm/deals';
+import { updateDealStage, PIPELINE_STAGES } from './actions';
 import { useToast } from '@/hooks/use-toast';
 import type { DealStage } from '@prisma/client';
 import type { DealsByStageResult } from '@/lib/modules/crm/deals';
-import { PIPELINE_STAGES } from '@/lib/modules/crm/deals';
 
 interface PipelineBoardProps {
   dealsByStage: DealsByStageResult;

@@ -30,7 +30,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { createLead, updateLead, createLeadSchema, type CreateLeadInput } from '@/lib/modules/crm/leads';
+import { createLead, updateLead, createLeadSchema, type CreateLeadInput } from './actions';
 import { Plus } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { useRouter } from 'next/navigation';

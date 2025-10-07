@@ -4,6 +4,18 @@
  */
 
 import { faker } from '@faker-js/faker';
+import type {
+  users,
+  organizations,
+  organization_members,
+  customers,
+  projects,
+  tasks,
+  notifications,
+  attachments,
+  ai_conversations,
+  subscriptions,
+} from '@prisma/client';
 import {
   UserRole,
   SubscriptionTier,
@@ -18,7 +30,7 @@ import {
 /**
  * Generate a mock user
  */
-export function mockUser(overrides: Partial<any> = {}) {
+export function mockUser(overrides: Partial<users> = {}): Partial<users> {
   return {
     id: faker.string.uuid(),
     clerkUserId: faker.string.uuid(),
@@ -37,7 +49,7 @@ export function mockUser(overrides: Partial<any> = {}) {
 /**
  * Generate a mock organization
  */
-export function mockOrganization(overrides: Partial<any> = {}) {
+export function mockOrganization(overrides: Partial<organizations> = {}): Partial<organizations> {
   const name = faker.company.name();
   return {
     id: faker.string.uuid(),
@@ -56,7 +68,7 @@ export function mockOrganization(overrides: Partial<any> = {}) {
 /**
  * Generate a mock organization member
  */
-export function mockOrganizationMember(overrides: Partial<any> = {}) {
+export function mockOrganizationMember(overrides: Partial<organization_members> = {}): Partial<organization_members> {
   return {
     id: faker.string.uuid(),
     userId: faker.string.uuid(),
@@ -72,7 +84,7 @@ export function mockOrganizationMember(overrides: Partial<any> = {}) {
 /**
  * Generate a mock customer
  */
-export function mockCustomer(overrides: Partial<any> = {}) {
+export function mockCustomer(overrides: Partial<customers> = {}): Partial<customers> {
   return {
     id: faker.string.uuid(),
     organizationId: faker.string.uuid(),
@@ -98,7 +110,7 @@ export function mockCustomer(overrides: Partial<any> = {}) {
 /**
  * Generate a mock project
  */
-export function mockProject(overrides: Partial<any> = {}) {
+export function mockProject(overrides: Partial<projects> = {}): Partial<projects> {
   return {
     id: faker.string.uuid(),
     organizationId: faker.string.uuid(),
@@ -119,7 +131,7 @@ export function mockProject(overrides: Partial<any> = {}) {
 /**
  * Generate a mock task
  */
-export function mockTask(overrides: Partial<any> = {}) {
+export function mockTask(overrides: Partial<tasks> = {}): Partial<tasks> {
   return {
     id: faker.string.uuid(),
     projectId: faker.string.uuid(),
@@ -143,7 +155,7 @@ export function mockTask(overrides: Partial<any> = {}) {
 /**
  * Generate a mock notification
  */
-export function mockNotification(overrides: Partial<any> = {}) {
+export function mockNotification(overrides: Partial<notifications> = {}): Partial<notifications> {
   return {
     id: faker.string.uuid(),
     userId: faker.string.uuid(),
@@ -164,7 +176,7 @@ export function mockNotification(overrides: Partial<any> = {}) {
 /**
  * Generate a mock attachment
  */
-export function mockAttachment(overrides: Partial<any> = {}) {
+export function mockAttachment(overrides: Partial<attachments> = {}): Partial<attachments> {
   return {
     id: faker.string.uuid(),
     organizationId: faker.string.uuid(),
@@ -186,7 +198,7 @@ export function mockAttachment(overrides: Partial<any> = {}) {
 /**
  * Generate a mock AI conversation
  */
-export function mockAIConversation(overrides: Partial<any> = {}) {
+export function mockAIConversation(overrides: Partial<ai_conversations> = {}): Partial<ai_conversations> {
   return {
     id: faker.string.uuid(),
     userId: faker.string.uuid(),
@@ -203,7 +215,7 @@ export function mockAIConversation(overrides: Partial<any> = {}) {
 /**
  * Generate a mock subscription
  */
-export function mockSubscription(overrides: Partial<any> = {}) {
+export function mockSubscription(overrides: Partial<subscriptions> = {}): Partial<subscriptions> {
   return {
     id: faker.string.uuid(),
     organizationId: faker.string.uuid(),
@@ -223,6 +235,6 @@ export function mockSubscription(overrides: Partial<any> = {}) {
 /**
  * Generate multiple items of a type
  */
-export function mockMany<T>(factory: (overrides?: any) => T, count: number, overrides: any = {}): T[] {
+export function mockMany<T>(factory: (overrides?: Partial<T>) => T, count: number, overrides: Partial<T> = {}): T[] {
   return Array.from({ length: count }, () => factory(overrides));
 }

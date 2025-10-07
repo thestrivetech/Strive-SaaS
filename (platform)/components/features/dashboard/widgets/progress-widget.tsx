@@ -54,7 +54,6 @@ export function ProgressWidget({ title, items }: ProgressWidgetProps) {
                 <Progress
                   value={percentage}
                   className="h-2"
-                  indicatorClassName={item.color || 'bg-blue-600'}
                 />
                 <div className="flex justify-between text-xs text-gray-500">
                   <span>{percentage.toFixed(0)}% complete</span>

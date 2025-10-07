@@ -38,6 +38,24 @@ const eslintConfig = [
     },
   },
   {
+    // Prevent cross-module imports (applies only to lib/modules/* files, not tests)
+    files: ["lib/modules/**/*.ts", "lib/modules/**/*.tsx"],
+    rules: {
+      "no-restricted-imports": ["error", {
+        "patterns": [{
+          "group": ["@/lib/modules/crm/**"],
+          "message": "Cross-module imports are forbidden in transaction module. Use shared types from @prisma/client only."
+        }, {
+          "group": ["@/lib/modules/ai/**"],
+          "message": "Cross-module imports are forbidden in transaction module. Use shared types from @prisma/client only."
+        }, {
+          "group": ["@/lib/modules/analytics/**"],
+          "message": "Cross-module imports are forbidden in transaction module. Use shared types from @prisma/client only."
+        }]
+      }]
+    },
+  },
+  {
     // Exception: Data/content files can be any size
     files: ["**/data/**/*.ts", "**/data/**/*.tsx"],
     rules: {

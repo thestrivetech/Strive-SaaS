@@ -4,6 +4,7 @@ import { revalidatePath } from 'next/cache';
 import { prisma } from '@/lib/prisma';
 import { getCurrentUser } from '@/lib/auth/auth-helpers';
 import { getUserOrganizationId } from '@/lib/auth/user-helpers';
+import { requireTransactionAccess } from '../core/permissions';
 import {
   CreateWorkflowTemplateSchema,
   ApplyWorkflowSchema,
@@ -111,6 +112,9 @@ export async function applyWorkflowToLoop(input: ApplyWorkflowInput) {
   if (!user) {
     throw new Error('Unauthorized: Not authenticated');
   }
+
+  // Check subscription tier access
+  requireTransactionAccess(user);
 
   // Validate input
   const validated = ApplyWorkflowSchema.parse(input);

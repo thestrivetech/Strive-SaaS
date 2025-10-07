@@ -6,6 +6,7 @@ import { getUserOrganizationId } from '@/lib/auth/user-helpers';
 import { QuerySignatureRequestsSchema } from './schemas';
 import type { QuerySignatureRequestsInput } from './schemas';
 import type { SignatureStatus } from '@prisma/client';
+import { calculatePagination, createPaginatedResult, type PaginationParams } from '../types/pagination';
 
 /**
  * Get a single signature request by ID
@@ -100,22 +101,26 @@ export async function getSignatureRequest(requestId: string) {
  *
  * Returns paginated list of signature requests with basic signature counts.
  *
- * @param input - Query parameters (loopId, status, pagination)
+ * @param loopId - Transaction loop ID
+ * @param paginationParams - Pagination parameters (page, limit)
+ * @param status - Optional status filter
  * @returns Paginated signature requests
  * @throws Error if not authenticated
  *
  * @example
  * ```typescript
- * const requests = await getSignatureRequestsByLoop({
- *   loopId: 'loop-123',
- *   status: 'PENDING',
- *   page: 1,
- *   limit: 10
- * });
+ * const result = await getSignatureRequestsByLoop(
+ *   'loop-123',
+ *   { page: 1, limit: 20 },
+ *   'PENDING'
+ * );
+ * console.log(`Showing ${result.data.length} of ${result.pagination.total} requests`);
  * ```
  */
 export async function getSignatureRequestsByLoop(
-  input: QuerySignatureRequestsInput
+  loopId: string,
+  paginationParams: PaginationParams = {},
+  status?: SignatureStatus
 ) {
   const user = await getCurrentUser();
 
@@ -123,35 +128,24 @@ export async function getSignatureRequestsByLoop(
     throw new Error('Unauthorized: Not authenticated');
   }
 
-  const validated = QuerySignatureRequestsSchema.parse(input);
+  const { page, limit, skip } = calculatePagination(paginationParams);
   const organizationId = getUserOrganizationId(user);
 
   // Build where clause
   const where: {
     loop: { organization_id: string };
-    loop_id?: string;
+    loop_id: string;
     status?: SignatureStatus;
   } = {
     loop: {
       organization_id: organizationId,
     },
+    loop_id: loopId,
   };
 
-  if (validated.loopId) {
-    where.loop_id = validated.loopId;
+  if (status) {
+    where.status = status;
   }
-
-  if (validated.status) {
-    where.status = validated.status;
-  }
-
-  // Calculate pagination
-  const skip = (validated.page - 1) * validated.limit;
-
-  // Build orderBy
-  const orderBy: Record<string, 'asc' | 'desc'> = {
-    [validated.sortBy]: validated.sortOrder,
-  };
 
   // Execute query
   const [requests, total] = await Promise.all([
@@ -178,9 +172,9 @@ export async function getSignatureRequestsByLoop(
           },
         },
       },
-      orderBy,
+      orderBy: { created_at: 'desc' },
       skip,
-      take: validated.limit,
+      take: limit,
     }),
     prisma.signature_requests.count({ where }),
   ]);
@@ -208,15 +202,7 @@ export async function getSignatureRequestsByLoop(
     })
   );
 
-  return {
-    requests: requestsWithStats,
-    pagination: {
-      total,
-      page: validated.page,
-      limit: validated.limit,
-      totalPages: Math.ceil(total / validated.limit),
-    },
-  };
+  return createPaginatedResult(requestsWithStats, total, page, limit);
 }
 
 /**

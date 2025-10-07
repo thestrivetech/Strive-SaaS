@@ -7,6 +7,7 @@ import { prisma } from '@/lib/prisma';
 import { storageService } from '@/lib/storage/supabase-storage';
 import { validateFile, generateUniqueFilename } from '@/lib/storage/validation';
 import { UploadDocumentSchema, UpdateDocumentSchema } from './schemas';
+import { requireTransactionAccess } from '../core/permissions';
 import type { UploadDocumentInput, UpdateDocumentInput } from './schemas';
 
 /**
@@ -43,6 +44,9 @@ export async function uploadDocument(formData: FormData) {
   if (!user) {
     throw new Error('Unauthorized');
   }
+
+  // Check subscription tier access
+  requireTransactionAccess(user);
 
   // Extract file
   const file = formData.get('file') as File;
@@ -336,6 +340,9 @@ export async function updateDocument(documentId: string, input: UpdateDocumentIn
     throw new Error('Unauthorized');
   }
 
+  // Check subscription tier access
+  requireTransactionAccess(user);
+
   // Validate input
   const validated = UpdateDocumentSchema.parse(input);
 
@@ -402,6 +409,9 @@ export async function deleteDocument(documentId: string) {
   if (!user) {
     throw new Error('Unauthorized');
   }
+
+  // Check subscription tier access
+  requireTransactionAccess(user);
 
   // Get document (with org isolation)
   const document = await prisma.documents.findFirst({

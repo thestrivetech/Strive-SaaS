@@ -13,7 +13,6 @@ import {
   createTestOrganization,
   createOrganizationMember,
   createTestCustomer,
-  mockUser,
   resetMocks,
 } from '@/lib/test';
 import { UserRole, OrgRole } from '@prisma/client';
@@ -319,9 +318,9 @@ describe('CRM Workflow Integration Tests', () => {
         testPrisma.customers.create({
           data: {
             organization_id: org.id,
-            // Missing required 'name' field
+            // @ts-expect-error - intentionally missing required 'name' field for test
             email: 'test@example.com',
-          } as any,
+          },
         })
       ).rejects.toThrow();
     });

@@ -9,10 +9,10 @@ import {
   mockSupabaseClient,
   mockAuthenticatedUser,
   mockUnauthenticatedUser,
-  createMockRequest,
   resetMocks,
 } from '@/lib/test';
 import { UserRole } from '@prisma/client';
+import type { User, Session, AuthError } from '@supabase/supabase-js';
 
 // Mock Supabase client globally
 jest.mock('@supabase/supabase-js', () => ({
@@ -26,19 +26,20 @@ describe('Authentication Flow Integration Tests', () => {
 
   describe('Login Flow', () => {
     it('should successfully log in with valid credentials', async () => {
-      const mockUser = {
+      const mockUser: Partial<User> = {
         id: 'user-123',
         email: 'test@example.com',
-        role: UserRole.USER,
+      };
+
+      const mockSession: Partial<Session> = {
+        access_token: 'mock-token',
+        refresh_token: 'mock-refresh',
       };
 
       mockSupabaseClient.auth.signInWithPassword.mockResolvedValue({
         data: {
-          user: mockUser as any,
-          session: {
-            access_token: 'mock-token',
-            refresh_token: 'mock-refresh',
-          } as any,
+          user: mockUser as User,
+          session: mockSession as Session,
         },
         error: null,
       });
@@ -55,9 +56,14 @@ describe('Authentication Flow Integration Tests', () => {
     });
 
     it('should fail login with invalid credentials', async () => {
+      const mockError: Partial<AuthError> = {
+        message: 'Invalid login credentials',
+        status: 401,
+      };
+
       mockSupabaseClient.auth.signInWithPassword.mockResolvedValue({
         data: { user: null, session: null },
-        error: { message: 'Invalid login credentials', status: 401 } as any,
+        error: mockError as AuthError,
       });
 
       const result = await mockSupabaseClient.auth.signInWithPassword({
@@ -74,7 +80,7 @@ describe('Authentication Flow Integration Tests', () => {
     it('should fail login with malformed email', async () => {
       mockSupabaseClient.auth.signInWithPassword.mockResolvedValue({
         data: { user: null, session: null },
-        error: { message: 'Invalid email format', status: 400 } as any,
+        error: { message: 'Invalid email format', status: 400 } as AuthError,
       });
 
       const result = await mockSupabaseClient.auth.signInWithPassword({
@@ -101,7 +107,7 @@ describe('Authentication Flow Integration Tests', () => {
 
     it('should handle logout errors gracefully', async () => {
       mockSupabaseClient.auth.signOut.mockResolvedValue({
-        error: { message: 'Network error', status: 500 } as any,
+        error: { message: 'Network error', status: 500 } as AuthError,
       });
 
       const result = await mockSupabaseClient.auth.signOut();
@@ -172,12 +178,12 @@ describe('Authentication Flow Integration Tests', () => {
             user: {
               id: 'user-123',
               email: 'test@example.com',
-            } as any,
+            } as User,
           },
           user: {
             id: 'user-123',
             email: 'test@example.com',
-          } as any,
+          } as User,
         },
         error: null,
       });
@@ -192,7 +198,7 @@ describe('Authentication Flow Integration Tests', () => {
     it('should fail to refresh with invalid refresh token', async () => {
       mockSupabaseClient.auth.refreshSession.mockResolvedValue({
         data: { session: null, user: null },
-        error: { message: 'Invalid refresh token', status: 401 } as any,
+        error: { message: 'Invalid refresh token', status: 401 } as AuthError,
       });
 
       const result = await mockSupabaseClient.auth.refreshSession();
@@ -213,11 +219,11 @@ describe('Authentication Flow Integration Tests', () => {
 
       mockSupabaseClient.auth.signUp.mockResolvedValue({
         data: {
-          user: newUser as any,
+          user: newUser as User,
           session: {
             access_token: 'new-token',
             refresh_token: 'new-refresh',
-          } as any,
+          } as Session,
         },
         error: null,
       });
@@ -235,7 +241,7 @@ describe('Authentication Flow Integration Tests', () => {
     it('should fail registration with duplicate email', async () => {
       mockSupabaseClient.auth.signUp.mockResolvedValue({
         data: { user: null, session: null },
-        error: { message: 'User already registered', status: 422 } as any,
+        error: { message: 'User already registered', status: 422 } as AuthError,
       });
 
       const result = await mockSupabaseClient.auth.signUp({
@@ -251,7 +257,7 @@ describe('Authentication Flow Integration Tests', () => {
     it('should fail registration with weak password', async () => {
       mockSupabaseClient.auth.signUp.mockResolvedValue({
         data: { user: null, session: null },
-        error: { message: 'Password too weak', status: 422 } as any,
+        error: { message: 'Password too weak', status: 422 } as AuthError,
       });
 
       const result = await mockSupabaseClient.auth.signUp({
@@ -353,8 +359,8 @@ describe('Authentication Flow Integration Tests', () => {
       const callback = jest.fn();
 
       mockSupabaseClient.auth.onAuthStateChange.mockReturnValue({
-        data: { subscription: {} as any },
-      } as any);
+        data: { subscription: {} },
+      });
 
       mockSupabaseClient.auth.onAuthStateChange(callback);
 

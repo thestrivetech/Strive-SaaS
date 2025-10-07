@@ -8,17 +8,31 @@ import { DashboardMetricSchema, UpdateMetricSchema } from './schemas';
 export async function createDashboardMetric(input: unknown) {
   const user = await requireAuth();
 
-  // Check permissions - temporarily use a simple role check
-  // Will be replaced with canManageWidgets after RBAC update
-  if (!['SUPER_ADMIN', 'ADMIN'].includes(user.role || '')) {
-    throw new Error('Insufficient permissions');
+  // Check both GlobalRole (platform-level) AND OrganizationRole (org-level)
+  const isSuperAdmin = user.role === 'SUPER_ADMIN';
+  const isOrgAdmin = ['ADMIN', 'OWNER'].includes(user.organizationRole || '');
+
+  if (!isSuperAdmin && !isOrgAdmin) {
+    throw new Error('Insufficient permissions - requires SUPER_ADMIN or organization ADMIN/OWNER');
   }
 
   const validated = DashboardMetricSchema.parse(input);
 
   const metric = await prisma.dashboard_metrics.create({
     data: {
-      ...validated,
+      name: validated.name,
+      category: validated.category,
+      query: validated.query,
+      unit: validated.unit,
+      format: validated.format,
+      target_value: validated.targetValue,
+      warning_threshold: validated.warningThreshold,
+      critical_threshold: validated.criticalThreshold,
+      chart_type: validated.chartType,
+      color: validated.color,
+      icon: validated.icon,
+      permissions: validated.permissions,
+      refresh_rate: validated.refreshRate,
       organization_id: validated.organizationId || user.organizationId,
       created_by: user.id,
     },
@@ -31,9 +45,12 @@ export async function createDashboardMetric(input: unknown) {
 export async function updateDashboardMetric(input: unknown) {
   const user = await requireAuth();
 
-  // Check permissions
-  if (!['SUPER_ADMIN', 'ADMIN'].includes(user.role || '')) {
-    throw new Error('Insufficient permissions');
+  // Check both GlobalRole (platform-level) AND OrganizationRole (org-level)
+  const isSuperAdmin = user.role === 'SUPER_ADMIN';
+  const isOrgAdmin = ['ADMIN', 'OWNER'].includes(user.organizationRole || '');
+
+  if (!isSuperAdmin && !isOrgAdmin) {
+    throw new Error('Insufficient permissions - requires SUPER_ADMIN or organization ADMIN/OWNER');
   }
 
   const validated = UpdateMetricSchema.parse(input);
@@ -60,9 +77,12 @@ export async function updateDashboardMetric(input: unknown) {
 export async function deleteDashboardMetric(id: string) {
   const user = await requireAuth();
 
-  // Check permissions
-  if (!['SUPER_ADMIN', 'ADMIN'].includes(user.role || '')) {
-    throw new Error('Insufficient permissions');
+  // Check both GlobalRole (platform-level) AND OrganizationRole (org-level)
+  const isSuperAdmin = user.role === 'SUPER_ADMIN';
+  const isOrgAdmin = ['ADMIN', 'OWNER'].includes(user.organizationRole || '');
+
+  if (!isSuperAdmin && !isOrgAdmin) {
+    throw new Error('Insufficient permissions - requires SUPER_ADMIN or organization ADMIN/OWNER');
   }
 
   // Verify ownership

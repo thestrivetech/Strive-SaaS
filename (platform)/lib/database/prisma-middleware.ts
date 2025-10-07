@@ -21,6 +21,20 @@ const MULTI_TENANT_TABLES = [
   'projects',
   'subscriptions',
   'usage_tracking',
+  // Transaction Management tables
+  'transaction_audit_logs',
+  'transaction_loops',
+  'documents',
+  'loop_parties',
+  'transaction_tasks',
+  'signature_requests',
+  'document_signatures',
+  // CRM tables
+  'leads',
+  'contacts',
+  'deals',
+  'listings',
+  'activities',
 ] as const;
 
 /**

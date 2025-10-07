@@ -30,7 +30,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { createDeal, updateDeal, createDealSchema } from '@/lib/modules/crm/deals';
+import { createDeal, updateDeal, createDealSchema } from './actions';
 import { Plus } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { useRouter } from 'next/navigation';

@@ -1,4 +1,5 @@
 import { prisma } from '@/lib/prisma';
+import type { Prisma } from '@prisma/client';
 
 export async function getDashboardStats(organizationId: string) {
   const [
@@ -129,7 +130,7 @@ export async function getActivityLogs(
   resourceId?: string,
   limit: number = 50
 ) {
-  const where: any = { organization_id: organizationId };
+  const where: Prisma.activity_logsWhereInput = { organization_id: organizationId };
 
   if (resourceType) {
     where.resource_type = resourceType;

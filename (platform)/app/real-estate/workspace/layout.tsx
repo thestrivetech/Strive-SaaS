@@ -1,5 +1,5 @@
 import { getCurrentUser } from '@/lib/auth/auth-helpers';
-import { TierGate } from '@/components/subscription/tier-gate';
+import { canAccessTransactionModule } from '@/lib/modules/transactions/core/permissions';
 import { redirect } from 'next/navigation';
 
 export default async function TransactionLayout({
@@ -10,23 +10,19 @@ export default async function TransactionLayout({
   const user = await getCurrentUser();
 
   if (!user) {
-    redirect('/login');
+    redirect('/login?callbackUrl=/real-estate/workspace');
   }
 
-  // Get user's subscription tier
-  const userTier = user.subscription_tier || 'FREE';
+  // Check tier access (GROWTH minimum required)
+  if (!canAccessTransactionModule(user)) {
+    redirect('/pricing?upgrade=transaction-management&tier=GROWTH');
+  }
 
   return (
-    <TierGate
-      requiredTier="STARTER"
-      feature="Transaction Management"
-      userTier={userTier}
-    >
-      <div className="flex h-full flex-col">
-        <div className="flex-1 overflow-auto">
-          {children}
-        </div>
+    <div className="flex h-full flex-col">
+      <div className="flex-1 overflow-auto">
+        {children}
       </div>
-    </TierGate>
+    </div>
   );
 }

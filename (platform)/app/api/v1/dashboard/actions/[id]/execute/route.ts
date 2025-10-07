@@ -11,7 +11,7 @@ import { handleApiError } from '@/lib/api/error-handler';
  */
 export async function POST(
   req: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     await requireAuth();
@@ -24,15 +24,18 @@ export async function POST(
       );
     }
 
+    const { id } = await params;
+
     // executeQuickAction only needs the ID (body is ignored as per implementation)
-    const result = await executeQuickAction(params.id);
+    const result = await executeQuickAction(id);
 
     return NextResponse.json({
       success: true,
       result,
     });
   } catch (error) {
-    console.error(`[API] POST /api/v1/dashboard/actions/${params?.id}/execute failed:`, error);
+    const { id } = await params;
+    console.error(`[API] POST /api/v1/dashboard/actions/${id}/execute failed:`, error);
     return handleApiError(error);
   }
 }

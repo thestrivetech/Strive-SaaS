@@ -20,6 +20,8 @@ import {
 } from '@/lib/modules/notifications/actions';
 
 // Mock getCurrentUser
+import { getCurrentUser } from '@/lib/auth/auth-helpers';
+
 jest.mock('@/lib/auth/auth-helpers', () => ({
   getCurrentUser: jest.fn(),
 }));
@@ -149,8 +151,7 @@ describe('Notification Actions', () => {
       });
 
       // Mock getCurrentUser
-      const { getCurrentUser } = require('@/lib/auth/auth-helpers');
-      getCurrentUser.mockResolvedValueOnce({
+      (getCurrentUser as jest.Mock).mockResolvedValueOnce({
         ...user,
         organizationId: organization.id,
       });

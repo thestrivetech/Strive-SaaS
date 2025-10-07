@@ -4,6 +4,8 @@ import { revalidatePath } from 'next/cache';
 import { prisma } from '@/lib/prisma';
 import { requireAuth, getCurrentUser } from '@/lib/auth/auth-helpers';
 import { canAccessCRM, canManageLeads, canDeleteLeads } from '@/lib/auth/rbac';
+import { hasOrgPermission } from '@/lib/auth/org-rbac';
+import { canAccessFeature } from '@/lib/auth/subscription';
 import { withTenantContext } from '@/lib/database/utils';
 import { handleDatabaseError } from '@/lib/database/errors';
 import {
@@ -22,10 +24,14 @@ import {
 /**
  * Create a new lead
  *
- * RBAC: Requires CRM access + lead creation permission
+ * @param input - Lead data including name, email, phone, source, score
+ * @returns Created lead record with generated ID and timestamps
+ * @throws {Error} If user lacks permissions, validation fails, or database error occurs
  *
- * @param input - Lead data
- * @returns Created lead
+ * @security
+ * - Requires SubscriptionTier: STARTER or higher
+ * - Requires GlobalRole: USER or higher with CRM access
+ * - Requires OrganizationRole: MEMBER or higher (leads:write permission)
  */
 export async function createLead(input: CreateLeadInput) {
   await requireAuth();
@@ -35,9 +41,20 @@ export async function createLead(input: CreateLeadInput) {
     throw new Error('Unauthorized: User not found');
   }
 
-  // Check RBAC permissions
+  // 1. Check subscription tier
+  if (!canAccessFeature(user.subscription_tier, 'crm')) {
+    throw new Error('Upgrade to STARTER tier to access CRM features');
+  }
+
+  // 2. Check GlobalRole
   if (!canAccessCRM(user.role) || !canManageLeads(user.role)) {
-    throw new Error('Unauthorized: Insufficient permissions to create leads');
+    throw new Error('Unauthorized: Insufficient global permissions to create leads');
+  }
+
+  // 3. Check OrganizationRole
+  const orgMember = user.organization_members?.[0];
+  if (!orgMember || !hasOrgPermission(user.role, orgMember.role, 'leads:write')) {
+    throw new Error('Unauthorized: Insufficient organization permissions to create leads');
   }
 
   // Validate input
@@ -69,8 +86,12 @@ export async function createLead(input: CreateLeadInput) {
       return lead;
     } catch (error) {
       const dbError = handleDatabaseError(error);
-      console.error('[Leads Actions] createLead failed:', dbError);
-      throw new Error('Failed to create lead');
+      console.error('[CRM:Leads] createLead failed:', dbError);
+      throw new Error(
+        `[CRM:Leads] Failed to create lead: ${
+          error instanceof Error ? error.message : 'Unknown error'
+        }`
+      );
     }
   });
 }
@@ -78,8 +99,14 @@ export async function createLead(input: CreateLeadInput) {
 /**
  * Update an existing lead
  *
- * @param input - Updated lead data
- * @returns Updated lead
+ * @param input - Updated lead data with ID and fields to modify
+ * @returns Updated lead record
+ * @throws {Error} If lead not found, access denied, or update fails
+ *
+ * @security
+ * - Requires SubscriptionTier: STARTER or higher
+ * - Requires GlobalRole: USER or higher with CRM access
+ * - Requires OrganizationRole: MEMBER or higher (leads:write permission)
  */
 export async function updateLead(input: UpdateLeadInput) {
   await requireAuth();
@@ -89,8 +116,20 @@ export async function updateLead(input: UpdateLeadInput) {
     throw new Error('Unauthorized: User not found');
   }
 
+  // 1. Check subscription tier
+  if (!canAccessFeature(user.subscription_tier, 'crm')) {
+    throw new Error('Upgrade to STARTER tier to access CRM features');
+  }
+
+  // 2. Check GlobalRole
   if (!canAccessCRM(user.role) || !canManageLeads(user.role)) {
-    throw new Error('Unauthorized: Insufficient permissions to update leads');
+    throw new Error('Unauthorized: Insufficient global permissions to update leads');
+  }
+
+  // 3. Check OrganizationRole
+  const orgMember = user.organization_members?.[0];
+  if (!orgMember || !hasOrgPermission(user.role, orgMember.role, 'leads:write')) {
+    throw new Error('Unauthorized: Insufficient organization permissions to update leads');
   }
 
   const validated = updateLeadSchema.parse(input);
@@ -120,8 +159,12 @@ export async function updateLead(input: UpdateLeadInput) {
       return lead;
     } catch (error) {
       const dbError = handleDatabaseError(error);
-      console.error('[Leads Actions] updateLead failed:', dbError);
-      throw new Error('Failed to update lead');
+      console.error('[CRM:Leads] updateLead failed:', dbError);
+      throw new Error(
+        `[CRM:Leads] Failed to update lead: ${
+          error instanceof Error ? error.message : 'Unknown error'
+        }`
+      );
     }
   });
 }
@@ -129,7 +172,14 @@ export async function updateLead(input: UpdateLeadInput) {
 /**
  * Delete a lead
  *
- * @param leadId - Lead ID
+ * @param leadId - Lead ID to delete
+ * @returns Success status object
+ * @throws {Error} If access denied or deletion fails
+ *
+ * @security
+ * - Requires SubscriptionTier: STARTER or higher
+ * - Requires GlobalRole: USER or higher with delete permissions
+ * - Requires OrganizationRole: ADMIN or OWNER (leads:manage permission)
  */
 export async function deleteLead(leadId: string) {
   await requireAuth();
@@ -139,8 +189,20 @@ export async function deleteLead(leadId: string) {
     throw new Error('Unauthorized: User not found');
   }
 
+  // 1. Check subscription tier
+  if (!canAccessFeature(user.subscription_tier, 'crm')) {
+    throw new Error('Upgrade to STARTER tier to access CRM features');
+  }
+
+  // 2. Check GlobalRole
   if (!canAccessCRM(user.role) || !canDeleteLeads(user.role)) {
-    throw new Error('Unauthorized: Insufficient permissions to delete leads');
+    throw new Error('Unauthorized: Insufficient global permissions to delete leads');
+  }
+
+  // 3. Check OrganizationRole
+  const orgMember = user.organization_members?.[0];
+  if (!orgMember || !hasOrgPermission(user.role, orgMember.role, 'leads:manage')) {
+    throw new Error('Unauthorized: Insufficient organization permissions to delete leads');
   }
 
   return withTenantContext(async () => {
@@ -155,8 +217,12 @@ export async function deleteLead(leadId: string) {
       return { success: true };
     } catch (error) {
       const dbError = handleDatabaseError(error);
-      console.error('[Leads Actions] deleteLead failed:', dbError);
-      throw new Error('Failed to delete lead');
+      console.error('[CRM:Leads] deleteLead failed:', dbError);
+      throw new Error(
+        `[CRM:Leads] Failed to delete lead: ${
+          error instanceof Error ? error.message : 'Unknown error'
+        }`
+      );
     }
   });
 }
@@ -164,7 +230,14 @@ export async function deleteLead(leadId: string) {
 /**
  * Update lead score
  *
- * @param input - Lead ID and new score
+ * @param input - Lead ID and new score/score_value
+ * @returns Updated lead record with new score
+ * @throws {Error} If lead not found, access denied, or update fails
+ *
+ * @security
+ * - Requires SubscriptionTier: STARTER or higher
+ * - Requires GlobalRole: USER or higher with CRM access
+ * - Requires OrganizationRole: MEMBER or higher (leads:write permission)
  */
 export async function updateLeadScore(input: UpdateLeadScoreInput) {
   await requireAuth();
@@ -174,8 +247,20 @@ export async function updateLeadScore(input: UpdateLeadScoreInput) {
     throw new Error('Unauthorized: User not found');
   }
 
+  // 1. Check subscription tier
+  if (!canAccessFeature(user.subscription_tier, 'crm')) {
+    throw new Error('Upgrade to STARTER tier to access CRM features');
+  }
+
+  // 2. Check GlobalRole
   if (!canAccessCRM(user.role)) {
-    throw new Error('Unauthorized: Insufficient permissions');
+    throw new Error('Unauthorized: Insufficient global permissions');
+  }
+
+  // 3. Check OrganizationRole
+  const orgMember = user.organization_members?.[0];
+  if (!orgMember || !hasOrgPermission(user.role, orgMember.role, 'leads:write')) {
+    throw new Error('Unauthorized: Insufficient organization permissions');
   }
 
   const validated = updateLeadScoreSchema.parse(input);
@@ -196,8 +281,12 @@ export async function updateLeadScore(input: UpdateLeadScoreInput) {
       return lead;
     } catch (error) {
       const dbError = handleDatabaseError(error);
-      console.error('[Leads Actions] updateLeadScore failed:', dbError);
-      throw new Error('Failed to update lead score');
+      console.error('[CRM:Leads] updateLeadScore failed:', dbError);
+      throw new Error(
+        `[CRM:Leads] Failed to update lead score: ${
+          error instanceof Error ? error.message : 'Unknown error'
+        }`
+      );
     }
   });
 }
@@ -205,7 +294,14 @@ export async function updateLeadScore(input: UpdateLeadScoreInput) {
 /**
  * Update lead status
  *
- * @param input - Lead ID and new status
+ * @param input - Lead ID and new status (NEW, CONTACTED, QUALIFIED, etc.)
+ * @returns Updated lead record
+ * @throws {Error} If lead not found, access denied, or update fails
+ *
+ * @security
+ * - Requires SubscriptionTier: STARTER or higher
+ * - Requires GlobalRole: USER or higher with CRM access
+ * - Requires OrganizationRole: MEMBER or higher (leads:write permission)
  */
 export async function updateLeadStatus(input: UpdateLeadStatusInput) {
   await requireAuth();
@@ -215,8 +311,20 @@ export async function updateLeadStatus(input: UpdateLeadStatusInput) {
     throw new Error('Unauthorized: User not found');
   }
 
+  // 1. Check subscription tier
+  if (!canAccessFeature(user.subscription_tier, 'crm')) {
+    throw new Error('Upgrade to STARTER tier to access CRM features');
+  }
+
+  // 2. Check GlobalRole
   if (!canAccessCRM(user.role)) {
-    throw new Error('Unauthorized: Insufficient permissions');
+    throw new Error('Unauthorized: Insufficient global permissions');
+  }
+
+  // 3. Check OrganizationRole
+  const orgMember = user.organization_members?.[0];
+  if (!orgMember || !hasOrgPermission(user.role, orgMember.role, 'leads:write')) {
+    throw new Error('Unauthorized: Insufficient organization permissions');
   }
 
   const validated = updateLeadStatusSchema.parse(input);
@@ -239,8 +347,12 @@ export async function updateLeadStatus(input: UpdateLeadStatusInput) {
       return lead;
     } catch (error) {
       const dbError = handleDatabaseError(error);
-      console.error('[Leads Actions] updateLeadStatus failed:', dbError);
-      throw new Error('Failed to update lead status');
+      console.error('[CRM:Leads] updateLeadStatus failed:', dbError);
+      throw new Error(
+        `[CRM:Leads] Failed to update lead status: ${
+          error instanceof Error ? error.message : 'Unknown error'
+        }`
+      );
     }
   });
 }
@@ -248,7 +360,14 @@ export async function updateLeadStatus(input: UpdateLeadStatusInput) {
 /**
  * Bulk assign leads to an agent
  *
- * @param input - Lead IDs and assignee ID
+ * @param input - Lead IDs array and target assignee user ID
+ * @returns Count of updated leads
+ * @throws {Error} If access denied or assignment fails
+ *
+ * @security
+ * - Requires SubscriptionTier: STARTER or higher
+ * - Requires GlobalRole: USER or higher with CRM access
+ * - Requires OrganizationRole: ADMIN or OWNER (leads:manage permission)
  */
 export async function bulkAssignLeads(input: BulkAssignLeadsInput) {
   await requireAuth();
@@ -258,8 +377,20 @@ export async function bulkAssignLeads(input: BulkAssignLeadsInput) {
     throw new Error('Unauthorized: User not found');
   }
 
+  // 1. Check subscription tier
+  if (!canAccessFeature(user.subscription_tier, 'crm')) {
+    throw new Error('Upgrade to STARTER tier to access CRM features');
+  }
+
+  // 2. Check GlobalRole
   if (!canAccessCRM(user.role) || !canManageLeads(user.role)) {
-    throw new Error('Unauthorized: Insufficient permissions');
+    throw new Error('Unauthorized: Insufficient global permissions');
+  }
+
+  // 3. Check OrganizationRole
+  const orgMember = user.organization_members?.[0];
+  if (!orgMember || !hasOrgPermission(user.role, orgMember.role, 'leads:manage')) {
+    throw new Error('Unauthorized: Insufficient organization permissions');
   }
 
   const validated = bulkAssignLeadsSchema.parse(input);
@@ -280,8 +411,12 @@ export async function bulkAssignLeads(input: BulkAssignLeadsInput) {
       return { count: result.count };
     } catch (error) {
       const dbError = handleDatabaseError(error);
-      console.error('[Leads Actions] bulkAssignLeads failed:', dbError);
-      throw new Error('Failed to assign leads');
+      console.error('[CRM:Leads] bulkAssignLeads failed:', dbError);
+      throw new Error(
+        `[CRM:Leads] Failed to bulk assign leads: ${
+          error instanceof Error ? error.message : 'Unknown error'
+        }`
+      );
     }
   });
 }
@@ -289,7 +424,16 @@ export async function bulkAssignLeads(input: BulkAssignLeadsInput) {
 /**
  * Convert lead to contact/customer
  *
- * @param leadId - Lead ID
+ * Creates a new contact from the lead data and marks the lead as CONVERTED.
+ *
+ * @param leadId - Lead ID to convert
+ * @returns Object containing the newly created contact
+ * @throws {Error} If lead not found, already converted, or conversion fails
+ *
+ * @security
+ * - Requires SubscriptionTier: STARTER or higher
+ * - Requires GlobalRole: USER or higher with CRM access
+ * - Requires OrganizationRole: MEMBER or higher (leads:write permission)
  */
 export async function convertLead(leadId: string) {
   await requireAuth();
@@ -299,8 +443,20 @@ export async function convertLead(leadId: string) {
     throw new Error('Unauthorized: User not found');
   }
 
+  // 1. Check subscription tier
+  if (!canAccessFeature(user.subscription_tier, 'crm')) {
+    throw new Error('Upgrade to STARTER tier to access CRM features');
+  }
+
+  // 2. Check GlobalRole
   if (!canAccessCRM(user.role) || !canManageLeads(user.role)) {
-    throw new Error('Unauthorized: Insufficient permissions');
+    throw new Error('Unauthorized: Insufficient global permissions');
+  }
+
+  // 3. Check OrganizationRole
+  const orgMember = user.organization_members?.[0];
+  if (!orgMember || !hasOrgPermission(user.role, orgMember.role, 'leads:write')) {
+    throw new Error('Unauthorized: Insufficient organization permissions');
   }
 
   return withTenantContext(async () => {
@@ -343,8 +499,12 @@ export async function convertLead(leadId: string) {
       return { contact };
     } catch (error) {
       const dbError = handleDatabaseError(error);
-      console.error('[Leads Actions] convertLead failed:', dbError);
-      throw new Error('Failed to convert lead');
+      console.error('[CRM:Leads] convertLead failed:', dbError);
+      throw new Error(
+        `[CRM:Leads] Failed to convert lead: ${
+          error instanceof Error ? error.message : 'Unknown error'
+        }`
+      );
     }
   });
 }

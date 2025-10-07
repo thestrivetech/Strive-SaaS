@@ -50,6 +50,9 @@ jest.mock('@/lib/database/utils', () => ({
   withTenantContext: jest.fn((callback) => callback()),
 }));
 
+// Import mocked modules
+import * as authHelpers from '@/lib/auth/auth-helpers';
+
 describe('Lead-to-Deal Workflow Integration', () => {
   beforeAll(async () => {
     await connectTestDb();
@@ -73,10 +76,21 @@ describe('Lead-to-Deal Workflow Integration', () => {
     });
     await createOrganizationMember(agent.id, organization.id, OrgRole.MEMBER);
 
-    const { getCurrentUser } = require('@/lib/auth/auth-helpers');
-    getCurrentUser.mockResolvedValue({
+    jest.mocked(authHelpers.getCurrentUser).mockResolvedValue({
       ...user,
-      organization_members: [{ organization_id: organization.id }],
+      organization_members: [{
+        id: 'member-1',
+        user_id: user.id,
+        organization_id: organization.id,
+        created_at: new Date(),
+        role: OrgRole.ADMIN,
+        permissions: {},
+        joined_at: new Date(),
+        organizations: {
+          ...organization,
+          subscriptions: null,
+        },
+      }],
     });
 
     // === STEP 1: Create Lead ===
@@ -106,7 +120,7 @@ describe('Lead-to-Deal Workflow Integration', () => {
 
     // === STEP 2: Add Activities to Lead ===
     // Create call activity
-    const callActivity = await testPrisma.activities.create({
+    await testPrisma.activities.create({
       data: {
         type: 'CALL',
         title: 'Initial discovery call',
@@ -119,7 +133,7 @@ describe('Lead-to-Deal Workflow Integration', () => {
     });
 
     // Create meeting activity
-    const meetingActivity = await testPrisma.activities.create({
+    await testPrisma.activities.create({
       data: {
         type: 'MEETING',
         title: 'Product demo',
@@ -132,7 +146,7 @@ describe('Lead-to-Deal Workflow Integration', () => {
     });
 
     // Create email activity
-    const emailActivity = await testPrisma.activities.create({
+    await testPrisma.activities.create({
       data: {
         type: 'EMAIL',
         title: 'Follow-up email',
@@ -284,31 +298,63 @@ describe('Lead-to-Deal Workflow Integration', () => {
     const { organization: org1, user: user1 } = await createTestOrgWithUser();
     const { organization: org2, user: user2 } = await createTestOrgWithUser();
 
-    const { getCurrentUser } = require('@/lib/auth/auth-helpers');
-
     // === Org 1: Create and convert lead ===
-    getCurrentUser.mockResolvedValue({
+    jest.mocked(authHelpers.getCurrentUser).mockResolvedValue({
       ...user1,
-      organization_members: [{ organization_id: org1.id }],
+      organization_members: [{
+        id: 'member-org1',
+        user_id: user1.id,
+        organization_id: org1.id,
+        created_at: new Date(),
+        role: OrgRole.ADMIN,
+        permissions: {},
+        joined_at: new Date(),
+        organizations: {
+          ...org1,
+          subscriptions: null,
+        },
+      }],
     });
 
     const lead1 = await createLead({
       name: 'Org 1 Lead',
       organization_id: org1.id, // Will be overridden by user's org
-    } as any);
+      source: LeadSource.WEBSITE,
+      status: LeadStatus.NEW_LEAD,
+      score: LeadScore.COLD,
+      score_value: 0,
+      tags: [],
+    });
 
     const { contact: contact1 } = await convertLead(lead1.id);
 
     // === Org 2: Create and convert lead ===
-    getCurrentUser.mockResolvedValue({
+    jest.mocked(authHelpers.getCurrentUser).mockResolvedValue({
       ...user2,
-      organization_members: [{ organization_id: org2.id }],
+      organization_members: [{
+        id: 'member-org2',
+        user_id: user2.id,
+        organization_id: org2.id,
+        created_at: new Date(),
+        role: OrgRole.ADMIN,
+        permissions: {},
+        joined_at: new Date(),
+        organizations: {
+          ...org2,
+          subscriptions: null,
+        },
+      }],
     });
 
     const lead2 = await createLead({
       name: 'Org 2 Lead',
       organization_id: org2.id,
-    } as any);
+      source: LeadSource.WEBSITE,
+      status: LeadStatus.NEW_LEAD,
+      score: LeadScore.COLD,
+      score_value: 0,
+      tags: [],
+    });
 
     const { contact: contact2 } = await convertLead(lead2.id);
 
@@ -343,17 +389,33 @@ describe('Lead-to-Deal Workflow Integration', () => {
   it('should handle deal loss scenario', async () => {
     const { organization, user } = await createTestOrgWithUser();
 
-    const { getCurrentUser } = require('@/lib/auth/auth-helpers');
-    getCurrentUser.mockResolvedValue({
+    jest.mocked(authHelpers.getCurrentUser).mockResolvedValue({
       ...user,
-      organization_members: [{ organization_id: organization.id }],
+      organization_members: [{
+        id: 'member-1',
+        user_id: user.id,
+        organization_id: organization.id,
+        created_at: new Date(),
+        role: OrgRole.ADMIN,
+        permissions: {},
+        joined_at: new Date(),
+        organizations: {
+          ...organization,
+          subscriptions: null,
+        },
+      }],
     });
 
     // Create lead → contact → deal
     const lead = await createLead({
       name: 'Lost Deal Lead',
       organization_id: organization.id,
-    } as any);
+      source: LeadSource.WEBSITE,
+      status: LeadStatus.NEW_LEAD,
+      score: LeadScore.COLD,
+      score_value: 0,
+      tags: [],
+    });
 
     const { contact } = await convertLead(lead.id);
 
@@ -362,7 +424,7 @@ describe('Lead-to-Deal Workflow Integration', () => {
       value: 25000,
       contact_id: contact.id,
       organization_id: organization.id,
-    } as any);
+    } as Parameters<typeof createDeal>[0]);
 
     // Move through pipeline
     await updateDealStage({

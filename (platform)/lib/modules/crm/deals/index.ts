@@ -30,19 +30,27 @@ export {
   type DeleteDealInput,
 } from './schemas';
 
-// Queries
+// Queries - Core
 export {
   getDeals,
   getDealById,
-  getDealsByStage,
-  getDealMetrics,
   getDealsCount,
   getDealsByContact,
   getDealsByLead,
   type DealWithAssignee,
   type DealWithRelations,
-  type DealsByStageResult,
 } from './queries';
+
+// Queries - Pipeline
+export {
+  getDealsByStage,
+  type DealsByStageResult,
+} from './queries/pipeline';
+
+// Queries - Analytics
+export {
+  getDealMetrics,
+} from './queries/analytics';
 
 // Actions
 export {

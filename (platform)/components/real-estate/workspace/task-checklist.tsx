@@ -29,8 +29,8 @@ export function TaskChecklist({ loopId }: TaskChecklistProps) {
   async function loadTasks() {
     try {
       setLoading(true);
-      const data = await getTasksByLoop({ loopId });
-      setTasks(data);
+      const result = await getTasksByLoop({ loopId }, { page: 1, limit: 100 });
+      setTasks(result.data);
     } catch (error) {
       toast({
         variant: 'destructive',

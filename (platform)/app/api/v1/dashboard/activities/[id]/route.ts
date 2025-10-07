@@ -14,7 +14,7 @@ import { handleApiError } from '@/lib/api/error-handler';
  */
 export async function PATCH(
   req: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     await requireAuth();
@@ -27,6 +27,7 @@ export async function PATCH(
       );
     }
 
+    const { id } = await params;
     const body = await req.json();
     const { action } = body;
 
@@ -39,9 +40,9 @@ export async function PATCH(
 
     let activity;
     if (action === 'mark_read') {
-      activity = await markActivityAsRead(params.id);
+      activity = await markActivityAsRead(id);
     } else if (action === 'archive') {
-      activity = await archiveActivity(params.id);
+      activity = await archiveActivity(id);
     } else {
       return NextResponse.json(
         { error: 'Invalid action. Must be "mark_read" or "archive"' },
@@ -51,7 +52,8 @@ export async function PATCH(
 
     return NextResponse.json({ activity });
   } catch (error) {
-    console.error(`[API] PATCH /api/v1/dashboard/activities/${params?.id} failed:`, error);
+    const { id } = await params;
+    console.error(`[API] PATCH /api/v1/dashboard/activities/${id} failed:`, error);
     return handleApiError(error);
   }
 }

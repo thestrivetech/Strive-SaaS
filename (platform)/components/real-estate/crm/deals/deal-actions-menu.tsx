@@ -22,7 +22,7 @@ import {
 } from '@/components/ui/alert-dialog';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/use-toast';
-import { closeDeal, deleteDeal } from '@/lib/modules/crm/deals';
+import { closeDeal, deleteDeal } from './actions';
 
 interface DealActionsMenuProps {
   dealId: string;

@@ -1,80 +1,19 @@
 import 'server-only';
 
 import { DealStage, DealStatus } from '@prisma/client';
+import { PIPELINE_STAGES, type StageConfig } from './constants';
 
 /**
  * Deals Pipeline Module
  *
  * Pipeline-specific logic and utilities for deal management
  * Stage configurations, probability calculations, forecasting
+ *
+ * Note: PIPELINE_STAGES constant is now imported from ./constants.ts (client-safe)
  */
 
-/**
- * Pipeline stage configuration
- */
-export interface StageConfig {
-  id: DealStage;
-  title: string;
-  probability: number;
-  color: string;
-  order: number;
-}
-
-/**
- * Pipeline stages configuration
- * Ordered from earliest to latest in the sales process
- */
-export const PIPELINE_STAGES: StageConfig[] = [
-  {
-    id: 'LEAD',
-    title: 'Lead',
-    probability: 10,
-    color: 'gray',
-    order: 1,
-  },
-  {
-    id: 'QUALIFIED',
-    title: 'Qualified',
-    probability: 25,
-    color: 'blue',
-    order: 2,
-  },
-  {
-    id: 'PROPOSAL',
-    title: 'Proposal',
-    probability: 50,
-    color: 'yellow',
-    order: 3,
-  },
-  {
-    id: 'NEGOTIATION',
-    title: 'Negotiation',
-    probability: 75,
-    color: 'orange',
-    order: 4,
-  },
-  {
-    id: 'CLOSING',
-    title: 'Closing',
-    probability: 90,
-    color: 'green',
-    order: 5,
-  },
-  {
-    id: 'CLOSED_WON',
-    title: 'Closed Won',
-    probability: 100,
-    color: 'emerald',
-    order: 6,
-  },
-  {
-    id: 'CLOSED_LOST',
-    title: 'Closed Lost',
-    probability: 0,
-    color: 'red',
-    order: 7,
-  },
-];
+// Re-export for backward compatibility
+export { PIPELINE_STAGES, type StageConfig };
 
 /**
  * Get stage configuration by ID

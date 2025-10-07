@@ -6,7 +6,8 @@ import { Badge } from '@/components/ui/badge';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { Mail, Phone, Building2, Briefcase, Clock } from 'lucide-react';
 import { ContactActionsMenu } from './contact-actions-menu';
-import type { ContactWithAssignee, ContactType, ContactStatus } from '@/lib/modules/crm/contacts';
+import type { ContactWithAssignee } from './actions';
+import { ContactType, ContactStatus } from './actions';
 import { formatDistanceToNow } from 'date-fns';
 
 interface ContactCardProps {

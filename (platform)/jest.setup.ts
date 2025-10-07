@@ -114,6 +114,56 @@ jest.mock('@/lib/prisma', () => ({
   },
 }));
 
+// Mock @faker-js/faker (ESM module causing issues)
+// Tests that need faker should import from test utils instead
+jest.mock('@faker-js/faker', () => ({
+  faker: {
+    internet: {
+      email: jest.fn(() => 'test@example.com'),
+      url: jest.fn(() => 'https://example.com'),
+      userName: jest.fn(() => 'testuser'),
+    },
+    person: {
+      fullName: jest.fn(() => 'Test User'),
+      firstName: jest.fn(() => 'Test'),
+      lastName: jest.fn(() => 'User'),
+    },
+    company: {
+      name: jest.fn(() => 'Test Company'),
+    },
+    date: {
+      past: jest.fn(() => new Date('2024-01-01')),
+      future: jest.fn(() => new Date('2025-12-31')),
+      recent: jest.fn(() => new Date()),
+    },
+    number: {
+      int: jest.fn((options?: { min?: number; max?: number }) => {
+        const min = options?.min ?? 0;
+        const max = options?.max ?? 100;
+        return Math.floor(Math.random() * (max - min + 1)) + min;
+      }),
+    },
+    helpers: {
+      arrayElement: jest.fn((arr: unknown[]) => arr[0]),
+      shuffle: jest.fn((arr: unknown[]) => arr),
+    },
+    datatype: {
+      boolean: jest.fn(() => true),
+      uuid: jest.fn(() => '123e4567-e89b-12d3-a456-426614174000'),
+    },
+    string: {
+      uuid: jest.fn(() => '123e4567-e89b-12d3-a456-426614174000'),
+      alpha: jest.fn(() => 'abc'),
+      alphanumeric: jest.fn(() => 'abc123'),
+    },
+    lorem: {
+      sentence: jest.fn(() => 'Test sentence.'),
+      paragraph: jest.fn(() => 'Test paragraph.'),
+      words: jest.fn(() => 'test words'),
+    },
+  },
+}));
+
 // Suppress console errors and warnings in tests (optional)
 const originalError = console.error;
 const originalWarn = console.warn;

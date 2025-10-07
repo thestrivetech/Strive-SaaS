@@ -45,7 +45,7 @@ export function PartyInviteDialog({ loopId, onSuccess }: PartyInviteDialogProps)
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { toast } = useToast();
 
-  const form = useForm<CreatePartyInput>({
+  const form = useForm({
     resolver: zodResolver(CreatePartySchema),
     defaultValues: {
       loopId,
@@ -53,7 +53,7 @@ export function PartyInviteDialog({ loopId, onSuccess }: PartyInviteDialogProps)
       email: '',
       phone: '',
       role: 'BUYER' as PartyRole,
-      permissions: ['view'],
+      permissions: ['view'] as ('view' | 'edit' | 'sign' | 'upload')[],
     },
   });
 

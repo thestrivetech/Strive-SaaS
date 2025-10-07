@@ -5,7 +5,8 @@ import { SortableContext, verticalListSortingStrategy } from '@dnd-kit/sortable'
 import { DealCard } from './deal-card';
 import { Card, CardHeader, CardContent } from '@/components/ui/card';
 import { formatCurrency } from '@/lib/utils';
-import type { StageConfig, DealWithAssignee } from '@/lib/modules/crm/deals';
+import type { StageConfig } from './actions';
+import type { DealWithAssignee } from '@/lib/modules/crm/deals/queries';
 
 interface PipelineColumnProps {
   stage: StageConfig;

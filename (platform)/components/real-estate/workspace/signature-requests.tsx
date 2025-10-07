@@ -26,15 +26,8 @@ const statusColors: Record<string, string> = {
 };
 
 export async function SignatureRequests({ loopId }: SignatureRequestsProps) {
-  const result = await getSignatureRequestsByLoop({
-    loopId,
-    page: 1,
-    limit: 50,
-    sortBy: 'createdAt',
-    sortOrder: 'desc',
-  });
-
-  const requests = result.requests;
+  const result = await getSignatureRequestsByLoop(loopId, { page: 1, limit: 50 });
+  const requests = result.data;
 
   return (
     <div className="space-y-4">

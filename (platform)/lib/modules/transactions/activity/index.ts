@@ -36,7 +36,7 @@ export {
 export type {
   ActivityFeedParams,
   Activity,
-} from './queries';
+} from './types';
 
 // Formatters
 export {

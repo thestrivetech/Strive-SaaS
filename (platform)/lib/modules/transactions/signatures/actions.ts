@@ -5,6 +5,7 @@ import { prisma } from '@/lib/prisma';
 import { getCurrentUser } from '@/lib/auth/auth-helpers';
 import { getUserOrganizationId } from '@/lib/auth/user-helpers';
 import { sendSignatureRequestEmail } from '@/lib/email/notifications';
+import { requireTransactionAccess } from '../core/permissions';
 import {
   CreateSignatureRequestSchema,
   SignDocumentSchema,
@@ -50,6 +51,9 @@ export async function createSignatureRequest(input: CreateSignatureRequestInput)
   if (!user) {
     throw new Error('Unauthorized: Not authenticated');
   }
+
+  // Check subscription tier access
+  requireTransactionAccess(user);
 
   // Validate input
   const validated = CreateSignatureRequestSchema.parse(input);
@@ -176,7 +180,8 @@ export async function createSignatureRequest(input: CreateSignatureRequestInput)
   });
 
   // Send email notifications to signers
-  const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000';
+  const { publicConfig } = await import('@/lib/config/public');
+  const appUrl = publicConfig.appUrl;
   const emailPromises = createdSignatures.map(async (signature) => {
     try {
       await sendSignatureRequestEmail({
@@ -247,6 +252,15 @@ export async function createSignatureRequest(input: CreateSignatureRequestInput)
  * ```
  */
 export async function signDocument(input: SignDocumentInput) {
+  const user = await getCurrentUser();
+
+  if (!user) {
+    throw new Error('Unauthorized: Not authenticated');
+  }
+
+  // Check subscription tier access
+  requireTransactionAccess(user);
+
   // Validate input
   const validated = SignDocumentSchema.parse(input);
 
@@ -391,6 +405,15 @@ export async function signDocument(input: SignDocumentInput) {
  * ```
  */
 export async function declineSignature(input: DeclineSignatureInput) {
+  const user = await getCurrentUser();
+
+  if (!user) {
+    throw new Error('Unauthorized: Not authenticated');
+  }
+
+  // Check subscription tier access
+  requireTransactionAccess(user);
+
   // Validate input
   const validated = DeclineSignatureSchema.parse(input);
 

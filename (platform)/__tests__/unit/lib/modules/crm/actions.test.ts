@@ -13,6 +13,8 @@ import {
   disconnectTestDb,
 } from '@/__tests__/utils/test-helpers';
 import { createCustomer, updateCustomer, deleteCustomer } from '@/lib/modules/crm/core/actions';
+import { getUserOrganizations } from '@/lib/modules/organization/queries';
+import { createServerSupabaseClientWithAuth } from '@/lib/supabase-server';
 
 // Mock Supabase auth
 jest.mock('@/lib/supabase-server', () => ({
@@ -59,8 +61,7 @@ describe('CRM Actions', () => {
       const { organization } = await createTestOrgWithUser();
 
       // Mock getUserOrganizations to return the test organization
-      const { getUserOrganizations } = require('@/lib/modules/organization/queries');
-      getUserOrganizations.mockResolvedValueOnce([
+      (getUserOrganizations as jest.Mock).mockResolvedValueOnce([
         { organizationId: organization.id, role: 'OWNER' },
       ]);
 
@@ -124,8 +125,7 @@ describe('CRM Actions', () => {
       const { organization } = await createTestOrgWithUser();
 
       // Mock getUserOrganizations to return empty (no access)
-      const { getUserOrganizations } = require('@/lib/modules/organization/queries');
-      getUserOrganizations.mockResolvedValueOnce([]);
+      (getUserOrganizations as jest.Mock).mockResolvedValueOnce([]);
 
       const input = {
         name: 'John Doe',
@@ -143,14 +143,12 @@ describe('CRM Actions', () => {
     it('should create activity log on customer creation', async () => {
       const { organization, user } = await createTestOrgWithUser();
 
-      const { getUserOrganizations } = require('@/lib/modules/organization/queries');
-      getUserOrganizations.mockResolvedValueOnce([
+      (getUserOrganizations as jest.Mock).mockResolvedValueOnce([
         { organizationId: organization.id, role: 'OWNER' },
       ]);
 
       // Update mock to return actual user ID
-      const { createServerSupabaseClientWithAuth } = require('@/lib/supabase-server');
-      createServerSupabaseClientWithAuth.mockReturnValueOnce({
+      (createServerSupabaseClientWithAuth as jest.Mock).mockReturnValueOnce({
         auth: {
           getUser: jest.fn(() => ({
             data: { user: { id: user.id, email: user.email } },
@@ -190,8 +188,7 @@ describe('CRM Actions', () => {
         status: CustomerStatus.LEAD,
       });
 
-      const { getUserOrganizations } = require('@/lib/modules/organization/queries');
-      getUserOrganizations.mockResolvedValueOnce([
+      (getUserOrganizations as jest.Mock).mockResolvedValueOnce([
         { organizationId: organization.id, role: 'OWNER' },
       ]);
 
@@ -228,8 +225,7 @@ describe('CRM Actions', () => {
       const { organization } = await createTestOrgWithUser();
       const customer = await createTestCustomer(organization.id);
 
-      const { getUserOrganizations } = require('@/lib/modules/organization/queries');
-      getUserOrganizations.mockResolvedValueOnce([]); // No access
+      (getUserOrganizations as jest.Mock).mockResolvedValueOnce([]); // No access
 
       const updateInput = {
         id: customer.id,
@@ -247,8 +243,7 @@ describe('CRM Actions', () => {
       const { organization } = await createTestOrgWithUser();
       const customer = await createTestCustomer(organization.id);
 
-      const { getUserOrganizations } = require('@/lib/modules/organization/queries');
-      getUserOrganizations.mockResolvedValueOnce([
+      (getUserOrganizations as jest.Mock).mockResolvedValueOnce([
         { organizationId: organization.id, role: 'OWNER' },
       ]);
 
@@ -275,8 +270,7 @@ describe('CRM Actions', () => {
       const { organization } = await createTestOrgWithUser();
       const customer = await createTestCustomer(organization.id);
 
-      const { getUserOrganizations } = require('@/lib/modules/organization/queries');
-      getUserOrganizations.mockResolvedValueOnce([]); // No access
+      (getUserOrganizations as jest.Mock).mockResolvedValueOnce([]); // No access
 
       await expect(deleteCustomer(customer.id)).rejects.toThrow(
         'You do not have access to this organization'
@@ -287,13 +281,11 @@ describe('CRM Actions', () => {
       const { organization, user } = await createTestOrgWithUser();
       const customer = await createTestCustomer(organization.id);
 
-      const { getUserOrganizations } = require('@/lib/modules/organization/queries');
-      getUserOrganizations.mockResolvedValueOnce([
+      (getUserOrganizations as jest.Mock).mockResolvedValueOnce([
         { organizationId: organization.id, role: 'OWNER' },
       ]);
 
-      const { createServerSupabaseClientWithAuth } = require('@/lib/supabase-server');
-      createServerSupabaseClientWithAuth.mockReturnValueOnce({
+      (createServerSupabaseClientWithAuth as jest.Mock).mockReturnValueOnce({
         auth: {
           getUser: jest.fn(() => ({
             data: { user: { id: user.id, email: user.email } },
@@ -325,8 +317,7 @@ describe('CRM Actions', () => {
       const customer2 = await createTestCustomer(org2.id);
 
       // User from org1 trying to access customer from org2
-      const { getUserOrganizations } = require('@/lib/modules/organization/queries');
-      getUserOrganizations.mockResolvedValueOnce([
+      (getUserOrganizations as jest.Mock).mockResolvedValueOnce([
         { organizationId: org1.id, role: 'OWNER' },
       ]);
 

@@ -23,8 +23,8 @@ import {
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog';
 import { toast } from '@/hooks/use-toast';
-import { deleteContact } from '@/lib/modules/crm/contacts';
-import type { ContactWithAssignee } from '@/lib/modules/crm/contacts';
+import { deleteContact } from './actions';
+import type { ContactWithAssignee } from './actions';
 
 interface ContactActionsMenuProps {
   contact: ContactWithAssignee;

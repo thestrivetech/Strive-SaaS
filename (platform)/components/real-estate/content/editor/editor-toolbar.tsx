@@ -187,8 +187,13 @@ export function EditorToolbar({ editor }: EditorToolbarProps) {
       {/* Media Picker Dialog */}
       <MediaPickerDialog
         open={showMediaPicker}
-        onClose={() => setShowMediaPicker(false)}
-        onSelect={(asset) => addImage(asset.file_url)}
+        onOpenChange={setShowMediaPicker}
+        assets={[]}
+        onSelect={(assets) => {
+          if (assets.length > 0) {
+            addImage(assets[0].file_url);
+          }
+        }}
       />
     </div>
   );

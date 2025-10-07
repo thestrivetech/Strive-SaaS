@@ -4,6 +4,7 @@ import { revalidatePath } from 'next/cache';
 import { prisma } from '@/lib/prisma';
 import { getCurrentUser } from '@/lib/auth/auth-helpers';
 import { getUserOrganizationId } from '@/lib/auth/user-helpers';
+import { requireTransactionAccess } from '../core/permissions';
 import { CreateTransactionTaskSchema, UpdateTransactionTaskSchema } from './schemas';
 import type { CreateTransactionTaskInput, UpdateTransactionTaskInput } from './schemas';
 
@@ -22,6 +23,9 @@ export async function createTransactionTask(input: CreateTransactionTaskInput) {
   if (!user) {
     throw new Error('Unauthorized: Not authenticated');
   }
+
+  // Check subscription tier access
+  requireTransactionAccess(user);
 
   // Validate input
   const validated = CreateTransactionTaskSchema.parse(input);
@@ -128,6 +132,9 @@ export async function updateTransactionTask(taskId: string, input: UpdateTransac
   if (!user) {
     throw new Error('Unauthorized: Not authenticated');
   }
+
+  // Check subscription tier access
+  requireTransactionAccess(user);
 
   // Validate input
   const validated = UpdateTransactionTaskSchema.parse(input);
@@ -243,6 +250,9 @@ export async function completeTransactionTask(taskId: string) {
     throw new Error('Unauthorized: Not authenticated');
   }
 
+  // Check subscription tier access
+  requireTransactionAccess(user);
+
   const organizationId = getUserOrganizationId(user);
 
   // Verify task exists and belongs to user's organization
@@ -312,6 +322,9 @@ export async function deleteTransactionTask(taskId: string) {
   if (!user) {
     throw new Error('Unauthorized: Not authenticated');
   }
+
+  // Check subscription tier access
+  requireTransactionAccess(user);
 
   const organizationId = getUserOrganizationId(user);
 

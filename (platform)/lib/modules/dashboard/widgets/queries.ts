@@ -21,7 +21,7 @@ export async function getWidgetById(id: string) {
   const widget = await prisma.dashboard_widgets.findUnique({
     where: { id },
     include: {
-      users_dashboard_widgets_created_byTousers: {
+      creator: {
         select: { id: true, name: true, email: true },
       },
     },

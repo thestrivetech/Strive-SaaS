@@ -30,7 +30,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { createContact, updateContact, createContactSchema } from '@/lib/modules/crm/contacts';
+import { createContact, updateContact, createContactSchema } from './actions';
 import { Plus } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { useRouter } from 'next/navigation';

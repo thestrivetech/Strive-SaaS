@@ -26,7 +26,8 @@ const statusColors: Record<string, string> = {
 };
 
 export async function DocumentList({ loopId }: DocumentListProps) {
-  const documents = await getDocumentsByLoop({ loopId });
+  const result = await getDocumentsByLoop({ loopId }, { page: 1, limit: 100 });
+  const documents = result.data;
 
   return (
     <div className="space-y-4">

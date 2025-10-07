@@ -20,7 +20,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog';
-import { deleteLead, convertLead } from '@/lib/modules/crm/leads';
+import { deleteLead, convertLead } from './actions';
 import { useToast } from '@/hooks/use-toast';
 import { useRouter } from 'next/navigation';
 import type { leads } from '@prisma/client';

@@ -3,9 +3,9 @@
 import { revalidatePath } from 'next/cache';
 import { prisma } from '@/lib/prisma';
 import { requireAuth, getCurrentUser } from '@/lib/auth/auth-helpers';
-import { canAccessCRM, canManageListings, canDeleteListings } from '@/lib/auth/rbac';
 import { withTenantContext } from '@/lib/database/utils';
 import { handleDatabaseError } from '@/lib/database/errors';
+import { requireTransactionAccess, hasTransactionPermission, TRANSACTION_PERMISSIONS } from '../core/permissions';
 import {
   createListingSchema,
   updateListingSchema,
@@ -35,9 +35,12 @@ export async function createListing(input: CreateListingInput) {
     throw new Error('Unauthorized: User not found');
   }
 
-  // Check RBAC permissions
-  if (!canAccessCRM(user.role) || !canManageListings(user.role)) {
-    throw new Error('Unauthorized: Insufficient permissions to create listings');
+  // Check subscription tier access
+  requireTransactionAccess(user);
+
+  // Check dual-role RBAC permissions
+  if (!hasTransactionPermission(user, TRANSACTION_PERMISSIONS.CREATE_LISTINGS)) {
+    throw new Error('Forbidden: Cannot create listings');
   }
 
   // Validate input
@@ -94,8 +97,12 @@ export async function updateListing(input: UpdateListingInput) {
     throw new Error('Unauthorized: User not found');
   }
 
-  if (!canAccessCRM(user.role) || !canManageListings(user.role)) {
-    throw new Error('Unauthorized: Insufficient permissions to update listings');
+  // Check subscription tier access
+  requireTransactionAccess(user);
+
+  // Check dual-role RBAC permissions
+  if (!hasTransactionPermission(user, TRANSACTION_PERMISSIONS.UPDATE_LISTINGS)) {
+    throw new Error('Forbidden: Cannot update listings');
   }
 
   const validated = updateListingSchema.parse(input);
@@ -174,8 +181,12 @@ export async function deleteListing(id: string) {
     throw new Error('Unauthorized: User not found');
   }
 
-  if (!canAccessCRM(user.role) || !canDeleteListings(user.role)) {
-    throw new Error('Unauthorized: Insufficient permissions to delete listings');
+  // Check subscription tier access
+  requireTransactionAccess(user);
+
+  // Check dual-role RBAC permissions
+  if (!hasTransactionPermission(user, TRANSACTION_PERMISSIONS.DELETE_LISTINGS)) {
+    throw new Error('Forbidden: Cannot delete listings');
   }
 
   return withTenantContext(async () => {
@@ -227,11 +238,16 @@ export async function updateListingStatus(input: UpdateListingStatusInput) {
     throw new Error('Unauthorized: User not found');
   }
 
-  if (!canAccessCRM(user.role) || !canManageListings(user.role)) {
-    throw new Error('Unauthorized: Insufficient permissions to update listing status');
-  }
-
   const validated = updateListingStatusSchema.parse(input);
+
+  // Check dual-role RBAC permissions (status changes that publish require PUBLISH permission)
+  const requiredPermission = validated.status === 'ACTIVE'
+    ? TRANSACTION_PERMISSIONS.PUBLISH_LISTINGS
+    : TRANSACTION_PERMISSIONS.UPDATE_LISTINGS;
+
+  if (!hasTransactionPermission(user, requiredPermission)) {
+    throw new Error('Forbidden: Cannot update listing status');
+  }
 
   return withTenantContext(async () => {
     try {
@@ -304,8 +320,9 @@ export async function bulkAssignListings(input: BulkAssignListingsInput) {
     throw new Error('Unauthorized: User not found');
   }
 
-  if (!canAccessCRM(user.role) || !canManageListings(user.role)) {
-    throw new Error('Unauthorized: Insufficient permissions to assign listings');
+  // Check dual-role RBAC permissions
+  if (!hasTransactionPermission(user, TRANSACTION_PERMISSIONS.UPDATE_LISTINGS)) {
+    throw new Error('Forbidden: Cannot assign listings');
   }
 
   const validated = bulkAssignListingsSchema.parse(input);
@@ -354,8 +371,9 @@ export async function logPropertyActivity(input: LogPropertyActivityInput) {
     throw new Error('Unauthorized: User not found');
   }
 
-  if (!canAccessCRM(user.role)) {
-    throw new Error('Unauthorized: Insufficient permissions to log activities');
+  // Check dual-role RBAC permissions
+  if (!hasTransactionPermission(user, TRANSACTION_PERMISSIONS.VIEW_LISTINGS)) {
+    throw new Error('Forbidden: Cannot log property activities');
   }
 
   const validated = logPropertyActivitySchema.parse(input);
