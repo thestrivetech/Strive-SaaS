@@ -81,7 +81,7 @@ export async function getAvailableIndustries(): Promise<Industry[]> {
 export async function getOrganizationIndustries(
   organizationId: string
 ): Promise<Array<{ industryId: Industry; config: IndustryConfig; settings: Record<string, any> }>> {
-  const { prisma } = await import('@/lib/prisma');
+  const { prisma } = await import('@/lib/database/prisma');
 
   const enabledModules = await prisma.organization_tool_configs.findMany({
     where: {
@@ -126,7 +126,7 @@ export async function hasIndustryEnabled(
   organizationId: string,
   industryId: Industry
 ): Promise<boolean> {
-  const { prisma } = await import('@/lib/prisma');
+  const { prisma } = await import('@/lib/database/prisma');
 
   const config = await prisma.organization_tool_configs.findFirst({
     where: {
@@ -148,7 +148,7 @@ export async function validateIndustryAccess(
   userId: string,
   industryId: Industry
 ): Promise<boolean> {
-  const { prisma } = await import('@/lib/prisma');
+  const { prisma } = await import('@/lib/database/prisma');
 
   // Get user's organization
   const member = await prisma.organization_members.findFirst({

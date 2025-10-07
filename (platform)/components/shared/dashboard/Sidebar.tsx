@@ -197,7 +197,7 @@ export function Sidebar({ isOpen = true, onClose }: SidebarProps) {
           </div>
 
           {/* Navigation */}
-          <nav className="flex-1 overflow-y-auto p-4 space-y-2">
+          <nav className="flex-1 overflow-y-auto p-4 space-y-2" aria-label="Main navigation">
             {navigationItems.map((item) => {
               const Icon = item.icon;
               const isActive = isActiveRoute(item.href);
@@ -216,6 +216,8 @@ export function Sidebar({ isOpen = true, onClose }: SidebarProps) {
                           'w-full justify-between hover:bg-muted/30',
                           isActive && 'neon-border-primary bg-primary/10'
                         )}
+                        aria-label={`${item.title} menu, ${openItems.includes(item.id) ? 'expanded' : 'collapsed'}`}
+                        aria-expanded={openItems.includes(item.id)}
                       >
                         <div className="flex items-center gap-3">
                           <Icon
@@ -253,8 +255,10 @@ export function Sidebar({ isOpen = true, onClose }: SidebarProps) {
                                   'w-full justify-start text-sm hover:bg-muted/30',
                                   childActive && 'neon-border-cyan bg-primary/10 text-primary'
                                 )}
+                                aria-label={child.title}
+                                aria-current={childActive ? 'page' : undefined}
                               >
-                                <ChildIcon className="w-4 h-4 mr-3" />
+                                <ChildIcon className="w-4 h-4 mr-3" aria-hidden="true" />
                                 <span>{child.title}</span>
                               </Button>
                             </Link>
@@ -274,12 +278,15 @@ export function Sidebar({ isOpen = true, onClose }: SidebarProps) {
                       'w-full justify-start hover:bg-muted/30',
                       isActive && 'neon-border-cyan bg-primary/10'
                     )}
+                    aria-label={item.title}
+                    aria-current={isActive ? 'page' : undefined}
                   >
                     <Icon
                       className={cn(
                         'w-5 h-5 mr-3',
                         isActive ? 'text-primary' : 'text-muted-foreground'
                       )}
+                      aria-hidden="true"
                     />
                     <span
                       className={cn(

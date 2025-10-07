@@ -52,6 +52,11 @@ export default async function RealEstateLayout({
     );
   }
 
+  // Type guard: at this point user must exist (or we would have redirected/returned)
+  if (!user) {
+    redirect('/login');
+  }
+
   // Get role-based navigation items
   const navItems = getNavigationItems(user.role as UserRole);
 

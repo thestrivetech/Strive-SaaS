@@ -69,7 +69,7 @@ async function ListingDetail({ listingId }: { listingId: string }) {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-4">
-          <Link href="/crm/listings">
+          <Link href="/real-estate/workspace/listings">
             <Button variant="outline" size="icon">
               <ArrowLeft className="h-4 w-4" />
             </Button>

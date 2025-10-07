@@ -134,7 +134,7 @@ async function DealDetailContent({ dealId }: { dealId: string }) {
             <CardContent>
               {deal.contact ? (
                 <div className="space-y-2">
-                  <Link href={`/crm/contacts/${deal.contact.id}`} className="font-medium text-primary hover:underline">
+                  <Link href={`/real-estate/crm/contacts/${deal.contact.id}`} className="font-medium text-primary hover:underline">
                     {deal.contact.name}
                   </Link>
                   {deal.contact.email && (
@@ -156,7 +156,7 @@ async function DealDetailContent({ dealId }: { dealId: string }) {
                 </div>
               ) : deal.lead ? (
                 <div className="space-y-2">
-                  <Link href={`/crm/leads/${deal.lead.id}`} className="font-medium text-primary hover:underline">
+                  <Link href={`/real-estate/crm/leads/${deal.lead.id}`} className="font-medium text-primary hover:underline">
                     {deal.lead.name}
                   </Link>
                   <Badge variant="outline">{deal.lead.status}</Badge>
@@ -220,7 +220,7 @@ async function DealDetailContent({ dealId }: { dealId: string }) {
             {deal.listing && (
               <div className="space-y-1">
                 <p className="text-sm font-medium text-muted-foreground">Property</p>
-                <Link href={`/crm/listings/${deal.listing.id}`} className="text-sm text-primary hover:underline flex items-center gap-2">
+                <Link href={`/real-estate/workspace/listings/${deal.listing.id}`} className="text-sm text-primary hover:underline flex items-center gap-2">
                   <Building2 className="h-4 w-4" />
                   {deal.listing.title}
                 </Link>

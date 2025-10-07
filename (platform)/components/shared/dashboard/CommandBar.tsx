@@ -141,17 +141,18 @@ export function CommandBar() {
 
   return (
     <Dialog open={isOpen} onOpenChange={close}>
-      <DialogContent className="max-w-2xl p-0 glass-strong neon-border-cyan overflow-hidden">
-        <Command shouldFilter={false} className="bg-transparent">
+      <DialogContent className="max-w-2xl p-0 glass-strong neon-border-cyan overflow-hidden" aria-label="Command palette">
+        <Command shouldFilter={false} className="bg-transparent" role="dialog">
           <div className="flex items-center gap-3 px-4 py-3 border-b border-border/50">
-            <Search className="w-5 h-5 text-primary" />
+            <Search className="w-5 h-5 text-primary" aria-hidden="true" />
             <CommandInput
               placeholder="Search modules, actions, or type a command..."
               value={query}
               onValueChange={setQuery}
               className="border-none bg-transparent placeholder:text-muted-foreground focus:ring-0"
+              aria-label="Search command palette"
             />
-            <kbd className="hidden sm:inline-flex px-2 py-1 text-xs rounded bg-muted/50 text-muted-foreground border border-border/50">
+            <kbd className="hidden sm:inline-flex px-2 py-1 text-xs rounded bg-muted/50 text-muted-foreground border border-border/50" aria-label="Press Escape to close">
               ESC
             </kbd>
           </div>
@@ -176,6 +177,7 @@ export function CommandBar() {
                       key={result.id}
                       onSelect={() => handleSelect(result.action)}
                       className="flex items-center justify-between p-3 hover:bg-primary/10 cursor-pointer"
+                      aria-label={`${result.title}: ${result.description}`}
                     >
                       <div className="flex items-center gap-3">
                         <Icon className="w-5 h-5 text-primary" />

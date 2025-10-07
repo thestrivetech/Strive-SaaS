@@ -239,12 +239,16 @@ export async function cloneBlueprint(input: CloneBlueprintInput) {
       }
 
       // Create clone with new organization ownership
-      const { id, created_at, updated_at, usage_count, created_by_id, ...cloneData } = original;
-
       const clone = await prisma.tool_blueprints.create({
         data: {
-          ...cloneData,
           name: validated.name || `${original.name} (Copy)`,
+          description: original.description,
+          category: original.category,
+          tags: original.tags,
+          configuration: original.configuration as any,
+          components: original.components as any,
+          connections: original.connections as any,
+          complexity: original.complexity,
           organization_id: userOrgId,
           created_by_id: user.id,
           is_public: false, // Clones are private by default

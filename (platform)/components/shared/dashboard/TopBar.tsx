@@ -2,7 +2,9 @@
 
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Search, Mic, Moon, Bell, Menu } from 'lucide-react';
+import { Search, Mic, Moon, Sun, Bell, Menu } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { useTheme } from '@/hooks/use-theme';
 import type { UserWithOrganization } from '@/lib/auth/user-helpers';
 
 interface TopBarProps {
@@ -13,6 +15,8 @@ interface TopBarProps {
 }
 
 export function TopBar({ user, notifications = 0, onMenuToggle, onCommandBarOpen }: TopBarProps) {
+  const { theme, setTheme, resolvedTheme, mounted } = useTheme();
+
   const handleCommandBarOpen = () => {
     // Trigger command bar via callback or keyboard event
     if (onCommandBarOpen) {
@@ -33,8 +37,14 @@ export function TopBar({ user, notifications = 0, onMenuToggle, onCommandBarOpen
   };
 
   const handleThemeToggle = () => {
-    // Theme toggle placeholder (to be implemented in Phase 4)
-    console.log('Theme toggle triggered');
+    // Cycle through themes: light -> dark -> system -> light
+    if (theme === 'light') {
+      setTheme('dark');
+    } else if (theme === 'dark') {
+      setTheme('system');
+    } else {
+      setTheme('light');
+    }
   };
 
   const handleNotifications = () => {
@@ -63,6 +73,8 @@ export function TopBar({ user, notifications = 0, onMenuToggle, onCommandBarOpen
               size="icon"
               onClick={onMenuToggle}
               className="text-muted-foreground hover:text-foreground lg:hidden"
+              aria-label="Toggle mobile menu"
+              title="Open menu"
             >
               <Menu className="w-6 h-6" />
             </Button>
@@ -73,6 +85,8 @@ export function TopBar({ user, notifications = 0, onMenuToggle, onCommandBarOpen
             variant="ghost"
             onClick={handleCommandBarOpen}
             className="hidden sm:flex items-center gap-3 px-4 py-2 rounded-lg glass hover:bg-muted/30 transition-colors min-w-[200px] lg:min-w-[300px]"
+            aria-label="Open command palette"
+            title="Search or ask (⌘K)"
           >
             <Search className="w-5 h-5 text-muted-foreground flex-shrink-0" />
             <span className="text-muted-foreground text-sm truncate">
@@ -89,6 +103,8 @@ export function TopBar({ user, notifications = 0, onMenuToggle, onCommandBarOpen
             size="icon"
             onClick={handleCommandBarOpen}
             className="sm:hidden glass"
+            aria-label="Open search"
+            title="Search"
           >
             <Search className="w-5 h-5" />
           </Button>
@@ -102,6 +118,7 @@ export function TopBar({ user, notifications = 0, onMenuToggle, onCommandBarOpen
             size="icon"
             onClick={handleVoiceCommand}
             className="glass hover:bg-primary/10 neon-cyan hidden sm:flex"
+            aria-label="Activate voice command"
             title="Voice Command"
           >
             <Mic className="w-5 h-5 text-primary" />
@@ -112,10 +129,27 @@ export function TopBar({ user, notifications = 0, onMenuToggle, onCommandBarOpen
             variant="ghost"
             size="icon"
             onClick={handleThemeToggle}
-            className="glass hover:bg-muted/30 hidden sm:flex"
-            title="Toggle Theme"
+            className="glass hover:bg-muted/30 hidden sm:flex relative"
+            title={`Current theme: ${theme} (Click to change)`}
+            aria-label={`Toggle theme. Current: ${theme}`}
           >
-            <Moon className="w-5 h-5" />
+            <AnimatePresence mode="wait">
+              {mounted && (
+                <motion.div
+                  key={resolvedTheme}
+                  initial={{ rotate: -90, opacity: 0 }}
+                  animate={{ rotate: 0, opacity: 1 }}
+                  exit={{ rotate: 90, opacity: 0 }}
+                  transition={{ duration: 0.2 }}
+                >
+                  {resolvedTheme === 'dark' ? (
+                    <Moon className="w-5 h-5 text-chart-2" />
+                  ) : (
+                    <Sun className="w-5 h-5 text-chart-1" />
+                  )}
+                </motion.div>
+              )}
+            </AnimatePresence>
           </Button>
 
           {/* Notifications Button */}
@@ -125,6 +159,7 @@ export function TopBar({ user, notifications = 0, onMenuToggle, onCommandBarOpen
               size="icon"
               onClick={handleNotifications}
               className="glass hover:bg-muted/30"
+              aria-label={`Notifications${notifications > 0 ? ` (${notifications} unread)` : ''}`}
               title="Notifications"
             >
               <Bell className="w-5 h-5" />

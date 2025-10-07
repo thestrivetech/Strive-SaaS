@@ -9,6 +9,7 @@ import { getQuickActions } from '@/lib/modules/dashboard/quick-actions/queries';
 import { DashboardContent } from '@/components/shared/dashboard/DashboardContent';
 import { DashboardGrid } from '@/components/shared/dashboard/DashboardGrid';
 import { HeroSection } from '@/components/shared/dashboard/HeroSection';
+import { HeroSkeleton, GridSkeleton } from '@/components/shared/dashboard/skeletons';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
@@ -144,32 +145,6 @@ async function HeroSectionWrapper({
   return <HeroSection user={user} stats={stats} />;
 }
 
-/**
- * Hero Section Skeleton
- */
-function HeroSkeleton() {
-  return (
-    <div className="p-4 sm:p-6">
-      <div className="glass-strong rounded-2xl p-6 sm:p-8 neon-border-cyan mb-6">
-        <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-6">
-          <div className="flex-1">
-            <Skeleton className="h-12 w-96 mb-2" />
-            <Skeleton className="h-4 w-64" />
-          </div>
-          <div className="flex items-center gap-4 sm:gap-6">
-            <Skeleton className="h-20 w-24 rounded-xl" />
-            <Skeleton className="h-20 w-32 rounded-xl" />
-          </div>
-        </div>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mt-6">
-          {Array.from({ length: 4 }).map((_, i) => (
-            <Skeleton key={i} className="h-28 rounded-xl" />
-          ))}
-        </div>
-      </div>
-    </div>
-  );
-}
 
 /**
  * KPI Cards Section
@@ -259,10 +234,10 @@ async function QuickActionsSection({ organizationId }: { organizationId: string 
       color: 'green',
     },
     {
-      name: 'New Project',
-      description: 'Create a project',
+      name: 'New Transaction',
+      description: 'Create a transaction',
       icon: 'FolderKanban',
-      target_url: '/projects',
+      target_url: '/real-estate/workspace',
       color: 'purple',
     },
   ];
@@ -325,7 +300,7 @@ async function ActivityFeedSection({ organizationId }: { organizationId: string 
             <Clock className="h-5 w-5" />
             Recent Activity
           </CardTitle>
-          <Link href="/activity">
+          <Link href="/real-estate/activity">
             <Button variant="ghost" size="sm">
               View All
               <ArrowRight className="ml-2 h-4 w-4" />
@@ -544,16 +519,5 @@ function DashboardGridSection({ organizationId }: { organizationId: string }) {
 }
 
 function DashboardGridSkeleton() {
-  return (
-    <div className="px-6 pb-6">
-      <div className="flex items-center justify-between mb-4">
-        <Skeleton className="h-4 w-64" />
-        <Skeleton className="h-9 w-32" />
-      </div>
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <Skeleton className="h-96 rounded-2xl lg:col-span-2" />
-        <Skeleton className="h-96 rounded-2xl" />
-      </div>
-    </div>
-  );
+  return <GridSkeleton />;
 }

@@ -1,6 +1,6 @@
 import { prisma } from '@/lib/database/prisma';
 import { withTenantContext } from '@/lib/database/utils';
-import { handleDatabaseError } from '@/lib/database/errors';
+import { handleDatabaseError, DatabaseError } from '@/lib/database/errors';
 import type { appointments, Prisma } from '@prisma/client';
 import type { CalendarFilters } from './schemas';
 
@@ -44,7 +44,7 @@ type AppointmentWithRelations = Prisma.appointmentsGetPayload<{
  */
 export async function getAppointments(
   filters: CalendarFilters
-): Promise<AppointmentWithRelations[]> {
+): Promise<AppointmentWithRelations[] | DatabaseError> {
   return withTenantContext(async () => {
     try {
       const where: Prisma.appointmentsWhereInput = {
@@ -111,7 +111,7 @@ export async function getAppointments(
         orderBy: { start_time: 'asc' },
       });
     } catch (error) {
-      return handleDatabaseError(error, 'Failed to fetch appointments');
+      return handleDatabaseError(error);
     }
   });
 }
@@ -126,7 +126,7 @@ export async function getAppointments(
 export async function getUpcomingAppointments(
   userId: string,
   limit = 10
-): Promise<AppointmentWithRelations[]> {
+): Promise<AppointmentWithRelations[] | DatabaseError> {
   return withTenantContext(async () => {
     try {
       return await prisma.appointments.findMany({
@@ -137,29 +137,29 @@ export async function getUpcomingAppointments(
         },
         include: {
           users: {
-            select: { id: true, name: true, avatar_url: true },
+            select: { id: true, name: true, email: true, avatar_url: true },
           },
           lead: {
-            select: { id: true, name: true },
+            select: { id: true, name: true, status: true },
           },
           contact: {
-            select: { id: true, name: true },
+            select: { id: true, name: true, email: true, phone: true },
           },
           deal: {
-            select: { id: true, title: true },
+            select: { id: true, title: true, value: true, stage: true },
           },
           listing: {
-            select: { id: true, title: true, address: true },
+            select: { id: true, title: true, address: true, price: true },
           },
           customers: {
-            select: { id: true, name: true },
+            select: { id: true, name: true, email: true },
           },
         },
         orderBy: { start_time: 'asc' },
         take: limit,
       });
     } catch (error) {
-      return handleDatabaseError(error, 'Failed to fetch upcoming appointments');
+      return handleDatabaseError(error);
     }
   });
 }
@@ -172,7 +172,7 @@ export async function getUpcomingAppointments(
  */
 export async function getAppointmentById(
   id: string
-): Promise<AppointmentWithRelations | null> {
+): Promise<AppointmentWithRelations | null | DatabaseError> {
   return withTenantContext(async () => {
     try {
       return await prisma.appointments.findUnique({
@@ -199,7 +199,7 @@ export async function getAppointmentById(
         },
       });
     } catch (error) {
-      return handleDatabaseError(error, 'Failed to fetch appointment');
+      return handleDatabaseError(error);
     }
   });
 }
@@ -214,7 +214,7 @@ export async function getAppointmentById(
 export async function getAppointmentsByEntity(
   entityType: 'lead' | 'contact' | 'deal' | 'listing',
   entityId: string
-): Promise<AppointmentWithRelations[]> {
+): Promise<AppointmentWithRelations[] | DatabaseError> {
   return withTenantContext(async () => {
     try {
       const where: Prisma.appointmentsWhereInput = {};
@@ -238,28 +238,28 @@ export async function getAppointmentsByEntity(
         where,
         include: {
           users: {
-            select: { id: true, name: true, avatar_url: true },
+            select: { id: true, name: true, email: true, avatar_url: true },
           },
           lead: {
-            select: { id: true, name: true },
+            select: { id: true, name: true, status: true },
           },
           contact: {
-            select: { id: true, name: true },
+            select: { id: true, name: true, email: true, phone: true },
           },
           deal: {
-            select: { id: true, title: true },
+            select: { id: true, title: true, value: true, stage: true },
           },
           listing: {
-            select: { id: true, title: true },
+            select: { id: true, title: true, address: true, price: true },
           },
           customers: {
-            select: { id: true, name: true },
+            select: { id: true, name: true, email: true },
           },
         },
         orderBy: { start_time: 'desc' },
       });
     } catch (error) {
-      return handleDatabaseError(error, `Failed to fetch ${entityType} appointments`);
+      return handleDatabaseError(error);
     }
   });
 }
@@ -276,7 +276,22 @@ export async function getAppointmentStats(
   userId: string,
   startDate: Date,
   endDate: Date
-) {
+): Promise<{
+  total: number;
+  scheduled: number;
+  confirmed: number;
+  completed: number;
+  cancelled: number;
+  no_show: number;
+  byType: {
+    meeting: number;
+    call: number;
+    showing: number;
+    open_house: number;
+    follow_up: number;
+    other: number;
+  };
+} | DatabaseError> {
   return withTenantContext(async () => {
     try {
       const appointments = await prisma.appointments.findMany({
@@ -312,7 +327,7 @@ export async function getAppointmentStats(
 
       return stats;
     } catch (error) {
-      return handleDatabaseError(error, 'Failed to fetch appointment statistics');
+      return handleDatabaseError(error);
     }
   });
 }

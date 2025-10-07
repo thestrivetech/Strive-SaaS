@@ -60,10 +60,10 @@ export async function createAppointment(input: CreateAppointmentInput) {
           ...validated,
           assigned_to: validated.assigned_to || user.id,
           organization_id: user.organization_members[0].organization_id,
-          // Handle reminders
+          // Handle reminders - use undefined instead of null for JSON fields
           reminders_sent: validated.reminder_minutes
-            ? { reminder_minutes: validated.reminder_minutes, sent: false }
-            : null,
+            ? ({ reminder_minutes: validated.reminder_minutes, sent: false } as any)
+            : undefined,
         },
         include: {
           users: {
@@ -104,7 +104,7 @@ export async function createAppointment(input: CreateAppointmentInput) {
 
       return appointment;
     } catch (error) {
-      return handleDatabaseError(error, 'Failed to create appointment');
+      return handleDatabaseError(error);
     }
   });
 }
@@ -149,11 +149,11 @@ export async function updateAppointment(id: string, input: UpdateAppointmentInpu
         where: { id },
         data: {
           ...validated,
-          // Update reminders if provided
+          // Update reminders if provided - cast to any for JSON type compatibility
           ...(validated.reminder_minutes !== undefined && {
-            reminders_sent: validated.reminder_minutes
+            reminders_sent: (validated.reminder_minutes
               ? { reminder_minutes: validated.reminder_minutes, sent: false }
-              : null,
+              : undefined) as any,
           }),
         },
         include: {
@@ -195,7 +195,7 @@ export async function updateAppointment(id: string, input: UpdateAppointmentInpu
 
       return appointment;
     } catch (error) {
-      return handleDatabaseError(error, 'Failed to update appointment');
+      return handleDatabaseError(error);
     }
   });
 }
@@ -261,7 +261,7 @@ export async function updateAppointmentStatus(
 
       return appointment;
     } catch (error) {
-      return handleDatabaseError(error, 'Failed to update appointment status');
+      return handleDatabaseError(error);
     }
   });
 }
@@ -308,7 +308,7 @@ export async function deleteAppointment(id: string) {
 
       return { success: true };
     } catch (error) {
-      return handleDatabaseError(error, 'Failed to delete appointment');
+      return handleDatabaseError(error);
     }
   });
 }
@@ -379,7 +379,7 @@ export async function bulkRescheduleAppointments(input: BulkRescheduleInput) {
 
       return { count: appointments.length };
     } catch (error) {
-      return handleDatabaseError(error, 'Failed to bulk reschedule appointments');
+      return handleDatabaseError(error);
     }
   });
 }

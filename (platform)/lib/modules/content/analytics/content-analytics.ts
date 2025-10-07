@@ -1,6 +1,7 @@
 'use server';
 
 import { prisma } from '@/lib/database/prisma';
+import { Prisma } from '@prisma/client';
 import { requireAuth, getCurrentUser } from '@/lib/auth/middleware';
 import { cache } from 'react';
 import { getUserOrganizationId } from '@/lib/auth/user-helpers';
@@ -151,13 +152,13 @@ export const getTopPerformingContent = cache(async (type?: string) => {
 
   const organization_id = getUserOrganizationId(user);
 
-  const where: { organization_id: string; status: string; type?: string } = {
+  const where: Prisma.content_itemsWhereInput = {
     organization_id,
     status: 'PUBLISHED',
   };
 
   if (type) {
-    where.type = type;
+    where.type = type as any;
   }
 
   return await prisma.content_items.findMany({

@@ -188,12 +188,12 @@ export function PartyInviteDialog({ loopId, onSuccess }: PartyInviteDialogProps)
                     </FormDescription>
                   </div>
                   <div className="space-y-2">
-                    {[
+                    {([
                       { id: 'view', label: 'View documents and progress' },
                       { id: 'edit', label: 'Edit transaction details' },
                       { id: 'sign', label: 'Sign documents' },
                       { id: 'upload', label: 'Upload documents' },
-                    ].map((permission) => (
+                    ] as const).map((permission) => (
                       <FormField
                         key={permission.id}
                         control={form.control}
@@ -208,10 +208,11 @@ export function PartyInviteDialog({ loopId, onSuccess }: PartyInviteDialogProps)
                                 <Checkbox
                                   checked={field.value?.includes(permission.id)}
                                   onCheckedChange={(checked) => {
+                                    const currentValue = field.value || [];
                                     return checked
-                                      ? field.onChange([...field.value, permission.id])
+                                      ? field.onChange([...currentValue, permission.id])
                                       : field.onChange(
-                                          field.value?.filter(
+                                          currentValue.filter(
                                             (value) => value !== permission.id
                                           )
                                         );

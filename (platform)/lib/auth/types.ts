@@ -1,5 +1,5 @@
-import type { users, organization_members, organizations, subscriptions } from '@prisma/client';
-import type { UserRole, OrgRole } from './constants';
+import type { users, organization_members, organizations, subscriptions, OrgRole } from '@prisma/client';
+import type { UserRole } from './constants';
 
 /**
  * User with organization relationship loaded

@@ -35,9 +35,9 @@ export default function ListingsError({
             Retry
           </Button>
           <Button asChild variant="outline" className="w-full">
-            <Link href="/crm">
+            <Link href="/real-estate/workspace">
               <ArrowLeft className="mr-2 h-4 w-4" />
-              Back to CRM
+              Back to Workspace
             </Link>
           </Button>
         </CardContent>

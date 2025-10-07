@@ -1,13 +1,9 @@
 import { onCLS, onFCP, onLCP, onTTFB } from 'web-vitals';
 import { trackWebVitals } from './analytics-tracker';
-// FID is deprecated in favor of INP, but we'll still track it if available
-let onFID: any;
-try {
-  onFID = require('web-vitals').onFID;
-} catch (e) {
-  // FID not available, use fallback
-  onFID = null;
-}
+
+// FID is deprecated in favor of INP - web-vitals no longer exports it
+// Using null as fallback since modern browsers should use INP instead
+const onFID: any = null;
 
 // Types for Web Vitals metrics
 export interface WebVitalsMetric {

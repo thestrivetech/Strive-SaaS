@@ -16,7 +16,7 @@ export function useShoppingCart() {
 
   const cart = useQuery({
     queryKey: ['shopping-cart'],
-    queryFn: async () => {
+    queryFn: async (): Promise<Awaited<ReturnType<typeof getCartWithItems>> | null> => {
       // ⚠️ TEMPORARY: Mock user for local preview - REMOVE BEFORE PRODUCTION!
       // const user = await getCurrentUser();
       // if (!user) return null;
@@ -63,7 +63,7 @@ export function useShoppingCart() {
     removeItem,
     clear,
     checkout: processCheckout,
-    totalItems: (cart.data?.tools?.length || 0) + (cart.data?.bundles?.length || 0),
+    totalItems: cart.data ? ((cart.data.tools?.length || 0) + (cart.data.bundles?.length || 0)) : 0,
     totalPrice: cart.data?.totalPrice || 0,
   };
 }

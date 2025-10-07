@@ -46,7 +46,7 @@ export default async function CRMDashboardPage() {
   };
 
   // Fetch all dashboard data in parallel for performance
-  const [kpis, recentLeads, funnelData, appointments, activities, agentPerformance] = await Promise.all([
+  const [kpis, recentLeads, funnelData, appointmentsResult, activities, agentPerformance] = await Promise.all([
     getOverviewKPIs(),
     getLeads({ limit: 4, offset: 0, sort_order: 'desc', sort_by: 'created_at' }),
     getSalesFunnelData(),
@@ -54,6 +54,9 @@ export default async function CRMDashboardPage() {
     getRecentActivities({ limit: 10 }),
     getAgentPerformance(timeRange),
   ]);
+
+  // Handle potential database errors for appointments
+  const appointments = Array.isArray(appointmentsResult) ? appointmentsResult : [];
 
   return (
     <div className="space-y-6">

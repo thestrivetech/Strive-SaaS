@@ -20,13 +20,17 @@ async function CalendarData() {
   const startDate = startOfMonth(now);
   const endDate = endOfMonth(now);
 
-  const [appointments, upcoming] = await Promise.all([
+  const [appointmentsResult, upcomingResult] = await Promise.all([
     getAppointments({
       start_date: startDate,
       end_date: endDate,
     }),
     getUpcomingAppointments(user.id, 5),
   ]);
+
+  // Handle potential database errors (check if result has 'type' property which indicates DatabaseError)
+  const appointments = Array.isArray(appointmentsResult) ? appointmentsResult : [];
+  const upcoming = Array.isArray(upcomingResult) ? upcomingResult : [];
 
   const organizationId = user.organization_members[0].organization_id;
 

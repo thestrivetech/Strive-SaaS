@@ -55,7 +55,7 @@ export function TaskCreateDialog({ loopId, onSuccess }: TaskCreateDialogProps) {
   const [parties, setParties] = useState<Array<{ id: string; name: string; role: string }>>([]);
   const { toast } = useToast();
 
-  const form = useForm<CreateTransactionTaskInput>({
+  const form = useForm({
     resolver: zodResolver(CreateTransactionTaskSchema),
     defaultValues: {
       loopId,

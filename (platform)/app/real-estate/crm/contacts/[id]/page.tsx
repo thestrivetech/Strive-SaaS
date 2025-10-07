@@ -283,7 +283,7 @@ async function ContactDetail({ contactId, organizationId }: { contactId: string;
               {contact.deals.map((deal) => (
                 <Link
                   key={deal.id}
-                  href={`/crm/deals/${deal.id}`}
+                  href={`/real-estate/crm/deals/${deal.id}`}
                   className="block p-3 rounded-lg border hover:bg-muted/50 transition-colors"
                 >
                   <p className="font-medium text-sm">{deal.title}</p>

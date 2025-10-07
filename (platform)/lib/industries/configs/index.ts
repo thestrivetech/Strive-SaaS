@@ -2,7 +2,34 @@
 // Industry configuration loader for AI chat integration
 // Provides compatibility layer between platform and shared industry types
 
-import { IndustryType, IndustryConfig } from '@strive/shared/types/industry';
+import { Industry as IndustryType } from '@/lib/industries/_core/industry-config';
+
+/**
+ * AI Chat Industry Configuration
+ * Separate from platform IndustryConfig - this is for chatbot integration
+ */
+export interface ChatbotIndustryConfig {
+  industry: IndustryType;
+  displayName: string;
+  branding: {
+    primaryColor: string;
+    secondaryColor: string;
+  };
+  assistant: {
+    name: string;
+    title: string;
+  };
+  businessInfo: {
+    calendlyLink: string;
+    website: string;
+  };
+  welcomeMessage: {
+    greeting: string;
+    intro: string;
+    firstQuestion: string;
+  };
+  systemPrompt: string;
+}
 
 /**
  * Load complete industry configuration for AI chat
@@ -11,9 +38,9 @@ import { IndustryType, IndustryConfig } from '@strive/shared/types/industry';
  */
 export async function loadIndustryConfig(
   industry: IndustryType
-): Promise<IndustryConfig> {
+): Promise<ChatbotIndustryConfig> {
   // Basic configuration structure
-  const config: IndustryConfig = {
+  const config: ChatbotIndustryConfig = {
     industry,
     displayName: getIndustryDisplayName(industry),
     branding: {
@@ -44,7 +71,7 @@ export async function loadIndustryConfig(
  */
 function getDefaultSystemPrompt(industry: IndustryType): string {
   const prompts: Record<IndustryType, string> = {
-    'strive': `You are Sai, an AI assistant helping businesses with AI solutions and automation.
+    'shared': `You are Sai, an AI assistant helping businesses with AI solutions and automation.
 Be professional, helpful, and focus on understanding their business challenges.
 Ask discovery questions to understand their pain points before suggesting solutions.`,
 
@@ -53,8 +80,8 @@ Help users find properties, understand the market, and guide them through the bu
 Be conversational and friendly while being informative.
 Use the property search tool when users are looking for homes.`,
 
-    'dental': `You are Sai, a dental practice AI assistant.
-Help patients with appointments, procedures, and general dental health questions.
+    'healthcare': `You are Sai, a healthcare AI assistant.
+Help patients with appointments, procedures, and general health questions.
 Be friendly, empathetic, and professional.`,
 
     'legal': `You are Sai, a legal services AI assistant.
@@ -65,7 +92,7 @@ Be professional and clear in your explanations.`,
 Help with production optimization, supply chain, and operational efficiency.
 Focus on practical solutions and measurable improvements.`,
 
-    'financial': `You are Sai, a financial services AI assistant.
+    'fintech': `You are Sai, a fintech AI assistant.
 Help clients with financial planning, investments, and financial products.
 Be trustworthy and provide accurate information.`,
 
@@ -73,12 +100,24 @@ Be trustworthy and provide accurate information.`,
 Help customers find products, answer questions, and provide excellent service.
 Be helpful, friendly, and knowledgeable.`,
 
-    'insurance': `You are Sai, an insurance AI assistant.
-Help clients understand insurance options and find the right coverage.
-Explain complex insurance terms in simple language.`,
+    'education': `You are Sai, an education AI assistant.
+Help students and educators with learning resources and educational planning.
+Be supportive, encouraging, and knowledgeable.`,
+
+    'hospitality': `You are Sai, a hospitality AI assistant.
+Help guests with reservations, services, and hospitality needs.
+Be welcoming, attentive, and service-oriented.`,
+
+    'logistics': `You are Sai, a logistics AI assistant.
+Help with supply chain management, shipping, and logistics operations.
+Focus on efficiency and timely delivery.`,
+
+    'construction': `You are Sai, a construction AI assistant.
+Help with project management, materials, and construction planning.
+Be practical and detail-oriented.`,
   };
 
-  return prompts[industry] || prompts['strive'];
+  return prompts[industry] || prompts['shared'];
 }
 
 /**
@@ -86,14 +125,17 @@ Explain complex insurance terms in simple language.`,
  */
 export function getIndustryDisplayName(industry: IndustryType): string {
   const names: Record<IndustryType, string> = {
-    'strive': 'AI Solutions (STRIVE TECH)',
+    'shared': 'AI Solutions (STRIVE TECH)',
     'real-estate': 'Real Estate',
-    'dental': 'Dental Practice',
+    'healthcare': 'Healthcare',
     'legal': 'Legal Services',
     'manufacturing': 'Manufacturing',
-    'financial': 'Financial Services',
+    'fintech': 'Financial Technology',
     'retail': 'Retail',
-    'insurance': 'Insurance',
+    'education': 'Education',
+    'hospitality': 'Hospitality',
+    'logistics': 'Logistics',
+    'construction': 'Construction',
   };
   return names[industry];
 }
@@ -103,14 +145,17 @@ export function getIndustryDisplayName(industry: IndustryType): string {
  */
 export function getAvailableIndustries(): IndustryType[] {
   return [
-    'strive',
+    'shared',
     'real-estate',
-    'dental',
+    'healthcare',
     'legal',
     'manufacturing',
-    'financial',
+    'fintech',
     'retail',
-    'insurance',
+    'education',
+    'hospitality',
+    'logistics',
+    'construction',
   ];
 }
 

@@ -10,7 +10,7 @@ export const CreateTransactionTaskSchema = z.object({
   description: z.string().max(2000, 'Description too long').optional(),
   priority: z.nativeEnum(TaskPriority, {
     errorMap: () => ({ message: 'Invalid priority' }),
-  }).default('MEDIUM'),
+  }).optional().default('MEDIUM'),
   dueDate: z.coerce.date().optional().nullable(),
   assignedTo: z.string().uuid('Invalid party ID').optional().nullable(), // Party ID
 });

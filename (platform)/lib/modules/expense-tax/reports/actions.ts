@@ -115,7 +115,7 @@ export async function createExpenseReport(input: ExpenseReportInput) {
         total_expenses: totalExpenses,
         total_deductible: totalDeductible,
         organization_id: organizationId,
-        created_by: user.id,
+        created_by_id: user.id,
       },
     });
 

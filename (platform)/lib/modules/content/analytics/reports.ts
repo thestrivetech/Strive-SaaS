@@ -110,45 +110,45 @@ export async function formatForExport(
   switch (type) {
     case 'content':
       return data.map((item) => ({
-        Title: item.title,
-        Type: item.type,
-        'View Count': item.view_count,
-        'Share Count': item.share_count,
-        'Like Count': item.like_count,
-        'Comment Count': item.comment_count,
+        Title: String(item.title || ''),
+        Type: String(item.type || ''),
+        'View Count': Number(item.view_count || 0),
+        'Share Count': Number(item.share_count || 0),
+        'Like Count': Number(item.like_count || 0),
+        'Comment Count': Number(item.comment_count || 0),
         'Published At': item.published_at
-          ? new Date(item.published_at).toLocaleDateString()
+          ? new Date(item.published_at as Date).toLocaleDateString()
           : 'N/A',
-        Category: item.category?.name || 'Uncategorized',
+        Category: (item.category as any)?.name || 'Uncategorized',
       }));
 
     case 'campaigns':
       return data.map((item) => ({
-        Name: item.name,
-        Type: item.type,
-        Status: item.status,
-        Impressions: item.impressions,
-        Clicks: item.clicks,
-        Conversions: item.conversions,
-        Spend: Number(item.spend).toFixed(2),
-        Revenue: Number(item.revenue).toFixed(2),
-        'Start Date': item.start_date ? new Date(item.start_date).toLocaleDateString() : 'N/A',
-        'End Date': item.end_date ? new Date(item.end_date).toLocaleDateString() : 'N/A',
+        Name: String(item.name || ''),
+        Type: String(item.type || ''),
+        Status: String(item.status || ''),
+        Impressions: Number(item.impressions || 0),
+        Clicks: Number(item.clicks || 0),
+        Conversions: Number(item.conversions || 0),
+        Spend: Number(item.spend || 0).toFixed(2),
+        Revenue: Number(item.revenue || 0).toFixed(2),
+        'Start Date': item.start_date ? new Date(item.start_date as Date).toLocaleDateString() : 'N/A',
+        'End Date': item.end_date ? new Date(item.end_date as Date).toLocaleDateString() : 'N/A',
       }));
 
     case 'emails':
       return data.map((item) => ({
-        Subject: item.subject,
-        Sent: item.sent,
-        Delivered: item.delivered,
-        Opened: item.opened,
-        Clicked: item.clicked,
-        Bounced: item.bounced,
-        Unsubscribed: item.unsubscribed,
-        'Sent At': item.sent_at ? new Date(item.sent_at).toLocaleDateString() : 'N/A',
+        Subject: String(item.subject || ''),
+        Sent: Number(item.sent || 0),
+        Delivered: Number(item.delivered || 0),
+        Opened: Number(item.opened || 0),
+        Clicked: Number(item.clicked || 0),
+        Bounced: Number(item.bounced || 0),
+        Unsubscribed: Number(item.unsubscribed || 0),
+        'Sent At': item.sent_at ? new Date(item.sent_at as Date).toLocaleDateString() : 'N/A',
       }));
 
     default:
-      return data;
+      return [] as ExportData[];
   }
 }

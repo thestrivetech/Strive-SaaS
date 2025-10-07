@@ -42,7 +42,7 @@ export async function createCustomer(input: CreateCustomerInput) {
     include: {
       organization_members: {
         include: {
-          organization: true,
+          organizations: true,
         },
       },
     },
@@ -151,7 +151,7 @@ export async function updateCustomer(input: UpdateCustomerInput) {
     include: {
       organization_members: {
         include: {
-          organization: true,
+          organizations: true,
         },
       },
     },
@@ -271,7 +271,7 @@ export async function deleteCustomer(customerId: string) {
     include: {
       organization_members: {
         include: {
-          organization: true,
+          organizations: true,
         },
       },
     },

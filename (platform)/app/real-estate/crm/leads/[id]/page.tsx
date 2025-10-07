@@ -238,7 +238,7 @@ async function LeadDetailContent({ leadId, organizationId }: { leadId: string; o
                 {lead.deals.map((deal) => (
                   <div key={deal.id} className="text-sm">
                     <Link
-                      href={`/crm/deals/${deal.id}`}
+                      href={`/real-estate/crm/deals/${deal.id}`}
                       className="text-primary hover:underline"
                     >
                       {deal.title}

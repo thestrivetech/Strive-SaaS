@@ -184,14 +184,14 @@ export function TaskChecklist({ loopId }: TaskChecklistProps) {
                         </div>
                       )}
 
-                      {task.assignee && (
+                      {task.assigned_to && (
                         <div className="flex items-center gap-1">
                           <User className="h-3.5 w-3.5" />
-                          {task.assignee.name}
+                          Assigned
                         </div>
                       )}
 
-                      {!task.assignee && (
+                      {!task.assigned_to && (
                         <div className="flex items-center gap-1 text-muted-foreground/60">
                           <User className="h-3.5 w-3.5" />
                           Unassigned

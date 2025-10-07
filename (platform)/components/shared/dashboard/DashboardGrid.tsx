@@ -7,6 +7,11 @@ import { Button } from '@/components/ui/button';
 import { GripVertical, RotateCcw } from 'lucide-react';
 import { KPIRingsWidget } from './widgets/KPIRingsWidget';
 import { ActivityFeedWidget } from './widgets/ActivityFeedWidget';
+import { LiveChartsWidget } from './widgets/LiveChartsWidget';
+import { WorldMapWidget } from './widgets/WorldMapWidget';
+import { AIInsightsWidget } from './widgets/AIInsightsWidget';
+import { SmartSuggestionsWidget } from './widgets/SmartSuggestionsWidget';
+import { DashboardErrorBoundary } from './DashboardErrorBoundary';
 import 'react-grid-layout/css/styles.css';
 import 'react-resizable/css/styles.css';
 
@@ -15,15 +20,27 @@ const ResponsiveGridLayout = WidthProvider(Responsive);
 const defaultLayouts: Layouts = {
   lg: [
     { i: 'kpi-rings', x: 0, y: 0, w: 2, h: 2, minW: 1, minH: 2 },
+    { i: 'live-charts', x: 0, y: 2, w: 2, h: 2, minW: 1, minH: 2 },
+    { i: 'world-map', x: 0, y: 4, w: 2, h: 2, minW: 1, minH: 2 },
     { i: 'activity-feed', x: 2, y: 0, w: 1, h: 2, minW: 1, minH: 2 },
+    { i: 'ai-insights', x: 2, y: 2, w: 1, h: 2, minW: 1, minH: 2 },
+    { i: 'smart-suggestions', x: 2, y: 4, w: 1, h: 2, minW: 1, minH: 2 },
   ],
   md: [
     { i: 'kpi-rings', x: 0, y: 0, w: 2, h: 2, minW: 1, minH: 2 },
-    { i: 'activity-feed', x: 0, y: 2, w: 2, h: 2, minW: 1, minH: 2 },
+    { i: 'live-charts', x: 0, y: 2, w: 2, h: 2, minW: 1, minH: 2 },
+    { i: 'activity-feed', x: 0, y: 4, w: 2, h: 2, minW: 1, minH: 2 },
+    { i: 'world-map', x: 0, y: 6, w: 2, h: 2, minW: 1, minH: 2 },
+    { i: 'ai-insights', x: 0, y: 8, w: 2, h: 2, minW: 1, minH: 2 },
+    { i: 'smart-suggestions', x: 0, y: 10, w: 2, h: 2, minW: 1, minH: 2 },
   ],
   sm: [
     { i: 'kpi-rings', x: 0, y: 0, w: 1, h: 2, minW: 1, minH: 2 },
-    { i: 'activity-feed', x: 0, y: 2, w: 1, h: 2, minW: 1, minH: 2 },
+    { i: 'live-charts', x: 0, y: 2, w: 1, h: 2, minW: 1, minH: 2 },
+    { i: 'activity-feed', x: 0, y: 4, w: 1, h: 2, minW: 1, minH: 2 },
+    { i: 'world-map', x: 0, y: 6, w: 1, h: 2, minW: 1, minH: 2 },
+    { i: 'ai-insights', x: 0, y: 8, w: 1, h: 2, minW: 1, minH: 2 },
+    { i: 'smart-suggestions', x: 0, y: 10, w: 1, h: 2, minW: 1, minH: 2 },
   ],
 };
 
@@ -98,8 +115,8 @@ export function DashboardGrid({ organizationId }: DashboardGridProps) {
   return (
     <section className="px-6 pb-6" data-testid="dashboard-grid">
       <div className="flex items-center justify-between mb-4">
-        <div className="flex items-center gap-2 text-sm text-muted-foreground">
-          <GripVertical className="w-4 h-4" />
+        <div className="flex items-center gap-2 text-sm text-muted-foreground" role="status" aria-live="polite">
+          <GripVertical className="w-4 h-4" aria-hidden="true" />
           <span>Drag widgets to customize your dashboard</span>
         </div>
         <Button
@@ -108,8 +125,10 @@ export function DashboardGrid({ organizationId }: DashboardGridProps) {
           onClick={resetLayout}
           className="glass hover:bg-muted/30"
           data-testid="reset-layout"
+          aria-label="Reset widget layout to default"
+          title="Reset Layout"
         >
-          <RotateCcw className="w-4 h-4 mr-2" />
+          <RotateCcw className="w-4 h-4 mr-2" aria-hidden="true" />
           Reset Layout
         </Button>
       </div>
@@ -137,12 +156,14 @@ export function DashboardGrid({ organizationId }: DashboardGridProps) {
             className="h-full"
           >
             <div className="relative h-full group">
-              <div className="drag-handle absolute top-4 right-4 opacity-0 group-hover:opacity-100 transition-opacity cursor-move z-10">
+              <div className="drag-handle absolute top-4 right-4 opacity-0 group-hover:opacity-100 transition-opacity cursor-move z-10" role="button" aria-label="Drag to reposition KPI Rings widget" tabIndex={0}>
                 <div className="p-2 rounded-lg glass hover:bg-muted/30">
-                  <GripVertical className="w-4 h-4 text-muted-foreground" />
+                  <GripVertical className="w-4 h-4 text-muted-foreground" aria-hidden="true" />
                 </div>
               </div>
-              <KPIRingsWidget />
+              <DashboardErrorBoundary>
+                <KPIRingsWidget />
+              </DashboardErrorBoundary>
             </div>
           </motion.div>
         </div>
@@ -160,7 +181,89 @@ export function DashboardGrid({ organizationId }: DashboardGridProps) {
                   <GripVertical className="w-4 h-4 text-muted-foreground" />
                 </div>
               </div>
-              <ActivityFeedWidget organizationId={organizationId} />
+              <DashboardErrorBoundary>
+                <ActivityFeedWidget organizationId={organizationId} />
+              </DashboardErrorBoundary>
+            </div>
+          </motion.div>
+        </div>
+
+        <div key="live-charts">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.2 }}
+            className="h-full"
+          >
+            <div className="relative h-full group">
+              <div className="drag-handle absolute top-4 right-4 opacity-0 group-hover:opacity-100 transition-opacity cursor-move z-10">
+                <div className="p-2 rounded-lg glass hover:bg-muted/30">
+                  <GripVertical className="w-4 h-4 text-muted-foreground" />
+                </div>
+              </div>
+              <DashboardErrorBoundary>
+                <LiveChartsWidget organizationId={organizationId} />
+              </DashboardErrorBoundary>
+            </div>
+          </motion.div>
+        </div>
+
+        <div key="world-map">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.3 }}
+            className="h-full"
+          >
+            <div className="relative h-full group">
+              <div className="drag-handle absolute top-4 right-4 opacity-0 group-hover:opacity-100 transition-opacity cursor-move z-10">
+                <div className="p-2 rounded-lg glass hover:bg-muted/30">
+                  <GripVertical className="w-4 h-4 text-muted-foreground" />
+                </div>
+              </div>
+              <DashboardErrorBoundary>
+                <WorldMapWidget organizationId={organizationId} />
+              </DashboardErrorBoundary>
+            </div>
+          </motion.div>
+        </div>
+
+        <div key="ai-insights">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.4 }}
+            className="h-full"
+          >
+            <div className="relative h-full group">
+              <div className="drag-handle absolute top-4 right-4 opacity-0 group-hover:opacity-100 transition-opacity cursor-move z-10">
+                <div className="p-2 rounded-lg glass hover:bg-muted/30">
+                  <GripVertical className="w-4 h-4 text-muted-foreground" />
+                </div>
+              </div>
+              <DashboardErrorBoundary>
+                <AIInsightsWidget organizationId={organizationId} />
+              </DashboardErrorBoundary>
+            </div>
+          </motion.div>
+        </div>
+
+        <div key="smart-suggestions">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.5 }}
+            className="h-full"
+          >
+            <div className="relative h-full group">
+              <div className="drag-handle absolute top-4 right-4 opacity-0 group-hover:opacity-100 transition-opacity cursor-move z-10">
+                <div className="p-2 rounded-lg glass hover:bg-muted/30">
+                  <GripVertical className="w-4 h-4 text-muted-foreground" />
+                </div>
+              </div>
+              <DashboardErrorBoundary>
+                <SmartSuggestionsWidget organizationId={organizationId} />
+              </DashboardErrorBoundary>
             </div>
           </motion.div>
         </div>
