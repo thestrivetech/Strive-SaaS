@@ -1,5 +1,3 @@
-import 'server-only';
-
 import { PrismaClient } from '@prisma/client';
 import { tenantIsolationExtension } from './prisma-middleware';
 

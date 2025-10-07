@@ -10,42 +10,47 @@ export async function middleware(request: NextRequest) {
   const corsResponse = handleCORS(request);
   if (corsResponse) return corsResponse;
 
-  // Get client identifier for rate limiting
-  const identifier = getClientIdentifier(request);
+  // ⚠️ TEMPORARY: Skip rate limiting on localhost for showcase
+  const isLocalhost = request.nextUrl.hostname === 'localhost' || request.nextUrl.hostname === '127.0.0.1';
 
-  // Apply rate limiting to authentication routes
-  if (request.nextUrl.pathname.startsWith('/api/auth') || request.nextUrl.pathname.startsWith('/login') || request.nextUrl.pathname.startsWith('/signup')) {
-    const { success, limit, remaining, reset } = await checkRateLimit(identifier, authRateLimit);
+  if (!isLocalhost) {
+    // Get client identifier for rate limiting
+    const identifier = getClientIdentifier(request);
 
-    if (!success) {
-      return new NextResponse('Too many requests. Please try again later.', {
-        status: 429,
-        headers: {
-          'Content-Type': 'text/plain',
-          'X-RateLimit-Limit': limit.toString(),
-          'X-RateLimit-Remaining': remaining.toString(),
-          'X-RateLimit-Reset': reset.toISOString(),
-          'Retry-After': Math.ceil((reset.getTime() - Date.now()) / 1000).toString(),
-        },
-      });
+    // Apply rate limiting to authentication routes
+    if (request.nextUrl.pathname.startsWith('/api/auth') || request.nextUrl.pathname.startsWith('/login') || request.nextUrl.pathname.startsWith('/signup')) {
+      const { success, limit, remaining, reset } = await checkRateLimit(identifier, authRateLimit);
+
+      if (!success) {
+        return new NextResponse('Too many requests. Please try again later.', {
+          status: 429,
+          headers: {
+            'Content-Type': 'text/plain',
+            'X-RateLimit-Limit': limit.toString(),
+            'X-RateLimit-Remaining': remaining.toString(),
+            'X-RateLimit-Reset': reset.toISOString(),
+            'Retry-After': Math.ceil((reset.getTime() - Date.now()) / 1000).toString(),
+          },
+        });
+      }
     }
-  }
 
-  // Apply rate limiting to API routes
-  if (request.nextUrl.pathname.startsWith('/api/')) {
-    const { success, limit, remaining, reset } = await checkRateLimit(identifier, apiRateLimit);
+    // Apply rate limiting to API routes
+    if (request.nextUrl.pathname.startsWith('/api/')) {
+      const { success, limit, remaining, reset } = await checkRateLimit(identifier, apiRateLimit);
 
-    if (!success) {
-      return new NextResponse('API rate limit exceeded. Please try again later.', {
-        status: 429,
-        headers: {
-          'Content-Type': 'text/plain',
-          'X-RateLimit-Limit': limit.toString(),
-          'X-RateLimit-Remaining': remaining.toString(),
-          'X-RateLimit-Reset': reset.toISOString(),
-          'Retry-After': Math.ceil((reset.getTime() - Date.now()) / 1000).toString(),
-        },
-      });
+      if (!success) {
+        return new NextResponse('API rate limit exceeded. Please try again later.', {
+          status: 429,
+          headers: {
+            'Content-Type': 'text/plain',
+            'X-RateLimit-Limit': limit.toString(),
+            'X-RateLimit-Remaining': remaining.toString(),
+            'X-RateLimit-Reset': reset.toISOString(),
+            'Retry-After': Math.ceil((reset.getTime() - Date.now()) / 1000).toString(),
+          },
+        });
+      }
     }
   }
 

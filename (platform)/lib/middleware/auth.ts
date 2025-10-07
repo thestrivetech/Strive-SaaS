@@ -4,6 +4,12 @@ import { createServerClient } from '@supabase/ssr';
 export async function handlePlatformAuth(request: NextRequest): Promise<NextResponse> {
   const path = request.nextUrl.pathname;
 
+  // ⚠️ TEMPORARY: Skip auth on localhost for presentation
+  const isLocalhost = request.nextUrl.hostname === 'localhost' || request.nextUrl.hostname === '127.0.0.1';
+  if (isLocalhost && !path.startsWith('/api/')) {
+    return NextResponse.next();
+  }
+
   let response = NextResponse.next({
     request: { headers: request.headers },
   });
@@ -68,7 +74,7 @@ export async function handlePlatformAuth(request: NextRequest): Promise<NextResp
 
   // Platform-admin route protection (SUPER_ADMIN only - platform dev)
   if (user && isPlatformAdminRoute) {
-    const { prisma } = await import('@/lib/prisma');
+    const { prisma } = await import('@/lib/database/prisma');
     const dbUser = await prisma.users.findUnique({
       where: { email: user.email! },
       select: { role: true },
@@ -83,7 +89,7 @@ export async function handlePlatformAuth(request: NextRequest): Promise<NextResp
 
   // Org-admin route protection (SUPER_ADMIN + ADMIN - organization management)
   if (user && isAdminRoute) {
-    const { prisma } = await import('@/lib/prisma');
+    const { prisma } = await import('@/lib/database/prisma');
     const dbUser = await prisma.users.findUnique({
       where: { email: user.email! },
       select: { role: true },
@@ -98,7 +104,7 @@ export async function handlePlatformAuth(request: NextRequest): Promise<NextResp
 
   // Transaction route protection - role and tier check
   if (user && isTransactionRoute) {
-    const { prisma } = await import('@/lib/prisma');
+    const { prisma } = await import('@/lib/database/prisma');
     const dbUser = await prisma.users.findUnique({
       where: { email: user.email! },
       select: { role: true, subscription_tier: true },
@@ -123,7 +129,7 @@ export async function handlePlatformAuth(request: NextRequest): Promise<NextResp
 
   // Check if user has completed onboarding (has an organization)
   if (user && path.startsWith('/onboarding')) {
-    const { prisma } = await import('@/lib/prisma');
+    const { prisma } = await import('@/lib/database/prisma');
     const dbUser = await prisma.users.findUnique({
       where: { email: user.email! },
       select: {

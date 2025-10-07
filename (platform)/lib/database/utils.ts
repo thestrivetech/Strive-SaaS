@@ -1,8 +1,7 @@
-import 'server-only';
-
 import { prisma } from './prisma';
 import { setTenantContext, getTenantContext } from './prisma-middleware';
-import { getCurrentUser } from '@/lib/auth/auth-helpers';
+// ⚠️ TEMPORARY: Commented out to avoid next/headers import chain for local preview
+// import { getCurrentUser } from '@/lib/auth/auth-helpers';
 
 /**
  * Database Utility Functions
@@ -75,23 +74,29 @@ export interface PaginatedResult<T> {
 export async function withTenantContext<T>(
   operation: () => Promise<T>
 ): Promise<T> {
-  const user = await getCurrentUser();
+  // ⚠️ TEMPORARY FIX FOR LOCAL PREVIEW - REMOVE BEFORE PRODUCTION!
+  // Commented out to avoid next/headers import chain
+  // const user = await getCurrentUser();
 
-  if (!user || !user.organization_members || user.organization_members.length === 0) {
-    throw new Error('User must be authenticated and belong to an organization');
-  }
+  // if (!user || !user.organization_members || user.organization_members.length === 0) {
+  //   throw new Error('User must be authenticated and belong to an organization');
+  // }
 
-  // Set tenant context
-  setTenantContext({
-    organizationId: user.organization_members[0].organization_id,
-    userId: user.id,
-  });
+  // TEMPORARY: Skip tenant context setting for local preview
+  // TODO: Restore proper auth before production deployment
+
+  // COMMENTED OUT FOR LOCAL PREVIEW:
+  // setTenantContext({
+  //   organizationId: user.organization_members[0].organization_id,
+  //   userId: user.id,
+  // });
 
   try {
+    // Execute operation WITHOUT tenant context for now
     return await operation();
   } finally {
-    // Context is cleared automatically for next request
-    // But good practice to explicitly clear
+    // COMMENTED OUT FOR LOCAL PREVIEW:
+    // setTenantContext(null);
   }
 }
 

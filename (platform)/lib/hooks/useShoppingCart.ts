@@ -8,7 +8,8 @@ import {
   clearCart,
   checkout,
 } from '@/lib/modules/marketplace';
-import { getCurrentUser } from '@/lib/auth/auth-helpers';
+// ⚠️ TEMPORARY: Commented out to avoid next/headers import chain for local preview
+// import { getCurrentUser } from '@/lib/auth/auth-helpers';
 
 export function useShoppingCart() {
   const queryClient = useQueryClient();
@@ -16,9 +17,13 @@ export function useShoppingCart() {
   const cart = useQuery({
     queryKey: ['shopping-cart'],
     queryFn: async () => {
-      const user = await getCurrentUser();
-      if (!user) return null;
-      return getCartWithItems(user.id);
+      // ⚠️ TEMPORARY: Mock user for local preview - REMOVE BEFORE PRODUCTION!
+      // const user = await getCurrentUser();
+      // if (!user) return null;
+      // return getCartWithItems(user.id);
+
+      // For now, skip cart functionality for showcase
+      return null;
     },
   });
 

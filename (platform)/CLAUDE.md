@@ -2,6 +2,8 @@
 
 **Claude's Session Memory | v2.0 | Platform Project Standards - Multi-Industry Architecture**
 
+!!!! IMPORTANT NOTE -> Server only imports were removed to make the build work in order to prep for showcase -> This needs to be investigated and fixed before deploying to production !!! -> User will prompt you @Claude when it's time to fix this.
+
 > ## 🔴 CRITICAL: READ-BEFORE-EDIT MANDATE
 >
 > **YOU MUST FOLLOW THESE STEPS BEFORE ANY ACTION:**

@@ -2,6 +2,8 @@
 
 **Claude's Session Memory | v4.0 | Tri-Fold Architecture**
 
+!!!! IMPORTANT NOTE -> Server only imports were removed to make the build work in order to prep for showcase -> This needs to be investigated and fixed before deploying to production !!! -> User will prompt you @Claude when it's time to fix this.
+
 > ## 🔴 CRITICAL: TRI-FOLD REPOSITORY STRUCTURE
 >
 > This repository contains **THREE SEPARATE PROJECTS**, each with its own:

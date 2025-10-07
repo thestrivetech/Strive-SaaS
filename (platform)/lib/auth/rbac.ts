@@ -636,6 +636,43 @@ export function getContentLimits(tier: string) {
 }
 
 /**
+ * Campaign Management Permissions
+ */
+export function canManageCampaigns(user: { globalRole?: UserRole; role?: UserRole; organizationRole?: string; subscriptionTier?: string }): boolean {
+  // Support both globalRole and role fields
+  const userRole = user.globalRole || user.role;
+
+  // Check subscription tier (GROWTH+ required)
+  const tier = user.subscriptionTier || 'FREE';
+  const hasRequiredTier = ['GROWTH', 'ELITE', 'ENTERPRISE'].includes(tier);
+
+  if (!hasRequiredTier) {
+    return false;
+  }
+
+  // Must be Employee with Member+ org role
+  const isEmployee = ['ADMIN', 'MODERATOR', 'USER'].includes(userRole || '');
+  const hasOrgAccess = ['OWNER', 'ADMIN', 'MEMBER'].includes(user.organizationRole || '');
+
+  return isEmployee && hasOrgAccess;
+}
+
+export function canScheduleCampaigns(user: { organizationRole?: string }): boolean {
+  // All campaign managers can schedule
+  return ['OWNER', 'ADMIN', 'MEMBER'].includes(user.organizationRole || '');
+}
+
+export function canSendEmails(user: { organizationRole?: string }): boolean {
+  // Only owners and admins can send emails
+  return ['OWNER', 'ADMIN'].includes(user.organizationRole || '');
+}
+
+export function canPublishSocial(user: { organizationRole?: string }): boolean {
+  // Only owners and admins can publish to social
+  return ['OWNER', 'ADMIN'].includes(user.organizationRole || '');
+}
+
+/**
  * Tool Marketplace Access Control
  */
 export const MARKETPLACE_PERMISSIONS = {
