@@ -42,15 +42,9 @@ export const defaultNavItems: NavItem[] = [
   },
   {
     title: 'CRM',
-    href: '/crm',
+    href: '/real-estate/crm/dashboard',
     icon: Users,
     permission: 'canManageCustomers',
-  },
-  {
-    title: 'Projects',
-    href: '/projects',
-    icon: FolderKanban,
-    permission: 'canManageProjects',
   },
   {
     title: 'Workspace',
@@ -84,7 +78,6 @@ export const defaultNavItems: NavItem[] = [
     href: '/real-estate/cms-marketing/dashboard',
     icon: Megaphone,
     permission: 'canManageCustomers',
-    badge: 'Coming Soon',
   },
   {
     title: 'Marketplace',
@@ -98,12 +91,6 @@ export const defaultNavItems: NavItem[] = [
     href: '/settings',
     icon: Settings,
     permission: 'canManageSettings',
-  },
-  {
-    title: 'Admin',
-    href: '/admin',
-    icon: Shield,
-    adminOnly: true,
   },
 ];
 

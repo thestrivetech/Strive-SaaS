@@ -109,10 +109,7 @@ export function OrganizationSwitcher({ organizations, currentOrgId, userId }: Or
         </DropdownMenuContent>
       </DropdownMenu>
 
-      <CreateOrganizationDialog
-        children={null}
-        asChild={false}
-      />
+      <CreateOrganizationDialog asChild={false} />
     </>
   );
 }

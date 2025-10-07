@@ -137,7 +137,7 @@ export function CreateOrganizationDialog({ children, asChild = false }: CreateOr
                     />
                   </FormControl>
                   <FormDescription>
-                    Used in your organization's URL. Must be unique.
+                    Used in your organization&apos;s URL. Must be unique.
                   </FormDescription>
                   <FormMessage />
                 </FormItem>

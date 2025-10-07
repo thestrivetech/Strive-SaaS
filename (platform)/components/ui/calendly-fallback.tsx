@@ -57,7 +57,7 @@ export function CalendlyFallback({ status, error, onRetry, retryCount }: Calendl
             <p className="text-sm text-gray-600 mb-4">
               {(() => {
                 if (!checkNetworkConnectivity()) {
-                  return "It looks like you're offline or have a weak internet connection. Please check your connection and try again.";
+                  return "It looks like you&apos;re offline or have a weak internet connection. Please check your connection and try again.";
                 }
                 
                 if (status === 'timeout') {
@@ -68,7 +68,7 @@ export function CalendlyFallback({ status, error, onRetry, retryCount }: Calendl
                   return "Your ad blocker or browser settings may be preventing the calendar from loading. Try disabling ad blockers for this site or use the alternative options below.";
                 }
                 
-                return error || "We're having trouble loading the calendar widget. This can happen due to network issues, browser settings, or temporary server issues.";
+                return error || "We&apos;re having trouble loading the calendar widget. This can happen due to network issues, browser settings, or temporary server issues.";
               })()}
             </p>
             
@@ -174,8 +174,8 @@ export function CalendlyFallback({ status, error, onRetry, retryCount }: Calendl
                   ✨ Guaranteed Response Within 24 Hours
                 </h5>
                 <p className="text-sm text-purple-700">
-                  We'll contact you within 24 hours to schedule your personalized showcase 
-                  based on the information you've provided in this form.
+                  We&apos;ll contact you within 24 hours to schedule your personalized showcase
+                  based on the information you&apos;ve provided in this form.
                 </p>
               </div>
             </div>

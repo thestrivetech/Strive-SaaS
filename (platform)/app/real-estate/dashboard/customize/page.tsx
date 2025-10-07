@@ -219,7 +219,7 @@ export default async function CustomizeDashboardPage() {
                   Customization Coming Soon
                 </h3>
                 <p className="text-sm text-blue-700 dark:text-blue-300 mt-1">
-                  Dashboard customization features are currently in development. You'll soon be
+                  Dashboard customization features are currently in development. You&apos;ll soon be
                   able to personalize your dashboard with drag-and-drop widgets, custom themes,
                   and layout options.
                 </p>

@@ -52,7 +52,7 @@ export default function OrganizationOnboardingPage() {
               Welcome to Strive Tech
             </h1>
             <p className="text-gray-600 dark:text-gray-400">
-              Let's create your organization to get started
+              Let&apos;s create your organization to get started
             </p>
           </div>
 

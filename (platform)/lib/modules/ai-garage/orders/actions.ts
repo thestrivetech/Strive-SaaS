@@ -104,7 +104,7 @@ export async function updateOrder(input: UpdateOrderInput) {
   const { id, ...updateData } = validated;
 
   // Recalculate estimates if complexity or requirements changed
-  let extraUpdates: { estimated_hours?: number; estimated_cost?: number } = {};
+  const extraUpdates: { estimated_hours?: number; estimated_cost?: number } = {};
   if (updateData.complexity || updateData.requirements) {
     const order = await getOrderById(id);
     if (order) {

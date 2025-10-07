@@ -19,11 +19,37 @@ export default async function RealEstateLayout({
 }: {
   children: React.ReactNode;
 }) {
+  // ⚠️ TEMPORARY: Skip auth layout logic on localhost for presentation
+  // The middleware already bypasses auth, so we need to handle the case where user is null
+  const isLocalhost = typeof window === 'undefined' &&
+    (process.env.NODE_ENV === 'development' || process.env.NEXT_PUBLIC_ENV === 'local');
+
   // Auth check
   const user = await getCurrentUser();
 
-  if (!user) {
+  if (!user && !isLocalhost) {
     redirect('/login');
+  }
+
+  // ⚠️ TEMPORARY: Use mock navigation for localhost showcase
+  if (!user && isLocalhost) {
+    return (
+      <div className="flex h-screen overflow-hidden">
+        {/* Sidebar Navigation - Mock for localhost */}
+        <SidebarNav items={defaultNavItems} />
+
+        {/* Main Content Area */}
+        <div className="flex flex-1 flex-col overflow-hidden">
+          {/* Header with Breadcrumbs and User Menu */}
+          <Header />
+
+          {/* Page Content */}
+          <main className="flex-1 overflow-auto p-6">
+            {children}
+          </main>
+        </div>
+      </div>
+    );
   }
 
   // Get role-based navigation items

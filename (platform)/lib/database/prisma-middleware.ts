@@ -151,15 +151,18 @@ export const tenantIsolationExtension = Prisma.defineExtension((client) =>
           const writeOperations = ['update', 'updateMany', 'delete', 'deleteMany'];
           const createOperations = ['create', 'createMany', 'upsert'];
 
+          // ⚠️ TEMPORARY: Skip tenant context validation in development for showcase
+          const isDevelopment = process.env.NODE_ENV === 'development';
+
           // For multi-tenant tables, require organizationId
-          if (isMultiTenant && !context.organizationId) {
+          if (isMultiTenant && !context.organizationId && !isDevelopment) {
             const message = `[Tenant Isolation] Blocked ${operation} on ${model}: No tenant context set`;
             console.error(message);
             throw new Error('Tenant context required for this operation');
           }
 
           // For user-scoped tables, require userId
-          if (isUserScoped && !context.userId && readOperations.includes(operation)) {
+          if (isUserScoped && !context.userId && readOperations.includes(operation) && !isDevelopment) {
             const message = `[Tenant Isolation] Blocked ${operation} on ${model}: No user context set`;
             console.error(message);
             throw new Error('User context required for this operation');

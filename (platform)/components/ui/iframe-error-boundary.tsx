@@ -85,7 +85,7 @@ class IframeErrorBoundary extends Component<Props, State> {
                   {this.props.fallbackTitle || "Content Loading Error"}
                 </h3>
                 <p className="text-red-600 text-sm mb-4">
-                  We're having trouble loading this content. This might be due to network issues or security restrictions.
+                  We&apos;re having trouble loading this content. This might be due to network issues or security restrictions.
                 </p>
               </div>
 

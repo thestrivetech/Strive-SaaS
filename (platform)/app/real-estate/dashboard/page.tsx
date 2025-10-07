@@ -6,6 +6,9 @@ import { getDashboardMetrics } from '@/lib/modules/dashboard/metrics/queries';
 import { getDashboardWidgets } from '@/lib/modules/dashboard/widgets/queries';
 import { getRecentActivities } from '@/lib/modules/dashboard/activities/queries';
 import { getQuickActions } from '@/lib/modules/dashboard/quick-actions/queries';
+import { DashboardContent } from '@/components/shared/dashboard/DashboardContent';
+import { DashboardGrid } from '@/components/shared/dashboard/DashboardGrid';
+import { HeroSection } from '@/components/shared/dashboard/HeroSection';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
@@ -24,6 +27,7 @@ import {
 } from 'lucide-react';
 import Link from 'next/link';
 import { Metadata } from 'next';
+import type { UserWithOrganization } from '@/lib/auth/user-helpers';
 
 export const metadata: Metadata = {
   title: 'Dashboard | Strive Platform',
@@ -39,51 +43,58 @@ export const metadata: Metadata = {
  * @protected - Requires authentication at layout level
  */
 export default async function DashboardPage() {
-  await requireAuth();
-  const user = await getCurrentUser();
+  // ⚠️ TEMPORARY: Skip auth on localhost for presentation
+  const isLocalhost = typeof window === 'undefined' &&
+    (process.env.NODE_ENV === 'development' || process.env.NEXT_PUBLIC_ENV === 'local');
 
-  if (!user) {
-    redirect('/login');
-  }
+  let user: UserWithOrganization | null = null;
+  let organizationId: string | null = null;
 
-  const organizationId = user.organization_members[0]?.organization_id;
+  if (!isLocalhost) {
+    await requireAuth();
+    user = await getCurrentUser();
 
-  if (!organizationId) {
-    redirect('/onboarding/organization');
+    if (!user) {
+      redirect('/login');
+    }
+
+    organizationId = user.organization_members[0]?.organization_id;
+
+    if (!organizationId) {
+      redirect('/onboarding/organization');
+    }
+  } else {
+    // Mock user for localhost
+    user = {
+      id: 'demo-user',
+      clerk_user_id: null,
+      email: 'demo@strivetech.ai',
+      name: 'Demo User',
+      avatar_url: null,
+      role: 'USER' as const,
+      subscription_tier: 'STARTER' as const,
+      is_active: true,
+      created_at: new Date(),
+      updated_at: new Date(),
+      organization_members: [],
+    };
+    organizationId = 'demo-org';
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
-      {/* Dashboard Header */}
-      <div className="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-          <div className="flex items-center justify-between">
-            <div>
-              <h1 className="text-3xl font-bold tracking-tight text-gray-900 dark:text-white">
-                Welcome back, {user.name || 'User'}
-              </h1>
-              <p className="mt-1 text-sm text-gray-600 dark:text-gray-400">
-                Here's what's happening with your real estate business
-              </p>
-            </div>
-            <Link href="/real-estate/dashboard/customize">
-              <Button variant="outline" size="sm">
-                <Settings className="w-4 h-4 mr-2" />
-                Customize
-              </Button>
-            </Link>
-          </div>
-        </div>
-      </div>
+    <DashboardContent user={user} organizationId={organizationId}>
+      <Suspense fallback={<HeroSkeleton />}>
+        <HeroSectionWrapper organizationId={organizationId} user={user} />
+      </Suspense>
 
-      {/* Main Content */}
+      {/* Dashboard Widget Grid - New Drag-and-Drop System */}
+      <Suspense fallback={<DashboardGridSkeleton />}>
+        <DashboardGridSection organizationId={organizationId} />
+      </Suspense>
+
+      {/* Dashboard Content */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="space-y-8">
-          {/* KPI Cards Row */}
-          <Suspense fallback={<KPICardsSkeleton />}>
-            <KPICardsSection organizationId={organizationId} />
-          </Suspense>
-
           {/* Quick Actions Grid */}
           <Suspense fallback={<QuickActionsSkeleton />}>
             <QuickActionsSection organizationId={organizationId} />
@@ -113,6 +124,47 @@ export default async function DashboardPage() {
               </Suspense>
             </div>
           </div>
+        </div>
+      </div>
+    </DashboardContent>
+  );
+}
+
+/**
+ * Hero Section Wrapper - Server Component for data fetching
+ */
+async function HeroSectionWrapper({
+  organizationId,
+  user,
+}: {
+  organizationId: string;
+  user: UserWithOrganization;
+}) {
+  const stats = await getDashboardStats(organizationId);
+  return <HeroSection user={user} stats={stats} />;
+}
+
+/**
+ * Hero Section Skeleton
+ */
+function HeroSkeleton() {
+  return (
+    <div className="p-4 sm:p-6">
+      <div className="glass-strong rounded-2xl p-6 sm:p-8 neon-border-cyan mb-6">
+        <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-6">
+          <div className="flex-1">
+            <Skeleton className="h-12 w-96 mb-2" />
+            <Skeleton className="h-4 w-64" />
+          </div>
+          <div className="flex items-center gap-4 sm:gap-6">
+            <Skeleton className="h-20 w-24 rounded-xl" />
+            <Skeleton className="h-20 w-32 rounded-xl" />
+          </div>
+        </div>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mt-6">
+          {Array.from({ length: 4 }).map((_, i) => (
+            <Skeleton key={i} className="h-28 rounded-xl" />
+          ))}
         </div>
       </div>
     </div>
@@ -481,4 +533,27 @@ function ModuleShortcutsSkeleton() {
 
 function WidgetsSkeleton() {
   return <Skeleton className="h-48 rounded-lg" />;
+}
+
+/**
+ * Dashboard Grid Section - Client Component Wrapper
+ * Renders the drag-and-drop widget grid
+ */
+function DashboardGridSection({ organizationId }: { organizationId: string }) {
+  return <DashboardGrid organizationId={organizationId} />;
+}
+
+function DashboardGridSkeleton() {
+  return (
+    <div className="px-6 pb-6">
+      <div className="flex items-center justify-between mb-4">
+        <Skeleton className="h-4 w-64" />
+        <Skeleton className="h-9 w-32" />
+      </div>
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <Skeleton className="h-96 rounded-2xl lg:col-span-2" />
+        <Skeleton className="h-96 rounded-2xl" />
+      </div>
+    </div>
+  );
 }

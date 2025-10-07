@@ -270,7 +270,7 @@ const FloatingChat = () => {
         <AlertCircle className="w-12 h-12 text-muted-foreground mb-4" />
         <h3 className="font-semibold text-lg mb-2">Chat Temporarily Unavailable</h3>
         <p className="text-muted-foreground mb-4 text-sm">
-          We're having trouble connecting to our chat service. Please try again or contact us directly.
+          We&apos;re having trouble connecting to our chat service. Please try again or contact us directly.
         </p>
 
         <div className="space-y-2 w-full">

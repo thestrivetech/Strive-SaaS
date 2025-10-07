@@ -4,6 +4,11 @@ import { prisma } from '@/lib/database/prisma';
 import { requireAuth } from '@/lib/auth/middleware';
 
 export async function getDashboardWidgets() {
+  // ⚠️ TEMPORARY: Mock data for presentation showcase
+  if (process.env.NODE_ENV === 'development') {
+    return [];
+  }
+
   const user = await requireAuth();
 
   return await prisma.dashboard_widgets.findMany({

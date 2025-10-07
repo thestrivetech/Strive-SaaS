@@ -181,3 +181,292 @@
     transform: translateY(0);
   }
 }
+
+/* ========================================
+   DASHBOARD VISUAL EFFECTS SYSTEM
+   Enhanced glass morphism, neon effects, and animations
+   ======================================== */
+
+/* Glassmorphism Effects */
+.glass {
+  background: rgba(255, 255, 255, 0.03);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.glass-strong {
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(30px);
+  -webkit-backdrop-filter: blur(30px);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+}
+
+.glass-subtle {
+  background: rgba(255, 255, 255, 0.02);
+  backdrop-filter: blur(15px);
+  -webkit-backdrop-filter: blur(15px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+/* Neon Glow Effects */
+.neon-cyan {
+  box-shadow:
+    0 0 10px rgba(0, 210, 255, 0.3),
+    0 0 20px rgba(0, 210, 255, 0.1);
+}
+
+.neon-green {
+  box-shadow:
+    0 0 10px rgba(57, 255, 20, 0.3),
+    0 0 20px rgba(57, 255, 20, 0.1);
+}
+
+.neon-purple {
+  box-shadow:
+    0 0 10px rgba(139, 92, 246, 0.3),
+    0 0 20px rgba(139, 92, 246, 0.1);
+}
+
+.neon-orange {
+  box-shadow:
+    0 0 10px rgba(255, 112, 51, 0.3),
+    0 0 20px rgba(255, 112, 51, 0.1);
+}
+
+/* Neon Border Effects */
+.neon-border-cyan {
+  border: 1px solid rgba(0, 210, 255, 0.5);
+  box-shadow:
+    0 0 15px rgba(0, 210, 255, 0.2),
+    inset 0 0 15px rgba(0, 210, 255, 0.1);
+}
+
+.neon-border-green {
+  border: 1px solid rgba(57, 255, 20, 0.5);
+  box-shadow:
+    0 0 15px rgba(57, 255, 20, 0.2),
+    inset 0 0 15px rgba(57, 255, 20, 0.1);
+}
+
+.neon-border-purple {
+  border: 1px solid rgba(139, 92, 246, 0.5);
+  box-shadow:
+    0 0 15px rgba(139, 92, 246, 0.2),
+    inset 0 0 15px rgba(139, 92, 246, 0.1);
+}
+
+.neon-border-orange {
+  border: 1px solid rgba(255, 112, 51, 0.5);
+  box-shadow:
+    0 0 15px rgba(255, 112, 51, 0.2),
+    inset 0 0 15px rgba(255, 112, 51, 0.1);
+}
+
+.neon-border-primary {
+  border: 1px solid rgba(0, 210, 255, 0.3);
+  box-shadow: 0 0 10px rgba(0, 210, 255, 0.1);
+}
+
+/* Widget Hover Effects */
+.widget-hover {
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.widget-hover:hover {
+  transform: translateY(-4px);
+  box-shadow:
+    0 10px 30px rgba(0, 210, 255, 0.2),
+    0 0 20px rgba(0, 210, 255, 0.1);
+}
+
+/* Dashboard Specific Animations */
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-20px);
+  }
+}
+
+@keyframes glow {
+  0% {
+    box-shadow: 0 0 5px rgba(0, 210, 255, 0.3);
+  }
+  100% {
+    box-shadow:
+      0 0 20px rgba(0, 210, 255, 0.8),
+      0 0 40px rgba(0, 210, 255, 0.4);
+  }
+}
+
+@keyframes pulse-slow {
+  0%, 100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.8;
+    transform: scale(1.05);
+  }
+}
+
+@keyframes data-pulse {
+  0%, 100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.8;
+    transform: scale(1.05);
+  }
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: -1000px 0;
+  }
+  100% {
+    background-position: 1000px 0;
+  }
+}
+
+@keyframes fade-in-up {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Animation Utility Classes */
+.animate-float {
+  animation: float 6s ease-in-out infinite;
+}
+
+.animate-glow {
+  animation: glow 2s ease-in-out infinite alternate;
+}
+
+.animate-pulse-slow {
+  animation: pulse-slow 3s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+.animate-data-pulse {
+  animation: data-pulse 1s ease-in-out;
+}
+
+.animate-shimmer {
+  animation: shimmer 2s linear infinite;
+  background: linear-gradient(
+    to right,
+    transparent 0%,
+    rgba(255, 255, 255, 0.05) 50%,
+    transparent 100%
+  );
+  background-size: 1000px 100%;
+}
+
+.animate-fade-in-up {
+  animation: fade-in-up 0.5s ease-out forwards;
+}
+
+/* Gradient Utilities */
+.gradient-cyan-purple {
+  background: linear-gradient(135deg, rgba(0, 210, 255, 0.1) 0%, rgba(139, 92, 246, 0.1) 100%);
+}
+
+.gradient-green-cyan {
+  background: linear-gradient(135deg, rgba(57, 255, 20, 0.1) 0%, rgba(0, 210, 255, 0.1) 100%);
+}
+
+.gradient-orange-purple {
+  background: linear-gradient(135deg, rgba(255, 112, 51, 0.1) 0%, rgba(139, 92, 246, 0.1) 100%);
+}
+
+/* Backdrop Blur Utilities */
+.backdrop-blur-strong {
+  backdrop-filter: blur(30px);
+  -webkit-backdrop-filter: blur(30px);
+}
+
+.backdrop-blur-medium {
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+}
+
+.backdrop-blur-subtle {
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+}
+
+/* Custom Scrollbar for Dashboard */
+.dashboard-scrollbar::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+.dashboard-scrollbar::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.03);
+  border-radius: 4px;
+}
+
+.dashboard-scrollbar::-webkit-scrollbar-thumb {
+  background: rgba(0, 210, 255, 0.3);
+  border-radius: 4px;
+}
+
+.dashboard-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: rgba(0, 210, 255, 0.5);
+}
+
+/* Activity Feed Smooth Scroll */
+.activity-feed {
+  scroll-behavior: smooth;
+}
+
+/* Dashboard Card Hover State */
+.dashboard-card {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.dashboard-card:hover {
+  transform: translateY(-2px);
+}
+
+/* Stat Card Pulse on Update */
+.stat-update {
+  animation: data-pulse 0.5s ease-out;
+}
+
+/* Loading Shimmer Effect */
+.loading-shimmer {
+  position: relative;
+  overflow: hidden;
+  background: rgba(255, 255, 255, 0.03);
+}
+
+.loading-shimmer::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(255, 255, 255, 0.05) 50%,
+    transparent 100%
+  );
+  animation: shimmer 2s infinite;
+}
+
+/* Focus Visible States for Accessibility */
+.focus-ring {
+  @apply focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-background;
+}

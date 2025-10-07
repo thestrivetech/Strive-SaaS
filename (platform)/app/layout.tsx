@@ -4,6 +4,7 @@ import "./globals.css";
 import "@/lib/env"; // Validate environment variables at startup
 import { Providers } from "@/components/shared/providers";
 import { Toaster } from "sonner";
+import { UnregisterServiceWorker } from "./unregister-sw";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -29,6 +30,7 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body className={`${inter.variable} font-sans antialiased`}>
+        <UnregisterServiceWorker />
         <Providers>
           {children}
           <Toaster />

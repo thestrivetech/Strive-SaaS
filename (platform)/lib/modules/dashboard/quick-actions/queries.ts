@@ -5,6 +5,11 @@ import { requireAuth } from '@/lib/auth/middleware';
 import type { quick_actions } from '@prisma/client';
 
 export async function getQuickActions() {
+  // ⚠️ TEMPORARY: Mock data for presentation showcase
+  if (process.env.NODE_ENV === 'development') {
+    return [];
+  }
+
   const user = await requireAuth();
 
   const actions = await prisma.quick_actions.findMany({

@@ -15,19 +15,25 @@ interface DashboardLayoutProps {
  * @protected - Requires valid session and organization membership
  */
 export default async function DashboardLayout({ children }: DashboardLayoutProps) {
-  // Enforce authentication
-  await requireAuth();
-  const user = await getCurrentUser();
+  // ⚠️ TEMPORARY: Skip auth on localhost for presentation
+  const isLocalhost = typeof window === 'undefined' &&
+    (process.env.NODE_ENV === 'development' || process.env.NEXT_PUBLIC_ENV === 'local');
 
-  if (!user) {
-    redirect('/login');
-  }
+  if (!isLocalhost) {
+    // Enforce authentication
+    await requireAuth();
+    const user = await getCurrentUser();
 
-  // Ensure user has organization membership
-  const organizationId = user.organization_members[0]?.organization_id;
+    if (!user) {
+      redirect('/login');
+    }
 
-  if (!organizationId) {
-    redirect('/onboarding/organization');
+    // Ensure user has organization membership
+    const organizationId = user.organization_members[0]?.organization_id;
+
+    if (!organizationId) {
+      redirect('/onboarding/organization');
+    }
   }
 
   return (

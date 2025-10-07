@@ -56,7 +56,7 @@ export default async function ContactDetailPage({ params }: ContactDetailPagePro
   return (
     <div className="space-y-6 p-6">
       {/* Back Button */}
-      <Link href="/crm/contacts">
+      <Link href="/real-estate/crm/contacts">
         <Button variant="ghost" size="sm">
           <ArrowLeft className="h-4 w-4 mr-2" />
           Back to Contacts

@@ -62,7 +62,7 @@ export default async function CRMDashboardPage() {
         <div>
           <h1 className="text-3xl font-bold">CRM Dashboard</h1>
           <p className="text-muted-foreground">
-            Welcome back, {user.name}! Here's your CRM overview.
+            Welcome back, {user.name}! Here&apos;s your CRM overview.
           </p>
         </div>
         <QuickCreateMenu organizationId={organizationId} />
@@ -107,7 +107,7 @@ export default async function CRMDashboardPage() {
               <div className="flex items-center justify-between">
                 <CardTitle>Recent Leads</CardTitle>
                 <Button variant="ghost" size="sm" asChild>
-                  <Link href="/crm/leads" className="flex items-center gap-1">
+                  <Link href="/real-estate/crm/leads" className="flex items-center gap-1">
                     View all
                     <ArrowRight className="h-4 w-4" />
                   </Link>
@@ -139,7 +139,7 @@ export default async function CRMDashboardPage() {
               <div className="flex items-center justify-between">
                 <CardTitle>Pipeline Overview</CardTitle>
                 <Button variant="ghost" size="sm" asChild>
-                  <Link href="/crm/deals" className="flex items-center gap-1">
+                  <Link href="/real-estate/crm/deals" className="flex items-center gap-1">
                     View pipeline
                     <ArrowRight className="h-4 w-4" />
                   </Link>
@@ -186,7 +186,7 @@ export default async function CRMDashboardPage() {
               <div className="flex items-center justify-between">
                 <CardTitle>Upcoming Appointments</CardTitle>
                 <Button variant="ghost" size="sm" asChild>
-                  <Link href="/crm/calendar" className="flex items-center gap-1">
+                  <Link href="/real-estate/crm/calendar" className="flex items-center gap-1">
                     View calendar
                     <ArrowRight className="h-4 w-4" />
                   </Link>

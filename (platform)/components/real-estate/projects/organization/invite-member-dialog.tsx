@@ -107,7 +107,7 @@ export function InviteMemberDialog({ organizationId, children, asChild = false }
                     />
                   </FormControl>
                   <FormDescription>
-                    We'll send them an invitation to join your organization.
+                    We&apos;ll send them an invitation to join your organization.
                   </FormDescription>
                   <FormMessage />
                 </FormItem>

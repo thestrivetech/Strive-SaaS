@@ -160,7 +160,7 @@ export function PartyInviteDialog({ loopId, onSuccess }: PartyInviteDialogProps)
                     <SelectContent>
                       <SelectItem value="BUYER">Buyer</SelectItem>
                       <SelectItem value="SELLER">Seller</SelectItem>
-                      <SelectItem value="BUYER_AGENT">Buyer's Agent</SelectItem>
+                      <SelectItem value="BUYER_AGENT">Buyer&apos;s Agent</SelectItem>
                       <SelectItem value="LISTING_AGENT">Listing Agent</SelectItem>
                       <SelectItem value="LENDER">Lender</SelectItem>
                       <SelectItem value="TITLE_COMPANY">Title Company</SelectItem>

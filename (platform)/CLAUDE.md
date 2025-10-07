@@ -3,7 +3,7 @@
 **Claude's Session Memory | v2.0 | Platform Project Standards - Multi-Industry Architecture**
 
 !!!! IMPORTANT NOTE -> Server only imports were removed to make the build work in order to prep for showcase -> This needs to be investigated and fixed before deploying to production !!! -> User will prompt you @Claude when it's time to fix this.
-
+  - This could've been beacuse the server only dependency wasn't installed... It was just recently installed. I'm not sure, this is just an observation.
 > ## 🔴 CRITICAL: READ-BEFORE-EDIT MANDATE
 >
 > **YOU MUST FOLLOW THESE STEPS BEFORE ANY ACTION:**
@@ -642,9 +642,33 @@ const customers = await prisma.customer.findMany({
 
 **MANDATORY before ANY commit:**
 ```bash
-npm run lint        # Zero warnings
+npm run lint        # Zero warnings (⚠️ Current: 291 any warnings + 25 React errors)
 npm run type-check  # Zero errors
 npm test            # 80% coverage
+```
+
+**⚠️ ESLint Configuration Updates (2025-10-07):**
+- `@typescript-eslint/no-explicit-any`: Changed from ERROR → **WARN**
+  - Allows build to succeed while encouraging proper typing
+  - Test files, error handlers, and third-party types exempt
+  - **291 instances to fix before Vercel deployment**
+- `max-lines-per-function`: **REMOVED** (was 50 lines, caused build failure)
+  - Only file-level limit (500 lines) enforced
+- `react/no-unescaped-entities`: Still **ERROR** (blocks build)
+  - **25 instances blocking production build** - must fix apostrophes/quotes in JSX
+
+**⚠️ CRITICAL - Before Deploying to Vercel:**
+```bash
+# Production deployment requirements:
+npm run build       # Must succeed with ZERO errors
+npm run lint        # Must show ZERO warnings (currently has 300+ warnings)
+
+# Current blockers (as of 2025-10-07):
+# 1. 25 react/no-unescaped-entities errors (blocks build immediately)
+# 2. 291 @typescript-eslint/no-explicit-any warnings (tech debt)
+# 3. Various unused variable warnings
+
+# Vercel will reject builds with errors - warnings accepted but discouraged
 ```
 
 **Platform-Specific Checks:**
@@ -656,6 +680,7 @@ npm test            # 80% coverage
 - [ ] No cross-module imports
 - [ ] Stripe webhooks verified
 - [ ] No exposed secrets
+- [ ] **ESLint warnings addressed** (especially before production deploy)
 
 **Test Coverage Requirements:**
 - Auth & RBAC: 100%

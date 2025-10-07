@@ -195,7 +195,7 @@ export function DealActionsMenu({ dealId, dealTitle, onEdit }: DealActionsMenuPr
           <AlertDialogHeader>
             <AlertDialogTitle>Delete deal?</AlertDialogTitle>
             <AlertDialogDescription>
-              This will permanently delete "{dealTitle}" and all associated data. This action cannot be undone.
+              This will permanently delete &quot;{dealTitle}&quot; and all associated data. This action cannot be undone.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>

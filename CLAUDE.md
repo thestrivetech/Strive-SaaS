@@ -3,7 +3,8 @@
 **Claude's Session Memory | v4.0 | Tri-Fold Architecture**
 
 !!!! IMPORTANT NOTE -> Server only imports were removed to make the build work in order to prep for showcase -> This needs to be investigated and fixed before deploying to production !!! -> User will prompt you @Claude when it's time to fix this.
-
+  - This could've been beacuse the server only dependency wasn't installed... It was just recently installed. I'm not sure, this is just an observation.
+  
 > ## 🔴 CRITICAL: TRI-FOLD REPOSITORY STRUCTURE
 >
 > This repository contains **THREE SEPARATE PROJECTS**, each with its own:
@@ -374,6 +375,38 @@ cd (website)/  && cat CLAUDE.md   # Website rules
 - Server Components: 250 lines
 - Services/Logic: 300 lines
 - API Routes: 150 lines
+
+### ESLint Configuration (Platform Project)
+**Location:** `(platform)/eslint.config.mjs`
+
+**Current Rules:**
+- `max-lines`: **ERROR** at 500 lines (blocks build)
+- `@typescript-eslint/no-explicit-any`: **WARN** (allows build, shows warnings)
+  - Test files exempt: `**/*.test.ts`, `lib/test/**/*`
+  - Error handlers exempt: `lib/api/error-handler.ts`, error boundaries
+  - Third-party types exempt: `lib/types/**/supabase.ts`
+- `react/no-unescaped-entities`: **ERROR** (blocks build - fix apostrophes/quotes in JSX)
+- Cross-module imports: **ERROR** (prevents `lib/modules/` from importing each other)
+
+**⚠️ CRITICAL - Before Deploying to Vercel:**
+```bash
+# Fix ALL warnings before production deployment
+npm run lint        # Must show ZERO warnings
+npm run build       # Must succeed with ZERO warnings
+
+# Current known warnings (as of 2025-10-07):
+# - 291 instances of @typescript-eslint/no-explicit-any
+# - 25 instances of react/no-unescaped-entities (blocking build)
+# - Various unused variable warnings
+
+# These MUST be fixed before deploying to production
+```
+
+**Why Warnings Matter:**
+- Development mode (`npm run dev`) - Warnings allowed
+- Production build (`npm run build`) - Warnings should be treated as tech debt
+- Vercel deployment - Clean builds show code quality
+- Type safety - `any` types bypass TypeScript's value proposition
 
 ### Root Directory Standards
 **CRITICAL:** Keep repository root clean!

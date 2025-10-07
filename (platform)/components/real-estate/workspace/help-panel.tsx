@@ -57,7 +57,7 @@ export function HelpPanel() {
                 </div>
               </AccordionTrigger>
               <AccordionContent className="text-sm text-muted-foreground">
-                Click the "Create Loop" button on the main transactions page. Fill in the property
+                Click the &quot;Create Loop&quot; button on the main transactions page. Fill in the property
                 details, transaction type, and listing price. You can add parties and documents after
                 creating the loop.
               </AccordionContent>
@@ -84,7 +84,7 @@ export function HelpPanel() {
                 </div>
               </AccordionTrigger>
               <AccordionContent className="text-sm text-muted-foreground">
-                Upload a document, then request signatures from specific parties. They'll receive an
+                Upload a document, then request signatures from specific parties. They&apos;ll receive an
                 email with a secure link to review and sign. You can track signature status in real-time
                 and receive notifications when documents are signed.
               </AccordionContent>

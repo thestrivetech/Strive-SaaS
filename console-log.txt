@@ -1,11 +1,195 @@
-dashboard:1  GET http://localhost:3000/dashboard 404 (Not Found)
 dashboard:1 <link rel=preload> must have a valid `as` value
 forward-logs-shared.ts:95 Download the React DevTools for a better development experience: https://react.dev/link/react-devtools
+auth-helpers.ts:76  Server  Using the user object as returned from supabase.auth.getSession() or from some supabase.auth.onAuthStateChange() events could be insecure! This value comes directly from the storage medium (usually cookies on the server) and may not be authentic. Use supabase.auth.getUser() instead which authenticates the data by contacting the Supabase Auth server.
+warn @ forward-logs-shared.ts:95
+Object.get @ GoTrueClient.ts:1566
+getCurrentUser @ auth-helpers.ts:76
+RealEstateLayout @ layout.tsx:28
+react_stack_bottom_frame @ react-server-dom-turbopack-client.browser.development.js:4802
+resolveConsoleEntry @ react-server-dom-turbopack-client.browser.development.js:3334
+processFullStringRow @ react-server-dom-turbopack-client.browser.development.js:4229
+processFullBinaryRow @ react-server-dom-turbopack-client.browser.development.js:4125
+processBinaryChunk @ react-server-dom-turbopack-client.browser.development.js:4338
+progress @ react-server-dom-turbopack-client.browser.development.js:4608
+<RealEstateLayout>
+Function.all @ VM4758 <anonymous>:1
+initializeFakeTask @ react-server-dom-turbopack-client.browser.development.js:3234
+initializeDebugInfo @ react-server-dom-turbopack-client.browser.development.js:3259
+initializeDebugChunk @ react-server-dom-turbopack-client.browser.development.js:1670
+processFullStringRow @ react-server-dom-turbopack-client.browser.development.js:4214
+processFullBinaryRow @ react-server-dom-turbopack-client.browser.development.js:4125
+processBinaryChunk @ react-server-dom-turbopack-client.browser.development.js:4338
+progress @ react-server-dom-turbopack-client.browser.development.js:4608
+"use server"
+ResponseInstance @ react-server-dom-turbopack-client.browser.development.js:2647
+createResponseFromOptions @ react-server-dom-turbopack-client.browser.development.js:4471
+exports.createFromReadableStream @ react-server-dom-turbopack-client.browser.development.js:4872
+__TURBOPACK__module__evaluation__ @ app-index.tsx:176
+(anonymous) @ dev-base.ts:241
+runModuleExecutionHooks @ dev-base.ts:275
+instantiateModule @ dev-base.ts:235
+getOrInstantiateModuleFromParent @ dev-base.ts:162
+commonJsRequire @ runtime-utils.ts:389
+(anonymous) @ app-next-turbopack.ts:11
+(anonymous) @ app-bootstrap.ts:79
+loadScriptsInSequence @ app-bootstrap.ts:23
+appBootstrap @ app-bootstrap.ts:61
+__TURBOPACK__module__evaluation__ @ app-next-turbopack.ts:10
+(anonymous) @ dev-base.ts:241
+runModuleExecutionHooks @ dev-base.ts:275
+instantiateModule @ dev-base.ts:235
+getOrInstantiateRuntimeModule @ dev-base.ts:128
+registerChunk @ runtime-backend-dom.ts:57
+await in registerChunk
+registerChunk @ dev-base.ts:1146
+(anonymous) @ dev-backend-dom.ts:126
+(anonymous) @ dev-backend-dom.ts:126
+auth-helpers.ts:129  Server  Error creating user in Supabase: {code: '42501', details: null, hint: null, message: 'new row violates row-level security policy for table "users"'}
+error @ intercept-console-error.ts:42
+getCurrentUser @ auth-helpers.ts:129
+RealEstateLayout @ layout.tsx:28
+react_stack_bottom_frame @ react-server-dom-turbopack-client.browser.development.js:4802
+resolveConsoleEntry @ react-server-dom-turbopack-client.browser.development.js:3334
+processFullStringRow @ react-server-dom-turbopack-client.browser.development.js:4229
+processFullBinaryRow @ react-server-dom-turbopack-client.browser.development.js:4125
+processBinaryChunk @ react-server-dom-turbopack-client.browser.development.js:4338
+progress @ react-server-dom-turbopack-client.browser.development.js:4608
+<RealEstateLayout>
+Function.all @ VM4758 <anonymous>:1
+initializeFakeTask @ react-server-dom-turbopack-client.browser.development.js:3234
+initializeDebugInfo @ react-server-dom-turbopack-client.browser.development.js:3259
+initializeDebugChunk @ react-server-dom-turbopack-client.browser.development.js:1670
+processFullStringRow @ react-server-dom-turbopack-client.browser.development.js:4214
+processFullBinaryRow @ react-server-dom-turbopack-client.browser.development.js:4125
+processBinaryChunk @ react-server-dom-turbopack-client.browser.development.js:4338
+progress @ react-server-dom-turbopack-client.browser.development.js:4608
+"use server"
+ResponseInstance @ react-server-dom-turbopack-client.browser.development.js:2647
+createResponseFromOptions @ react-server-dom-turbopack-client.browser.development.js:4471
+exports.createFromReadableStream @ react-server-dom-turbopack-client.browser.development.js:4872
+__TURBOPACK__module__evaluation__ @ app-index.tsx:176
+(anonymous) @ dev-base.ts:241
+runModuleExecutionHooks @ dev-base.ts:275
+instantiateModule @ dev-base.ts:235
+getOrInstantiateModuleFromParent @ dev-base.ts:162
+commonJsRequire @ runtime-utils.ts:389
+(anonymous) @ app-next-turbopack.ts:11
+(anonymous) @ app-bootstrap.ts:79
+loadScriptsInSequence @ app-bootstrap.ts:23
+appBootstrap @ app-bootstrap.ts:61
+__TURBOPACK__module__evaluation__ @ app-next-turbopack.ts:10
+(anonymous) @ dev-base.ts:241
+runModuleExecutionHooks @ dev-base.ts:275
+instantiateModule @ dev-base.ts:235
+getOrInstantiateRuntimeModule @ dev-base.ts:128
+registerChunk @ runtime-backend-dom.ts:57
+await in registerChunk
+registerChunk @ dev-base.ts:1146
+(anonymous) @ dev-backend-dom.ts:126
+(anonymous) @ dev-backend-dom.ts:126
+auth-helpers.ts:76  Server  Using the user object as returned from supabase.auth.getSession() or from some supabase.auth.onAuthStateChange() events could be insecure! This value comes directly from the storage medium (usually cookies on the server) and may not be authentic. Use supabase.auth.getUser() instead which authenticates the data by contacting the Supabase Auth server.
+warn @ forward-logs-shared.ts:95
+Object.get @ GoTrueClient.ts:1566
+getCurrentUser @ auth-helpers.ts:76
+Header @ header.tsx:7
+react_stack_bottom_frame @ react-server-dom-turbopack-client.browser.development.js:4802
+resolveConsoleEntry @ react-server-dom-turbopack-client.browser.development.js:3334
+processFullStringRow @ react-server-dom-turbopack-client.browser.development.js:4229
+processFullBinaryRow @ react-server-dom-turbopack-client.browser.development.js:4125
+processBinaryChunk @ react-server-dom-turbopack-client.browser.development.js:4338
+progress @ react-server-dom-turbopack-client.browser.development.js:4608
+<Header>
+RealEstateLayout @ layout.tsx:44
+initializeFakeTask @ react-server-dom-turbopack-client.browser.development.js:3236
+initializeDebugInfo @ react-server-dom-turbopack-client.browser.development.js:3259
+initializeDebugChunk @ react-server-dom-turbopack-client.browser.development.js:1670
+processFullStringRow @ react-server-dom-turbopack-client.browser.development.js:4214
+processFullBinaryRow @ react-server-dom-turbopack-client.browser.development.js:4125
+processBinaryChunk @ react-server-dom-turbopack-client.browser.development.js:4338
+progress @ react-server-dom-turbopack-client.browser.development.js:4608
+<RealEstateLayout>
+Function.all @ VM4758 <anonymous>:1
+initializeFakeTask @ react-server-dom-turbopack-client.browser.development.js:3234
+initializeDebugInfo @ react-server-dom-turbopack-client.browser.development.js:3259
+initializeDebugChunk @ react-server-dom-turbopack-client.browser.development.js:1670
+processFullStringRow @ react-server-dom-turbopack-client.browser.development.js:4214
+processFullBinaryRow @ react-server-dom-turbopack-client.browser.development.js:4125
+processBinaryChunk @ react-server-dom-turbopack-client.browser.development.js:4338
+progress @ react-server-dom-turbopack-client.browser.development.js:4608
+"use server"
+ResponseInstance @ react-server-dom-turbopack-client.browser.development.js:2647
+createResponseFromOptions @ react-server-dom-turbopack-client.browser.development.js:4471
+exports.createFromReadableStream @ react-server-dom-turbopack-client.browser.development.js:4872
+__TURBOPACK__module__evaluation__ @ app-index.tsx:176
+(anonymous) @ dev-base.ts:241
+runModuleExecutionHooks @ dev-base.ts:275
+instantiateModule @ dev-base.ts:235
+getOrInstantiateModuleFromParent @ dev-base.ts:162
+commonJsRequire @ runtime-utils.ts:389
+(anonymous) @ app-next-turbopack.ts:11
+(anonymous) @ app-bootstrap.ts:79
+loadScriptsInSequence @ app-bootstrap.ts:23
+appBootstrap @ app-bootstrap.ts:61
+__TURBOPACK__module__evaluation__ @ app-next-turbopack.ts:10
+(anonymous) @ dev-base.ts:241
+runModuleExecutionHooks @ dev-base.ts:275
+instantiateModule @ dev-base.ts:235
+getOrInstantiateRuntimeModule @ dev-base.ts:128
+registerChunk @ runtime-backend-dom.ts:57
+await in registerChunk
+registerChunk @ dev-base.ts:1146
+(anonymous) @ dev-backend-dom.ts:126
+(anonymous) @ dev-backend-dom.ts:126
+auth-helpers.ts:129  Server  Error creating user in Supabase: {code: '42501', details: null, hint: null, message: 'new row violates row-level security policy for table "users"'}
+error @ intercept-console-error.ts:42
+getCurrentUser @ auth-helpers.ts:129
+Header @ header.tsx:7
+react_stack_bottom_frame @ react-server-dom-turbopack-client.browser.development.js:4802
+resolveConsoleEntry @ react-server-dom-turbopack-client.browser.development.js:3334
+processFullStringRow @ react-server-dom-turbopack-client.browser.development.js:4229
+processFullBinaryRow @ react-server-dom-turbopack-client.browser.development.js:4125
+processBinaryChunk @ react-server-dom-turbopack-client.browser.development.js:4338
+progress @ react-server-dom-turbopack-client.browser.development.js:4608
+<Header>
+RealEstateLayout @ layout.tsx:44
+initializeFakeTask @ react-server-dom-turbopack-client.browser.development.js:3236
+initializeDebugInfo @ react-server-dom-turbopack-client.browser.development.js:3259
+initializeDebugChunk @ react-server-dom-turbopack-client.browser.development.js:1670
+processFullStringRow @ react-server-dom-turbopack-client.browser.development.js:4214
+processFullBinaryRow @ react-server-dom-turbopack-client.browser.development.js:4125
+processBinaryChunk @ react-server-dom-turbopack-client.browser.development.js:4338
+progress @ react-server-dom-turbopack-client.browser.development.js:4608
+<RealEstateLayout>
+Function.all @ VM4758 <anonymous>:1
+initializeFakeTask @ react-server-dom-turbopack-client.browser.development.js:3234
+initializeDebugInfo @ react-server-dom-turbopack-client.browser.development.js:3259
+initializeDebugChunk @ react-server-dom-turbopack-client.browser.development.js:1670
+processFullStringRow @ react-server-dom-turbopack-client.browser.development.js:4214
+processFullBinaryRow @ react-server-dom-turbopack-client.browser.development.js:4125
+processBinaryChunk @ react-server-dom-turbopack-client.browser.development.js:4338
+progress @ react-server-dom-turbopack-client.browser.development.js:4608
+"use server"
+ResponseInstance @ react-server-dom-turbopack-client.browser.development.js:2647
+createResponseFromOptions @ react-server-dom-turbopack-client.browser.development.js:4471
+exports.createFromReadableStream @ react-server-dom-turbopack-client.browser.development.js:4872
+__TURBOPACK__module__evaluation__ @ app-index.tsx:176
+(anonymous) @ dev-base.ts:241
+runModuleExecutionHooks @ dev-base.ts:275
+instantiateModule @ dev-base.ts:235
+getOrInstantiateModuleFromParent @ dev-base.ts:162
+commonJsRequire @ runtime-utils.ts:389
+(anonymous) @ app-next-turbopack.ts:11
+(anonymous) @ app-bootstrap.ts:79
+loadScriptsInSequence @ app-bootstrap.ts:23
+appBootstrap @ app-bootstrap.ts:61
+__TURBOPACK__module__evaluation__ @ app-next-turbopack.ts:10
+(anonymous) @ dev-base.ts:241
+runModuleExecutionHooks @ dev-base.ts:275
+instantiateModule @ dev-base.ts:235
+getOrInstantiateRuntimeModule @ dev-base.ts:128
+registerChunk @ runtime-backend-dom.ts:57
+await in registerChunk
+registerChunk @ dev-base.ts:1146
+(anonymous) @ dev-backend-dom.ts:126
+(anonymous) @ dev-backend-dom.ts:126
 forward-logs-shared.ts:95 [HMR] connected
-content.js:2 [Core Web Vitals] LCP 3.596 sec (needs-improvement)
-content.js:2 [Core Web Vitals] FCP 3.596 sec (poor)
-content.js:2 [Core Web Vitals] TTFB 3.107 sec (poor)
-forward-logs-shared.ts:95 [Fast Refresh] rebuilding
-forward-logs-shared.ts:95 [Fast Refresh] done in 124ms
-content.js:2 [Core Web Vitals] CLS 0.00 (good)
-content.js:2 [Core Web Vitals] INP 8 ms (good)

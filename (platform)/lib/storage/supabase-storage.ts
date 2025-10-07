@@ -101,7 +101,7 @@ export class SupabaseStorageService {
 
     let uploadBuffer = fileBuffer;
     let bucket = this.DOCUMENTS_BUCKET;
-    let storagePath = `loops/${loopId}/documents/${fileName}`;
+    const storagePath = `loops/${loopId}/documents/${fileName}`;
     let uploadMetadata: Record<string, string> = { ...metadata, mimeType };
 
     // Encrypt file if required (production default)

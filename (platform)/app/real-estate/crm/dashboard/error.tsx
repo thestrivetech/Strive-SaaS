@@ -35,7 +35,7 @@ export default function DashboardError({
             Retry
           </Button>
           <Button asChild variant="outline" className="w-full">
-            <Link href="/dashboard">
+            <Link href="/real-estate/dashboard">
               <Home className="mr-2 h-4 w-4" />
               Main Dashboard
             </Link>

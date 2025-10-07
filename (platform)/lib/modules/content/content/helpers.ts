@@ -19,7 +19,7 @@ export async function generateUniqueSlug(
   organizationId: string
 ): Promise<string> {
   // Normalize slug: lowercase, replace spaces/special chars with hyphens
-  let slug = baseSlug
+  const slug = baseSlug
     .toLowerCase()
     .replace(/[^a-z0-9]+/g, '-')
     .replace(/^-|-$/g, '');

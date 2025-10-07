@@ -32,7 +32,7 @@ export default async function SettingsLayout({
   // Check if user can access settings
   const canAccess = await canAccessRoute('/settings');
   if (!canAccess) {
-    redirect('/dashboard');
+    redirect('/real-estate/dashboard');
   }
 
   // Get navigation items based on user role

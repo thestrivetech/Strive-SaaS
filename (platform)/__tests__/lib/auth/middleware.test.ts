@@ -319,10 +319,10 @@ describe('Platform Auth Middleware', () => {
       const mockUser = { id: '1', email: 'user@test.com' };
       const mockClient = createMockSupabaseClient(mockUser);
 
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+       
       let cookieOptions: any = null;
 
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+       
       mockCreateServerClient.mockImplementation((url, key, options: any) => {
         cookieOptions = options;
         return mockClient as never;

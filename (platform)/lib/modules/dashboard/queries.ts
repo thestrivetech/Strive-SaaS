@@ -2,6 +2,64 @@ import { prisma } from '@/lib/database/prisma';
 import type { Prisma } from '@prisma/client';
 
 export async function getDashboardStats(organizationId: string) {
+  // ⚠️ TEMPORARY: Mock data for presentation showcase
+  if (process.env.NODE_ENV === 'development') {
+    return {
+      revenue: 12450,
+      customers: 247,
+      projects: 89,
+      activeProjects: 34,
+      tasks: 156,
+      completedTasks: 98,
+      teamMembers: 12,
+      taskCompletionRate: 63,
+      recentActivity: [
+        {
+          id: '1',
+          type: 'CUSTOMER_CREATED',
+          title: 'New customer: John Smith added to CRM',
+          description: 'Created new customer record',
+          created_at: new Date(Date.now() - 3600000),
+          organization_id: organizationId,
+          user_id: 'demo-user',
+          user: {
+            name: 'Sarah Johnson',
+            email: 'sarah@example.com',
+            avatar_url: null,
+          },
+        },
+        {
+          id: '2',
+          type: 'PROJECT_COMPLETED',
+          title: '123 Main St transaction closed successfully',
+          description: 'Transaction completed',
+          created_at: new Date(Date.now() - 7200000),
+          organization_id: organizationId,
+          user_id: 'demo-user',
+          user: {
+            name: 'Mike Chen',
+            email: 'mike@example.com',
+            avatar_url: null,
+          },
+        },
+        {
+          id: '3',
+          type: 'TASK_COMPLETED',
+          title: 'Title search completed for 456 Oak Ave',
+          description: 'Task marked as complete',
+          created_at: new Date(Date.now() - 10800000),
+          organization_id: organizationId,
+          user_id: 'demo-user',
+          user: {
+            name: 'Lisa Anderson',
+            email: 'lisa@example.com',
+            avatar_url: null,
+          },
+        },
+      ],
+    };
+  }
+
   const [
     customerCount,
     projectCount,

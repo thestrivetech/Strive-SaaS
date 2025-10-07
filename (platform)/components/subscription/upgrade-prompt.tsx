@@ -122,7 +122,7 @@ export function UpgradePrompt({ currentTier, requiredTier, feature }: UpgradePro
 
           {/* Feature Benefits */}
           <div className="space-y-3 rounded-lg bg-muted p-4">
-            <h4 className="font-semibold">What you'll get with {requiredMeta.name}:</h4>
+            <h4 className="font-semibold">What you&apos;ll get with {requiredMeta.name}:</h4>
             <ul className="space-y-2 text-sm">
               {requiredTier === 'STARTER' && (
                 <>

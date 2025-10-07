@@ -1,17 +1,36 @@
+import { Suspense } from 'react';
 import { requireAuth, getCurrentUser } from '@/lib/auth/auth-helpers';
 import { redirect } from 'next/navigation';
+import Link from 'next/link';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Megaphone, FileText, BarChart3, Mail, Globe, Calendar } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { Skeleton } from '@/components/ui/skeleton';
+import {
+  Megaphone,
+  FileText,
+  BarChart3,
+  Image,
+  Eye,
+  CheckCircle2,
+  TrendingUp,
+  ArrowRight,
+  Plus,
+} from 'lucide-react';
+import {
+  getCMSDashboardStats,
+  getRecentContent,
+  getRecentCampaigns,
+} from '@/lib/modules/cms-marketing/dashboard-queries';
+import { formatDistanceToNow } from 'date-fns';
 
 /**
  * CMS & Marketing Module Dashboard
  *
  * Main dashboard for Content Management & Marketing features
- * - Content creation and management
- * - Marketing campaigns
- * - Analytics and tracking
- * - Email marketing
- * - Social media integration
+ * - Overview statistics
+ * - Navigation to key features
+ * - Recent activity
+ * - Quick actions
  *
  * @protected - Requires authentication
  */
@@ -29,46 +48,6 @@ export default async function CMSMarketingDashboardPage() {
     redirect('/onboarding/organization');
   }
 
-  // Placeholder features for CMS & Marketing module
-  const upcomingFeatures = [
-    {
-      icon: FileText,
-      title: 'Content Management',
-      description: 'Create and manage website content, blog posts, and landing pages',
-      status: 'Planned',
-    },
-    {
-      icon: Megaphone,
-      title: 'Marketing Campaigns',
-      description: 'Design and launch multi-channel marketing campaigns',
-      status: 'Planned',
-    },
-    {
-      icon: Mail,
-      title: 'Email Marketing',
-      description: 'Build email templates, manage lists, and track campaign performance',
-      status: 'Planned',
-    },
-    {
-      icon: Globe,
-      title: 'Social Media',
-      description: 'Schedule posts, manage multiple platforms, and track engagement',
-      status: 'Planned',
-    },
-    {
-      icon: BarChart3,
-      title: 'Analytics & Tracking',
-      description: 'Track website analytics, conversion rates, and marketing ROI',
-      status: 'Planned',
-    },
-    {
-      icon: Calendar,
-      title: 'Content Calendar',
-      description: 'Plan and schedule content across all marketing channels',
-      status: 'Planned',
-    },
-  ];
-
   return (
     <div className="space-y-6">
       {/* Header */}
@@ -79,41 +58,373 @@ export default async function CMSMarketingDashboardPage() {
             Manage your content and marketing campaigns
           </p>
         </div>
+        <Button asChild>
+          <Link href="/real-estate/cms-marketing/content/editor">
+            <Plus className="mr-2 h-4 w-4" />
+            Create Content
+          </Link>
+        </Button>
       </div>
 
-      {/* Coming Soon Notice */}
-      <Card className="border-dashed border-2 bg-muted/50">
+      {/* Overview Stats */}
+      <Suspense fallback={<StatsLoadingSkeleton />}>
+        <DashboardStats />
+      </Suspense>
+
+      {/* Feature Navigation Cards */}
+      <div className="grid gap-4 md:grid-cols-2">
+        <FeatureCard
+          icon={FileText}
+          title="Content Library"
+          description="Create and manage blog posts, pages, and articles"
+          href="/real-estate/cms-marketing/content"
+          stats="Manage all content"
+        />
+        <FeatureCard
+          icon={Megaphone}
+          title="Campaigns"
+          description="Launch and track marketing campaigns"
+          href="/real-estate/cms-marketing/content/campaigns"
+          stats="Email & social media"
+        />
+        <FeatureCard
+          icon={BarChart3}
+          title="Analytics"
+          description="View content performance and campaign metrics"
+          href="/real-estate/cms-marketing/analytics"
+          stats="Track engagement"
+        />
+        <FeatureCard
+          icon={Image}
+          title="Media Library"
+          description="Manage images, videos, and files"
+          href="/real-estate/cms-marketing/content"
+          stats="Coming soon"
+          badge="Coming Soon"
+        />
+      </div>
+
+      {/* Recent Activity */}
+      <div className="grid gap-4 md:grid-cols-2">
+        <Suspense fallback={<ActivityLoadingSkeleton title="Recent Content" />}>
+          <RecentContentSection />
+        </Suspense>
+        <Suspense fallback={<ActivityLoadingSkeleton title="Recent Campaigns" />}>
+          <RecentCampaignsSection />
+        </Suspense>
+      </div>
+
+      {/* Quick Actions */}
+      <Card>
         <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <Megaphone className="h-5 w-5" />
-            Coming Soon
-          </CardTitle>
-          <CardDescription>
-            The CMS & Marketing module is currently under development.
-            Check back soon for powerful content management and marketing automation tools.
-          </CardDescription>
+          <CardTitle>Quick Actions</CardTitle>
+          <CardDescription>Common tasks to get you started</CardDescription>
         </CardHeader>
+        <CardContent>
+          <div className="flex flex-wrap gap-2">
+            <Button asChild variant="outline">
+              <Link href="/real-estate/cms-marketing/content/editor">
+                Create New Content
+              </Link>
+            </Button>
+            <Button asChild variant="outline">
+              <Link href="/real-estate/cms-marketing/content/campaigns/new">
+                Start Campaign
+              </Link>
+            </Button>
+            <Button asChild variant="outline">
+              <Link href="/real-estate/cms-marketing/analytics">
+                View Analytics
+              </Link>
+            </Button>
+          </div>
+        </CardContent>
       </Card>
-
-      {/* Upcoming Features Grid */}
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-        {upcomingFeatures.map((feature) => (
-          <Card key={feature.title}>
-            <CardHeader>
-              <div className="flex items-start justify-between">
-                <feature.icon className="h-8 w-8 text-primary" />
-                <span className="rounded-full bg-primary/10 px-2.5 py-0.5 text-xs font-medium text-primary">
-                  {feature.status}
-                </span>
-              </div>
-              <CardTitle className="mt-4">{feature.title}</CardTitle>
-              <CardDescription className="mt-2">
-                {feature.description}
-              </CardDescription>
-            </CardHeader>
-          </Card>
-        ))}
-      </div>
     </div>
   );
+}
+
+// Server Component: Fetch and display dashboard stats
+async function DashboardStats() {
+  const stats = await getCMSDashboardStats();
+
+  return (
+    <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+      <StatCard
+        icon={FileText}
+        title="Total Content"
+        value={stats.totalContent.toLocaleString()}
+        description="All content items"
+      />
+      <StatCard
+        icon={CheckCircle2}
+        title="Published"
+        value={stats.publishedContent.toLocaleString()}
+        description="Live content"
+        trend="positive"
+      />
+      <StatCard
+        icon={TrendingUp}
+        title="Active Campaigns"
+        value={stats.activeCampaigns.toLocaleString()}
+        description="Running campaigns"
+      />
+      <StatCard
+        icon={Eye}
+        title="Total Views"
+        value={stats.totalViews.toLocaleString()}
+        description="Content views"
+        trend="positive"
+      />
+    </div>
+  );
+}
+
+// Server Component: Recent content activity
+async function RecentContentSection() {
+  const recentContent = await getRecentContent();
+
+  return (
+    <Card>
+      <CardHeader>
+        <div className="flex items-center justify-between">
+          <CardTitle>Recent Content</CardTitle>
+          <Button asChild variant="ghost" size="sm">
+            <Link href="/real-estate/cms-marketing/content">
+              View All
+              <ArrowRight className="ml-2 h-4 w-4" />
+            </Link>
+          </Button>
+        </div>
+      </CardHeader>
+      <CardContent>
+        {recentContent.length === 0 ? (
+          <div className="text-center py-8 text-muted-foreground">
+            <FileText className="mx-auto h-12 w-12 mb-2 opacity-50" />
+            <p>No content yet</p>
+            <Button asChild variant="link" className="mt-2">
+              <Link href="/real-estate/cms-marketing/content/editor">
+                Create your first content
+              </Link>
+            </Button>
+          </div>
+        ) : (
+          <div className="space-y-3">
+            {recentContent.map((item) => (
+              <Link
+                key={item.id}
+                href={`/real-estate/cms-marketing/content/editor/${item.id}`}
+                className="block p-3 rounded-lg border hover:bg-accent transition-colors"
+              >
+                <div className="flex items-start justify-between">
+                  <div className="flex-1 min-w-0">
+                    <p className="font-medium truncate">{item.title}</p>
+                    <div className="flex items-center gap-2 mt-1 text-sm text-muted-foreground">
+                      <span className="capitalize">{item.type.toLowerCase()}</span>
+                      <span>•</span>
+                      <span className={getStatusColor(item.status)}>
+                        {item.status}
+                      </span>
+                    </div>
+                  </div>
+                  <span className="text-xs text-muted-foreground whitespace-nowrap ml-2">
+                    {formatDistanceToNow(new Date(item.updated_at), { addSuffix: true })}
+                  </span>
+                </div>
+              </Link>
+            ))}
+          </div>
+        )}
+      </CardContent>
+    </Card>
+  );
+}
+
+// Server Component: Recent campaigns activity
+async function RecentCampaignsSection() {
+  const recentCampaigns = await getRecentCampaigns();
+
+  return (
+    <Card>
+      <CardHeader>
+        <div className="flex items-center justify-between">
+          <CardTitle>Recent Campaigns</CardTitle>
+          <Button asChild variant="ghost" size="sm">
+            <Link href="/real-estate/cms-marketing/content/campaigns">
+              View All
+              <ArrowRight className="ml-2 h-4 w-4" />
+            </Link>
+          </Button>
+        </div>
+      </CardHeader>
+      <CardContent>
+        {recentCampaigns.length === 0 ? (
+          <div className="text-center py-8 text-muted-foreground">
+            <Megaphone className="mx-auto h-12 w-12 mb-2 opacity-50" />
+            <p>No campaigns yet</p>
+            <Button asChild variant="link" className="mt-2">
+              <Link href="/real-estate/cms-marketing/content/campaigns/new">
+                Create your first campaign
+              </Link>
+            </Button>
+          </div>
+        ) : (
+          <div className="space-y-3">
+            {recentCampaigns.map((campaign) => (
+              <Link
+                key={campaign.id}
+                href={`/real-estate/cms-marketing/content/campaigns`}
+                className="block p-3 rounded-lg border hover:bg-accent transition-colors"
+              >
+                <div className="flex items-start justify-between">
+                  <div className="flex-1 min-w-0">
+                    <p className="font-medium truncate">{campaign.name}</p>
+                    <div className="flex items-center gap-2 mt-1 text-sm text-muted-foreground">
+                      <span className="capitalize">{campaign.type.toLowerCase()}</span>
+                      <span>•</span>
+                      <span className={getStatusColor(campaign.status)}>
+                        {campaign.status}
+                      </span>
+                    </div>
+                  </div>
+                  <span className="text-xs text-muted-foreground whitespace-nowrap ml-2">
+                    {formatDistanceToNow(new Date(campaign.created_at), { addSuffix: true })}
+                  </span>
+                </div>
+              </Link>
+            ))}
+          </div>
+        )}
+      </CardContent>
+    </Card>
+  );
+}
+
+// Helper Components
+
+interface StatCardProps {
+  icon: React.ComponentType<{ className?: string }>;
+  title: string;
+  value: string;
+  description: string;
+  trend?: 'positive' | 'negative';
+}
+
+function StatCard({ icon: Icon, title, value, description, trend }: StatCardProps) {
+  return (
+    <Card>
+      <CardHeader className="flex flex-row items-center justify-between pb-2">
+        <CardTitle className="text-sm font-medium">{title}</CardTitle>
+        <Icon className="h-4 w-4 text-muted-foreground" />
+      </CardHeader>
+      <CardContent>
+        <div className="text-2xl font-bold">{value}</div>
+        <p className="text-xs text-muted-foreground mt-1">
+          {description}
+        </p>
+      </CardContent>
+    </Card>
+  );
+}
+
+interface FeatureCardProps {
+  icon: React.ComponentType<{ className?: string }>;
+  title: string;
+  description: string;
+  href: string;
+  stats: string;
+  badge?: string;
+}
+
+function FeatureCard({ icon: Icon, title, description, href, stats, badge }: FeatureCardProps) {
+  return (
+    <Card className="hover:shadow-md transition-shadow">
+      <CardHeader>
+        <div className="flex items-start justify-between">
+          <div className="flex items-center gap-3">
+            <div className="p-2 rounded-lg bg-primary/10">
+              <Icon className="h-6 w-6 text-primary" />
+            </div>
+            <div>
+              <CardTitle className="text-lg">{title}</CardTitle>
+              {badge && (
+                <span className="text-xs text-muted-foreground mt-1 inline-block">
+                  {badge}
+                </span>
+              )}
+            </div>
+          </div>
+        </div>
+        <CardDescription className="mt-2">{description}</CardDescription>
+      </CardHeader>
+      <CardContent>
+        <div className="flex items-center justify-between">
+          <span className="text-sm text-muted-foreground">{stats}</span>
+          {!badge && (
+            <Button asChild variant="ghost" size="sm">
+              <Link href={href}>
+                Go to {title}
+                <ArrowRight className="ml-2 h-4 w-4" />
+              </Link>
+            </Button>
+          )}
+        </div>
+      </CardContent>
+    </Card>
+  );
+}
+
+// Loading Skeletons
+
+function StatsLoadingSkeleton() {
+  return (
+    <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+      {[...Array(4)].map((_, i) => (
+        <Card key={i}>
+          <CardHeader className="pb-2">
+            <Skeleton className="h-4 w-24" />
+          </CardHeader>
+          <CardContent>
+            <Skeleton className="h-8 w-16 mb-1" />
+            <Skeleton className="h-3 w-32" />
+          </CardContent>
+        </Card>
+      ))}
+    </div>
+  );
+}
+
+function ActivityLoadingSkeleton({ title }: { title: string }) {
+  return (
+    <Card>
+      <CardHeader>
+        <CardTitle>{title}</CardTitle>
+      </CardHeader>
+      <CardContent>
+        <div className="space-y-3">
+          {[...Array(3)].map((_, i) => (
+            <div key={i} className="p-3 rounded-lg border">
+              <Skeleton className="h-5 w-3/4 mb-2" />
+              <Skeleton className="h-4 w-1/2" />
+            </div>
+          ))}
+        </div>
+      </CardContent>
+    </Card>
+  );
+}
+
+// Utility Functions
+
+function getStatusColor(status: string): string {
+  const statusColors: Record<string, string> = {
+    PUBLISHED: 'text-green-600',
+    DRAFT: 'text-yellow-600',
+    ARCHIVED: 'text-gray-600',
+    ACTIVE: 'text-green-600',
+    PAUSED: 'text-yellow-600',
+    COMPLETED: 'text-blue-600',
+  };
+
+  return statusColors[status] || 'text-muted-foreground';
 }
