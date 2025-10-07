@@ -20,8 +20,8 @@ import { tenantIsolationExtension } from './prisma-middleware';
  *
  * @example
  * ```typescript
- * import { prisma } from '@/lib/prisma';
- * import { setTenantContext } from '@/lib/prisma-middleware';
+ * import { prisma } from '@/lib/database/prisma';
+ * import { setTenantContext } from '@/lib/database/prisma-middleware';
  *
  * export async function getCustomers() {
  *   const user = await getCurrentUser();

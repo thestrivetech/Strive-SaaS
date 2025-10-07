@@ -3,7 +3,7 @@
 import { requireAuth, getCurrentUser } from '@/lib/auth/middleware';
 import { canAccessContent, canPublishContent } from '@/lib/auth/rbac';
 import { canAccessFeature } from '@/lib/auth/rbac';
-import { prisma } from '@/lib/prisma';
+import { prisma } from '@/lib/database/prisma';
 import { revalidatePath } from 'next/cache';
 import {
   ContentItemSchema,

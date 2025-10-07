@@ -1,4 +1,4 @@
-import { prisma } from '@/lib/prisma';
+import { prisma } from '@/lib/database/prisma';
 import { ReportType } from './schemas';
 import type { MarketReportInput } from './schemas';
 

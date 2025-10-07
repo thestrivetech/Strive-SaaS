@@ -547,6 +547,18 @@ if (!isValid) return new Response('400', { status: 400 });
 // Location: .env.local -> DOCUMENT_ENCRYPTION_KEY
 import { encryptDocument } from '@/lib/storage/encryption';
 const encrypted = encryptDocument(fileBuffer);
+
+// 10. Tenant Isolation (CRITICAL)
+import { setTenantContext } from '@/lib/database/prisma-middleware';
+
+// ALWAYS set tenant context before queries
+await setTenantContext({
+  organizationId: session.user.organizationId,
+  userId: session.user.id
+});
+
+// Now queries are automatically filtered by organization
+const data = await prisma.customer.findMany();
 ```
 
 **NEVER expose:**
@@ -675,15 +687,23 @@ npm run db:sync         # Check for schema drift
 # Database - Schema Inspection (99% token savings!)
 # ❌ NEVER: Use MCP list_tables tool (18k tokens!)
 # ✅ ALWAYS: Read local documentation first (500 tokens)
-cat ../shared/prisma/SCHEMA-QUICK-REF.md    # Quick reference
-cat ../shared/prisma/SCHEMA-MODELS.md       # Model details
-cat ../shared/prisma/SCHEMA-ENUMS.md        # Enum values
+cat prisma/SCHEMA-QUICK-REF.md    # Quick reference
+cat prisma/SCHEMA-MODELS.md       # Model details
+cat prisma/SCHEMA-ENUMS.md        # Enum values
+
+# Database - Documentation (Complete guides)
+cat lib/database/docs/SUPABASE-SETUP.md              # Supabase integration
+cat lib/database/docs/RLS-POLICIES.md                # Row Level Security
+cat lib/database/docs/STORAGE-BUCKETS.md             # File storage
+cat lib/database/docs/PRISMA-SUPABASE-DECISION-TREE.md  # Tool selection
+cat lib/database/docs/HYBRID-PATTERNS.md             # Real-world patterns
+cat lib/database/docs/TESTING-RLS.md                 # Testing guide
 
 # Database - Direct Prisma (advanced use only)
-npx prisma generate --schema=../shared/prisma/schema.prisma    # Generate client
-npx prisma migrate dev --name description --schema=../shared/prisma/schema.prisma    # Create migration (manual)
-npx prisma db push --schema=../shared/prisma/schema.prisma     # Push schema (dev only - use with caution)
-npx prisma migrate deploy --schema=../shared/prisma/schema.prisma    # Apply migrations (prod)
+npx prisma generate --schema=./prisma/schema.prisma    # Generate client
+npx prisma migrate dev --name description --schema=./prisma/schema.prisma    # Create migration (manual)
+npx prisma db push --schema=./prisma/schema.prisma     # Push schema (dev only - use with caution)
+npx prisma migrate deploy --schema=./prisma/schema.prisma    # Apply migrations (prod)
 
 # Testing
 npm test                 # Run all tests
@@ -902,10 +922,12 @@ describe('MyFeature Module', () => {
 
 // Database Workflow Anti-patterns (CRITICAL!)
 ❌ Use MCP list_tables for schema inspection // 18k tokens wasted!
-❌ Query database to see what models exist // Read SCHEMA-QUICK-REF.md instead
+❌ Query database to see what models exist // Read prisma/SCHEMA-QUICK-REF.md
 ❌ Create migration without updating docs // Always run npm run db:docs after
 ❌ Bypass helper scripts for migrations // Use npm run db:migrate
 ❌ Apply migrations without verification // Use npm run db:status first
+❌ Skip setTenantContext before queries // SECURITY RISK - data leak!
+❌ Import from @/lib/prisma // Use @/lib/database/prisma instead
 ```
 
 ---

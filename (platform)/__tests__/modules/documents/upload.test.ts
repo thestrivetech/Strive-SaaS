@@ -1,12 +1,12 @@
 import { uploadDocument, getDocumentDownloadUrl, updateDocument, deleteDocument } from '@/lib/modules/transactions/documents/actions';
 import { getCurrentUser } from '@/lib/auth/auth-helpers';
-import { prisma } from '@/lib/prisma';
+import { prisma } from '@/lib/database/prisma';
 import { storageService } from '@/lib/storage/supabase-storage';
 import * as validation from '@/lib/storage/validation';
 
 // Mock dependencies
 jest.mock('@/lib/auth/auth-helpers');
-jest.mock('@/lib/prisma', () => ({
+jest.mock('@/lib/database/prisma', () => ({
   prisma: {
     transaction_loops: {
       findFirst: jest.fn(),

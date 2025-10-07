@@ -1,7 +1,7 @@
 'use server';
 
 import { cache } from 'react';
-import { prisma } from '@/lib/prisma';
+import { prisma } from '@/lib/database/prisma';
 
 /**
  * Onboarding Module - Data Queries

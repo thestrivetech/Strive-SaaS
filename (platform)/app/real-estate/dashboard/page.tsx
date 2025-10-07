@@ -1,8 +1,14 @@
+import { Suspense } from 'react';
 import { redirect } from 'next/navigation';
 import { requireAuth, getCurrentUser } from '@/lib/auth/auth-helpers';
-import { getTransactionAnalytics } from '@/lib/modules/transactions/analytics/queries';
+import { getDashboardStats } from '@/lib/modules/dashboard/queries';
+import { getDashboardMetrics } from '@/lib/modules/dashboard/metrics/queries';
+import { getDashboardWidgets } from '@/lib/modules/dashboard/widgets/queries';
+import { getRecentActivities } from '@/lib/modules/dashboard/activities/queries';
+import { getQuickActions } from '@/lib/modules/dashboard/quick-actions/queries';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
+import { Skeleton } from '@/components/ui/skeleton';
 import {
   LayoutDashboard,
   Users,
@@ -12,18 +18,26 @@ import {
   ArrowRight,
   CheckCircle,
   Clock,
+  DollarSign,
+  Activity,
+  Settings,
 } from 'lucide-react';
 import Link from 'next/link';
+import { Metadata } from 'next';
+
+export const metadata: Metadata = {
+  title: 'Dashboard | Strive Platform',
+  description: 'Your personalized dashboard for managing your real estate business',
+};
 
 /**
  * Main Platform Dashboard
  *
- * Landing page showing overview of CRM, Projects, and Transactions
- * Role-based stats display
+ * Real Estate Industry Dashboard - Entry point for the platform
+ * Displays KPIs, quick actions, recent activity, and module shortcuts
  *
- * @protected - Requires authentication
+ * @protected - Requires authentication at layout level
  */
-
 export default async function DashboardPage() {
   await requireAuth();
   const user = await getCurrentUser();
@@ -38,222 +52,433 @@ export default async function DashboardPage() {
     redirect('/onboarding/organization');
   }
 
-  // Check if user can access transactions (EMPLOYEE, MODERATOR, SUPER_ADMIN)
-  const canAccessTransactions = ['EMPLOYEE', 'MODERATOR', 'SUPER_ADMIN'].includes(
-    user.role
-  );
-
-  // Fetch transaction stats if user has access
-  let transactionStats = null;
-  if (canAccessTransactions) {
-    try {
-      const analytics = await getTransactionAnalytics();
-      transactionStats = analytics.overview;
-    } catch (error) {
-      console.error('Failed to load transaction stats:', error);
-    }
-  }
-
   return (
-    <div className="flex flex-col gap-8 p-8">
-      {/* Header */}
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-3xl font-bold tracking-tight">
-            Welcome back, {user.name || 'User'}
-          </h1>
-          <p className="text-muted-foreground">
-            Here's what's happening across your organization
-          </p>
-        </div>
-      </div>
-
-      {/* Quick Access Cards */}
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-        {/* CRM Card */}
-        <Link href="/real-estate/crm">
-          <Card className="cursor-pointer transition-all hover:shadow-lg">
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">CRM</CardTitle>
-              <Users className="h-4 w-4 text-muted-foreground" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">Contacts & Leads</div>
-              <p className="text-xs text-muted-foreground">
-                Manage customer relationships
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
+      {/* Dashboard Header */}
+      <div className="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+          <div className="flex items-center justify-between">
+            <div>
+              <h1 className="text-3xl font-bold tracking-tight text-gray-900 dark:text-white">
+                Welcome back, {user.name || 'User'}
+              </h1>
+              <p className="mt-1 text-sm text-gray-600 dark:text-gray-400">
+                Here's what's happening with your real estate business
               </p>
-              <Button variant="ghost" size="sm" className="mt-2">
-                Go to CRM
-                <ArrowRight className="ml-2 h-4 w-4" />
+            </div>
+            <Link href="/real-estate/dashboard/customize">
+              <Button variant="outline" size="sm">
+                <Settings className="w-4 h-4 mr-2" />
+                Customize
               </Button>
-            </CardContent>
-          </Card>
-        </Link>
-
-        {/* Projects Card */}
-        <Link href="/projects">
-          <Card className="cursor-pointer transition-all hover:shadow-lg">
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Projects</CardTitle>
-              <FolderKanban className="h-4 w-4 text-muted-foreground" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">Project Management</div>
-              <p className="text-xs text-muted-foreground">
-                Track project progress
-              </p>
-              <Button variant="ghost" size="sm" className="mt-2">
-                Go to Projects
-                <ArrowRight className="ml-2 h-4 w-4" />
-              </Button>
-            </CardContent>
-          </Card>
-        </Link>
-
-        {/* Transaction Management Card - Only for employees */}
-        {canAccessTransactions && transactionStats && (
-          <Link href="/real-estate/workspace">
-            <Card className="cursor-pointer transition-all hover:shadow-lg border-primary/50">
-              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">
-                  Transactions
-                </CardTitle>
-                <FileText className="h-4 w-4 text-primary" />
-              </CardHeader>
-              <CardContent>
-                <div className="text-2xl font-bold">{transactionStats.activeLoops}</div>
-                <p className="text-xs text-muted-foreground">
-                  Active Transactions
-                </p>
-                <Button variant="ghost" size="sm" className="mt-2">
-                  Go to Transactions
-                  <ArrowRight className="ml-2 h-4 w-4" />
-                </Button>
-              </CardContent>
-            </Card>
-          </Link>
-        )}
-
-        {/* Dashboard Overview Card */}
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Overview</CardTitle>
-            <LayoutDashboard className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">Dashboard</div>
-            <p className="text-xs text-muted-foreground">
-              Organization insights
-            </p>
-            <Button variant="ghost" size="sm" className="mt-2" disabled>
-              Coming Soon
-            </Button>
-          </CardContent>
-        </Card>
-      </div>
-
-      {/* Transaction Stats Section - Only for employees */}
-      {canAccessTransactions && transactionStats && (
-        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">
-                Total Transactions
-              </CardTitle>
-              <FileText className="h-4 w-4 text-muted-foreground" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">{transactionStats.totalLoops}</div>
-              <p className="text-xs text-muted-foreground">
-                All transaction loops
-              </p>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Active</CardTitle>
-              <Clock className="h-4 w-4 text-blue-500" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold text-blue-500">
-                {transactionStats.activeLoops}
-              </div>
-              <p className="text-xs text-muted-foreground">In progress</p>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Closed</CardTitle>
-              <CheckCircle className="h-4 w-4 text-green-500" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold text-green-500">
-                {transactionStats.closedLoops}
-              </div>
-              <p className="text-xs text-muted-foreground">Successfully closed</p>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Avg. Close Time</CardTitle>
-              <TrendingUp className="h-4 w-4 text-muted-foreground" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">
-                {Math.round(transactionStats.avgClosingDays)} days
-              </div>
-              <p className="text-xs text-muted-foreground">Average to close</p>
-            </CardContent>
-          </Card>
-        </div>
-      )}
-
-      {/* Quick Actions */}
-      <div>
-        <h2 className="text-xl font-semibold mb-4">Quick Actions</h2>
-        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-          <Link href="/real-estate/crm/contacts">
-            <Card className="cursor-pointer transition-all hover:shadow-md">
-              <CardContent className="pt-6">
-                <Users className="h-8 w-8 mb-2 text-primary" />
-                <h3 className="font-semibold">Add Contact</h3>
-                <p className="text-sm text-muted-foreground">
-                  Create a new contact in CRM
-                </p>
-              </CardContent>
-            </Card>
-          </Link>
-
-          {canAccessTransactions && (
-            <Link href="/real-estate/workspace">
-              <Card className="cursor-pointer transition-all hover:shadow-md">
-                <CardContent className="pt-6">
-                  <FileText className="h-8 w-8 mb-2 text-primary" />
-                  <h3 className="font-semibold">New Transaction</h3>
-                  <p className="text-sm text-muted-foreground">
-                    Start a new transaction loop
-                  </p>
-                </CardContent>
-              </Card>
             </Link>
-          )}
+          </div>
+        </div>
+      </div>
 
-          <Link href="/projects">
-            <Card className="cursor-pointer transition-all hover:shadow-md">
-              <CardContent className="pt-6">
-                <FolderKanban className="h-8 w-8 mb-2 text-primary" />
-                <h3 className="font-semibold">Create Project</h3>
-                <p className="text-sm text-muted-foreground">
-                  Start a new project
-                </p>
-              </CardContent>
-            </Card>
-          </Link>
+      {/* Main Content */}
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div className="space-y-8">
+          {/* KPI Cards Row */}
+          <Suspense fallback={<KPICardsSkeleton />}>
+            <KPICardsSection organizationId={organizationId} />
+          </Suspense>
+
+          {/* Quick Actions Grid */}
+          <Suspense fallback={<QuickActionsSkeleton />}>
+            <QuickActionsSection organizationId={organizationId} />
+          </Suspense>
+
+          {/* Main Content Grid */}
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            {/* Left Column - Activity Feed & Metrics */}
+            <div className="lg:col-span-2 space-y-8">
+              <Suspense fallback={<ActivityFeedSkeleton />}>
+                <ActivityFeedSection organizationId={organizationId} />
+              </Suspense>
+
+              <Suspense fallback={<MetricsSkeleton />}>
+                <MetricsSection organizationId={organizationId} />
+              </Suspense>
+            </div>
+
+            {/* Right Column - Module Shortcuts & Widgets */}
+            <div className="lg:col-span-1 space-y-8">
+              <Suspense fallback={<ModuleShortcutsSkeleton />}>
+                <ModuleShortcutsSection />
+              </Suspense>
+
+              <Suspense fallback={<WidgetsSkeleton />}>
+                <WidgetsSection organizationId={organizationId} />
+              </Suspense>
+            </div>
+          </div>
         </div>
       </div>
     </div>
   );
+}
+
+/**
+ * KPI Cards Section
+ * Displays key performance indicators with data from dashboard stats
+ */
+async function KPICardsSection({ organizationId }: { organizationId: string }) {
+  const stats = await getDashboardStats(organizationId);
+
+  const kpis = [
+    {
+      title: 'Revenue',
+      value: `$${stats.revenue.toLocaleString()}`,
+      description: 'Monthly recurring',
+      icon: DollarSign,
+      color: 'text-green-600 dark:text-green-400',
+      bgColor: 'bg-green-100 dark:bg-green-900/20',
+    },
+    {
+      title: 'Customers',
+      value: stats.customers.toString(),
+      description: 'Total customers',
+      icon: Users,
+      color: 'text-blue-600 dark:text-blue-400',
+      bgColor: 'bg-blue-100 dark:bg-blue-900/20',
+    },
+    {
+      title: 'Active Projects',
+      value: stats.activeProjects.toString(),
+      description: `${stats.projects} total projects`,
+      icon: FolderKanban,
+      color: 'text-purple-600 dark:text-purple-400',
+      bgColor: 'bg-purple-100 dark:bg-purple-900/20',
+    },
+    {
+      title: 'Task Completion',
+      value: `${stats.taskCompletionRate}%`,
+      description: `${stats.completedTasks}/${stats.tasks} tasks`,
+      icon: CheckCircle,
+      color: 'text-orange-600 dark:text-orange-400',
+      bgColor: 'bg-orange-100 dark:bg-orange-900/20',
+    },
+  ];
+
+  return (
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+      {kpis.map((kpi) => {
+        const Icon = kpi.icon;
+        return (
+          <Card key={kpi.title} className="hover:shadow-lg transition-shadow">
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium">{kpi.title}</CardTitle>
+              <div className={`p-2 rounded-lg ${kpi.bgColor}`}>
+                <Icon className={`h-4 w-4 ${kpi.color}`} />
+              </div>
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold">{kpi.value}</div>
+              <p className="text-xs text-muted-foreground">{kpi.description}</p>
+            </CardContent>
+          </Card>
+        );
+      })}
+    </div>
+  );
+}
+
+/**
+ * Quick Actions Section
+ * Displays frequently used actions for quick access
+ */
+async function QuickActionsSection({ organizationId }: { organizationId: string }) {
+  const actions = await getQuickActions();
+
+  const defaultActions = [
+    {
+      name: 'New Contact',
+      description: 'Add a contact to CRM',
+      icon: 'Users',
+      target_url: '/real-estate/crm/contacts',
+      color: 'blue',
+    },
+    {
+      name: 'New Transaction',
+      description: 'Start a transaction loop',
+      icon: 'FileText',
+      target_url: '/real-estate/workspace',
+      color: 'green',
+    },
+    {
+      name: 'New Project',
+      description: 'Create a project',
+      icon: 'FolderKanban',
+      target_url: '/projects',
+      color: 'purple',
+    },
+  ];
+
+  const displayActions = actions.length > 0 ? actions : defaultActions;
+
+  return (
+    <Card>
+      <CardHeader>
+        <CardTitle className="flex items-center gap-2">
+          <Activity className="h-5 w-5" />
+          Quick Actions
+        </CardTitle>
+      </CardHeader>
+      <CardContent>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          {displayActions.slice(0, 3).map((action, index) => {
+            // Icon mapping
+            const iconMap: Record<string, any> = {
+              Users,
+              FileText,
+              FolderKanban,
+              Activity,
+            };
+            const Icon = iconMap[action.icon] || Activity;
+
+            return (
+              <Link
+                key={action.target_url || index}
+                href={action.target_url || '#'}
+              >
+                <div className="p-4 border border-gray-200 dark:border-gray-700 rounded-lg hover:shadow-md transition-shadow cursor-pointer">
+                  <Icon className={`h-6 w-6 mb-2 text-${action.color}-600`} />
+                  <h3 className="font-semibold text-sm">{action.name}</h3>
+                  <p className="text-xs text-muted-foreground mt-1">
+                    {action.description}
+                  </p>
+                </div>
+              </Link>
+            );
+          })}
+        </div>
+      </CardContent>
+    </Card>
+  );
+}
+
+/**
+ * Activity Feed Section
+ * Displays recent activity across the organization
+ */
+async function ActivityFeedSection({ organizationId }: { organizationId: string }) {
+  const activities = await getRecentActivities(10);
+
+  return (
+    <Card>
+      <CardHeader>
+        <div className="flex items-center justify-between">
+          <CardTitle className="flex items-center gap-2">
+            <Clock className="h-5 w-5" />
+            Recent Activity
+          </CardTitle>
+          <Link href="/activity">
+            <Button variant="ghost" size="sm">
+              View All
+              <ArrowRight className="ml-2 h-4 w-4" />
+            </Button>
+          </Link>
+        </div>
+      </CardHeader>
+      <CardContent>
+        {activities.length === 0 ? (
+          <p className="text-sm text-muted-foreground text-center py-8">
+            No recent activity
+          </p>
+        ) : (
+          <div className="space-y-4">
+            {activities.map((activity) => (
+              <div
+                key={activity.id}
+                className="flex items-start gap-3 pb-3 border-b border-gray-100 dark:border-gray-800 last:border-0"
+              >
+                <div className="flex-shrink-0">
+                  <div className="w-8 h-8 rounded-full bg-blue-100 dark:bg-blue-900/20 flex items-center justify-center">
+                    <Activity className="h-4 w-4 text-blue-600 dark:text-blue-400" />
+                  </div>
+                </div>
+                <div className="flex-1 min-w-0">
+                  <p className="text-sm font-medium text-gray-900 dark:text-white">
+                    {activity.user?.name || 'System'}
+                  </p>
+                  <p className="text-sm text-muted-foreground">{activity.title}</p>
+                  <p className="text-xs text-muted-foreground mt-1">
+                    {new Date(activity.created_at).toLocaleDateString()} at{' '}
+                    {new Date(activity.created_at).toLocaleTimeString()}
+                  </p>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+      </CardContent>
+    </Card>
+  );
+}
+
+/**
+ * Metrics Section
+ * Displays custom dashboard metrics
+ */
+async function MetricsSection({ organizationId }: { organizationId: string }) {
+  const metrics = await getDashboardMetrics();
+
+  return (
+    <Card>
+      <CardHeader>
+        <CardTitle className="flex items-center gap-2">
+          <TrendingUp className="h-5 w-5" />
+          Performance Metrics
+        </CardTitle>
+      </CardHeader>
+      <CardContent>
+        {metrics.length === 0 ? (
+          <p className="text-sm text-muted-foreground text-center py-4">
+            No metrics configured
+          </p>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {metrics.slice(0, 4).map((metric) => (
+              <div
+                key={metric.id}
+                className="p-4 border border-gray-200 dark:border-gray-700 rounded-lg"
+              >
+                <p className="text-sm font-medium text-gray-900 dark:text-white">
+                  {metric.name}
+                </p>
+                <p className="text-2xl font-bold mt-2">
+                  {metric.cached_value !== null && metric.cached_value !== undefined
+                    ? metric.cached_value.toLocaleString()
+                    : 'N/A'}
+                </p>
+                <p className="text-xs text-muted-foreground mt-1">
+                  {metric.category}
+                </p>
+              </div>
+            ))}
+          </div>
+        )}
+      </CardContent>
+    </Card>
+  );
+}
+
+/**
+ * Module Shortcuts Section
+ * Quick links to major platform modules
+ */
+function ModuleShortcutsSection() {
+  const modules = [
+    {
+      name: 'CRM',
+      description: 'Manage contacts & leads',
+      href: '/real-estate/crm',
+      icon: Users,
+      color: 'text-blue-600',
+    },
+    {
+      name: 'Workspace',
+      description: 'Transaction management',
+      href: '/real-estate/workspace',
+      icon: FileText,
+      color: 'text-green-600',
+    },
+    {
+      name: 'AI Hub',
+      description: 'AI tools & automation',
+      href: '/real-estate/ai-hub',
+      icon: LayoutDashboard,
+      color: 'text-purple-600',
+    },
+  ];
+
+  return (
+    <Card>
+      <CardHeader>
+        <CardTitle>Quick Access</CardTitle>
+      </CardHeader>
+      <CardContent>
+        <div className="space-y-3">
+          {modules.map((module) => {
+            const Icon = module.icon;
+            return (
+              <Link key={module.href} href={module.href}>
+                <div className="flex items-center gap-3 p-3 border border-gray-200 dark:border-gray-700 rounded-lg hover:shadow-md transition-shadow cursor-pointer">
+                  <div className="flex-shrink-0">
+                    <Icon className={`h-5 w-5 ${module.color}`} />
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <p className="text-sm font-medium text-gray-900 dark:text-white">
+                      {module.name}
+                    </p>
+                    <p className="text-xs text-muted-foreground">
+                      {module.description}
+                    </p>
+                  </div>
+                  <ArrowRight className="h-4 w-4 text-muted-foreground flex-shrink-0" />
+                </div>
+              </Link>
+            );
+          })}
+        </div>
+      </CardContent>
+    </Card>
+  );
+}
+
+/**
+ * Widgets Section
+ * Displays custom dashboard widgets
+ */
+async function WidgetsSection({ organizationId }: { organizationId: string }) {
+  const widgets = await getDashboardWidgets();
+
+  if (widgets.length === 0) {
+    return null;
+  }
+
+  return (
+    <Card>
+      <CardHeader>
+        <CardTitle>Custom Widgets</CardTitle>
+      </CardHeader>
+      <CardContent>
+        <p className="text-sm text-muted-foreground">
+          {widgets.length} widget(s) configured
+        </p>
+      </CardContent>
+    </Card>
+  );
+}
+
+// Loading Skeletons
+function KPICardsSkeleton() {
+  return (
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+      {Array.from({ length: 4 }).map((_, i) => (
+        <Skeleton key={i} className="h-32 rounded-lg" />
+      ))}
+    </div>
+  );
+}
+
+function QuickActionsSkeleton() {
+  return <Skeleton className="h-48 rounded-lg" />;
+}
+
+function ActivityFeedSkeleton() {
+  return <Skeleton className="h-96 rounded-lg" />;
+}
+
+function MetricsSkeleton() {
+  return <Skeleton className="h-64 rounded-lg" />;
+}
+
+function ModuleShortcutsSkeleton() {
+  return <Skeleton className="h-64 rounded-lg" />;
+}
+
+function WidgetsSkeleton() {
+  return <Skeleton className="h-48 rounded-lg" />;
 }

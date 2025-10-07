@@ -6,11 +6,11 @@ import {
   getSignatureStats,
 } from '@/lib/modules/transactions/signatures/queries';
 import { getCurrentUser } from '@/lib/auth/auth-helpers';
-import { prisma } from '@/lib/prisma';
+import { prisma } from '@/lib/database/prisma';
 
 // Mock dependencies
 jest.mock('@/lib/auth/auth-helpers');
-jest.mock('@/lib/prisma', () => ({
+jest.mock('@/lib/database/prisma', () => ({
   prisma: {
     signature_requests: {
       findFirst: jest.fn(),

@@ -99,10 +99,11 @@ Before invoking agents:
 Strive-SaaS/                    # Root (this is NOT a Next.js project)
 ├── (chatbot)/                  # AI Chatbot Widget
 ├── (platform)/                 # Main SaaS Platform
+│   ├── prisma/                # Platform Prisma schema (authoritative)
+│   └── lib/database/docs/     # Complete database guides
 ├── (website)/                  # Marketing Website
-├── shared/                     # Shared Resources
-│   ├── prisma/                # Shared Prisma schema
-│   └── supabase/              # Shared Supabase config
+├── .ignore/                    # Isolated/archived projects
+│   └── shared/                # [ARCHIVED] Former shared resources
 ├── scripts/                    # Repository-wide scripts
 ├── dev-workspace/             # Development logs & planning
 ├── CLAUDE.md                  # THIS FILE - Repository overview
@@ -183,18 +184,19 @@ Strive-SaaS/                    # Root (this is NOT a Next.js project)
 
 ## 🔗 Shared Resources
 
-### shared/prisma/
-**Shared Prisma Schema** - Single source of truth for database structure
+### Database: (platform)/prisma/
+**Platform Prisma Schema** - Single source of truth for database structure
 
-All three projects connect to the **SAME Supabase database** using this shared schema:
+All three projects connect to the **SAME Supabase database** using the platform schema:
 ```bash
-# From any project directory:
-npx prisma generate --schema=../shared/prisma/schema.prisma
-npx prisma migrate dev --schema=../shared/prisma/schema.prisma
+# From platform directory:
+cd (platform)
+npx prisma generate --schema=./prisma/schema.prisma
+npm run db:migrate  # Create migrations (uses helper script)
 ```
 
 **Database Models (83 total):**
-- See: `shared/prisma/SCHEMA-QUICK-REF.md` for complete list
+- See: `(platform)/prisma/SCHEMA-QUICK-REF.md` for complete list
 - Categories: Core, CRM, Transactions, Content, AI, Analytics, Marketplace, Admin, Dashboard
 
 **⚠️ CRITICAL: Database Operations Workflow**
@@ -205,14 +207,17 @@ npx prisma migrate dev --schema=../shared/prisma/schema.prisma
 
 1. **Schema Inspection** - Use local documentation (500 tokens vs 18k!)
    ```bash
+   # From platform directory
+   cd (platform)
+
    # Quick reference (model & enum names only)
-   cat shared/prisma/SCHEMA-QUICK-REF.md
+   cat prisma/SCHEMA-QUICK-REF.md
 
    # Detailed model fields
-   cat shared/prisma/SCHEMA-MODELS.md
+   cat prisma/SCHEMA-MODELS.md
 
    # Enum values
-   cat shared/prisma/SCHEMA-ENUMS.md
+   cat prisma/SCHEMA-ENUMS.md
    ```
 
 2. **Schema Changes** - Use helper scripts
@@ -234,11 +239,12 @@ npx prisma migrate dev --schema=../shared/prisma/schema.prisma
 
 4. **After Any Schema Change**
    ```bash
-   npm run db:docs         # Regenerate documentation
-   git add shared/prisma/  # Commit schema + migrations + docs
+   npm run db:docs              # Regenerate documentation
+   git add prisma/ lib/database/docs/  # Commit schema + migrations + docs
    ```
 
-**Scripts Location:** `scripts/database/`
+**Scripts Location:** `scripts/database/` (repository root)
+**Documentation:** `(platform)/lib/database/docs/` (complete database guides)
 - `generate-schema-docs.js` - Create schema documentation
 - `create-migration.js` - Interactive migration creator
 - `apply-migration.js` - Migration application guide
@@ -247,8 +253,8 @@ npx prisma migrate dev --schema=../shared/prisma/schema.prisma
 
 **Token Savings:** 99% reduction (18k → 500 tokens per schema query)
 
-### shared/supabase/
-**Shared Supabase Configuration** - Auth, Storage, Realtime, RLS
+### Supabase Configuration
+**Supabase Project** - Auth, Storage, Realtime, RLS
 
 All three projects use the **SAME Supabase project** for:
 - Authentication (SSO across all apps)
@@ -256,16 +262,64 @@ All three projects use the **SAME Supabase project** for:
 - Real-time subscriptions
 - Row Level Security (RLS) for multi-tenancy
 
-**Documentation:**
+**Documentation Location:** `(platform)/lib/database/docs/`
 - `SUPABASE-SETUP.md` - Complete Supabase + Prisma integration guide
 - `STORAGE-BUCKETS.md` - File storage bucket setup and RLS policies
 - `RLS-POLICIES.md` - Row Level Security patterns and examples
+- `PRISMA-SUPABASE-DECISION-TREE.md` - When to use Prisma vs Supabase
+- `HYBRID-PATTERNS.md` - Real-world code examples
+- `TESTING-RLS.md` - RLS testing strategies
 
 **Helper Script:**
 - `scripts/database/check-rls-policies.js` - Check RLS policy status
 
 **Critical:** Supabase provides the platform, Prisma handles schema + migrations.
 RLS policies are defined in Prisma migration SQL files.
+
+### ⚠️ CRITICAL: Prisma Bypasses RLS
+
+**Important Security Context:**
+
+Prisma connects to PostgreSQL using `DATABASE_URL` which contains the service role credentials. This means:
+
+❌ **Prisma BYPASSES Row Level Security (RLS) policies**
+✅ **Application-level filtering is REQUIRED**
+
+**You MUST use one of these approaches:**
+
+1. **Recommended: Tenant Isolation Middleware**
+   ```typescript
+   import { prisma } from '@/lib/database/prisma';
+   import { setTenantContext } from '@/lib/database/prisma-middleware';
+
+   // Set context BEFORE queries
+   await setTenantContext({
+     organizationId: user.orgId,
+     userId: user.id
+   });
+
+   // Queries automatically filtered
+   const customers = await prisma.customer.findMany();
+   ```
+
+2. **Alternative: Manual Filtering**
+   ```typescript
+   const customers = await prisma.customer.findMany({
+     where: { organization_id: user.orgId }
+   });
+   ```
+
+**RLS is still important for:**
+- Defense-in-depth security
+- Protecting raw SQL queries
+- Database-level audit logs
+- External tool access
+
+**Complete Documentation:** `(platform)/lib/database/docs/`
+- Decision Tree: When to use Prisma vs Supabase
+- RLS Policies: Complete policy reference
+- Hybrid Patterns: Real-world code examples
+- Testing RLS: Automated test strategies
 
 ---
 
@@ -398,8 +452,9 @@ npm test            # 80%+ coverage
 All three projects connect to the **SAME** Supabase database:
 ```
 (chatbot)/  ──┐
-(platform)/ ──┼──► Shared Prisma Schema ──► Supabase PostgreSQL
+(platform)/ ──┼──► Platform Prisma Schema ──► Supabase PostgreSQL
 (website)/  ──┘
+               ((platform)/prisma/schema.prisma)
 ```
 
 ### Authentication: Supabase Auth (SSO)
@@ -489,16 +544,16 @@ npm run build            # Production build
 npm test                 # Run tests
 ```
 
-### Database (from any project, uses shared schema)
+### Database (from platform directory)
 ```bash
 # Generate Prisma client
-npx prisma generate --schema=../shared/prisma/schema.prisma
+npx prisma generate --schema=./prisma/schema.prisma
 
-# Create migration
-npx prisma migrate dev --name description --schema=../shared/prisma/schema.prisma
+# Create migration (use helper script)
+npm run db:migrate
 
 # View database
-npx prisma studio --schema=../shared/prisma/schema.prisma
+npx prisma studio --schema=./prisma/schema.prisma
 ```
 
 ---
@@ -535,8 +590,8 @@ npm run dev
 cat CLAUDE.md
 cat PLAN.md
 
-# Use shared resources correctly
-npx prisma generate --schema=../shared/prisma/schema.prisma
+# Use database correctly
+npx prisma generate --schema=./prisma/schema.prisma
 ```
 
 ---
@@ -579,10 +634,10 @@ Each project has complete documentation in its directory:
 5. Run project-specific commands
 
 **When touching database:**
-1. Navigate to `shared/prisma/`
-2. Update schema if needed
-3. Run migrations: `npx prisma migrate dev`
-4. Generate client in each affected project
+1. Navigate to `(platform)/`
+2. Update schema if needed: Edit `prisma/schema.prisma`
+3. Run migrations: `npm run db:migrate`
+4. Regenerate docs: `npm run db:docs`
 
 **When deploying:**
 1. Each project deploys independently

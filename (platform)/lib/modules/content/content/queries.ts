@@ -1,6 +1,6 @@
 'use server';
 
-import { prisma } from '@/lib/prisma';
+import { prisma } from '@/lib/database/prisma';
 import { requireAuth, getCurrentUser } from '@/lib/auth/middleware';
 import { ContentFilters } from './schemas';
 import { cache } from 'react';

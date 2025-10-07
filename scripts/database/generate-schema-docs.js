@@ -22,8 +22,8 @@ const path = require('path');
 
 // Paths
 const ROOT_DIR = path.join(__dirname, '../..');
-const SCHEMA_PATH = path.join(ROOT_DIR, 'shared/prisma/schema.prisma');
-const OUTPUT_DIR = path.join(ROOT_DIR, 'shared/prisma');
+const SCHEMA_PATH = path.join(ROOT_DIR, '(platform)/prisma/schema.prisma');
+const OUTPUT_DIR = path.join(ROOT_DIR, '(platform)/prisma');
 
 // Read schema file
 function readSchema() {
@@ -95,7 +95,7 @@ function generateQuickRef(models, enums) {
     '# Prisma Schema - Quick Reference',
     '',
     '**Generated:** ' + new Date().toISOString(),
-    '**Source:** `shared/prisma/schema.prisma`',
+    '**Source:** `(platform)/prisma/schema.prisma`',
     '',
     '> 🎯 **Purpose:** Lightning-fast schema reference to avoid expensive MCP calls',
     '> - Use this for: "What tables exist?", "What enums are available?"',
@@ -194,7 +194,7 @@ function generateModelsDoc(models) {
     '# Prisma Schema - Models Documentation',
     '',
     '**Generated:** ' + new Date().toISOString(),
-    '**Source:** `shared/prisma/schema.prisma`',
+    '**Source:** `(platform)/prisma/schema.prisma`',
     '',
     '> 📚 **Purpose:** Detailed model field reference',
     '> - Use this when you need to know: "What fields does X have?"',
@@ -235,7 +235,7 @@ function generateEnumsDoc(enums) {
     '# Prisma Schema - Enums Documentation',
     '',
     '**Generated:** ' + new Date().toISOString(),
-    '**Source:** `shared/prisma/schema.prisma`',
+    '**Source:** `(platform)/prisma/schema.prisma`',
     '',
     '> 🏷️ **Purpose:** Complete enum values reference',
     '> - Use this when you need to know: "What are the valid values for X enum?"',
@@ -315,7 +315,7 @@ function main() {
   if (success) {
     console.log('✨ Documentation generated successfully!');
     console.log('');
-    console.log('📍 Files created in: shared/prisma/');
+    console.log('📍 Files created in: (platform)/prisma/');
     console.log('   - SCHEMA-QUICK-REF.md  (Quick reference)');
     console.log('   - SCHEMA-MODELS.md     (Model details)');
     console.log('   - SCHEMA-ENUMS.md      (Enum values)');

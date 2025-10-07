@@ -18,7 +18,7 @@ const path = require('path');
 
 // Paths
 const ROOT_DIR = path.join(__dirname, '../..');
-const SCHEMA_PATH = path.join(ROOT_DIR, 'shared/prisma/schema.prisma');
+const SCHEMA_PATH = path.join(ROOT_DIR, '(platform)/prisma/schema.prisma');
 
 // Check database sync
 function checkSync() {
@@ -77,8 +77,8 @@ function main() {
 
   console.log('');
   console.log('📚 Documentation:');
-  console.log('   Schema reference: shared/prisma/SCHEMA-QUICK-REF.md');
-  console.log('   Migration guide: shared/prisma/README.md');
+  console.log('   Schema reference: (platform)/prisma/SCHEMA-QUICK-REF.md');
+  console.log('   Migration guide: (platform)/prisma/README.md');
   console.log('');
 }
 

@@ -17,8 +17,8 @@ const { execSync } = require('child_process');
 
 // Paths
 const ROOT_DIR = path.join(__dirname, '../..');
-const MIGRATIONS_DIR = path.join(ROOT_DIR, 'shared/prisma/migrations');
-const SCHEMA_PATH = path.join(ROOT_DIR, 'shared/prisma/schema.prisma');
+const MIGRATIONS_DIR = path.join(ROOT_DIR, '(platform)/prisma/migrations');
+const SCHEMA_PATH = path.join(ROOT_DIR, '(platform)/prisma/schema.prisma');
 
 // Get all migration directories
 function getMigrations() {
@@ -126,7 +126,7 @@ function main() {
     console.log('');
     console.log('Your schema has changes that need to be migrated:');
     console.log('');
-    console.log('   1. Review changes: git diff shared/prisma/schema.prisma');
+    console.log('   1. Review changes: git diff "(platform)/prisma/schema.prisma"');
     console.log('   2. Create migration: npm run db:migrate');
     console.log('   3. Apply to database: Use Claude or Supabase dashboard');
     console.log('');
@@ -147,7 +147,7 @@ function main() {
   console.log('');
   console.log('   Check schema:     npm run db:status');
   console.log('   Create migration: npm run db:migrate');
-  console.log('   View schema docs: cat shared/prisma/SCHEMA-QUICK-REF.md');
+  console.log('   View schema docs: cat "(platform)/prisma/SCHEMA-QUICK-REF.md"');
   console.log('   Update docs:      npm run db:docs');
   console.log('');
 }

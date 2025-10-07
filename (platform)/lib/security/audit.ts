@@ -9,7 +9,7 @@
  * - Multi-tenancy enforcement
  */
 
-import { prisma } from '@/lib/prisma';
+import { prisma } from '@/lib/database/prisma';
 
 export interface SecurityIssue {
   severity: 'critical' | 'high' | 'medium' | 'low';

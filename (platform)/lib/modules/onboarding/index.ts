@@ -50,8 +50,17 @@ export {
   createPaymentIntent,
   confirmPayment,
   getPaymentIntentStatus,
-  calculatePrice,
 } from './payment';
+
+// ============================================================================
+// Pricing Utilities
+// ============================================================================
+
+export {
+  calculatePrice,
+  calculatePriceCents,
+  TIER_PRICES,
+} from './utils';
 
 // ============================================================================
 // Completion

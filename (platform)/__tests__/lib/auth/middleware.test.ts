@@ -10,7 +10,7 @@ import { createServerClient } from '@supabase/ssr';
 
 // Mock dependencies
 jest.mock('@supabase/ssr');
-jest.mock('@/lib/prisma', () => ({
+jest.mock('@/lib/database/prisma', () => ({
   prisma: {
     user: {
       findUnique: jest.fn(),
@@ -179,7 +179,7 @@ describe('Platform Auth Middleware', () => {
           findUnique: jest.fn().mockResolvedValue({ role: 'ADMIN' }),
         },
       };
-      jest.doMock('@/lib/prisma', () => ({ prisma: mockPrisma }));
+      jest.doMock('@/lib/database/prisma', () => ({ prisma: mockPrisma }));
 
       const response = await handlePlatformAuth(mockRequest);
 
@@ -199,7 +199,7 @@ describe('Platform Auth Middleware', () => {
           findUnique: jest.fn().mockResolvedValue({ role: 'USER' }),
         },
       };
-      jest.doMock('@/lib/prisma', () => ({ prisma: mockPrisma }));
+      jest.doMock('@/lib/database/prisma', () => ({ prisma: mockPrisma }));
 
       const response = await handlePlatformAuth(mockRequest);
 
@@ -220,7 +220,7 @@ describe('Platform Auth Middleware', () => {
           findUnique: jest.fn().mockResolvedValue({ role: 'USER' }),
         },
       };
-      jest.doMock('@/lib/prisma', () => ({ prisma: mockPrisma }));
+      jest.doMock('@/lib/database/prisma', () => ({ prisma: mockPrisma }));
 
       const response = await handlePlatformAuth(mockRequest);
 
@@ -241,7 +241,7 @@ describe('Platform Auth Middleware', () => {
           findUnique: jest.fn().mockResolvedValue(null),
         },
       };
-      jest.doMock('@/lib/prisma', () => ({ prisma: mockPrisma }));
+      jest.doMock('@/lib/database/prisma', () => ({ prisma: mockPrisma }));
 
       const response = await handlePlatformAuth(mockRequest);
 

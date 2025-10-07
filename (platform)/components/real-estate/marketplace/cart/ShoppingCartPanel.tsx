@@ -10,19 +10,18 @@ import { toast } from 'sonner';
 import { getCartWithItems, removeFromCart, clearCart, checkout } from '@/lib/modules/marketplace';
 import { CartItem } from './CartItem';
 import { CheckoutModal } from './CheckoutModal';
-import { getCurrentUser } from '@/lib/auth/auth-helpers';
 
-export function ShoppingCartPanel() {
+interface ShoppingCartPanelProps {
+  userId: string;
+}
+
+export function ShoppingCartPanel({ userId }: ShoppingCartPanelProps) {
   const queryClient = useQueryClient();
   const [isCheckoutOpen, setIsCheckoutOpen] = React.useState(false);
 
   const { data: cartData, isLoading } = useQuery({
-    queryKey: ['shopping-cart'],
-    queryFn: async () => {
-      const user = await getCurrentUser();
-      if (!user) return null;
-      return getCartWithItems(user.id);
-    },
+    queryKey: ['shopping-cart', userId],
+    queryFn: () => getCartWithItems(userId),
   });
 
   const removeItemMutation = useMutation({

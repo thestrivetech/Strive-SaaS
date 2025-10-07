@@ -23,7 +23,7 @@ const path = require('path');
 
 // Paths
 const ROOT_DIR = path.join(__dirname, '../..');
-const SCHEMA_PATH = path.join(ROOT_DIR, 'shared/prisma/schema.prisma');
+const SCHEMA_PATH = path.join(ROOT_DIR, '(platform)/prisma/schema.prisma');
 
 // Create readline interface
 const rl = readline.createInterface({
@@ -120,10 +120,10 @@ async function main() {
   console.log('');
   console.log('📋 Next Steps:');
   console.log('');
-  console.log('   1. Review migration: shared/prisma/migrations/<timestamp>_' + migrationName);
+  console.log('   1. Review migration: (platform)/prisma/migrations/<timestamp>_' + migrationName);
   console.log('   2. Test locally: npm run dev (ensure app works)');
   console.log('   3. Apply to production: Use MCP tool or npm run db:apply');
-  console.log('   4. Commit: git add shared/prisma && git commit');
+  console.log('   4. Commit: git add "(platform)/prisma" && git commit');
   console.log('');
 
   rl.close();

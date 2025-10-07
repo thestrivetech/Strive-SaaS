@@ -19,7 +19,7 @@ const path = require('path');
 
 // Paths
 const ROOT_DIR = path.join(__dirname, '../..');
-const MIGRATIONS_DIR = path.join(ROOT_DIR, 'shared/prisma/migrations');
+const MIGRATIONS_DIR = path.join(ROOT_DIR, '(platform)/prisma/migrations');
 
 // Get all migration directories
 function getMigrations() {
@@ -112,7 +112,7 @@ function main() {
   console.log('');
   console.log('Option 3: Using Prisma Deploy (Production)');
   console.log('───────────────────────────────────────────');
-  console.log('   npx prisma migrate deploy --schema=shared/prisma/schema.prisma');
+  console.log('   npx prisma migrate deploy --schema="(platform)/prisma/schema.prisma"');
   console.log('');
   console.log('⚠️  WARNING: Option 3 should only be used in production environments');
   console.log('');
@@ -122,7 +122,7 @@ function main() {
   console.log('   1. Verify tables created: Ask Claude to list tables');
   console.log('   2. Test application: npm run dev');
   console.log('   3. Update docs: npm run db:docs');
-  console.log('   4. Commit migration: git add shared/prisma/migrations');
+  console.log('   4. Commit migration: git add "(platform)/prisma/migrations"');
   console.log('');
 }
 

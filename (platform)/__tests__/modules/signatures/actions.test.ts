@@ -4,13 +4,13 @@ import {
   declineSignature,
 } from '@/lib/modules/transactions/signatures/actions';
 import { getCurrentUser } from '@/lib/auth/auth-helpers';
-import { prisma } from '@/lib/prisma';
+import { prisma } from '@/lib/database/prisma';
 import { sendSignatureRequestEmail } from '@/lib/email/notifications';
 
 // Mock dependencies
 jest.mock('@/lib/auth/auth-helpers');
 jest.mock('@/lib/email/notifications');
-jest.mock('@/lib/prisma', () => ({
+jest.mock('@/lib/database/prisma', () => ({
   prisma: {
     transaction_loops: {
       findFirst: jest.fn(),

@@ -1,6 +1,6 @@
 'use server';
 
-import { prisma } from '@/lib/prisma';
+import { prisma } from '@/lib/database/prisma';
 import { requireAuth } from '@/lib/auth/middleware';
 import { canAccessREID } from '@/lib/auth/rbac';
 import { InsightFiltersSchema } from './schemas';

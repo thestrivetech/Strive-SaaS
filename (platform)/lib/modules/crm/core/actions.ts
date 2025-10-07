@@ -1,6 +1,6 @@
 'use server';
 
-import { prisma } from '@/lib/prisma';
+import { prisma } from '@/lib/database/prisma';
 import { withTenantContext } from '@/lib/database/utils';
 import { createServerSupabaseClientWithAuth } from '@/lib/supabase-server';
 import { hasOrgPermission } from '@/lib/auth/org-rbac';

@@ -3,6 +3,8 @@ import { MarketplaceGrid } from '@/components/real-estate/marketplace/grid/Marke
 import { MarketplaceFilters } from '@/components/real-estate/marketplace/filters/MarketplaceFilters';
 import { ShoppingCartPanel } from '@/components/real-estate/marketplace/cart/ShoppingCartPanel';
 import { Skeleton } from '@/components/ui/skeleton';
+import { getCurrentUser } from '@/lib/auth/auth-helpers';
+import { redirect } from 'next/navigation';
 
 interface MarketplacePageProps {
   searchParams: { [key: string]: string | string[] | undefined };
@@ -20,6 +22,12 @@ interface MarketplacePageProps {
 export default async function MarketplacePage({
   searchParams,
 }: MarketplacePageProps) {
+  const user = await getCurrentUser();
+
+  if (!user) {
+    redirect('/login');
+  }
+
   return (
     <div className="flex flex-col lg:flex-row gap-8">
       {/* Filters Sidebar - Hidden on mobile, sidebar on desktop */}
@@ -39,7 +47,7 @@ export default async function MarketplacePage({
       {/* Shopping Cart Panel - Bottom on mobile, sidebar on desktop */}
       <div className="lg:w-80 lg:flex-shrink-0">
         <Suspense fallback={<Skeleton className="h-64 w-full" />}>
-          <ShoppingCartPanel />
+          <ShoppingCartPanel userId={user.id} />
         </Suspense>
       </div>
     </div>

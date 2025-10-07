@@ -1,8 +1,9 @@
 'use server';
 
 import Stripe from 'stripe';
-import { prisma } from '@/lib/prisma';
+import { prisma } from '@/lib/database/prisma';
 import type { SubscriptionTier, BillingCycle } from '@prisma/client';
+import { TIER_PRICES } from './utils';
 
 /**
  * Onboarding Module - Stripe Payment Integration
@@ -17,26 +18,6 @@ import type { SubscriptionTier, BillingCycle } from '@prisma/client';
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
   apiVersion: '2025-09-30.clover',
 });
-
-// ============================================================================
-// Pricing Configuration
-// ============================================================================
-
-/**
- * Tier pricing in cents (USD)
- * Amounts match the 6-tier pricing structure from platform docs
- */
-const TIER_PRICES: Record<
-  SubscriptionTier,
-  { MONTHLY: number; YEARLY: number }
-> = {
-  FREE: { MONTHLY: 0, YEARLY: 0 },
-  CUSTOM: { MONTHLY: 0, YEARLY: 0 }, // Pay-per-use marketplace
-  STARTER: { MONTHLY: 29900, YEARLY: 299000 }, // $299/mo, $2,990/yr
-  GROWTH: { MONTHLY: 69900, YEARLY: 699000 }, // $699/mo, $6,990/yr
-  ELITE: { MONTHLY: 99900, YEARLY: 999000 }, // $999/mo, $9,990/yr
-  ENTERPRISE: { MONTHLY: 0, YEARLY: 0 }, // Custom pricing
-} as const;
 
 // ============================================================================
 // Payment Intent Creation
@@ -146,16 +127,3 @@ export async function getPaymentIntentStatus(paymentIntentId: string) {
   };
 }
 
-/**
- * Calculate price for display
- * @param tier - Subscription tier
- * @param billingCycle - Billing cycle
- * @returns Price in dollars
- */
-export function calculatePrice(
-  tier: SubscriptionTier,
-  billingCycle: BillingCycle
-): number {
-  const amount = TIER_PRICES[tier]?.[billingCycle] || 0;
-  return amount / 100; // Convert cents to dollars
-}
