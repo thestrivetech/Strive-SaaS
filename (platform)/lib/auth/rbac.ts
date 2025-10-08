@@ -166,7 +166,7 @@ export function getNavigationItems(role: UserRole) {
       badge: 'Coming Soon',
     },
     {
-      title: 'ContentPilot',
+      title: 'ContentPilot-CMS',
       href: '/real-estate/cms-marketing/dashboard',
       icon: 'FileText',
       roles: ['SUPER_ADMIN', 'ADMIN', 'MODERATOR', 'USER'] as UserRole[],
@@ -635,7 +635,7 @@ export function getContentLimits(tier: string) {
 }
 
 /**
- * ContentPilot Module Access Control
+ * ContentPilot-CMS Module Access Control
  */
 export function canAccessContentPilot(user: {
   globalRole?: UserRole;

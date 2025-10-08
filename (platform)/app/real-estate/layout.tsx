@@ -1,17 +1,17 @@
 import { redirect } from 'next/navigation';
 import { getCurrentUser } from '@/lib/auth/auth-helpers';
-import { SidebarNav, defaultNavItems } from '@/components/shared/navigation/sidebar-nav';
-import { Header } from '@/components/shared/navigation/header';
-import { getNavigationItems } from '@/lib/auth/rbac';
-import type { UserRole } from '@/lib/auth/constants';
-import * as LucideIcons from 'lucide-react';
+import { DashboardContent } from '@/components/shared/dashboard/DashboardContent';
+import type { UserWithOrganization } from '@/lib/auth/user-helpers';
 
 /**
  * Real Estate Industry Layout
  *
- * Provides consistent navigation and layout for all real estate routes
- * - Sidebar navigation with role-based filtering
- * - Header with breadcrumbs and user menu
+ * Provides consistent glass morphism design across all real estate routes
+ * - Glass morphism sidebar with neon accents
+ * - TopBar with search, notifications, and user menu
+ * - Particle background effect
+ * - Command bar (Cmd+K)
+ * - Mobile bottom navigation
  * - Auth protection (redirects to login if not authenticated)
  */
 export default async function RealEstateLayout({
@@ -31,64 +31,43 @@ export default async function RealEstateLayout({
     redirect('/login');
   }
 
-  // ⚠️ TEMPORARY: Use mock navigation for localhost showcase
+  // Mock user for localhost showcase
+  let displayUser: UserWithOrganization;
+  let organizationId: string;
+
   if (!user && isLocalhost) {
-    return (
-      <div className="flex h-screen overflow-hidden">
-        {/* Sidebar Navigation - Mock for localhost */}
-        <SidebarNav items={defaultNavItems} />
-
-        {/* Main Content Area */}
-        <div className="flex flex-1 flex-col overflow-hidden">
-          {/* Header with Breadcrumbs and User Menu */}
-          <Header />
-
-          {/* Page Content */}
-          <main className="flex-1 overflow-auto p-6">
-            {children}
-          </main>
-        </div>
-      </div>
-    );
-  }
-
-  // Type guard: at this point user must exist (or we would have redirected/returned)
-  if (!user) {
-    redirect('/login');
-  }
-
-  // Get role-based navigation items
-  const navItems = getNavigationItems(user.role as UserRole);
-
-  // Map RBAC navigation items to SidebarNav format
-  // Convert icon string names to actual Lucide components
-  const sidebarItems = navItems.map((item) => {
-    // Get the icon component from Lucide by name
-    const IconComponent = (LucideIcons as any)[item.icon] || LucideIcons.Circle;
-
-    return {
-      title: item.title,
-      href: item.href,
-      icon: IconComponent,
-      badge: item.badge,
+    // Mock user for localhost
+    displayUser = {
+      id: 'demo-user',
+      clerk_user_id: null,
+      email: 'demo@strivetech.ai',
+      name: 'Demo User',
+      avatar_url: null,
+      role: 'USER' as const,
+      subscription_tier: 'ELITE' as const,
+      is_active: true,
+      created_at: new Date(),
+      updated_at: new Date(),
+      organization_members: [],
     };
-  });
+    organizationId = 'demo-org';
+  } else {
+    // Type guard: at this point user must exist (or we would have redirected)
+    if (!user) {
+      redirect('/login');
+    }
+
+    displayUser = user;
+    organizationId = user.organization_members[0]?.organization_id;
+
+    if (!organizationId) {
+      redirect('/onboarding/organization');
+    }
+  }
 
   return (
-    <div className="flex h-screen overflow-hidden">
-      {/* Sidebar Navigation */}
-      <SidebarNav items={sidebarItems.length > 0 ? sidebarItems : defaultNavItems} />
-
-      {/* Main Content Area */}
-      <div className="flex flex-1 flex-col overflow-hidden">
-        {/* Header with Breadcrumbs and User Menu */}
-        <Header />
-
-        {/* Page Content */}
-        <main className="flex-1 overflow-auto p-6">
-          {children}
-        </main>
-      </div>
-    </div>
+    <DashboardContent user={displayUser} organizationId={organizationId}>
+      {children}
+    </DashboardContent>
   );
 }

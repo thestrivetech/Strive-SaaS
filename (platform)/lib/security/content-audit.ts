@@ -1,5 +1,5 @@
 /**
- * ContentPilot Security Audit
+ * ContentPilot-CMS Security Audit
  *
  * Comprehensive security audit for CMS & Marketing module:
  * - RLS policies on all tables
@@ -69,7 +69,7 @@ export async function auditContentSecurity(): Promise<SecurityAuditResult> {
 }
 
 /**
- * Check RLS policies on ContentPilot tables
+ * Check RLS policies on ContentPilot-CMS tables
  */
 async function checkRLSPolicies(): Promise<SecurityCheck> {
   const contentTables = [
@@ -116,7 +116,7 @@ async function checkRLSPolicies(): Promise<SecurityCheck> {
     return {
       name: 'RLS Policies',
       passed: true,
-      details: `All ${contentTables.length} ContentPilot tables have RLS policies enabled`,
+      details: `All ${contentTables.length} ContentPilot-CMS tables have RLS policies enabled`,
     };
   } catch (error) {
     return {
@@ -258,7 +258,7 @@ export function formatAuditReport(result: SecurityAuditResult): string {
   const lines: string[] = [];
 
   lines.push('='.repeat(60));
-  lines.push('ContentPilot Security Audit Report');
+  lines.push('ContentPilot-CMS Security Audit Report');
   lines.push(`Timestamp: ${result.timestamp.toISOString()}`);
   lines.push('='.repeat(60));
   lines.push('');

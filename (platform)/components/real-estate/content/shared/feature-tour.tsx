@@ -15,7 +15,7 @@ import { ChevronLeft, ChevronRight, X } from 'lucide-react';
 /**
  * Feature Tour Component
  *
- * Displays a guided tour for first-time ContentPilot users
+ * Displays a guided tour for first-time ContentPilot-CMS users
  * Uses localStorage to track completion
  * Client component for localStorage access
  */
@@ -28,7 +28,7 @@ interface TourStep {
 
 const TOUR_STEPS: TourStep[] = [
   {
-    title: 'Welcome to ContentPilot!',
+    title: 'Welcome to ContentPilot-CMS!',
     description:
       'Your all-in-one content management and marketing platform. Create, publish, and track content performance all in one place.',
   },

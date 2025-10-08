@@ -2,8 +2,58 @@
 
 **Claude's Session Memory | v4.0 | Tri-Fold Architecture**
 
+## 🚨 CRITICAL: PRODUCTION DEPLOYMENT BLOCKERS
+
+> **⚠️ THESE MUST BE FIXED BEFORE PRODUCTION DEPLOYMENT**
+
+### 1. Localhost Authentication Bypass (ADDED: 2025-10-07)
+**Status:** 🔴 ACTIVE - Temporary fix for presentation
+**Priority:** CRITICAL - Security vulnerability if deployed to production
+
+**Files Modified:**
+- `(platform)/lib/auth/auth-helpers.ts`
+  - `requireAuth()` function (line ~170)
+  - `getCurrentUser()` function (line ~79)
+- `(platform)/lib/middleware/auth.ts` (already had isLocalhost bypass)
+
+**What was changed:**
+- Added `isLocalhost` checks that bypass authentication entirely
+- Returns mock user data (demo-user, demo-org) on localhost
+- Allows all pages to load without real authentication
+
+**Why it was added:**
+- Showcase/presentation mode on localhost
+- Fixes navigation routing issues during development
+- Prevents redirect loops when testing locally
+
+**BEFORE PRODUCTION:**
+```typescript
+// ❌ REMOVE these blocks from both functions:
+const isLocalhost = typeof window === 'undefined' &&
+  (process.env.NODE_ENV === 'development' || process.env.NEXT_PUBLIC_ENV === 'local');
+
+if (isLocalhost) {
+  // Return mock user...
+}
+```
+
+**Action Required:**
+1. Remove `isLocalhost` checks from `requireAuth()`
+2. Remove `isLocalhost` checks from `getCurrentUser()`
+3. Remove `isLocalhost` bypass from middleware (if still present)
+4. Implement proper Supabase/Clerk authentication flow
+5. Test all routes with real authentication
+6. Verify RBAC permissions work correctly
+
+---
+
+### 2. Server-Only Imports Issue
+**Status:** 🟡 NEEDS INVESTIGATION
+
 !!!! IMPORTANT NOTE -> Server only imports were removed to make the build work in order to prep for showcase -> This needs to be investigated and fixed before deploying to production !!! -> User will prompt you @Claude when it's time to fix this.
   - This could've been beacuse the server only dependency wasn't installed... It was just recently installed. I'm not sure, this is just an observation.
+
+---
   
 > ## 🔴 CRITICAL: TRI-FOLD REPOSITORY STRUCTURE
 >

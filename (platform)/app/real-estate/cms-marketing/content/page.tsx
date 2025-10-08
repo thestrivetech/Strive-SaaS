@@ -35,7 +35,20 @@ export default async function ContentPage({ searchParams }: ContentPageProps) {
 
   // Check RBAC permissions
   if (!canAccessContent(user)) {
-    redirect('/real-estate/dashboard');
+    return (
+      <div className="p-6">
+        <Card>
+          <CardContent className="p-6 text-center">
+            <p className="text-muted-foreground">
+              You don't have permission to access content management.
+            </p>
+            <p className="text-sm text-muted-foreground mt-2">
+              Please contact your administrator to request access.
+            </p>
+          </CardContent>
+        </Card>
+      </div>
+    );
   }
 
   const params = await searchParams;

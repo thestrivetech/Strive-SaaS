@@ -33,13 +33,13 @@ export function ContentListSkeleton() {
 /**
  * Dashboard Skeleton
  *
- * Loading state for ContentPilot dashboard
+ * Loading state for ContentPilot-CMS dashboard
  * Shows stats cards, chart placeholder, and recent content
  */
 export function DashboardSkeleton() {
   return (
     <div className="space-y-6" role="status" aria-live="polite" aria-label="Loading dashboard">
-      <span className="sr-only">Loading ContentPilot dashboard...</span>
+      <span className="sr-only">Loading ContentPilot-CMS dashboard...</span>
       {/* Stats cards */}
       <div className="grid gap-4 grid-cols-1 sm:grid-cols-2 md:grid-cols-4">
         {[...Array(4)].map((_, i) => (

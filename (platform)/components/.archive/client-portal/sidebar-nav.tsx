@@ -82,7 +82,7 @@ export const defaultNavItems: NavItem[] = [
     badge: 'Coming Soon',
   },
   {
-    title: 'ContentPilot',
+    title: 'ContentPilot-CMS',
     href: '/real-estate/cms-marketing/dashboard',
     icon: FileText,
     permission: 'canManageCustomers',

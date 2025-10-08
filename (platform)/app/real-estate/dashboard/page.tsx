@@ -6,7 +6,6 @@ import { getDashboardMetrics } from '@/lib/modules/dashboard/metrics/queries';
 import { getDashboardWidgets } from '@/lib/modules/dashboard/widgets/queries';
 import { getRecentActivities } from '@/lib/modules/dashboard/activities/queries';
 import { getQuickActions } from '@/lib/modules/dashboard/quick-actions/queries';
-import { DashboardContent } from '@/components/shared/dashboard/DashboardContent';
 import { DashboardGrid } from '@/components/shared/dashboard/DashboardGrid';
 import { HeroSection } from '@/components/shared/dashboard/HeroSection';
 import { HeroSkeleton, GridSkeleton } from '@/components/shared/dashboard/skeletons';
@@ -83,7 +82,7 @@ export default async function DashboardPage() {
   }
 
   return (
-    <DashboardContent user={user} organizationId={organizationId}>
+    <>
       <Suspense fallback={<HeroSkeleton />}>
         <HeroSectionWrapper organizationId={organizationId} user={user} />
       </Suspense>
@@ -127,7 +126,7 @@ export default async function DashboardPage() {
           </div>
         </div>
       </div>
-    </DashboardContent>
+    </>
   );
 }
 
@@ -230,14 +229,14 @@ async function QuickActionsSection({ organizationId }: { organizationId: string 
       name: 'New Transaction',
       description: 'Start a transaction loop',
       icon: 'FileText',
-      target_url: '/real-estate/workspace',
+      target_url: '/real-estate/workspace/dashboard',
       color: 'green',
     },
     {
-      name: 'New Transaction',
-      description: 'Create a transaction',
+      name: 'New Project',
+      description: 'Create a project',
       icon: 'FolderKanban',
-      target_url: '/real-estate/workspace',
+      target_url: '/real-estate/workspace/listings',
       color: 'purple',
     },
   ];

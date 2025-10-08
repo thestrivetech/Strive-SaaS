@@ -6,6 +6,9 @@
  * @module appointments
  */
 
+// Check if mock mode is enabled
+import { dataConfig } from '@/lib/data/config';
+
 // Actions (Server Actions)
 export {
   createAppointment,
@@ -15,14 +18,26 @@ export {
   bulkRescheduleAppointments,
 } from './actions';
 
-// Queries
-export {
-  getAppointments,
-  getUpcomingAppointments,
-  getAppointmentById,
-  getAppointmentsByEntity,
-  getAppointmentStats,
-} from './queries';
+// Queries - Use mock data if enabled
+export const getAppointments = dataConfig.useMocks
+  ? async () => []
+  : async (filters?: any) => (await import('./queries')).getAppointments(filters);
+
+export const getUpcomingAppointments = dataConfig.useMocks
+  ? async (userId: string, limit?: number) => (await import('@/lib/data/providers/appointments-provider')).getUpcomingAppointments(userId, limit)
+  : async (userId: string, limit?: number) => (await import('./queries')).getUpcomingAppointments(userId, limit);
+
+export const getAppointmentById = dataConfig.useMocks
+  ? async () => null
+  : async (id: string) => (await import('./queries')).getAppointmentById(id);
+
+export const getAppointmentsByEntity = dataConfig.useMocks
+  ? async () => []
+  : async (entityType: string, entityId: string) => (await import('./queries')).getAppointmentsByEntity(entityType, entityId);
+
+export const getAppointmentStats = dataConfig.useMocks
+  ? async () => ({ total: 0, upcoming: 0, completed: 0, cancelled: 0 })
+  : async () => (await import('./queries')).getAppointmentStats();
 
 // Schemas
 export {

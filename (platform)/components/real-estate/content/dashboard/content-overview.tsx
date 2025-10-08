@@ -5,7 +5,7 @@ import { getCMSDashboardStats } from '@/lib/modules/cms-marketing/dashboard-quer
 /**
  * Content Overview Stats Component
  *
- * Displays key metrics for the ContentPilot module:
+ * Displays key metrics for the ContentPilot-CMS module:
  * - Total content items
  * - Published content
  * - Active campaigns

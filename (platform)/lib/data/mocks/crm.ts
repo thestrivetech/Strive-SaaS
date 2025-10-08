@@ -39,9 +39,11 @@ export type MockLead = {
   email: string;
   phone: string | null;
   source: string;
-  status: 'new' | 'contacted' | 'qualified' | 'lost';
+  status: 'NEW_LEAD' | 'CONTACTED' | 'QUALIFIED' | 'LOST';
+  score: 'HOT' | 'WARM' | 'COLD';
   value: number | null;
   notes: string | null;
+  assigned_to_id: string | null;
   created_at: Date;
   updated_at: Date;
   organization_id: string;
@@ -67,7 +69,8 @@ export type MockCustomer = {
 };
 
 const LEAD_SOURCES = ['Website', 'Referral', 'Social Media', 'Cold Call', 'Trade Show', 'Partner'];
-const LEAD_STATUSES: MockLead['status'][] = ['new', 'contacted', 'qualified', 'lost'];
+const LEAD_STATUSES: MockLead['status'][] = ['NEW_LEAD', 'CONTACTED', 'QUALIFIED', 'LOST'];
+const LEAD_SCORES: MockLead['score'][] = ['HOT', 'WARM', 'COLD'];
 const CONTACT_ROLES = ['CEO', 'CTO', 'Manager', 'Director', 'VP Sales', 'Coordinator'];
 const TAGS = ['VIP', 'Hot Lead', 'Follow Up', 'Dormant', 'High Value', 'Repeat Customer'];
 
@@ -102,8 +105,10 @@ export function generateMockLead(orgId: string, overrides?: Partial<MockLead>): 
     phone: randomBoolean() ? randomPhone() : null,
     source: randomFromArray(LEAD_SOURCES),
     status: randomFromArray(LEAD_STATUSES),
+    score: randomFromArray(LEAD_SCORES),
     value: randomBoolean() ? randomCurrency(5000, 500000) : null,
     notes: randomBoolean() ? 'Sample lead notes' : null,
+    assigned_to_id: randomBoolean() ? 'demo-user' : null,
     created_at: createdAt,
     updated_at: createdAt,
     organization_id: orgId,

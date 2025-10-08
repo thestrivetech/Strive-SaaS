@@ -68,11 +68,22 @@ describe('REID RBAC Security', () => {
       expect(canAccessREID(user)).toBe(true);
     });
 
-    it('allows SUPER_ADMIN regardless of org role', () => {
+    it('blocks SUPER_ADMIN with VIEWER org role (requires MEMBER+)', () => {
       const user = {
         globalRole: 'SUPER_ADMIN' as const,
-        organizationRole: 'VIEWER', // Even VIEWER
-        subscriptionTier: 'FREE', // Even FREE tier
+        organizationRole: 'VIEWER', // VIEWER blocks access
+        subscriptionTier: 'FREE',
+      };
+
+      // Even SUPER_ADMIN needs Member+ org role for REID
+      expect(canAccessREID(user)).toBe(false);
+    });
+
+    it('allows ADMIN with proper org role', () => {
+      const user = {
+        globalRole: 'ADMIN' as const,
+        organizationRole: 'ADMIN',
+        subscriptionTier: 'GROWTH',
       };
 
       expect(canAccessREID(user)).toBe(true);

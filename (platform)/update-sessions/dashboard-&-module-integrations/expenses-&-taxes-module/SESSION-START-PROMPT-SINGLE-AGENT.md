@@ -9,7 +9,7 @@ Use this prompt at the beginning of each session. Replace `{SESSION_NUMBER}` wit
 ## 📋 SESSION START PROMPT
 
 ```
-I'm starting Session {SESSION_NUMBER} of the Expenses & Taxes Module integration.
+I'm starting Session {5} of the Expenses & Taxes Module integration.
 
 ## STEP 1: READ ESSENTIAL DOCUMENTATION
 

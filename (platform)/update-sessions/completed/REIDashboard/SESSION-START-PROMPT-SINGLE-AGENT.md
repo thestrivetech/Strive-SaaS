@@ -1,4 +1,4 @@
-# CMS & Marketing Module - Single Agent Session Prompt
+# REI Dashboard (Real Estate Intelligence) - Single Agent Session Prompt
 
 **Session-based development using strive-agent-universal**
 
@@ -9,7 +9,7 @@ Use this prompt at the beginning of each session. Replace `{SESSION_NUMBER}` wit
 ## 📋 SESSION START PROMPT
 
 ```
-I'm starting Session {SESSION_NUMBER} of the CMS & Marketing Module integration.
+I'm starting Session {12} of the REI Dashboard integration.
 
 ## STEP 1: READ ESSENTIAL DOCUMENTATION
 
@@ -43,7 +43,7 @@ Read these files in order (ALWAYS at session start):
    - Security mandates (document encryption, multi-tenancy)
 
 4. **Session Plan**:
-   C:\Users\zochr\Desktop\GitHub\Strive-SaaS\(platform)\update-sessions\dashboard-&-module-integrations\cms&marketing-module\session-{SESSION_NUMBER}.plan.md
+   C:\Users\zochr\Desktop\GitHub\Strive-SaaS\(platform)\update-sessions\dashboard-&-module-integrations\REIDashboard\session-{SESSION_NUMBER}.plan.md
 
 ---
 
@@ -52,7 +52,7 @@ Read these files in order (ALWAYS at session start):
 Use the strive-agent-universal agent for implementation:
 
 Task strive-agent-universal "
-CMS & Marketing Module - Session {SESSION_NUMBER}
+REI Dashboard - Session {SESSION_NUMBER}
 
 ## Context Files Already Read
 You can reference patterns from:
@@ -76,18 +76,17 @@ Database:
 Security (Platform-Specific):
 - Dual-role RBAC: Check BOTH GlobalRole AND OrganizationRole
 - Multi-tenancy: Filter ALL queries by organizationId
-- Content ownership: Validate user owns/can edit content
-- Media library: Validate organization-scoped access
-- Publishing permissions: Check role before publish
-- Subscription tiers: CMS requires STARTER tier minimum
+- Market data: Validate organization subscription for data access
+- Property alerts: Scope to user's organization and criteria
+- Subscription tiers: REI Intelligence requires GROWTH tier minimum
 - Input validation: Use Zod schemas for ALL user input
-- XSS prevention: Sanitize rich text content
+- Location data privacy: Anonymize sensitive address data
 
 Architecture:
-- Route structure: app/real-estate/cms-marketing/ (CMS module)
+- Route structure: app/real-estate/rei-analytics/ (REI Analytics module)
 - Follow Industry > Module > Page hierarchy from platform CLAUDE.md
-- Components in components/real-estate/cms-marketing/
-- Backend logic in lib/modules/cms-marketing/
+- Components in components/real-estate/rei-analytics/
+- Backend logic in lib/modules/rei-analytics/
 - File size limit: 500 lines max (hard ESLint block)
 
 UI/UX:
@@ -97,8 +96,8 @@ UI/UX:
 - Use hover-elevate class for interactions
 - Mobile-first responsive (Tailwind breakpoints)
 - Light/dark mode support
-- Rich text editor with formatting controls
-- Media library with drag-drop upload
+- Interactive maps with markers
+- Data visualization charts
 
 Implementation:
 1. Create TodoWrite list FIRST (granular tasks with activeForm)
@@ -194,16 +193,16 @@ After agent reports complete, independently verify:
 
 ### Security Validation
 - [ ] All queries filter by organizationId (multi-tenancy)
-- [ ] Content ownership validated before access/edit
+- [ ] Market data access validated by subscription tier
 - [ ] Server Actions validate with Zod schemas
 - [ ] RBAC checks both GlobalRole AND OrganizationRole
-- [ ] Rich text content sanitized (XSS prevention)
+- [ ] Location data properly anonymized
 - [ ] No secrets exposed in code
 - [ ] No references to .env.local file content
 
 ### Architecture Validation
-- [ ] Routes in correct directories (app/real-estate/cms-marketing/)
-- [ ] Components properly organized (components/real-estate/cms-marketing/)
+- [ ] Routes in correct directories (app/real-estate/rei-analytics/)
+- [ ] Components properly organized (components/real-estate/rei-analytics/)
 - [ ] Backend logic in lib/modules/
 - [ ] No files exceed 500 lines
 - [ ] Follows Industry > Module > Page hierarchy
@@ -218,13 +217,13 @@ Execute and provide outputs:
 - cd (platform)
 - npx tsc --noEmit | head -30
 - npm run lint | grep -E '(error|warning)'
-- npm test -- cms
+- npm test -- rei
 - npm run build 2>&1 | tail -20
 
 Security checks:
-- Grep for organizationId filters: grep -r 'prisma\\..*\\.findMany' app/real-estate/cms-marketing/ lib/modules/cms-marketing/
-- Verify RBAC checks: grep -r 'requireAuth' app/real-estate/cms-marketing/
-- Check file sizes: find app/real-estate/cms-marketing/ -name '*.tsx' -exec wc -l {} + | sort -rn | head -10
+- Grep for organizationId filters: grep -r 'prisma\\..*\\.findMany' app/real-estate/rei-analytics/ lib/modules/rei-analytics/
+- Verify RBAC checks: grep -r 'requireAuth' app/real-estate/rei-analytics/
+- Check file sizes: find app/real-estate/rei-analytics/ -name '*.tsx' -exec wc -l {} + | sort -rn | head -10
 
 Provide complete outputs and confirm all checks pass.
 "
@@ -252,79 +251,76 @@ Required sections:
 
 ## 🔑 INTEGRATION-SPECIFIC REMINDERS
 
-### Route Structure (CMS & Marketing)
+### Route Structure (REI Dashboard)
 ```
-app/real-estate/cms-marketing/
-├── dashboard/           # CMS main dashboard
-├── content/             # Content management
-│   ├── page.tsx        # Content library
-│   ├── [id]/           # Content editor
-│   ├── new/            # Create content
-│   └── categories/     # Content categories
-├── media/               # Media library
-│   ├── page.tsx        # Media browser
-│   └── upload/         # Upload interface
-├── campaigns/           # Marketing campaigns
-│   ├── page.tsx        # Campaign list
-│   ├── [id]/           # Campaign editor
-│   └── new/            # Create campaign
-└── analytics/           # Content analytics
-    └── page.tsx        # Performance metrics
+app/real-estate/rei-analytics/
+├── dashboard/           # REI main dashboard
+├── market-reports/      # Market intelligence
+│   ├── page.tsx        # Report list
+│   ├── [id]/           # Report detail
+│   └── generate/       # Generate custom report
+├── neighborhood/        # Neighborhood insights
+│   ├── page.tsx        # Neighborhood search
+│   └── [id]/           # Neighborhood detail
+├── alerts/              # Property alerts
+│   ├── page.tsx        # Alert list
+│   ├── [id]/           # Alert detail
+│   └── create/         # Create alert
+└── analytics/           # Advanced analytics
+    ├── trends/         # Market trends
+    ├── comparisons/    # Comparative analysis
+    └── forecasts/      # Market forecasts
 ```
 
-### Content Management Pattern
+### Market Data Pattern
 ```typescript
-// Content must be owned by organization
-interface ContentItem {
+// Market data must be organization-scoped
+interface MarketReport {
   id: string;
-  title: string;
-  content: string;        // Rich text (sanitized!)
-  organizationId: string; // Multi-tenancy
-  authorId: string;       // Creator
-  status: 'DRAFT' | 'PUBLISHED' | 'ARCHIVED';
-  publishedAt?: Date;
+  reportType: ReidReportType;
+  areaId: string;
+  organizationId: string;   // Multi-tenancy
+  userId: string;           // Creator
+  generatedAt: Date;
+  data: any;                // Report data
 }
 
-// Content access validation
-export async function getContent(contentId: string) {
+// Market data access validation
+export async function getMarketReport(reportId: string) {
   const session = await requireAuth();
 
-  const content = await prisma.contentItem.findFirst({
+  // Validate subscription tier
+  if (!['GROWTH', 'ELITE', 'ENTERPRISE'].includes(session.user.subscriptionTier)) {
+    throw new Error('REI Intelligence requires GROWTH tier or higher');
+  }
+
+  const report = await prisma.marketReport.findFirst({
     where: {
-      id: contentId,
+      id: reportId,
       organizationId: session.user.organizationId  // Critical!
     }
   });
 
-  if (!content) throw new Error('Content not found');
-  return content;
+  if (!report) throw new Error('Report not found');
+  return report;
 }
 ```
 
-### Database Models (CMS-Specific)
+### Database Models (REI-Specific)
 Refer to shared/prisma/SCHEMA-QUICK-REF.md for:
-- ContentItem - Content pieces
-- ContentCategory - Content categories
-- ContentTag - Content tags
-- MediaAsset - Media library files
-- MediaFolder - Media organization
-- Campaign - Marketing campaigns
-- CampaignContent - Campaign content items
-- EmailCampaign - Email campaigns
-- SocialMediaPost - Social posts
+- MarketReport - Market intelligence reports
+- NeighborhoodInsight - Neighborhood data
+- PropertyAlert - Property alerts/notifications
+- AlertTrigger - Alert criteria
 
 ### API Routes
 ```
 app/api/v1/
-├── cms/
-│   ├── content/         # Content CRUD
-│   ├── media/           # Media upload/management
-│   ├── categories/      # Category management
-│   └── tags/            # Tag management
-└── marketing/
-    ├── campaigns/       # Campaign management
-    ├── email/           # Email campaigns
-    └── social/          # Social media posts
+├── rei/
+│   ├── reports/         # Market reports
+│   ├── neighborhoods/   # Neighborhood data
+│   ├── alerts/          # Alert management
+│   └── analytics/       # Advanced analytics
 ```
 
 ---
@@ -368,7 +364,7 @@ Session is complete when:
 - Single-role RBAC → Incomplete auth
 - MCP list_tables → Token waste
 - Files >500 lines → ESLint block
-- Unsanitized rich text → XSS vulnerability
+- Missing tier validation → Unauthorized access
 
 ---
 

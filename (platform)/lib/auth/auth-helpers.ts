@@ -77,6 +77,52 @@ export const getSession = async () => {
 };
 
 export const getCurrentUser = async (): Promise<UserWithOrganization | null> => {
+  // 🚨 CRITICAL: REMOVE BEFORE PRODUCTION DEPLOYMENT 🚨
+  // ⚠️ TEMPORARY: Skip auth on localhost for presentation ONLY
+  // ⚠️ This is a SECURITY VULNERABILITY if deployed to production!
+  // ⚠️ See: (platform)/PRE-DEPLOYMENT-CHECKLIST.md
+  // ⚠️ See: (platform)/CLAUDE.md - Production Deployment Blockers
+  const isLocalhost = typeof window === 'undefined' &&
+    (process.env.NODE_ENV === 'development' || process.env.NEXT_PUBLIC_ENV === 'local');
+
+  if (isLocalhost) {
+    // Return mock user for localhost - REMOVE THIS ENTIRE BLOCK BEFORE PRODUCTION
+    return {
+      id: 'demo-user',
+      clerk_user_id: null,
+      email: 'demo@strivetech.ai',
+      name: 'Demo User',
+      avatar_url: null,
+      role: 'USER' as const,
+      subscription_tier: 'ELITE' as const,
+      is_active: true,
+      created_at: new Date(),
+      updated_at: new Date(),
+      organization_members: [{
+        organization_id: 'demo-org',
+        user_id: 'demo-user',
+        role: 'ADMIN' as any,
+        joined_at: new Date(),
+        organizations: {
+          id: 'demo-org',
+          name: 'Demo Organization',
+          created_at: new Date(),
+          updated_at: new Date(),
+          subscriptions: {
+            id: 'demo-subscription',
+            organization_id: 'demo-org',
+            tier: 'ELITE',
+            status: 'active',
+            current_period_start: new Date(),
+            current_period_end: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000),
+            created_at: new Date(),
+            updated_at: new Date(),
+          } as any,
+        } as any
+      }],
+    } as UserWithOrganization;
+  }
+
   // ⚠️ SECURITY: Use getUser() directly for server-side JWT validation
   // This avoids the Supabase security warning about using session.user
   const supabase = await createSupabaseServerClient();
@@ -168,6 +214,52 @@ export const getCurrentUser = async (): Promise<UserWithOrganization | null> => 
  * @throws Redirects to login if not authenticated or no organization
  */
 export const requireAuth = async (): Promise<EnhancedUser> => {
+  // 🚨 CRITICAL: REMOVE BEFORE PRODUCTION DEPLOYMENT 🚨
+  // ⚠️ TEMPORARY: Skip auth on localhost for presentation ONLY
+  // ⚠️ This is a SECURITY VULNERABILITY if deployed to production!
+  // ⚠️ See: (platform)/PRE-DEPLOYMENT-CHECKLIST.md
+  // ⚠️ See: (platform)/CLAUDE.md - Production Deployment Blockers
+  const isLocalhost = typeof window === 'undefined' &&
+    (process.env.NODE_ENV === 'development' || process.env.NEXT_PUBLIC_ENV === 'local');
+
+  if (isLocalhost) {
+    // Return mock user for localhost - REMOVE THIS ENTIRE BLOCK BEFORE PRODUCTION
+    return enhanceUser({
+      id: 'demo-user',
+      clerk_user_id: null,
+      email: 'demo@strivetech.ai',
+      name: 'Demo User',
+      avatar_url: null,
+      role: 'USER' as const,
+      subscription_tier: 'ELITE' as const,
+      is_active: true,
+      created_at: new Date(),
+      updated_at: new Date(),
+      organization_members: [{
+        organization_id: 'demo-org',
+        user_id: 'demo-user',
+        role: 'ADMIN' as any,
+        joined_at: new Date(),
+        organizations: {
+          id: 'demo-org',
+          name: 'Demo Organization',
+          created_at: new Date(),
+          updated_at: new Date(),
+          subscriptions: {
+            id: 'demo-subscription',
+            organization_id: 'demo-org',
+            tier: 'ELITE',
+            status: 'active',
+            current_period_start: new Date(),
+            current_period_end: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000),
+            created_at: new Date(),
+            updated_at: new Date(),
+          } as any,
+        } as any
+      }],
+    } as UserWithOrganization);
+  }
+
   const user = await getCurrentUser();
 
   if (!user) {

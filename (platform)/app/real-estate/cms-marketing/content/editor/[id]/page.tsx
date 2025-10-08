@@ -1,8 +1,9 @@
-import { redirect, notFound } from 'next/navigation';
+import { notFound } from 'next/navigation';
 import { requireAuth } from '@/lib/auth/auth-helpers';
 import { canAccessContent } from '@/lib/auth/rbac';
 import { getContentItemById } from '@/lib/modules/content/content';
 import { ContentEditor } from '@/components/real-estate/content/content-editor';
+import { Card, CardContent } from '@/components/ui/card';
 import Link from 'next/link';
 import { ChevronRight } from 'lucide-react';
 
@@ -17,7 +18,20 @@ export default async function EditContentPage({ params }: EditContentPageProps) 
 
   // Check RBAC permissions
   if (!canAccessContent(user)) {
-    redirect('/real-estate/dashboard');
+    return (
+      <div className="p-6">
+        <Card>
+          <CardContent className="p-6 text-center">
+            <p className="text-muted-foreground">
+              You don't have permission to edit content.
+            </p>
+            <p className="text-sm text-muted-foreground mt-2">
+              Please contact your administrator to request access.
+            </p>
+          </CardContent>
+        </Card>
+      </div>
+    );
   }
 
   const { id } = await params;

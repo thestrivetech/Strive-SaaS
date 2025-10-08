@@ -29,6 +29,15 @@ const SCORE_CONFIG = {
 } as const;
 
 export function LeadScoreBadge({ score, showIcon = true, className }: LeadScoreBadgeProps) {
+  // Handle invalid/missing scores gracefully
+  if (!score || !(score in SCORE_CONFIG)) {
+    return (
+      <Badge variant="outline" className={className}>
+        Unknown
+      </Badge>
+    );
+  }
+
   const config = SCORE_CONFIG[score];
   const Icon = config.icon;
 

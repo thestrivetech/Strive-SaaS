@@ -2,8 +2,63 @@
 
 **Claude's Session Memory | v2.0 | Platform Project Standards - Multi-Industry Architecture**
 
+## 🚨 CRITICAL: PRODUCTION DEPLOYMENT BLOCKERS
+
+> **⚠️ THESE MUST BE FIXED BEFORE PRODUCTION DEPLOYMENT**
+
+### 1. Localhost Authentication Bypass (ADDED: 2025-10-07)
+**Status:** 🔴 ACTIVE - Temporary fix for presentation
+**Priority:** CRITICAL - Security vulnerability if deployed to production
+
+**Files Modified:**
+- `lib/auth/auth-helpers.ts`
+  - `requireAuth()` function (line ~170)
+  - `getCurrentUser()` function (line ~79)
+- `lib/middleware/auth.ts` (already had isLocalhost bypass)
+
+**What was changed:**
+- Added `isLocalhost` checks that bypass authentication entirely
+- Returns mock user data (demo-user, demo-org, ELITE tier) on localhost
+- Allows all pages to load without real authentication for showcase
+
+**Why it was added:**
+- Showcase/presentation mode on localhost
+- Fixes navigation routing issues during development
+- Prevents redirect loops when testing locally without database
+
+**BEFORE PRODUCTION - Action Required:**
+1. ❌ Remove `isLocalhost` checks from `requireAuth()` in `lib/auth/auth-helpers.ts`
+2. ❌ Remove `isLocalhost` checks from `getCurrentUser()` in `lib/auth/auth-helpers.ts`
+3. ❌ Remove `isLocalhost` bypass from `lib/middleware/auth.ts` (if still present)
+4. ✅ Implement proper Supabase authentication flow
+5. ✅ Test all routes with real authentication
+6. ✅ Verify RBAC permissions work correctly
+7. ✅ Verify multi-tenancy isolation works (no cross-org data leaks)
+
+**Code to Remove:**
+```typescript
+// ❌ REMOVE these blocks from both functions:
+const isLocalhost = typeof window === 'undefined' &&
+  (process.env.NODE_ENV === 'development' || process.env.NEXT_PUBLIC_ENV === 'local');
+
+if (isLocalhost) {
+  return enhanceUser({
+    id: 'demo-user',
+    // ... mock user data
+  });
+}
+```
+
+---
+
+### 2. Server-Only Imports Issue
+**Status:** 🟡 NEEDS INVESTIGATION
+
 !!!! IMPORTANT NOTE -> Server only imports were removed to make the build work in order to prep for showcase -> This needs to be investigated and fixed before deploying to production !!! -> User will prompt you @Claude when it's time to fix this.
   - This could've been beacuse the server only dependency wasn't installed... It was just recently installed. I'm not sure, this is just an observation.
+
+---
+
 > ## 🔴 CRITICAL: READ-BEFORE-EDIT MANDATE
 >
 > **YOU MUST FOLLOW THESE STEPS BEFORE ANY ACTION:**

@@ -1,9 +1,8 @@
 'use client';
 
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { TrendingUp, TrendingDown } from 'lucide-react';
+import { TrendingUp, TrendingDown, Users, DollarSign, CheckCircle } from 'lucide-react';
 import { formatCurrency, formatNumber } from '@/lib/utils';
-import type { LucideIcon } from 'lucide-react';
 
 /**
  * KPI Card Component
@@ -20,7 +19,7 @@ import type { LucideIcon } from 'lucide-react';
  *   value={125000}
  *   change={12.5}
  *   format="currency"
- *   icon={DollarSign}
+ *   iconName="dollar-sign"
  * />
  * ```
  */
@@ -30,10 +29,18 @@ interface KPICardProps {
   value: number;
   change?: number;
   format?: 'number' | 'currency' | 'percentage';
-  icon?: LucideIcon;
+  iconName?: 'users' | 'dollar-sign' | 'trending-up' | 'check-circle';
 }
 
-export function KPICard({ title, value, change, format = 'number', icon: Icon }: KPICardProps) {
+const iconMap = {
+  'users': Users,
+  'dollar-sign': DollarSign,
+  'trending-up': TrendingUp,
+  'check-circle': CheckCircle,
+};
+
+export function KPICard({ title, value, change, format = 'number', iconName }: KPICardProps) {
+  const Icon = iconName ? iconMap[iconName] : null;
   const formatValue = () => {
     switch (format) {
       case 'currency':

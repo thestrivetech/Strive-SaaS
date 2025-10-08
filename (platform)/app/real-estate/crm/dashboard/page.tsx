@@ -11,7 +11,7 @@ import { RecentActivity } from '@/components/real-estate/crm/dashboard/recent-ac
 import { QuickCreateMenu } from '@/components/real-estate/crm/dashboard/quick-create-menu';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Users, DollarSign, TrendingUp, CheckCircle, ArrowRight } from 'lucide-react';
+import { ArrowRight } from 'lucide-react';
 import Link from 'next/link';
 import { subDays } from 'date-fns';
 
@@ -77,26 +77,26 @@ export default async function CRMDashboardPage() {
           title="New Leads"
           value={kpis.leads.new}
           change={kpis.leads.change}
-          icon={Users}
+          iconName="users"
         />
         <KPICard
           title="Pipeline Value"
           value={kpis.pipeline.totalValue}
           format="currency"
-          icon={DollarSign}
+          iconName="dollar-sign"
         />
         <KPICard
           title="Revenue (MTD)"
           value={kpis.revenue.thisMonth}
           change={kpis.revenue.change}
           format="currency"
-          icon={TrendingUp}
+          iconName="trending-up"
         />
         <KPICard
           title="Conversion Rate"
           value={kpis.conversionRate}
           format="percentage"
-          icon={CheckCircle}
+          iconName="check-circle"
         />
       </div>
 

@@ -1,56 +1,35 @@
-import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
+import { DashboardSkeleton } from '@/components/real-estate/expense-tax/dashboard/DashboardSkeleton';
 
 /**
  * Expense & Tax Dashboard Loading State
  *
- * Loading skeleton for expense & tax dashboard
+ * Displays loading skeleton for the entire dashboard
+ * while the page data is being fetched
  */
 export default function ExpenseTaxDashboardLoading() {
   return (
-    <div className="space-y-6">
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
       {/* Header Skeleton */}
-      <div>
-        <Skeleton className="h-9 w-80" />
-        <Skeleton className="mt-2 h-5 w-96" />
-      </div>
-
-      {/* Content Card Skeleton */}
-      <Card>
-        <CardHeader>
-          <div className="flex items-center gap-3">
-            <Skeleton className="h-12 w-12 rounded-lg" />
+      <div className="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 animate-pulse">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+          <div className="flex items-center justify-between">
             <div className="space-y-2">
-              <Skeleton className="h-6 w-40" />
-              <Skeleton className="h-4 w-64" />
+              <Skeleton className="h-9 w-80" />
+              <Skeleton className="h-5 w-96" />
+            </div>
+            <div className="flex items-center gap-3">
+              <Skeleton className="h-9 w-24" />
+              <Skeleton className="h-9 w-32" />
             </div>
           </div>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          <Skeleton className="h-4 w-full" />
-          <Skeleton className="h-4 w-5/6" />
+        </div>
+      </div>
 
-          {/* Grid Skeleton */}
-          <div className="grid gap-4 md:grid-cols-2">
-            {[1, 2, 3, 4].map((i) => (
-              <div key={i} className="rounded-lg border p-4 space-y-3">
-                <div className="flex items-center gap-2">
-                  <Skeleton className="h-5 w-5 rounded" />
-                  <Skeleton className="h-5 w-32" />
-                </div>
-                <div className="space-y-2">
-                  <Skeleton className="h-4 w-full" />
-                  <Skeleton className="h-4 w-5/6" />
-                  <Skeleton className="h-4 w-4/5" />
-                  <Skeleton className="h-4 w-3/4" />
-                </div>
-              </div>
-            ))}
-          </div>
-
-          <Skeleton className="h-24 w-full rounded-lg" />
-        </CardContent>
-      </Card>
+      {/* Content Skeleton */}
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <DashboardSkeleton />
+      </div>
     </div>
   );
 }
