@@ -83,3 +83,7 @@ archive/app-backup/.vercel/project.json
 .mcp.json
 .mcp.json
 .mcp.json
+
+# Git backup files
+.git-backups/
+.backups/

@@ -5,6 +5,7 @@ import { redirect } from 'next/navigation';
 import { ExpenseHeader } from '@/components/real-estate/expense-tax/dashboard/ExpenseHeader';
 import { ExpenseKPIs } from '@/components/real-estate/expense-tax/dashboard/ExpenseKPIs';
 import { DashboardSkeleton } from '@/components/real-estate/expense-tax/dashboard/DashboardSkeleton';
+import { ExpenseTable } from '@/components/real-estate/expense-tax/tables/ExpenseTable';
 
 /**
  * Expense & Tax Dashboard Page
@@ -50,6 +51,15 @@ export default async function ExpenseTaxDashboardPage() {
           {/* KPI Cards with Suspense Boundary */}
           <Suspense fallback={<DashboardSkeleton />}>
             <ExpenseKPIs />
+          </Suspense>
+
+          {/* Expense Table with Suspense Boundary */}
+          <Suspense
+            fallback={
+              <div className="h-96 bg-white dark:bg-gray-800 rounded-lg shadow-sm animate-pulse"></div>
+            }
+          >
+            <ExpenseTable />
           </Suspense>
         </div>
       </div>

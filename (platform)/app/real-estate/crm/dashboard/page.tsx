@@ -1,24 +1,27 @@
 import { redirect } from 'next/navigation';
+import { Suspense } from 'react';
 import { requireAuth, getCurrentUser } from '@/lib/auth/auth-helpers';
 import { getOverviewKPIs, getSalesFunnelData, getAgentPerformance } from '@/lib/modules/analytics';
 import { getLeads } from '@/lib/modules/crm/leads';
 import { getUpcomingAppointments } from '@/lib/modules/appointments';
 import { getRecentActivities } from '@/lib/modules/activities';
-import { KPICard } from '@/components/real-estate/crm/analytics/kpi-card';
+import { ModuleHeroSection } from '@/components/shared/dashboard/ModuleHeroSection';
+import { EnhancedCard, CardHeader, CardTitle, CardContent } from '@/components/shared/dashboard/EnhancedCard';
+import { HeroSkeleton } from '@/components/shared/dashboard/skeletons';
 import { AgentLeaderboard } from '@/components/real-estate/crm/analytics/agent-leaderboard';
 import { LeadCard } from '@/components/real-estate/crm/leads/lead-card';
 import { RecentActivity } from '@/components/real-estate/crm/dashboard/recent-activity';
 import { QuickCreateMenu } from '@/components/real-estate/crm/dashboard/quick-create-menu';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { ArrowRight } from 'lucide-react';
 import Link from 'next/link';
 import { subDays } from 'date-fns';
+import { motion } from 'framer-motion';
 
 /**
  * CRM Dashboard Page
  *
- * Main dashboard for CRM with KPIs, recent leads, pipeline overview,
+ * Main dashboard for CRM with ModuleHeroSection, KPIs, recent leads, pipeline overview,
  * upcoming appointments, recent activity, and top performers
  *
  * @protected - Requires authentication
@@ -46,8 +49,7 @@ export default async function CRMDashboardPage() {
   };
 
   // Fetch all dashboard data in parallel for performance
-  const [kpis, recentLeads, funnelData, appointmentsResult, activities, agentPerformance] = await Promise.all([
-    getOverviewKPIs(),
+  const [recentLeads, funnelData, appointmentsResult, activities, agentPerformance] = await Promise.all([
     getLeads({ limit: 4, offset: 0, sort_order: 'desc', sort_by: 'created_at' }),
     getSalesFunnelData(),
     getUpcomingAppointments(user.id, 5),
@@ -60,52 +62,27 @@ export default async function CRMDashboardPage() {
 
   return (
     <div className="space-y-6">
-      {/* Header */}
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-3xl font-bold">CRM Dashboard</h1>
-          <p className="text-muted-foreground">
-            Welcome back, {user.name}! Here&apos;s your CRM overview.
-          </p>
-        </div>
+      {/* Hero Section with KPIs */}
+      <Suspense fallback={<HeroSkeleton />}>
+        <HeroSectionWrapper organizationId={organizationId} user={user} />
+      </Suspense>
+
+      {/* Quick Create Menu in Header Position */}
+      <div className="flex justify-end px-4 sm:px-6">
         <QuickCreateMenu organizationId={organizationId} />
       </div>
 
-      {/* KPI Stats */}
-      <div className="grid gap-4 md:grid-cols-4">
-        <KPICard
-          title="New Leads"
-          value={kpis.leads.new}
-          change={kpis.leads.change}
-          iconName="users"
-        />
-        <KPICard
-          title="Pipeline Value"
-          value={kpis.pipeline.totalValue}
-          format="currency"
-          iconName="dollar-sign"
-        />
-        <KPICard
-          title="Revenue (MTD)"
-          value={kpis.revenue.thisMonth}
-          change={kpis.revenue.change}
-          format="currency"
-          iconName="trending-up"
-        />
-        <KPICard
-          title="Conversion Rate"
-          value={kpis.conversionRate}
-          format="percentage"
-          iconName="check-circle"
-        />
-      </div>
-
       {/* Main Content Grid */}
-      <div className="grid gap-6 lg:grid-cols-3">
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.3 }}
+        className="grid gap-6 lg:grid-cols-3"
+      >
         {/* Left Column - 2/3 width */}
         <div className="lg:col-span-2 space-y-6">
           {/* Recent Leads */}
-          <Card>
+          <EnhancedCard glassEffect="strong" neonBorder="cyan" hoverEffect={true}>
             <CardHeader>
               <div className="flex items-center justify-between">
                 <CardTitle>Recent Leads</CardTitle>
@@ -127,17 +104,17 @@ export default async function CRMDashboardPage() {
                   {recentLeads.map((lead) => (
                     <LeadCard
                       key={lead.id}
-                      lead={lead}
+                      lead={lead as any}
                       organizationId={organizationId}
                     />
                   ))}
                 </div>
               )}
             </CardContent>
-          </Card>
+          </EnhancedCard>
 
           {/* Pipeline Overview */}
-          <Card>
+          <EnhancedCard glassEffect="strong" neonBorder="purple" hoverEffect={true}>
             <CardHeader>
               <div className="flex items-center justify-between">
                 <CardTitle>Pipeline Overview</CardTitle>
@@ -175,16 +152,18 @@ export default async function CRMDashboardPage() {
                 </div>
               )}
             </CardContent>
-          </Card>
+          </EnhancedCard>
 
           {/* Recent Activity */}
-          <RecentActivity activities={activities} />
+          <EnhancedCard glassEffect="strong" neonBorder="green" hoverEffect={true}>
+            <RecentActivity activities={activities as any} />
+          </EnhancedCard>
         </div>
 
         {/* Right Column - 1/3 width */}
         <div className="space-y-6">
           {/* Upcoming Appointments */}
-          <Card>
+          <EnhancedCard glassEffect="strong" neonBorder="orange" hoverEffect={true}>
             <CardHeader>
               <div className="flex items-center justify-between">
                 <CardTitle>Upcoming Appointments</CardTitle>
@@ -231,12 +210,58 @@ export default async function CRMDashboardPage() {
                 </div>
               )}
             </CardContent>
-          </Card>
+          </EnhancedCard>
 
           {/* Top Performers */}
-          <AgentLeaderboard agents={agentPerformance.slice(0, 4)} />
+          <EnhancedCard glassEffect="strong" neonBorder="purple" hoverEffect={true}>
+            <AgentLeaderboard agents={agentPerformance.slice(0, 4) as any} />
+          </EnhancedCard>
         </div>
-      </div>
+      </motion.div>
     </div>
+  );
+}
+
+/**
+ * Hero Section Wrapper
+ * Fetches KPI data and passes to ModuleHeroSection
+ */
+async function HeroSectionWrapper({ user }: { organizationId?: string; user: any }) {
+  const kpis = await getOverviewKPIs();
+
+  const stats = [
+    {
+      label: 'New Leads',
+      value: kpis.leads.new,
+      change: kpis.leads.change,
+      changeType: 'count' as const,
+      icon: 'customers' as const,
+    },
+    {
+      label: 'Pipeline Value',
+      value: `$${(kpis.pipeline.totalValue / 1000).toFixed(1)}K`,
+      icon: 'revenue' as const,
+    },
+    {
+      label: 'Revenue (MTD)',
+      value: `$${(kpis.revenue.thisMonth / 1000).toFixed(1)}K`,
+      change: kpis.revenue.change,
+      changeType: 'percentage' as const,
+      icon: 'revenue' as const,
+    },
+    {
+      label: 'Conversion Rate',
+      value: `${kpis.conversionRate}%`,
+      icon: 'tasks' as const,
+    },
+  ];
+
+  return (
+    <ModuleHeroSection
+      user={user}
+      moduleName="CRM Dashboard"
+      moduleDescription="Manage your contacts, leads, and pipeline"
+      stats={stats}
+    />
   );
 }

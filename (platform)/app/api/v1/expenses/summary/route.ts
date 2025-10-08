@@ -65,11 +65,12 @@ export async function GET(request: NextRequest) {
       _sum: { amount: true }
     });
 
-    // Count receipts
-    const receiptCount = await prisma.receipts.count({
+    // Count receipts (count expenses with receipt_url)
+    const receiptCount = await prisma.expenses.count({
       where: {
-        expense: {
-          organization_id: organizationId
+        organization_id: organizationId,
+        receipt_url: {
+          not: null
         }
       }
     });

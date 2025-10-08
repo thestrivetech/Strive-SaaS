@@ -48,22 +48,42 @@ export default async function CMSMarketingDashboardPage() {
     redirect('/onboarding/organization');
   }
 
+  // Helper function for personalized greeting
+  const getGreeting = () => {
+    const hour = new Date().getHours();
+    if (hour < 12) return 'Good Morning';
+    if (hour < 17) return 'Good Afternoon';
+    return 'Good Evening';
+  };
+
+  const firstName = user.name?.split(' ')[0] || 'User';
+
   return (
     <div className="space-y-6">
-      {/* Header */}
-      <div className="flex items-center justify-between">
+      {/* Hero Section */}
+      <div className="glass-strong rounded-2xl p-6 sm:p-8 neon-border-cyan mb-6">
         <div>
-          <h1 className="text-3xl font-bold">CMS & Marketing</h1>
+          <h1 className="text-3xl sm:text-4xl font-bold mb-2">
+            <span className="inline-block">{getGreeting()},</span>{' '}
+            <span className="bg-gradient-to-r from-primary via-chart-2 to-chart-3 bg-clip-text text-transparent">
+              {firstName}
+            </span>
+          </h1>
+          <h2 className="text-xl sm:text-2xl font-semibold text-primary mb-2">
+            CMS & Marketing
+          </h2>
           <p className="text-muted-foreground">
             Manage your content and marketing campaigns
           </p>
         </div>
-        <Button asChild>
-          <Link href="/real-estate/cms-marketing/content/editor">
-            <Plus className="mr-2 h-4 w-4" />
-            Create Content
-          </Link>
-        </Button>
+        <div className="mt-6">
+          <Button asChild>
+            <Link href="/real-estate/cms-marketing/content/editor">
+              <Plus className="mr-2 h-4 w-4" />
+              Create Content
+            </Link>
+          </Button>
+        </div>
       </div>
 
       {/* Overview Stats */}
@@ -115,7 +135,7 @@ export default async function CMSMarketingDashboardPage() {
       </div>
 
       {/* Quick Actions */}
-      <Card>
+      <Card className="glass neon-border-orange">
         <CardHeader>
           <CardTitle>Quick Actions</CardTitle>
           <CardDescription>Common tasks to get you started</CardDescription>
@@ -185,7 +205,7 @@ async function RecentContentSection() {
   const recentContent = await getRecentContent();
 
   return (
-    <Card>
+    <Card className="glass-strong neon-border-green">
       <CardHeader>
         <div className="flex items-center justify-between">
           <CardTitle>Recent Content</CardTitle>
@@ -245,7 +265,7 @@ async function RecentCampaignsSection() {
   const recentCampaigns = await getRecentCampaigns();
 
   return (
-    <Card>
+    <Card className="glass-strong neon-border-green">
       <CardHeader>
         <div className="flex items-center justify-between">
           <CardTitle>Recent Campaigns</CardTitle>
@@ -312,7 +332,7 @@ interface StatCardProps {
 
 function StatCard({ icon: Icon, title, value, description, trend }: StatCardProps) {
   return (
-    <Card>
+    <Card className="glass-strong neon-border-purple hover:shadow-lg transition-all">
       <CardHeader className="flex flex-row items-center justify-between pb-2">
         <CardTitle className="text-sm font-medium">{title}</CardTitle>
         <Icon className="h-4 w-4 text-muted-foreground" />
@@ -338,7 +358,7 @@ interface FeatureCardProps {
 
 function FeatureCard({ icon: Icon, title, description, href, stats, badge }: FeatureCardProps) {
   return (
-    <Card className="hover:shadow-md transition-shadow">
+    <Card className="glass neon-border-cyan hover:shadow-md transition-all hover:-translate-y-1">
       <CardHeader>
         <div className="flex items-start justify-between">
           <div className="flex items-center gap-3">

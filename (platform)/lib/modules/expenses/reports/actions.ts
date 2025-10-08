@@ -55,14 +55,14 @@ export async function createExpenseReport(input: ExpenseReportInput) {
     });
 
     // Calculate totals
-    const totalExpenses = expenses.reduce((sum, e) => sum + Number(e.amount), 0);
+    const totalExpenses = expenses.reduce((sum: number, e: any) => sum + Number(e.amount), 0);
     const totalDeductible = expenses
-      .filter(e => e.is_deductible)
-      .reduce((sum, e) => sum + Number(e.amount), 0);
+      .filter((e: any) => e.is_deductible)
+      .reduce((sum: number, e: any) => sum + Number(e.amount), 0);
 
     // Create report data structure
     const reportData = {
-      expenses: expenses.map(e => ({
+      expenses: expenses.map((e: any) => ({
         id: e.id,
         date: e.date,
         merchant: e.merchant,
@@ -76,7 +76,7 @@ export async function createExpenseReport(input: ExpenseReportInput) {
         totalExpenses,
         totalDeductible,
         count: expenses.length,
-        deductibleCount: expenses.filter(e => e.is_deductible).length,
+        deductibleCount: expenses.filter((e: any) => e.is_deductible).length,
       },
       filters: {
         startDate: validated.startDate,
