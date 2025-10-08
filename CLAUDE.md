@@ -279,6 +279,24 @@ All three projects use the **SAME Supabase project** for:
 **Critical:** Supabase provides the platform, Prisma handles schema + migrations.
 RLS policies are defined in Prisma migration SQL files.
 
+### 🎨 Platform: Mock Data Mode (ACTIVE - 2025-10-07)
+
+**Schema Reset:** Platform schema reduced from 3,345 lines (83 models) to 88 lines (3 models)
+- Backup: `(platform)/prisma/backup-20251007/schema.prisma`
+- Current: users, organizations, organization_members only
+
+**UI-First Development:**
+```typescript
+// Toggle in .env.local: NEXT_PUBLIC_USE_MOCKS=true
+import { contactsProvider, leadsProvider, customersProvider } from '@/lib/data';
+
+const contacts = await contactsProvider.findMany(orgId);
+```
+
+**Available:** CRM mocks (contacts, leads, customers) with realistic data
+**Workflow:** Build UI → Document needs → Design schema → Migrate to real DB
+**Docs:** `(platform)/MOCK-DATA-WORKFLOW.md`, `(platform)/QUICK-START-MOCK-MODE.md`
+
 ### ⚠️ CRITICAL: Prisma Bypasses RLS
 
 **Important Security Context:**
@@ -339,20 +357,10 @@ Prisma connects to PostgreSQL using `DATABASE_URL` which contains the service ro
 ### Step 2: Read Project-Specific CLAUDE.md
 ```bash
 # ALWAYS read the project's CLAUDE.md first!
-# Each project has different rules and patterns
 
-cd (chatbot)/  && cat CLAUDE.md   # Chatbot rules
 cd (platform)/ && cat CLAUDE.md   # Platform rules
-cd (website)/  && cat CLAUDE.md   # Website rules
+
 ```
-
-### Step 3: Follow Project-Specific Standards
-- Each project has its own tech stack decisions
-- Each project has its own file structure
-- Each project has its own testing strategy
-- **DO NOT mix standards between projects!**
-
----
 
 ## 🚨 UNIVERSAL RULES (ALL PROJECTS)
 
@@ -364,7 +372,7 @@ cd (website)/  && cat CLAUDE.md   # Website rules
 3. **UPDATE, DON'T CREATE** - Prefer editing existing files over creating new ones
 4. **ASK IF UNCERTAIN** - When unsure if something exists, ask the user first
 
-### File Size Standards (Enforced Across All Projects)
+### File Size Standards
 **Hard Limit:** 500 lines per file (enforced by ESLint)
 - Applies to all `.ts`/`.tsx` files
 - Exception: Pure data/content files (no logic)
@@ -422,7 +430,7 @@ npm run build       # Must succeed with ZERO warnings
 
 **Allowed in root:**
 ```
-✅ (chatbot)/ (platform)/ (website)/  # Project directories
+✅ (platform)/  # Project directories
 ✅ shared/                              # Shared resources
 ✅ scripts/                             # Repo-wide scripts
 ✅ dev-workspace/                       # Development planning
@@ -470,7 +478,7 @@ const schema = z.object({ email: z.string().email() });
 
 ### Testing (Universal)
 ```bash
-# Every project MUST maintain 80%+ test coverage
+# Project MUST maintain 80%+ test coverage
 npm test -- --coverage
 
 # Pre-commit checks (ALL projects)
@@ -478,18 +486,7 @@ npm run lint        # Zero warnings
 npx tsc --noEmit    # Zero errors
 npm test            # 80%+ coverage
 ```
-
----
-
-## 🔄 How Projects Interact
-
-### Database: Shared Supabase (via Prisma)
-All three projects connect to the **SAME** Supabase database:
 ```
-(chatbot)/  ──┐
-(platform)/ ──┼──► Platform Prisma Schema ──► Supabase PostgreSQL
-(website)/  ──┘
-               ((platform)/prisma/schema.prisma)
 ```
 
 ### Authentication: Supabase Auth (SSO)
@@ -510,65 +507,16 @@ All three projects connect to the **SAME** Supabase database:
 **Docs:** `(platform)/AUTH-ONBOARDING-GUIDE.md` - Complete implementation guide
 **Architecture:** `(platform)/AUTH-ARCHITECTURE.md` - Technical flow details
 
-### Deployment: Independent
-Each project deploys separately to Vercel:
-```
-(chatbot)/  → chat.strivetech.ai
-(platform)/ → app.strivetech.ai
-(website)/  → strivetech.ai
-```
-
-### Data Flow Example
-```
-1. User signs up on (website)/
-   → Creates User record in shared database
-
-2. User logs into (platform)/
-   → Same Supabase session, no re-auth needed
-   → Can access CRM, Projects, etc.
-
-3. User embeds (chatbot)/ on their site
-   → Chatbot recognizes user via session
-   → Loads user's conversation history from shared DB
-```
-
----
-
-## 🎯 Decision Tree: Which Project?
-
-**Ask yourself:**
-
-1. **Is it about the AI chatbot widget or conversational interface?**
-   → Work in `(chatbot)/`
-
-2. **Is it about the main SaaS platform features?**
-   - Dashboard, CRM, Projects, Tools, Admin
-   → Work in `(platform)/`
-
-3. **Is it about marketing, public content, or landing pages?**
-   - Company info, blog, product pages
-   → Work in `(website)/`
-
-4. **Is it about database schema or Supabase config?**
-   → Work in `shared/` (affects ALL projects!)
-
-5. **Is it about repository-wide tooling or scripts?**
-   → Work in `scripts/` or root config files
-
 ---
 
 ## 📋 Common Commands
 
 ### Navigate to Project
 ```bash
-# Chatbot
-cd "(chatbot)"
 
 # Platform
 cd "(platform)"
 
-# Website
-cd "(website)"
 ```
 
 ### Development (from project directory)
@@ -684,6 +632,6 @@ Each project has complete documentation in its directory:
 
 **Remember:** This is a **TRI-FOLD REPOSITORY**, not a monorepo. Each project is independent with shared resources. Always work in the correct project directory and follow that project's specific standards.
 
-**Last Updated:** 2025-10-04
-**Version:** 4.0 (Tri-Fold Architecture)
+**Last Updated:** 2025-10-07
+**Version:** 4.1 (Tri-Fold Architecture + Platform Mock Data Mode)
 - memory

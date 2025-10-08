@@ -14,7 +14,7 @@ const __dirname = dirname(__filename);
 dotenv.config({ path: resolve(__dirname, '../.env') });
 
 import { createClient } from '@supabase/supabase-js';
-import { prisma } from '../lib/prisma';
+import { prisma } from '../lib/database/prisma';
 
 async function testRealtime() {
   console.log('🧪 Testing Realtime Subscriptions\n');

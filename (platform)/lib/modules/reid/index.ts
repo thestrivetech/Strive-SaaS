@@ -10,5 +10,5 @@ export * from './reports';
 // Preferences
 export * from './preferences';
 
-// AI (will be added in Session 6)
-// export * from './ai';
+// AI (Session 6: AI Profile Generation & Insights Analysis)
+export * from './ai';

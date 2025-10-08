@@ -15,6 +15,7 @@ import {
   Calculator,
   Megaphone,
   ShoppingBag,
+  TrendingUp,
   type LucideIcon,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
@@ -60,6 +61,13 @@ export const defaultNavItems: NavItem[] = [
     badge: 'Coming Soon',
   },
   {
+    title: 'REID Dashboard',
+    href: '/real-estate/reid/dashboard',
+    icon: TrendingUp,
+    permission: 'canManageCustomers',
+    badge: 'ELITE',
+  },
+  {
     title: 'Analytics',
     href: '/real-estate/rei-analytics/dashboard',
     icon: BarChart,
@@ -74,9 +82,9 @@ export const defaultNavItems: NavItem[] = [
     badge: 'Coming Soon',
   },
   {
-    title: 'CMS & Marketing',
+    title: 'ContentPilot',
     href: '/real-estate/cms-marketing/dashboard',
-    icon: Megaphone,
+    icon: FileText,
     permission: 'canManageCustomers',
   },
   {

@@ -13,7 +13,7 @@ const __dirname = dirname(__filename);
 
 dotenv.config({ path: resolve(__dirname, '../.env') });
 
-import { prisma } from '../lib/prisma';
+import { prisma } from '../lib/database/prisma';
 
 async function testNotifications() {
   console.log('🧪 Testing Notification System\n');

@@ -16,12 +16,6 @@ import { ArrowLeft, Mail, Phone, Building2, Briefcase, Calendar, Linkedin, Twitt
 import { formatDistanceToNow, format } from 'date-fns';
 import type { ContactType, ContactStatus } from '@/lib/modules/crm/contacts';
 
-interface ContactDetailPageProps {
-  params: {
-    id: string;
-  };
-}
-
 // Type badge variants
 const typeVariants: Record<ContactType, { label: string; variant: 'default' | 'secondary' | 'outline' }> = {
   PROSPECT: { label: 'Prospect', variant: 'outline' },
@@ -38,6 +32,10 @@ const statusVariants: Record<ContactStatus, { label: string; variant: 'default' 
   DO_NOT_CONTACT: { label: 'Do Not Contact', variant: 'destructive' },
 };
 
+interface ContactDetailPageProps {
+  params: Promise<{ id: string }>;
+}
+
 export default async function ContactDetailPage({ params }: ContactDetailPageProps) {
   await requireAuth();
   const user = await getCurrentUser();
@@ -53,6 +51,8 @@ export default async function ContactDetailPage({ params }: ContactDetailPagePro
     redirect('/onboarding/organization');
   }
 
+  const { id } = await params;
+
   return (
     <div className="space-y-6 p-6">
       {/* Back Button */}
@@ -64,7 +64,7 @@ export default async function ContactDetailPage({ params }: ContactDetailPagePro
       </Link>
 
       <Suspense fallback={<ContactDetailSkeleton />}>
-        <ContactDetail contactId={params.id} organizationId={currentOrg.organization_id} />
+        <ContactDetail contactId={id} organizationId={currentOrg.organization_id} />
       </Suspense>
     </div>
   );

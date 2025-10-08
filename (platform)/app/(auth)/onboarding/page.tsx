@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { OnboardingLayout } from '@/components/features/onboarding/onboarding-layout';
 import { OrgDetailsForm } from '@/components/features/onboarding/org-details-form';
@@ -10,7 +10,7 @@ import { OnboardingComplete } from '@/components/features/onboarding/onboarding-
 
 type Step = 1 | 2 | 3 | 4;
 
-export default function OnboardingPage() {
+function OnboardingContent() {
   const searchParams = useSearchParams();
   const tierParam = searchParams.get('tier');
 
@@ -166,5 +166,13 @@ export default function OnboardingPage() {
         />
       )}
     </OnboardingLayout>
+  );
+}
+
+export default function OnboardingPage() {
+  return (
+    <Suspense fallback={<div className="flex items-center justify-center min-h-screen">Loading...</div>}>
+      <OnboardingContent />
+    </Suspense>
   );
 }

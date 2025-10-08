@@ -59,10 +59,12 @@ export function RichTextEditor({
   return (
     <div className="border rounded-lg overflow-hidden">
       {editable && <EditorToolbar editor={editor} />}
-      <EditorContent
-        editor={editor}
-        className="prose prose-sm max-w-none p-4 min-h-[400px] focus:outline-none [&_.ProseMirror]:outline-none [&_.ProseMirror]:min-h-[400px]"
-      />
+      <div role="textbox" aria-label="Rich text editor" aria-multiline="true">
+        <EditorContent
+          editor={editor}
+          className="prose prose-sm max-w-none p-4 min-h-[400px] focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-primary [&_.ProseMirror]:outline-none [&_.ProseMirror]:min-h-[400px]"
+        />
+      </div>
     </div>
   );
 }

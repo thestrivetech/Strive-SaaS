@@ -41,6 +41,11 @@ async function withContentContext<T>(callback: () => Promise<T>): Promise<T> {
  *
  * @param filters - Optional filters (status, type, category, search, etc.)
  * @returns Promise<ContentItem[]> - Array of content items with relations
+ *
+ * PERFORMANCE OPTIMIZATION:
+ * - Uses indexes: idx_content_org_status, idx_content_type_status
+ * - Includes all relations in single query (no N+1)
+ * - Cached at request level with React cache()
  */
 export const getContentItems = cache(async (filters?: ContentFilters) => {
   return withContentContext(async () => {
@@ -76,6 +81,7 @@ export const getContentItems = cache(async (filters?: ContentFilters) => {
       };
     }
 
+    // ✅ PERFORMANCE FIX: All relations in single query (prevents N+1)
     return await prisma.content_items.findMany({
       where,
       include: {

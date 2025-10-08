@@ -45,6 +45,7 @@ export async function handlePlatformAuth(request: NextRequest): Promise<NextResp
   const isAdminRoute = path.startsWith('/admin') || path.startsWith('/api/admin/');
 
   const isTransactionRoute = path.startsWith('/transactions') || path.startsWith('/real-estate/workspace');
+  const isREIDRoute = path.startsWith('/real-estate/reid');
   const isProtectedRoute = path.startsWith('/dashboard') ||
     path.startsWith('/real-estate/dashboard') ||
     path.startsWith('/real-estate/workspace') ||
@@ -61,6 +62,7 @@ export async function handlePlatformAuth(request: NextRequest): Promise<NextResp
     path.startsWith('/settings') ||
     path.startsWith('/onboarding') ||
     isTransactionRoute ||
+    isREIDRoute ||
     isAdminRoute ||
     isPlatformAdminRoute;
 
@@ -122,6 +124,31 @@ export async function handlePlatformAuth(request: NextRequest): Promise<NextResp
     const tierAccess = ['STARTER', 'GROWTH', 'ELITE', 'ENTERPRISE']; // Transaction module requires STARTER+
     if (!tierAccess.includes(dbUser.subscription_tier)) {
       const redirectResponse = NextResponse.redirect(new URL('/real-estate/dashboard?upgrade=starter', request.url));
+      setNoCacheHeaders(redirectResponse);
+      return redirectResponse;
+    }
+  }
+
+  // REID Dashboard protection - ELITE tier required
+  if (user && isREIDRoute) {
+    const { prisma } = await import('@/lib/database/prisma');
+    const dbUser = await prisma.users.findUnique({
+      where: { email: user.email! },
+      select: { role: true, subscription_tier: true },
+    });
+
+    // Check user role (only USER, MODERATOR, ADMIN, SUPER_ADMIN can access)
+    if (!dbUser || !['USER', 'MODERATOR', 'ADMIN', 'SUPER_ADMIN'].includes(dbUser.role)) {
+      const redirectResponse = NextResponse.redirect(new URL('/real-estate/dashboard', request.url));
+      setNoCacheHeaders(redirectResponse);
+      return redirectResponse;
+    }
+
+    // Check subscription tier (ELITE or higher required for REID Dashboard)
+    // Tier hierarchy: FREE < CUSTOM < STARTER < GROWTH < ELITE < ENTERPRISE
+    const tierAccess = ['ELITE', 'ENTERPRISE']; // REID requires ELITE+
+    if (!tierAccess.includes(dbUser.subscription_tier)) {
+      const redirectResponse = NextResponse.redirect(new URL('/real-estate/dashboard?upgrade=elite', request.url));
       setNoCacheHeaders(redirectResponse);
       return redirectResponse;
     }

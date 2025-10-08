@@ -118,61 +118,138 @@ export function ContentListTable({ content, organizationId }: ContentListTablePr
   }
 
   return (
-    <div className="rounded-md border overflow-x-auto">
-      <Table>
-        <TableHeader>
-          <TableRow>
-            <TableHead className="w-[300px]">Title</TableHead>
-            <TableHead>Type</TableHead>
-            <TableHead>Status</TableHead>
-            <TableHead>Author</TableHead>
-            <TableHead>Updated</TableHead>
-            <TableHead className="text-right">Actions</TableHead>
-          </TableRow>
-        </TableHeader>
-        <TableBody>
-          {content.map((item) => {
-            const statusConfig = statusVariants[item.status] || statusVariants.DRAFT;
-            const typeLabel = typeLabels[item.type] || item.type;
+    <>
+      {/* Desktop Table View */}
+      <div className="hidden md:block rounded-md border overflow-x-auto">
+        <Table aria-label="Content items table">
+          <TableHeader>
+            <TableRow>
+              <TableHead className="w-[300px]">Title</TableHead>
+              <TableHead>Type</TableHead>
+              <TableHead>Status</TableHead>
+              <TableHead>Author</TableHead>
+              <TableHead>Updated</TableHead>
+              <TableHead className="text-right">Actions</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {content.map((item) => {
+              const statusConfig = statusVariants[item.status] || statusVariants.DRAFT;
+              const typeLabel = typeLabels[item.type] || item.type;
 
-            return (
-              <TableRow
-                key={item.id}
-                className="cursor-pointer hover:bg-muted/50"
-                onClick={() => handleRowClick(item.id)}
-              >
-                <TableCell>
-                  <div>
-                    <div className="font-medium">{item.title}</div>
-                    <div className="text-xs text-muted-foreground truncate max-w-[280px]">
-                      /{item.slug}
+              return (
+                <TableRow
+                  key={item.id}
+                  className="cursor-pointer hover:bg-muted/50"
+                  onClick={() => handleRowClick(item.id)}
+                  role="button"
+                  tabIndex={0}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                      e.preventDefault();
+                      handleRowClick(item.id);
+                    }
+                  }}
+                  aria-label={`Edit ${item.title}`}
+                >
+                  <TableCell>
+                    <div>
+                      <div className="font-medium">{item.title}</div>
+                      <div className="text-xs text-muted-foreground truncate max-w-[280px]">
+                        /{item.slug}
+                      </div>
                     </div>
-                  </div>
-                </TableCell>
-                <TableCell>
-                  <span className="text-sm">{typeLabel}</span>
-                </TableCell>
-                <TableCell>
-                  <Badge className={statusConfig.className}>
-                    {statusConfig.label}
-                  </Badge>
-                </TableCell>
-                <TableCell className="text-sm">
-                  {item.author?.name || item.author?.email || 'Unknown'}
-                </TableCell>
-                <TableCell className="text-xs text-muted-foreground">
-                  {formatDistanceToNow(new Date(item.updated_at), { addSuffix: true })}
-                </TableCell>
-                <TableCell className="text-right" onClick={(e) => e.stopPropagation()}>
+                  </TableCell>
+                  <TableCell>
+                    <span className="text-sm">{typeLabel}</span>
+                  </TableCell>
+                  <TableCell>
+                    <Badge className={statusConfig.className}>
+                      {statusConfig.label}
+                    </Badge>
+                  </TableCell>
+                  <TableCell className="text-sm">
+                    {item.author?.name || item.author?.email || 'Unknown'}
+                  </TableCell>
+                  <TableCell className="text-xs text-muted-foreground">
+                    {formatDistanceToNow(new Date(item.updated_at), { addSuffix: true })}
+                  </TableCell>
+                  <TableCell className="text-right" onClick={(e) => e.stopPropagation()}>
+                    <DropdownMenu>
+                      <DropdownMenuTrigger asChild>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          aria-label={`More actions for ${item.title}`}
+                          className="min-h-[44px] min-w-[44px]"
+                        >
+                          <MoreHorizontal className="h-4 w-4" />
+                        </Button>
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent align="end">
+                        <DropdownMenuItem onClick={(e) => handleEdit(e, item.id)}>
+                          <Pencil className="mr-2 h-4 w-4" aria-hidden="true" />
+                          Edit
+                        </DropdownMenuItem>
+                        <DropdownMenuItem
+                          onClick={(e) => handleDelete(e, item.id)}
+                          disabled={deletingId === item.id}
+                          className="text-destructive focus:text-destructive"
+                        >
+                          <Trash2 className="mr-2 h-4 w-4" aria-hidden="true" />
+                          {deletingId === item.id ? 'Deleting...' : 'Delete'}
+                        </DropdownMenuItem>
+                      </DropdownMenuContent>
+                    </DropdownMenu>
+                  </TableCell>
+                </TableRow>
+              );
+            })}
+          </TableBody>
+        </Table>
+      </div>
+
+      {/* Mobile Card View */}
+      <div className="md:hidden space-y-4">
+        {content.map((item) => {
+          const statusConfig = statusVariants[item.status] || statusVariants.DRAFT;
+          const typeLabel = typeLabels[item.type] || item.type;
+
+          return (
+            <div
+              key={item.id}
+              className="border rounded-lg p-4 space-y-3 hover:bg-muted/50 transition-colors cursor-pointer"
+              onClick={() => handleRowClick(item.id)}
+              role="button"
+              tabIndex={0}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                  e.preventDefault();
+                  handleRowClick(item.id);
+                }
+              }}
+              aria-label={`Edit ${item.title}`}
+            >
+              <div className="flex items-start justify-between gap-3">
+                <div className="flex-1 min-w-0">
+                  <h3 className="font-medium truncate">{item.title}</h3>
+                  <p className="text-xs text-muted-foreground truncate">/{item.slug}</p>
+                </div>
+                <div onClick={(e) => e.stopPropagation()}>
                   <DropdownMenu>
                     <DropdownMenuTrigger asChild>
-                      <Button variant="ghost" size="sm">
-                        <MoreHorizontal className="h-4 w-4" />
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        aria-label={`More actions for ${item.title}`}
+                        className="min-h-[44px] min-w-[44px] p-3"
+                      >
+                        <MoreHorizontal className="h-5 w-5" />
                       </Button>
                     </DropdownMenuTrigger>
                     <DropdownMenuContent align="end">
                       <DropdownMenuItem onClick={(e) => handleEdit(e, item.id)}>
-                        <Pencil className="mr-2 h-4 w-4" />
+                        <Pencil className="mr-2 h-4 w-4" aria-hidden="true" />
                         Edit
                       </DropdownMenuItem>
                       <DropdownMenuItem
@@ -180,17 +257,32 @@ export function ContentListTable({ content, organizationId }: ContentListTablePr
                         disabled={deletingId === item.id}
                         className="text-destructive focus:text-destructive"
                       >
-                        <Trash2 className="mr-2 h-4 w-4" />
+                        <Trash2 className="mr-2 h-4 w-4" aria-hidden="true" />
                         {deletingId === item.id ? 'Deleting...' : 'Delete'}
                       </DropdownMenuItem>
                     </DropdownMenuContent>
                   </DropdownMenu>
-                </TableCell>
-              </TableRow>
-            );
-          })}
-        </TableBody>
-      </Table>
-    </div>
+                </div>
+              </div>
+
+              <div className="flex flex-wrap items-center gap-2 text-sm">
+                <Badge className={statusConfig.className}>
+                  {statusConfig.label}
+                </Badge>
+                <span className="text-muted-foreground">•</span>
+                <span className="text-muted-foreground">{typeLabel}</span>
+              </div>
+
+              <div className="flex items-center justify-between text-sm text-muted-foreground pt-2 border-t">
+                <span>{item.author?.name || item.author?.email || 'Unknown'}</span>
+                <span className="text-xs">
+                  {formatDistanceToNow(new Date(item.updated_at), { addSuffix: true })}
+                </span>
+              </div>
+            </div>
+          );
+        })}
+      </div>
+    </>
   );
 }

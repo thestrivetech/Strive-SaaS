@@ -1,5 +1,5 @@
 // Generate embeddings for training examples
-import { prisma } from '../lib/prisma';
+import { prisma } from '../lib/database/prisma';
 import OpenAI from 'openai';
 import { config } from 'dotenv';
 import { resolve } from 'path';

@@ -89,7 +89,7 @@ export async function getAlertTriggers(alertId?: string) {
 
   // Get all triggers for org's alerts
   const orgAlertIds = await prisma.property_alerts.findMany({
-    where: { organization_id: session.user.organizationId },
+    where: { organization_id: user.organizationId },
     select: { id: true }
   });
 

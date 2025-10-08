@@ -21,11 +21,13 @@ const statusColors = {
 export default async function LoopDetailPage({
   params,
 }: {
-  params: { loopId: string };
+  params: Promise<{ loopId: string }>;
 }) {
+  const { loopId } = await params;
+
   let loop;
   try {
-    loop = await getLoopById(params.loopId);
+    loop = await getLoopById(loopId);
   } catch (error) {
     notFound();
   }

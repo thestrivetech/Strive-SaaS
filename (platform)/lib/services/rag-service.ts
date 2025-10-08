@@ -3,12 +3,66 @@ import 'server-only';
 
 import { createClient } from '@supabase/supabase-js';
 import OpenAI from 'openai';
-import { CacheService } from '@strive/shared/services/cache-service';
-import {
-  SemanticSearchResult,
-  SimilarConversation,
-  RAGContext,
-} from '@strive/shared/types/rag';
+
+// TODO: Re-enable when @strive/shared is properly configured
+// import { CacheService } from '@strive/shared/services/cache-service';
+// import {
+//   SemanticSearchResult,
+//   SimilarConversation,
+//   RAGContext,
+// } from '@strive/shared/types/rag';
+
+// Temporary type definitions (to be moved to @strive/shared)
+export interface SimilarConversation {
+  id: string;
+  userMessage: string;
+  assistantResponse: string;
+  problemDetected?: string;
+  solutionPresented?: string;
+  outcome?: string;
+  conversionScore?: number;
+  similarity: number;
+}
+
+export interface SemanticSearchResult {
+  similarConversations: SimilarConversation[];
+  detectedProblems: string[];
+  recommendedSolutions: string[];
+  bestPattern?: {
+    approach: string;
+    conversionScore: number;
+    stage: string;
+  };
+  confidence: {
+    problemDetection: number;
+    solutionMatch: number;
+    overallConfidence: number;
+  };
+}
+
+export interface RAGContext {
+  userMessage: string;
+  searchResults: SemanticSearchResult;
+  conversationHistory: {
+    stage: string;
+    messageCount: number;
+    problemsDiscussed: string[];
+  };
+  guidance: {
+    suggestedApproach: string;
+    keyPoints: string[];
+    avoidTopics: string[];
+    urgencyLevel: 'low' | 'medium' | 'high';
+  };
+}
+
+// Temporary no-op CacheService replacement (caching disabled for showcase)
+// TODO: Re-enable when @strive/shared is properly configured
+const CacheService = {
+  createKey: (...args: any[]) => args.join(':'),
+  get: <T>(_key: string): T | null => null,
+  set: (_key: string, _value: any, _ttl?: number) => {},
+};
 
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,

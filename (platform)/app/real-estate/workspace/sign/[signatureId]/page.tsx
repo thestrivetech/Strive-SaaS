@@ -8,11 +8,13 @@ import { FileText, MapPin } from 'lucide-react';
 export default async function SigningPage({
   params,
 }: {
-  params: { signatureId: string };
+  params: Promise<{ signatureId: string }>;
 }) {
+  const { signatureId } = await params;
+
   let signature;
   try {
-    signature = await getSignatureById(params.signatureId);
+    signature = await getSignatureById(signatureId);
   } catch (error) {
     notFound();
   }

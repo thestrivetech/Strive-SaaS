@@ -166,11 +166,10 @@ export function getNavigationItems(role: UserRole) {
       badge: 'Coming Soon',
     },
     {
-      title: 'CMS & Marketing',
+      title: 'ContentPilot',
       href: '/real-estate/cms-marketing/dashboard',
-      icon: 'Megaphone',
+      icon: 'FileText',
       roles: ['SUPER_ADMIN', 'ADMIN', 'MODERATOR', 'USER'] as UserRole[],
-      badge: 'Coming Soon',
     },
     {
       title: 'Marketplace',
@@ -633,6 +632,38 @@ export function getContentLimits(tier: string) {
   };
 
   return limits[tier] || limits.FREE;
+}
+
+/**
+ * ContentPilot Module Access Control
+ */
+export function canAccessContentPilot(user: {
+  globalRole?: UserRole;
+  role?: UserRole;
+  organizationRole?: string;
+  subscriptionTier?: string
+}): boolean {
+  // Support both globalRole and role fields
+  const userRole = user.globalRole || user.role;
+
+  // Check subscription tier (GROWTH+ required)
+  const tier = user.subscriptionTier || 'FREE';
+  const hasRequiredTier = ['GROWTH', 'ELITE', 'ENTERPRISE'].includes(tier);
+
+  // SUPER_ADMIN bypasses tier restrictions
+  if (userRole === 'SUPER_ADMIN') {
+    return true;
+  }
+
+  if (!hasRequiredTier) {
+    return false;
+  }
+
+  // Must be Employee with Member+ org role
+  const isEmployee = ['ADMIN', 'MODERATOR', 'USER'].includes(userRole || '');
+  const hasOrgAccess = ['OWNER', 'ADMIN', 'MEMBER'].includes(user.organizationRole || '');
+
+  return isEmployee && hasOrgAccess;
 }
 
 /**

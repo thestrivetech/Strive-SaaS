@@ -37,13 +37,7 @@
     "deploy:check": "bash scripts/pre-deploy-check.sh",
     "deploy:migrate": "bash scripts/migrate-production.sh",
     "deploy:prod": "bash scripts/deploy-production.sh",
-    "deploy:rollback": "bash scripts/rollback.sh",
-    "chatbot:dev": "npm run dev",
-    "chatbot:test": "npm run type-check && npm run lint && npm run dev",
-    "chatbot:studio": "npx prisma studio",
-    "chatbot:setup-rag": "npx prisma db execute --file SUPABASE-RAG-SETUP-EXECUTE.sql --schema prisma/schema.prisma",
-    "chatbot:generate-embeddings": "npx tsx scripts/generate-embeddings.ts",
-    "chatbot:test-vector-search": "npx tsx scripts/test-vector-search.ts"
+    "deploy:rollback": "bash scripts/rollback.sh"
   },
   "dependencies": {
     "@dnd-kit/core": "^6.3.1",
@@ -99,6 +93,7 @@
     "isomorphic-dompurify": "^2.28.0",
     "jest": "^30.2.0",
     "jspdf": "^3.0.3",
+    "leaflet": "^1.9.4",
     "lowlight": "^3.3.0",
     "lucide-react": "^0.544.0",
     "next": "^15.6.0-canary.33",
@@ -111,6 +106,7 @@
     "react-dropzone": "^14.3.8",
     "react-grid-layout": "^1.5.2",
     "react-hook-form": "^7.63.0",
+    "react-leaflet": "^5.0.0",
     "react-resizable-panels": "^3.0.6",
     "recharts": "^3.2.1",
     "server-only": "^0.0.1",
@@ -132,6 +128,7 @@
     "@testing-library/jest-dom": "^6.9.1",
     "@testing-library/react": "^16.3.0",
     "@testing-library/user-event": "^14.6.1",
+    "@types/leaflet": "^1.9.20",
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",

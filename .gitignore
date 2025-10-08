@@ -77,9 +77,6 @@ archive/app-backup/.vercel/project.json
 
 .claude/
 .claude/settings.local.json
-.serena/
 (platform)/.env.test
 .vercel/
 .mcp.json
-.ignore/
-.next/

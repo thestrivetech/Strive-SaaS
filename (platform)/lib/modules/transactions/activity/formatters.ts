@@ -51,9 +51,9 @@ function formatLoopActivity(activity: Activity, userName: string): string {
     case 'deleted':
       return `${userName} deleted the transaction loop`;
     case 'status_changed':
-      return `${userName} changed loop status to ${formatStatus(newValues?.status)}`;
+      return `${userName} changed loop status to ${formatStatus((newValues?.status || 'unknown') as string)}`;
     case 'progress_updated':
-      return `${userName} updated loop progress to ${newValues?.progress}%`;
+      return `${userName} updated loop progress to ${(newValues?.progress || 0) as number}%`;
     default:
       return `${userName} ${action} the transaction loop`;
   }
@@ -74,9 +74,9 @@ function formatDocumentActivity(activity: Activity, userName: string): string {
     case 'deleted':
       return `${userName} deleted a document`;
     case 'status_changed':
-      return `${userName} changed document status to ${formatStatus(newValues?.status)}`;
+      return `${userName} changed document status to ${formatStatus(newValues?.status as string)}`;
     case 'version_created':
-      return `${userName} created version ${newValues?.version} of document`;
+      return `${userName} created version ${newValues?.version as number} of document`;
     default:
       return `${userName} ${action} a document`;
   }
@@ -91,13 +91,13 @@ function formatPartyActivity(activity: Activity, userName: string): string {
   switch (action) {
     case 'created':
     case 'invited':
-      return `${userName} invited ${newValues?.name || 'a party'} as ${formatRole(newValues?.role)}`;
+      return `${userName} invited ${newValues?.name || 'a party'} as ${formatRole(newValues?.role as string)}`;
     case 'updated':
       return `${userName} updated party ${newValues?.name || 'information'}`;
     case 'removed':
       return `${userName} removed a party from the transaction`;
     case 'status_changed':
-      return `${userName} changed party status to ${formatStatus(newValues?.status)}`;
+      return `${userName} changed party status to ${formatStatus(newValues?.status as string)}`;
     default:
       return `${userName} ${action} a party`;
   }
@@ -121,7 +121,7 @@ function formatTaskActivity(activity: Activity, userName: string): string {
     case 'assigned':
       return `${userName} assigned a task to ${newValues?.assignee || 'someone'}`;
     case 'status_changed':
-      return `${userName} changed task status to ${formatStatus(newValues?.status)}`;
+      return `${userName} changed task status to ${formatStatus(newValues?.status as string)}`;
     default:
       return `${userName} ${action} a task`;
   }
@@ -185,11 +185,11 @@ function formatLoopUpdate(activity: Activity, userName: string): string {
   const changes: string[] = [];
 
   if (oldValues.status !== newValues.status) {
-    changes.push(`status to ${formatStatus(newValues.status)}`);
+    changes.push(`status to ${formatStatus(newValues.status as string)}`);
   }
 
   if (oldValues.listing_price !== newValues.listing_price) {
-    changes.push(`listing price to ${formatCurrency(newValues.listing_price)}`);
+    changes.push(`listing price to ${formatCurrency(newValues.listing_price as number)}`);
   }
 
   if (oldValues.expected_closing !== newValues.expected_closing) {

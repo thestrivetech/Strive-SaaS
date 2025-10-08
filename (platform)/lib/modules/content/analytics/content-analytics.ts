@@ -11,6 +11,12 @@ import { getUserOrganizationId } from '@/lib/auth/user-helpers';
  *
  * All queries enforce multi-tenancy via organizationId filtering.
  * Uses React cache() for request-level memoization.
+ *
+ * PERFORMANCE OPTIMIZATIONS:
+ * - Request-level caching with React cache()
+ * - Parallel query execution with Promise.all()
+ * - Database indexes for fast aggregations
+ * - Optimized groupBy queries
  */
 
 /**
@@ -89,6 +95,11 @@ export const getContentPerformance = cache(async (period: 'week' | 'month' | 'ye
  *
  * @param months - Number of months to retrieve (default: 6)
  * @returns Promise<Array> - Monthly trend data for views and engagement
+ *
+ * PERFORMANCE OPTIMIZATION:
+ * - Parallelized monthly queries with Promise.all()
+ * - Uses idx_content_published index for fast date filtering
+ * - Request-level cache reduces redundant queries
  */
 export const getContentTrends = cache(async (months: number = 6) => {
   await requireAuth();
@@ -96,16 +107,16 @@ export const getContentTrends = cache(async (months: number = 6) => {
   if (!user) throw new Error('Unauthorized');
 
   const organization_id = getUserOrganizationId(user);
-  const trends = [];
 
-  for (let i = 0; i < months; i++) {
+  // ✅ PERFORMANCE FIX: Parallel execution instead of sequential loop
+  const monthlyQueries = Array.from({ length: months }, (_, i) => {
     const date = new Date();
     date.setMonth(date.getMonth() - i);
 
     const start = new Date(date.getFullYear(), date.getMonth(), 1);
     const end = new Date(date.getFullYear(), date.getMonth() + 1, 0, 23, 59, 59);
 
-    const [views, engagement] = await Promise.all([
+    return Promise.all([
       prisma.content_items.aggregate({
         where: {
           organization_id,
@@ -124,19 +135,23 @@ export const getContentTrends = cache(async (months: number = 6) => {
           comment_count: true,
         },
       }),
+      Promise.resolve(date.toLocaleString('default', { month: 'short', year: 'numeric' })),
     ]);
+  });
 
-    trends.unshift({
-      month: date.toLocaleString('default', { month: 'short', year: 'numeric' }),
-      views: views._sum.view_count || 0,
-      engagement:
-        (engagement._sum.like_count || 0) +
-        (engagement._sum.share_count || 0) +
-        (engagement._sum.comment_count || 0),
-    });
-  }
+  const results = await Promise.all(monthlyQueries);
 
-  return trends;
+  // Transform results into trend data
+  const trends = results.map(([views, engagement, month]) => ({
+    month,
+    views: views._sum.view_count || 0,
+    engagement:
+      (engagement._sum.like_count || 0) +
+      (engagement._sum.share_count || 0) +
+      (engagement._sum.comment_count || 0),
+  }));
+
+  return trends.reverse(); // Oldest to newest
 });
 
 /**

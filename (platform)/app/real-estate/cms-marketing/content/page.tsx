@@ -77,14 +77,20 @@ export default async function ContentPage({ searchParams }: ContentPageProps) {
         <CardContent className="pt-6">
           <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4">
             <div className="relative flex-1 w-full">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+              <label htmlFor="content-search" className="sr-only">
+                Search content
+              </label>
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" aria-hidden="true" />
               <Input
+                id="content-search"
+                type="search"
                 placeholder="Search content..."
-                className="pl-10"
+                className="pl-10 min-h-[44px]"
                 defaultValue={params.search}
+                aria-label="Search content items"
               />
             </div>
-            <div className="flex gap-2 flex-wrap">
+            <div className="flex gap-2 flex-wrap" role="group" aria-label="Filter content by status">
               <FilterButton
                 href="?"
                 label="All"
@@ -224,7 +230,8 @@ function FilterButton({
 // Loading Skeletons
 function StatsCardsSkeleton() {
   return (
-    <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+    <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4" role="status" aria-label="Loading statistics">
+      <span className="sr-only">Loading content statistics...</span>
       {[...Array(4)].map((_, i) => (
         <Card key={i}>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
@@ -242,7 +249,8 @@ function StatsCardsSkeleton() {
 
 function ContentListSkeleton() {
   return (
-    <div className="space-y-2">
+    <div className="space-y-2" role="status" aria-label="Loading content">
+      <span className="sr-only">Loading content items...</span>
       {[...Array(10)].map((_, i) => (
         <Skeleton key={i} className="h-16 w-full" />
       ))}

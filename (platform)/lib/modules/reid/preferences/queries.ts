@@ -18,6 +18,7 @@ export async function getUserPreferences() {
         theme: 'dark',
         chart_type: 'line',
         map_style: 'dark',
+        dashboard_layout: {},
       }
     });
   }

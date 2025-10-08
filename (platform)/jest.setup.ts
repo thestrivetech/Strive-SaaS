@@ -91,11 +91,13 @@ jest.mock('@supabase/supabase-js', () => ({
 }));
 
 // Mock Prisma client (will be replaced with actual test client in test-helpers)
-jest.mock('@/lib/prisma', () => ({
+jest.mock('@/lib/database/prisma', () => ({
   prisma: {
     $connect: jest.fn(),
     $disconnect: jest.fn(),
     $transaction: jest.fn(),
+    $executeRaw: jest.fn(),
+    $executeRawUnsafe: jest.fn(),
     user: {
       findMany: jest.fn(),
       findUnique: jest.fn(),

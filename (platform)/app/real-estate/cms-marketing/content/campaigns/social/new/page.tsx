@@ -16,7 +16,7 @@ import { redirect } from 'next/navigation';
 export default async function NewSocialPostPage({
   searchParams,
 }: {
-  searchParams: { campaignId?: string };
+  searchParams: Promise<{ campaignId?: string }>;
 }) {
   const user = await requireAuth();
 
@@ -25,10 +25,13 @@ export default async function NewSocialPostPage({
     redirect('/real-estate/cms-marketing/content/campaigns?error=upgrade_required');
   }
 
+  // Await searchParams in Next.js 15
+  const params = await searchParams;
+
   return (
     <div>
       <SocialPostScheduler
-        campaignId={searchParams.campaignId}
+        campaignId={params.campaignId}
         organizationId={user.organizationId}
       />
     </div>

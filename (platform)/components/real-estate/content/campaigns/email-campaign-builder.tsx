@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { RichTextEditor } from '../editor/rich-text-editor';
@@ -42,6 +42,27 @@ export function EmailCampaignBuilder({ campaignId, organizationId }: EmailCampai
     },
   });
 
+  // Keyboard shortcuts
+  useEffect(() => {
+    const handleKeyPress = (e: KeyboardEvent) => {
+      // Ctrl/Cmd + S to save draft
+      if ((e.ctrlKey || e.metaKey) && e.key === 's') {
+        e.preventDefault();
+        onSave(true);
+      }
+
+      // Ctrl/Cmd + Shift + S to send/schedule
+      if ((e.ctrlKey || e.metaKey) && e.shiftKey && e.key === 's') {
+        e.preventDefault();
+        onSave(false);
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyPress);
+    return () => window.removeEventListener('keydown', handleKeyPress);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   async function onSave(isDraft = true) {
     setIsSaving(true);
     try {
@@ -73,25 +94,33 @@ export function EmailCampaignBuilder({ campaignId, organizationId }: EmailCampai
 
   return (
     <div className="max-w-6xl mx-auto p-6 space-y-6">
-      <div className="flex items-center justify-between">
-        <h1 className="text-3xl font-bold">Email Campaign Builder</h1>
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div>
+          <h1 className="text-3xl font-bold">Email Campaign Builder</h1>
+          <p className="text-sm text-muted-foreground mt-1">
+            Keyboard shortcuts: Ctrl+S (save draft), Ctrl+Shift+S (send/schedule)
+          </p>
+        </div>
 
         <div className="flex items-center gap-3">
           <Button
             variant="outline"
             onClick={() => onSave(true)}
             disabled={isSaving}
+            className="min-h-[44px]"
+            aria-label="Save email campaign as draft (Ctrl+S)"
           >
-            <Save className="h-4 w-4 mr-2" />
+            <Save className="h-4 w-4 mr-2" aria-hidden="true" />
             Save Draft
           </Button>
 
           <Button
             onClick={() => onSave(false)}
             disabled={isSaving}
-            className="bg-green-600 hover:bg-green-700"
+            className="bg-green-600 hover:bg-green-700 min-h-[44px]"
+            aria-label={`${scheduledFor ? 'Schedule' : 'Send'} email campaign (Ctrl+Shift+S)`}
           >
-            <Send className="h-4 w-4 mr-2" />
+            <Send className="h-4 w-4 mr-2" aria-hidden="true" />
             {scheduledFor ? 'Schedule' : 'Send Now'}
           </Button>
         </div>
@@ -111,15 +140,21 @@ export function EmailCampaignBuilder({ campaignId, organizationId }: EmailCampai
             </CardHeader>
             <CardContent className="space-y-4">
               <div>
-                <Label htmlFor="subject">Subject Line *</Label>
+                <Label htmlFor="subject">
+                  Subject Line <span className="text-destructive" aria-label="required">*</span>
+                </Label>
                 <Input
                   id="subject"
                   {...form.register('subject')}
                   placeholder="Your compelling subject line..."
                   maxLength={200}
+                  aria-required="true"
+                  aria-invalid={form.formState.errors.subject ? 'true' : 'false'}
+                  aria-describedby={form.formState.errors.subject ? 'subject-error' : undefined}
+                  className="min-h-[44px]"
                 />
                 {form.formState.errors.subject && (
-                  <p className="text-sm text-destructive mt-1">
+                  <p id="subject-error" className="text-sm text-destructive mt-1" role="alert">
                     {String(form.formState.errors.subject.message)}
                   </p>
                 )}
@@ -132,6 +167,7 @@ export function EmailCampaignBuilder({ campaignId, organizationId }: EmailCampai
                   {...form.register('preheader')}
                   placeholder="Preview text that appears in inbox..."
                   maxLength={150}
+                  className="min-h-[44px]"
                 />
               </div>
             </CardContent>
@@ -156,31 +192,43 @@ export function EmailCampaignBuilder({ campaignId, organizationId }: EmailCampai
               <CardTitle>Sender Information</CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
-                  <Label htmlFor="fromName">From Name *</Label>
+                  <Label htmlFor="fromName">
+                    From Name <span className="text-destructive" aria-label="required">*</span>
+                  </Label>
                   <Input
                     id="fromName"
                     {...form.register('fromName')}
                     placeholder="Your Company"
+                    aria-required="true"
+                    aria-invalid={form.formState.errors.fromName ? 'true' : 'false'}
+                    aria-describedby={form.formState.errors.fromName ? 'fromName-error' : undefined}
+                    className="min-h-[44px]"
                   />
                   {form.formState.errors.fromName && (
-                    <p className="text-sm text-destructive mt-1">
+                    <p id="fromName-error" className="text-sm text-destructive mt-1" role="alert">
                       {String(form.formState.errors.fromName.message)}
                     </p>
                   )}
                 </div>
 
                 <div>
-                  <Label htmlFor="fromEmail">From Email *</Label>
+                  <Label htmlFor="fromEmail">
+                    From Email <span className="text-destructive" aria-label="required">*</span>
+                  </Label>
                   <Input
                     id="fromEmail"
                     {...form.register('fromEmail')}
                     type="email"
                     placeholder="noreply@example.com"
+                    aria-required="true"
+                    aria-invalid={form.formState.errors.fromEmail ? 'true' : 'false'}
+                    aria-describedby={form.formState.errors.fromEmail ? 'fromEmail-error' : undefined}
+                    className="min-h-[44px]"
                   />
                   {form.formState.errors.fromEmail && (
-                    <p className="text-sm text-destructive mt-1">
+                    <p id="fromEmail-error" className="text-sm text-destructive mt-1" role="alert">
                       {String(form.formState.errors.fromEmail.message)}
                     </p>
                   )}
@@ -194,6 +242,7 @@ export function EmailCampaignBuilder({ campaignId, organizationId }: EmailCampai
                   {...form.register('replyTo')}
                   type="email"
                   placeholder="support@example.com"
+                  className="min-h-[44px]"
                 />
               </div>
             </CardContent>
@@ -204,15 +253,20 @@ export function EmailCampaignBuilder({ campaignId, organizationId }: EmailCampai
               <CardTitle>Schedule</CardTitle>
             </CardHeader>
             <CardContent>
-              <Label>Send Date & Time</Label>
+              <Label htmlFor="schedule-button">Send Date & Time</Label>
               <Popover>
                 <PopoverTrigger asChild>
-                  <Button variant="outline" className="w-full justify-start text-left mt-2">
-                    <CalendarIcon className="mr-2 h-4 w-4" />
+                  <Button
+                    id="schedule-button"
+                    variant="outline"
+                    className="w-full justify-start text-left mt-2 min-h-[44px]"
+                    aria-label={scheduledFor ? `Scheduled for ${format(scheduledFor, 'PPP')}` : 'Send immediately'}
+                  >
+                    <CalendarIcon className="mr-2 h-4 w-4" aria-hidden="true" />
                     {scheduledFor ? format(scheduledFor, 'PPP') : 'Send immediately'}
                   </Button>
                 </PopoverTrigger>
-                <PopoverContent className="w-auto p-0">
+                <PopoverContent className="w-auto p-0" align="start">
                   <Calendar
                     mode="single"
                     selected={scheduledFor}

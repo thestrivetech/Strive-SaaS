@@ -559,3 +559,280 @@
     min-width: 44px;
   }
 }
+
+/* ============================================
+   REID Dashboard Theme
+   Dark theme with neon cyan/purple accents
+   ============================================ */
+
+:root {
+  /* Dark theme colors */
+  --reid-background: #0f172a;
+  --reid-surface: #1e293b;
+  --reid-surface-light: #334155;
+
+  /* Neon accents */
+  --reid-cyan: #06b6d4;
+  --reid-purple: #8b5cf6;
+  --reid-cyan-glow: rgba(6, 182, 212, 0.4);
+  --reid-purple-glow: rgba(139, 92, 246, 0.4);
+
+  /* Data visualization */
+  --reid-success: #10b981;
+  --reid-warning: #f59e0b;
+  --reid-error: #ef4444;
+  --reid-info: #3b82f6;
+
+  /* Text colors */
+  --reid-text-primary: #e2e8f0;
+  --reid-text-secondary: #94a3b8;
+  --reid-text-muted: #64748b;
+}
+
+/* Dark theme base */
+.reid-theme {
+  background: var(--reid-background);
+  color: var(--reid-text-primary);
+  min-height: 100vh;
+}
+
+/* Neon accent cards */
+.reid-card {
+  background: var(--reid-surface);
+  border: 1px solid #334155;
+  border-radius: 0.5rem;
+  transition: all 0.3s ease;
+}
+
+.reid-card:hover {
+  border-color: var(--reid-cyan);
+  box-shadow: 0 0 20px var(--reid-cyan-glow);
+}
+
+.reid-card-purple:hover {
+  border-color: var(--reid-purple);
+  box-shadow: 0 0 20px var(--reid-purple-glow);
+}
+
+/* Data density layout */
+.reid-data-grid {
+  display: grid;
+  gap: 1rem;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+}
+
+/* Chart styling */
+.reid-chart {
+  background: var(--reid-surface);
+  border-radius: 0.5rem;
+  padding: 1rem;
+}
+
+/* Map styling */
+.reid-map {
+  border-radius: 0.5rem;
+  overflow: hidden;
+  border: 1px solid #334155;
+  background: var(--reid-surface);
+}
+
+/* Leaflet Dark Theme Overrides */
+.leaflet-container {
+  background: var(--reid-background);
+  font-family: var(--font-family-sans);
+}
+
+.leaflet-popup-content-wrapper {
+  background: var(--reid-surface);
+  color: var(--reid-text-primary);
+  border: 1px solid #334155;
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+  border-radius: 0.5rem;
+}
+
+.leaflet-popup-tip {
+  background: var(--reid-surface);
+  border: 1px solid #334155;
+}
+
+.leaflet-popup-close-button {
+  color: var(--reid-text-primary) !important;
+}
+
+.leaflet-popup-close-button:hover {
+  color: var(--reid-cyan) !important;
+}
+
+.reid-map-popup h3 {
+  margin: 0 0 0.5rem 0;
+  font-size: 1rem;
+  font-weight: 600;
+}
+
+.reid-map-popup p {
+  margin: 0;
+}
+
+.custom-marker {
+  transition: all 0.3s ease;
+  cursor: pointer;
+}
+
+.custom-marker:hover {
+  transform: scale(1.2);
+}
+
+/* Leaflet control overrides */
+.leaflet-control-zoom a {
+  background: var(--reid-surface) !important;
+  color: var(--reid-text-primary) !important;
+  border: 1px solid #334155 !important;
+}
+
+.leaflet-control-zoom a:hover {
+  background: var(--reid-surface-light) !important;
+  border-color: var(--reid-cyan) !important;
+}
+
+.leaflet-control-attribution {
+  background: rgba(15, 23, 42, 0.8) !important;
+  color: var(--reid-text-secondary) !important;
+  font-size: 0.75rem;
+}
+
+.leaflet-control-attribution a {
+  color: var(--reid-cyan) !important;
+}
+
+/* Metric card styling */
+.reid-metric {
+  background: linear-gradient(135deg, var(--reid-surface), var(--reid-surface-light));
+  border: 1px solid transparent;
+  background-clip: padding-box;
+  padding: 1rem;
+  border-radius: 0.5rem;
+}
+
+.reid-metric-value {
+  font-family: 'Fira Code', monospace;
+  font-size: 2rem;
+  font-weight: bold;
+  color: var(--reid-cyan);
+  line-height: 1;
+}
+
+.reid-metric-label {
+  color: var(--reid-text-secondary);
+  font-size: 0.875rem;
+  margin-top: 0.5rem;
+}
+
+/* Alert severity styling */
+.reid-alert-critical {
+  border-left: 4px solid var(--reid-error);
+  background: rgba(239, 68, 68, 0.1);
+}
+
+.reid-alert-high {
+  border-left: 4px solid var(--reid-warning);
+  background: rgba(245, 158, 11, 0.1);
+}
+
+.reid-alert-medium {
+  border-left: 4px solid var(--reid-info);
+  background: rgba(59, 130, 246, 0.1);
+}
+
+.reid-alert-low {
+  border-left: 4px solid var(--reid-success);
+  background: rgba(16, 185, 129, 0.1);
+}
+
+/* Status badges */
+.reid-badge-success {
+  background: rgba(16, 185, 129, 0.2);
+  color: var(--reid-success);
+  border: 1px solid var(--reid-success);
+}
+
+.reid-badge-warning {
+  background: rgba(245, 158, 11, 0.2);
+  color: var(--reid-warning);
+  border: 1px solid var(--reid-warning);
+}
+
+.reid-badge-error {
+  background: rgba(239, 68, 68, 0.2);
+  color: var(--reid-error);
+  border: 1px solid var(--reid-error);
+}
+
+.reid-badge-info {
+  background: rgba(59, 130, 246, 0.2);
+  color: var(--reid-info);
+  border: 1px solid var(--reid-info);
+}
+
+/* Interactive elements */
+.reid-button-primary {
+  background: var(--reid-cyan);
+  color: white;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 0.375rem;
+  font-weight: 500;
+  transition: all 0.2s;
+}
+
+.reid-button-primary:hover {
+  background: #0891b2;
+  box-shadow: 0 0 15px var(--reid-cyan-glow);
+}
+
+.reid-button-secondary {
+  background: var(--reid-purple);
+  color: white;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 0.375rem;
+  font-weight: 500;
+  transition: all 0.2s;
+}
+
+.reid-button-secondary:hover {
+  background: #7c3aed;
+  box-shadow: 0 0 15px var(--reid-purple-glow);
+}
+
+/* Loading skeleton */
+.reid-skeleton {
+  background: linear-gradient(
+    90deg,
+    var(--reid-surface) 25%,
+    var(--reid-surface-light) 50%,
+    var(--reid-surface) 75%
+  );
+  background-size: 200% 100%;
+  animation: reid-loading 1.5s ease-in-out infinite;
+  border-radius: 0.5rem;
+}
+
+@keyframes reid-loading {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .reid-data-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .reid-metric-value {
+    font-size: 1.5rem;
+  }
+}

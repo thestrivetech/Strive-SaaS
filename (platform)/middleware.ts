@@ -1,7 +1,6 @@
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 import { handleCORS } from './lib/middleware/cors';
-import { detectHostType } from './lib/middleware/routing';
 import { handlePlatformAuth } from './lib/middleware/auth';
 import { checkRateLimit, getClientIdentifier, authRateLimit, apiRateLimit } from './lib/rate-limit';
 
@@ -54,21 +53,8 @@ export async function middleware(request: NextRequest) {
     }
   }
 
-  // Detect host type and route accordingly
-  const hostType = detectHostType(request);
-
-  // Chatbot and marketing sites don't require auth
-  if (hostType === 'chatbot' || hostType === 'marketing') {
-    return NextResponse.next();
-  }
-
-  // Platform site requires authentication
-  if (hostType === 'platform') {
-    return await handlePlatformAuth(request);
-  }
-
-  // Unknown hostname, continue normally
-  return NextResponse.next();
+  // Single-domain platform: handle authentication for all routes
+  return await handlePlatformAuth(request);
 }
 
 export const config = {

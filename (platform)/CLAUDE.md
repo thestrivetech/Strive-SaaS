@@ -77,6 +77,44 @@ Coverage: 80% minimum
 
 ---
 
+## 🎨 MOCK DATA MODE (ACTIVE - 2025-10-07)
+
+**Schema Reset:** Old schema (3,345 lines, 83 models) backed up to `prisma/backup-20251007/`
+**Current Schema:** Minimal (88 lines, 3 models: users, organizations, organization_members)
+
+### UI-First Development Pattern
+
+**Toggle mock mode:** `.env.local` → `NEXT_PUBLIC_USE_MOCKS=true`
+
+**Use providers instead of Prisma:**
+```typescript
+// ❌ Old way (don't use during UI development)
+import { prisma } from '@/lib/database/prisma';
+
+// ✅ New way (use this)
+import { contactsProvider, leadsProvider, customersProvider } from '@/lib/data';
+
+const contacts = await contactsProvider.findMany(orgId);
+const contact = await contactsProvider.findById(id, orgId);
+await contactsProvider.create(data, orgId);
+await contactsProvider.update(id, data, orgId);
+await contactsProvider.delete(id, orgId);
+```
+
+**Available Mock Data:**
+- **CRM:** `contactsProvider` (25), `leadsProvider` (15), `customersProvider` (30)
+- Realistic data: names, emails, phones, addresses, dates, tags
+
+**Workflow:**
+1. Build UI with mock data (current phase)
+2. Document required fields as you discover them
+3. Design final schema based on real UI needs
+4. Migrate to real database module-by-module
+
+**Docs:** See `MOCK-DATA-WORKFLOW.md` (full guide) or `QUICK-START-MOCK-MODE.md` (quick start)
+
+---
+
 ## 🏗️ ARCHITECTURE: 3-LEVEL HIERARCHY
 
 **Understanding the Platform Structure:**
@@ -705,7 +743,12 @@ npm run dev              # Start dev server (Turbopack)
 npx prisma studio        # Database GUI
 npm run lint:fix         # Fix linting issues
 
+# Mock Data Mode (ACTIVE - UI Development)
+# Enable in .env.local: NEXT_PUBLIC_USE_MOCKS=true
+# See: MOCK-DATA-WORKFLOW.md or QUICK-START-MOCK-MODE.md
+
 # Database (⚠️ USE HELPER SCRIPTS - See below)
+# Note: Database commands not needed when using mock data mode
 npm run db:docs         # Generate schema documentation (ALWAYS after schema changes)
 npm run db:status       # Check migration status
 npm run db:migrate      # Create migration (interactive)
@@ -1029,6 +1072,16 @@ describe('MyFeature Module', () => {
 
 ## 📝 VERSION HISTORY
 
+**v2.3 (2025-10-07)** - Mock Data Infrastructure & Schema Reset
+- Schema reset: Old 3,345-line schema backed up to `prisma/backup-20251007/`
+- New minimal schema: 88 lines, 3 models (users, organizations, organization_members)
+- Added mock data infrastructure: `lib/data/` with providers, mocks, and generators
+- CRM mock providers: contacts (25), leads (15), customers (30)
+- Toggle via `NEXT_PUBLIC_USE_MOCKS=true` in `.env.local`
+- UI-first development pattern: Build UI with mocks, design schema from real needs
+- Documentation: `MOCK-DATA-WORKFLOW.md`, `QUICK-START-MOCK-MODE.md`
+- Fixed build: Installed missing `react-grid-layout` dependency
+
 **v2.2 (2025-10-05)** - Session 3 Refactoring Updates
 - Added workspace dashboard (`app/real-estate/workspace/dashboard/`)
 - Added 5 module skeletons:
@@ -1070,4 +1123,4 @@ describe('MyFeature Module', () => {
 - Security mandates
 - Performance targets
 
-**Last Updated:** 2025-10-05
+**Last Updated:** 2025-10-07
