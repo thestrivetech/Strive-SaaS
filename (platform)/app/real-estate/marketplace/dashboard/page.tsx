@@ -2,8 +2,10 @@ import { Metadata } from 'next';
 import { requireAuth, getCurrentUser } from '@/lib/auth/auth-helpers';
 import { redirect } from 'next/navigation';
 import Link from 'next/link';
+import { Suspense } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import {
   Store,
   Package,
@@ -21,7 +23,12 @@ import {
   CheckCircle2,
   Clock,
   ArrowRight,
+  Layers,
 } from 'lucide-react';
+import { MarketplaceGrid } from '@/components/real-estate/marketplace/grid/MarketplaceGrid';
+import { BundleGrid } from '@/components/real-estate/marketplace/bundles/BundleGrid';
+import { ShoppingCartPanel } from '@/components/real-estate/marketplace/cart/ShoppingCartPanel';
+import { getShoppingCart } from '@/lib/modules/marketplace';
 
 /**
  * Marketplace Dashboard Page
@@ -186,7 +193,11 @@ const MOCK_POPULAR_TOOLS = [
   { name: 'SMS Gateway', installs: 521 },
 ];
 
-export default async function MarketplaceDashboardPage() {
+export default async function MarketplaceDashboardPage({
+  searchParams,
+}: {
+  searchParams: { [key: string]: string | string[] | undefined };
+}) {
   // Require authentication
   await requireAuth();
   const user = await getCurrentUser();
@@ -202,6 +213,11 @@ export default async function MarketplaceDashboardPage() {
     redirect('/onboarding/organization');
   }
 
+  // Get cart data for checking what's in cart
+  const cart = await getShoppingCart(user.id).catch(() => null);
+  const cartToolIds = (cart?.tools as string[]) || [];
+  const cartBundleIds = (cart?.bundles as string[]) || [];
+
   // Helper function for personalized greeting
   const getGreeting = () => {
     const hour = new Date().getHours();
@@ -211,178 +227,212 @@ export default async function MarketplaceDashboardPage() {
   };
 
   const firstName = user.name?.split(' ')[0] || 'User';
+  const activeTab = (searchParams.tab as string) || 'tools';
 
   return (
-    <div className="space-y-6">
-      {/* Hero Section with Personalized Greeting */}
-      <div className="glass-strong rounded-2xl p-6 sm:p-8 neon-border-cyan mb-6">
-        <div>
-          <h1 className="text-3xl sm:text-4xl font-bold mb-2">
-            <span className="inline-block">{getGreeting()},</span>{' '}
-            <span className="bg-gradient-to-r from-primary via-chart-2 to-chart-3 bg-clip-text text-transparent">
-              {firstName}
-            </span>
-          </h1>
-          <h2 className="text-xl sm:text-2xl font-semibold text-primary mb-2">
-            Tool Marketplace
-          </h2>
-          <p className="text-muted-foreground">
-            Discover and manage third-party tools and integrations
-          </p>
-        </div>
-        <div className="mt-6">
-          <Button asChild>
-            <Link href="/real-estate/marketplace/browse">
-              <Store className="mr-2 h-4 w-4" />
-              Browse Tools
-            </Link>
-          </Button>
-        </div>
-      </div>
-
-      {/* Stats Cards */}
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-        <StatCard
-          icon={Store}
-          title="Available Tools"
-          value={MOCK_STATS.availableTools.toString()}
-          description="In marketplace"
-          borderColor="neon-border-purple"
-        />
-        <StatCard
-          icon={Package}
-          title="Active Subscriptions"
-          value={MOCK_STATS.activeSubscriptions.toString()}
-          description="Your tools"
-          borderColor="neon-border-purple"
-        />
-        <StatCard
-          icon={DollarSign}
-          title="Total Savings"
-          value={`$${MOCK_STATS.monthlySavings}/mo`}
-          description="vs individual purchase"
-          borderColor="neon-border-purple"
-        />
-        <StatCard
-          icon={TrendingUp}
-          title="Popular Tools"
-          value={MOCK_STATS.popularTools.toString()}
-          description="Trending"
-          borderColor="neon-border-purple"
-        />
-      </div>
-
-      {/* Featured Tools Grid */}
-      <div>
-        <div className="flex items-center justify-between mb-4">
-          <h3 className="text-xl font-semibold">Featured Tools</h3>
-          <Button asChild variant="ghost" size="sm">
-            <Link href="/real-estate/marketplace/browse">
-              View All
-              <ArrowRight className="ml-2 h-4 w-4" />
-            </Link>
-          </Button>
-        </div>
-        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-          {MOCK_FEATURED_TOOLS.map((tool) => (
-            <ToolCard key={tool.id} tool={tool} />
-          ))}
-        </div>
-      </div>
-
-      {/* Active Subscriptions Section */}
-      <Card className="glass-strong neon-border-green">
-        <CardHeader>
-          <div className="flex items-center justify-between">
-            <CardTitle>Active Subscriptions</CardTitle>
-            <Button asChild variant="ghost" size="sm">
-              <Link href="/real-estate/marketplace/subscriptions">
-                Manage All
-                <ArrowRight className="ml-2 h-4 w-4" />
-              </Link>
-            </Button>
+    <div className="container mx-auto py-6 px-4 max-w-7xl">
+      <div className="grid lg:grid-cols-4 gap-6">
+        {/* Main Content - Left 3 columns */}
+        <div className="lg:col-span-3 space-y-6">
+          {/* Hero Section with Personalized Greeting */}
+          <div className="glass-strong rounded-2xl p-6 sm:p-8 neon-border-cyan">
+            <div>
+              <h1 className="text-3xl sm:text-4xl font-bold mb-2">
+                <span className="inline-block">{getGreeting()},</span>{' '}
+                <span className="bg-gradient-to-r from-primary via-chart-2 to-chart-3 bg-clip-text text-transparent">
+                  {firstName}
+                </span>
+              </h1>
+              <h2 className="text-xl sm:text-2xl font-semibold text-primary mb-2">
+                Tool Marketplace
+              </h2>
+              <p className="text-muted-foreground">
+                Discover and manage third-party tools and integrations
+              </p>
+            </div>
           </div>
-          <CardDescription>Your active tool subscriptions</CardDescription>
-        </CardHeader>
-        <CardContent>
-          {MOCK_SUBSCRIPTIONS.length === 0 ? (
-            <div className="text-center py-8 text-muted-foreground">
-              <Package className="mx-auto h-12 w-12 mb-2 opacity-50" />
-              <p>No active subscriptions</p>
-              <Button asChild variant="link" className="mt-2">
-                <Link href="/real-estate/marketplace/browse">
-                  Browse tools to get started
-                </Link>
-              </Button>
-            </div>
-          ) : (
-            <div className="space-y-3">
-              {MOCK_SUBSCRIPTIONS.map((subscription) => (
-                <SubscriptionCard key={subscription.id} subscription={subscription} />
-              ))}
-            </div>
-          )}
-        </CardContent>
-      </Card>
 
-      {/* Popular Tools Widget */}
-      <Card className="glass-strong neon-border-orange">
-        <CardHeader>
-          <CardTitle>Popular Tools</CardTitle>
-          <CardDescription>Most installed by real estate professionals</CardDescription>
-        </CardHeader>
-        <CardContent>
-          <div className="space-y-3">
-            {MOCK_POPULAR_TOOLS.map((tool, index) => (
-              <div
-                key={tool.name}
-                className="flex items-center justify-between p-3 rounded-lg border hover:bg-accent transition-colors"
-              >
-                <div className="flex items-center gap-3">
-                  <div className="flex items-center justify-center w-8 h-8 rounded-full bg-primary/10">
-                    <span className="text-sm font-bold text-primary">
-                      {index + 1}
-                    </span>
-                  </div>
-                  <p className="font-medium">{tool.name}</p>
+          {/* Stats Cards */}
+          <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+            <StatCard
+              icon={Store}
+              title="Available Tools"
+              value={MOCK_STATS.availableTools.toString()}
+              description="In marketplace"
+              borderColor="neon-border-purple"
+            />
+            <StatCard
+              icon={Package}
+              title="Active Subscriptions"
+              value={MOCK_STATS.activeSubscriptions.toString()}
+              description="Your tools"
+              borderColor="neon-border-purple"
+            />
+            <StatCard
+              icon={DollarSign}
+              title="Total Savings"
+              value={`$${MOCK_STATS.monthlySavings}/mo`}
+              description="vs individual purchase"
+              borderColor="neon-border-purple"
+            />
+            <StatCard
+              icon={TrendingUp}
+              title="Popular Tools"
+              value={MOCK_STATS.popularTools.toString()}
+              description="Trending"
+              borderColor="neon-border-purple"
+            />
+          </div>
+
+          {/* Tabs for Tools and Bundles */}
+          <Tabs defaultValue={activeTab} className="space-y-6">
+            <TabsList className="grid w-full grid-cols-2 max-w-md">
+              <TabsTrigger value="tools" className="flex items-center gap-2">
+                <Store className="w-4 h-4" />
+                Individual Tools
+              </TabsTrigger>
+              <TabsTrigger value="bundles" className="flex items-center gap-2">
+                <Layers className="w-4 h-4" />
+                Bundles & Packages
+              </TabsTrigger>
+            </TabsList>
+
+            {/* Individual Tools Tab */}
+            <TabsContent value="tools" className="space-y-6">
+              <div>
+                <div className="flex items-center justify-between mb-4">
+                  <h3 className="text-xl font-semibold">Featured Tools</h3>
+                  <Button asChild variant="ghost" size="sm">
+                    <Link href="/real-estate/marketplace/browse">
+                      View All
+                      <ArrowRight className="ml-2 h-4 w-4" />
+                    </Link>
+                  </Button>
                 </div>
-                <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                  <Users className="h-4 w-4" />
-                  <span>{tool.installs.toLocaleString()} installs</span>
-                  <TrendingUp className="h-4 w-4 text-green-500" />
-                </div>
+                <Suspense fallback={<div className="text-center py-12">Loading tools...</div>}>
+                  <MarketplaceGrid searchParams={searchParams} />
+                </Suspense>
               </div>
-            ))}
-          </div>
-        </CardContent>
-      </Card>
+            </TabsContent>
 
-      {/* Quick Actions */}
-      <Card className="glass neon-border-purple">
-        <CardHeader>
-          <CardTitle>Quick Actions</CardTitle>
-          <CardDescription>Common marketplace tasks</CardDescription>
-        </CardHeader>
-        <CardContent>
-          <div className="flex flex-wrap gap-2">
-            <Button asChild variant="outline">
-              <Link href="/real-estate/marketplace/browse">
-                Browse Tools
-              </Link>
-            </Button>
-            <Button asChild variant="outline">
-              <Link href="/real-estate/marketplace/subscriptions">
-                Manage Subscriptions
-              </Link>
-            </Button>
-            <Button asChild variant="outline">
-              <Link href="/real-estate/marketplace/usage">
-                View Usage
-              </Link>
-            </Button>
-          </div>
-        </CardContent>
-      </Card>
+            {/* Bundles Tab */}
+            <TabsContent value="bundles" className="space-y-6">
+              <div>
+                <div className="flex items-center justify-between mb-4">
+                  <div>
+                    <h3 className="text-xl font-semibold">Tool Bundles & Packages</h3>
+                    <p className="text-sm text-muted-foreground mt-1">
+                      Save big with curated bundles of professional tools
+                    </p>
+                  </div>
+                </div>
+                <Suspense fallback={<div className="text-center py-12">Loading bundles...</div>}>
+                  <BundleGrid cartBundleIds={cartBundleIds} />
+                </Suspense>
+              </div>
+            </TabsContent>
+          </Tabs>
+
+          {/* Active Subscriptions Section */}
+          <Card className="glass-strong neon-border-green">
+            <CardHeader>
+              <div className="flex items-center justify-between">
+                <CardTitle>Active Subscriptions</CardTitle>
+                <Button asChild variant="ghost" size="sm">
+                  <Link href="/real-estate/marketplace/subscriptions">
+                    Manage All
+                    <ArrowRight className="ml-2 h-4 w-4" />
+                  </Link>
+                </Button>
+              </div>
+              <CardDescription>Your active tool subscriptions</CardDescription>
+            </CardHeader>
+            <CardContent>
+              {MOCK_SUBSCRIPTIONS.length === 0 ? (
+                <div className="text-center py-8 text-muted-foreground">
+                  <Package className="mx-auto h-12 w-12 mb-2 opacity-50" />
+                  <p>No active subscriptions</p>
+                  <Button asChild variant="link" className="mt-2">
+                    <Link href="/real-estate/marketplace/browse">
+                      Browse tools to get started
+                    </Link>
+                  </Button>
+                </div>
+              ) : (
+                <div className="space-y-3">
+                  {MOCK_SUBSCRIPTIONS.map((subscription) => (
+                    <SubscriptionCard key={subscription.id} subscription={subscription} />
+                  ))}
+                </div>
+              )}
+            </CardContent>
+          </Card>
+
+          {/* Popular Tools Widget */}
+          <Card className="glass-strong neon-border-orange">
+            <CardHeader>
+              <CardTitle>Popular Tools</CardTitle>
+              <CardDescription>Most installed by real estate professionals</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-3">
+                {MOCK_POPULAR_TOOLS.map((tool, index) => (
+                  <div
+                    key={tool.name}
+                    className="flex items-center justify-between p-3 rounded-lg border hover:bg-accent transition-colors"
+                  >
+                    <div className="flex items-center gap-3">
+                      <div className="flex items-center justify-center w-8 h-8 rounded-full bg-primary/10">
+                        <span className="text-sm font-bold text-primary">
+                          {index + 1}
+                        </span>
+                      </div>
+                      <p className="font-medium">{tool.name}</p>
+                    </div>
+                    <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                      <Users className="h-4 w-4" />
+                      <span>{tool.installs.toLocaleString()} installs</span>
+                      <TrendingUp className="h-4 w-4 text-green-500" />
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Quick Actions */}
+          <Card className="glass neon-border-purple">
+            <CardHeader>
+              <CardTitle>Quick Actions</CardTitle>
+              <CardDescription>Common marketplace tasks</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="flex flex-wrap gap-2">
+                <Button asChild variant="outline">
+                  <Link href="/real-estate/marketplace/browse">
+                    Browse Tools
+                  </Link>
+                </Button>
+                <Button asChild variant="outline">
+                  <Link href="/real-estate/marketplace/subscriptions">
+                    Manage Subscriptions
+                  </Link>
+                </Button>
+                <Button asChild variant="outline">
+                  <Link href="/real-estate/marketplace/usage">
+                    View Usage
+                  </Link>
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+
+        {/* Shopping Cart Panel - Right column (always visible) */}
+        <div className="lg:col-span-1">
+          <ShoppingCartPanel userId={user.id} />
+        </div>
+      </div>
     </div>
   );
 }

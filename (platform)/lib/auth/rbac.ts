@@ -363,10 +363,11 @@ export function canDeleteTransactionLoops(role: UserRole): boolean {
 }
 
 /**
- * Admin Panel Access Control (ADMIN role - for platform administrators)
+ * Admin Panel Access Control (Organization-level admin)
+ * Both ADMIN and SUPER_ADMIN can access organization admin panel
  */
 export function canAccessAdminPanel(role: UserRole): boolean {
-  return role === 'ADMIN';
+  return role === 'ADMIN' || role === 'SUPER_ADMIN';
 }
 
 export function canViewPlatformMetrics(role: UserRole): boolean {

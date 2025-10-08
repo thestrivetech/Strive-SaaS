@@ -7,6 +7,39 @@
 **Complexity:** Medium
 **Dependencies:** Sessions 1-6
 
+---
+
+## ⚠️ CRITICAL: CUSTOM THEME REQUIREMENTS
+
+**AI Garage uses a CUSTOM HOLOGRAPHIC THEME - DO NOT apply standard modernization patterns**
+
+### Required Reading BEFORE Starting:
+1. **Custom Theme Guide:** `DASHBOARD-MODERNIZATION-UPDATE.md` (this folder)
+2. **Design Guidelines:** `AIGarageWorkbench/design_guidelines.md`
+3. **Quality Standards:** `(platform)/docs/MODULE-DASHBOARD-GUIDE.md` (Section 8-9 only)
+
+### DO NOT Use:
+- ❌ Standard glass morphism (glass, glass-strong classes)
+- ❌ Standard neon borders (cyan #00d2ff, purple, green, orange)
+- ❌ ModuleHeroSection component
+- ❌ EnhancedCard component
+- ❌ Patterns from CRM/Workspace/Marketplace dashboards
+
+### DO Use:
+- ✅ Holographic glass morphism (custom classes)
+- ✅ Aurora gradient system (violet/cyan/emerald)
+- ✅ Custom color palette: cyan #00b6d6, violet #a78bfa, emerald #10b981
+- ✅ Magnetic hover effects (Framer Motion)
+- ✅ Dark mode backgrounds (slate-900/950)
+- ✅ Quality standards (TypeScript, ESLint, file size <500 lines)
+- ✅ Auth/security patterns from MODULE-DASHBOARD-GUIDE.md
+
+### Reference:
+- **Similar Custom Theme:** REID Analytics (`app/real-estate/rei-analytics/dashboard/page.tsx`)
+- **Different From:** All other module dashboards (CRM, Workspace, etc.)
+
+---
+
 ## Objectives
 
 1. ✅ Create order studio wizard
@@ -276,6 +309,120 @@ export function TemplateGallery() {
   );
 }
 ```
+
+### Tool Builder Canvas Design (Holographic Theme)
+
+**Canvas Background:**
+```tsx
+<div className="
+  relative w-full h-screen
+  bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950
+  overflow-hidden
+">
+  {/* Aurora gradient grid overlay */}
+  <div className="
+    absolute inset-0
+    bg-[linear-gradient(rgba(99,102,241,0.05)_1px,transparent_1px),linear-gradient(90deg,rgba(99,102,241,0.05)_1px,transparent_1px)]
+    bg-[size:50px_50px]
+  " />
+
+  {/* Canvas content */}
+</div>
+```
+
+**Component Nodes:**
+```tsx
+<motion.div
+  drag
+  dragMomentum={false}
+  whileHover={{ scale: 1.05 }}
+  className="
+    absolute
+    bg-slate-900/90
+    backdrop-blur-xl
+    border border-cyan-500/30
+    rounded-xl
+    shadow-[0_0_20px_rgba(6,182,212,0.3)]
+    p-4
+  "
+>
+  {/* Node content */}
+</motion.div>
+```
+
+**Connection Lines:**
+- Use SVG with aurora gradient stroke
+- Animated flow effect
+- Magnetic snapping to connection points
+- Holographic glow on active connections
+
+**Component Palette:**
+```tsx
+<aside className="
+  w-64
+  bg-slate-900/70
+  backdrop-blur-xl
+  border-r border-indigo-500/20
+  p-4
+">
+  {/* Holographic component cards */}
+</aside>
+```
+
+**Interactive Features:**
+- Magnetic node dragging (snap to grid)
+- Aurora gradient for selected nodes
+- Holographic connection indicators
+- Real-time visual feedback with glow effects
+
+## Quality Standards (From MODULE-DASHBOARD-GUIDE.md)
+
+### Pre-Commit Requirements
+```bash
+cd "(platform)"
+
+# Must pass ALL checks:
+npx tsc --noEmit          # Zero TypeScript errors
+npm run lint              # Zero ESLint warnings
+npm run build             # Must succeed
+wc -l app/real-estate/ai-garage/order-studio/page.tsx  # Must be <500 lines
+```
+
+### Auth & Security Pattern
+```tsx
+import { requireAuth, getCurrentUser } from '@/lib/auth/auth-helpers';
+import { redirect } from 'next/navigation';
+
+export default async function OrderStudioPage() {
+  await requireAuth();
+  const user = await getCurrentUser();
+
+  if (!user) redirect('/login');
+
+  const organizationId = user.organization_members[0]?.organization_id;
+  if (!organizationId) redirect('/onboarding/organization');
+
+  // CRITICAL: Filter ALL queries by organizationId
+  const templates = await prisma.agent_templates.findMany({
+    where: { organizationId }
+  });
+
+  // ...
+}
+```
+
+### Accessibility Requirements
+- Proper heading hierarchy (h1 → h2 → h3)
+- ARIA labels on interactive elements
+- Keyboard navigation functional
+- Color contrast AA minimum (4.5:1)
+- Focus states visible
+
+### Responsive Design
+- Mobile-first: grid-cols-1
+- Tablet: md:grid-cols-2
+- Desktop: lg:grid-cols-3
+- Responsive padding: p-4 sm:p-6 lg:p-8
 
 ## Success Criteria
 

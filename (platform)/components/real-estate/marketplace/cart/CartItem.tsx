@@ -7,7 +7,7 @@ import { Trash2, Package } from 'lucide-react';
 import type { MarketplaceTool, ToolBundle } from '@/lib/modules/marketplace';
 
 interface CartItemProps {
-  item: MarketplaceTool | (ToolBundle & { tools?: any[] });
+  item: MarketplaceTool | (ToolBundle & { tools?: unknown[] });
   itemType: 'tool' | 'bundle';
   index: number;
   onRemove: () => void;

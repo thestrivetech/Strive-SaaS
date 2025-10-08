@@ -79,8 +79,8 @@ export async function addToCart(input: AddToCartInput) {
       ]);
 
       const totalPrice =
-        toolPrices.reduce((sum, t) => sum + t.price, 0) +
-        bundlePrices.reduce((sum, b) => sum + b.bundle_price, 0);
+        toolPrices.reduce((sum: number, t: any) => sum + t.price, 0) +
+        bundlePrices.reduce((sum: number, b: any) => sum + b.bundle_price, 0);
 
       // Update cart
       const updatedCart = await prisma.shopping_carts.update({
@@ -152,8 +152,8 @@ export async function removeFromCart(input: RemoveFromCartInput) {
       ]);
 
       const totalPrice =
-        toolPrices.reduce((sum, t) => sum + t.price, 0) +
-        bundlePrices.reduce((sum, b) => sum + b.bundle_price, 0);
+        toolPrices.reduce((sum: number, t: any) => sum + t.price, 0) +
+        bundlePrices.reduce((sum: number, b: any) => sum + b.bundle_price, 0);
 
       // Update cart
       const updatedCart = await prisma.shopping_carts.update({

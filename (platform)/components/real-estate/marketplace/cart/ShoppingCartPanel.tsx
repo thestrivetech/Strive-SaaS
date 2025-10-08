@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { Card, CardContent, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
 import { ShoppingCart, Trash2 } from 'lucide-react';
@@ -59,7 +59,7 @@ export function ShoppingCartPanel({ userId }: ShoppingCartPanelProps) {
       toast.success('Purchase completed successfully!');
       setIsCheckoutOpen(false);
     },
-    onError: (error: any) => {
+    onError: (error: Error) => {
       toast.error(error.message || 'Checkout failed');
     },
   });
@@ -128,7 +128,7 @@ export function ShoppingCartPanel({ userId }: ShoppingCartPanelProps) {
             <>
               {/* Cart Items */}
               <div className="space-y-3 max-h-96 overflow-y-auto">
-                {tools.map((tool, index) => (
+                {tools.map((tool: any, index: number) => (
                   <CartItem
                     key={tool.id}
                     item={tool}
@@ -142,7 +142,7 @@ export function ShoppingCartPanel({ userId }: ShoppingCartPanelProps) {
                     }
                   />
                 ))}
-                {bundles.map((bundle, index) => (
+                {bundles.map((bundle: any, index: number) => (
                   <CartItem
                     key={bundle.id}
                     item={bundle}

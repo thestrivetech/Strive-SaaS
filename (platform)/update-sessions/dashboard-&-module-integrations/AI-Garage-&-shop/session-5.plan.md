@@ -7,6 +7,39 @@
 **Complexity:** Medium
 **Dependencies:** Sessions 1-4
 
+---
+
+## ⚠️ CRITICAL: CUSTOM THEME REQUIREMENTS
+
+**AI Garage uses a CUSTOM HOLOGRAPHIC THEME - DO NOT apply standard modernization patterns**
+
+### Required Reading BEFORE Starting:
+1. **Custom Theme Guide:** `DASHBOARD-MODERNIZATION-UPDATE.md` (this folder)
+2. **Design Guidelines:** `AIGarageWorkbench/design_guidelines.md`
+3. **Quality Standards:** `(platform)/docs/MODULE-DASHBOARD-GUIDE.md` (Section 8-9 only)
+
+### DO NOT Use:
+- ❌ Standard glass morphism (glass, glass-strong classes)
+- ❌ Standard neon borders (cyan #00d2ff, purple, green, orange)
+- ❌ ModuleHeroSection component
+- ❌ EnhancedCard component
+- ❌ Patterns from CRM/Workspace/Marketplace dashboards
+
+### DO Use:
+- ✅ Holographic glass morphism (custom classes)
+- ✅ Aurora gradient system (violet/cyan/emerald)
+- ✅ Custom color palette: cyan #00b6d6, violet #a78bfa, emerald #10b981
+- ✅ Magnetic hover effects (Framer Motion)
+- ✅ Dark mode backgrounds (slate-900/950)
+- ✅ Quality standards (TypeScript, ESLint, file size <500 lines)
+- ✅ Auth/security patterns from MODULE-DASHBOARD-GUIDE.md
+
+### Reference:
+- **Similar Custom Theme:** REID Analytics (`app/real-estate/rei-analytics/dashboard/page.tsx`)
+- **Different From:** All other module dashboards (CRM, Workspace, etc.)
+
+---
+
 ## Objectives
 
 1. ✅ Create dashboard page with holographic design
@@ -21,6 +54,47 @@
 ### Step 1: Create Dashboard Page
 
 **File:** `app/(platform)/ai-garage/dashboard/page.tsx`
+
+### Dashboard Design Requirements
+
+**Theme:** Holographic/Futuristic (Custom - Not Standard Platform)
+
+**Visual Elements:**
+- Dark mode with slate-950/slate-900 gradient backgrounds
+- Holographic glass cards: `bg-slate-900/70 backdrop-blur-xl`
+- Aurora borders: `from-indigo-500/20 to-cyan-500/40`
+- Magnetic hover: `hover:shadow-[0_0_30px_rgba(99,102,241,0.3)]`
+- Gradient text: `from-cyan-400 to-violet-400 bg-clip-text text-transparent`
+
+**Layout Pattern:**
+```tsx
+// Hero Section (Custom - NOT ModuleHeroSection)
+<section className="bg-gradient-to-br from-violet-900/20 via-cyan-900/20 to-emerald-900/20">
+  <h1 className="text-5xl font-bold bg-gradient-to-r from-cyan-400 to-violet-400 bg-clip-text text-transparent">
+    AI Garage Dashboard
+  </h1>
+</section>
+
+// Stats Cards (Holographic Glass)
+<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+  <div className="
+    bg-slate-900/70
+    backdrop-blur-xl
+    border border-indigo-500/20
+    rounded-2xl
+    hover:shadow-[0_0_30px_rgba(99,102,241,0.3)]
+    transition-all duration-300
+  ">
+    {/* Stat content */}
+  </div>
+</div>
+```
+
+**Components to Build:**
+1. `HolographicCard` - Replaces EnhancedCard
+2. `AuroraBackground` - Custom gradient backgrounds
+3. `MagneticButton` - Interactive buttons
+4. `OrderStatusBadge` - Holographic status indicators
 
 ```typescript
 import { Suspense } from 'react';
@@ -180,6 +254,55 @@ export function ProjectGrid() {
   50% { background-position: 100% 50%; }
 }
 ```
+
+## Quality Standards (From MODULE-DASHBOARD-GUIDE.md)
+
+### Pre-Commit Requirements
+```bash
+cd "(platform)"
+
+# Must pass ALL checks:
+npx tsc --noEmit          # Zero TypeScript errors
+npm run lint              # Zero ESLint warnings
+npm run build             # Must succeed
+wc -l app/real-estate/ai-garage/dashboard/page.tsx  # Must be <500 lines
+```
+
+### Auth & Security Pattern
+```tsx
+import { requireAuth, getCurrentUser } from '@/lib/auth/auth-helpers';
+import { redirect } from 'next/navigation';
+
+export default async function AIGarageDashboard() {
+  await requireAuth();
+  const user = await getCurrentUser();
+
+  if (!user) redirect('/login');
+
+  const organizationId = user.organization_members[0]?.organization_id;
+  if (!organizationId) redirect('/onboarding/organization');
+
+  // CRITICAL: Filter ALL queries by organizationId
+  const orders = await prisma.custom_agent_orders.findMany({
+    where: { organizationId }
+  });
+
+  // ...
+}
+```
+
+### Accessibility Requirements
+- Proper heading hierarchy (h1 → h2 → h3)
+- ARIA labels on interactive elements
+- Keyboard navigation functional
+- Color contrast AA minimum (4.5:1)
+- Focus states visible
+
+### Responsive Design
+- Mobile-first: grid-cols-1
+- Tablet: md:grid-cols-2
+- Desktop: lg:grid-cols-4
+- Responsive padding: p-4 sm:p-6 lg:p-8
 
 ## Success Criteria
 

@@ -13,7 +13,7 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { LogOut, Settings as SettingsIcon, User as UserIcon } from 'lucide-react';
+import { LogOut, Settings as SettingsIcon, User as UserIcon, Shield, Building2 } from 'lucide-react';
 
 interface UserMenuProps {
   user: users;
@@ -66,6 +66,27 @@ export function UserMenu({ user }: UserMenuProps) {
             Settings
           </Link>
         </DropdownMenuItem>
+        {/* Organization Admin - for ADMIN and SUPER_ADMIN */}
+        {(user.role === 'ADMIN' || user.role === 'SUPER_ADMIN') && (
+          <>
+            <DropdownMenuSeparator />
+            <DropdownMenuItem asChild>
+              <Link href="/admin" className="flex items-center">
+                <Building2 className="mr-2 h-4 w-4" />
+                Organization Admin
+              </Link>
+            </DropdownMenuItem>
+          </>
+        )}
+        {/* Platform Admin - SUPER_ADMIN only */}
+        {user.role === 'SUPER_ADMIN' && (
+          <DropdownMenuItem asChild>
+            <Link href="/platform-admin" className="flex items-center text-primary">
+              <Shield className="mr-2 h-4 w-4" />
+              Platform Admin
+            </Link>
+          </DropdownMenuItem>
+        )}
         <DropdownMenuSeparator />
         <DropdownMenuItem
           onClick={handleSignOut}

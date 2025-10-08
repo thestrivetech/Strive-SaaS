@@ -45,6 +45,13 @@ Read these files in order (ALWAYS at session start):
 4. **Session Plan**:
    C:\Users\zochr\Desktop\GitHub\Strive-SaaS\(platform)\update-sessions\dashboard-&-module-integrations\expenses-&-taxes-module\session-{SESSION_NUMBER}.plan.md
 
+5. **Dashboard Modernization Guide** (dashboard already complete):
+   /Users/grant/Documents/GitHub/Strive-SaaS/(platform)/update-sessions/dashboard-&-module-integrations/expenses-&-taxes-module/DASHBOARD-MODERNIZATION-UPDATE.md
+
+   NOTE: Expense dashboard enhanced in Phase 5A (Oct 2025)
+   - Integrates real components (ExpenseKPIs, TaxEstimateCard, CategoryBreakdown)
+   - Follow established patterns for new expense/tax pages
+
 ---
 
 ## STEP 2: LAUNCH DEVELOPMENT AGENT
@@ -91,14 +98,12 @@ Architecture:
 - File size limit: 500 lines max (hard ESLint block)
 
 UI/UX:
-- Clean professional design system
-- Elevation: var(--elevate-1), var(--elevate-2)
-- Primary color: hsl(240 100% 27%)
-- Use hover-elevate class for interactions
-- Mobile-first responsive (Tailwind breakpoints)
-- Light/dark mode support
-- Receipt upload with image preview
-- Currency formatting and localization
+- Follow MODULE-DASHBOARD-GUIDE.md patterns (see DASHBOARD-MODERNIZATION-UPDATE.md)
+- Integrates with real components (ExpenseKPIs, TaxEstimateCard, CategoryBreakdown)
+- Glass morphism (.glass, .glass-strong) with neon borders (cyan, purple, green, orange)
+- Reference: Expense dashboard (136 lines, Phase 5A enhanced)
+- Quality standards: TypeScript 0 errors, ESLint 0 warnings, <500 lines
+- Accessibility: WCAG AA, responsive mobile-first
 
 Implementation:
 1. Create TodoWrite list FIRST (granular tasks with activeForm)

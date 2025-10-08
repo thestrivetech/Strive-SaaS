@@ -7,6 +7,39 @@
 **Complexity:** High
 **Dependencies:** Sessions 1-5
 
+---
+
+## ⚠️ CRITICAL: CUSTOM THEME REQUIREMENTS
+
+**AI Garage uses a CUSTOM HOLOGRAPHIC THEME - DO NOT apply standard modernization patterns**
+
+### Required Reading BEFORE Starting:
+1. **Custom Theme Guide:** `DASHBOARD-MODERNIZATION-UPDATE.md` (this folder)
+2. **Design Guidelines:** `AIGarageWorkbench/design_guidelines.md`
+3. **Quality Standards:** `(platform)/docs/MODULE-DASHBOARD-GUIDE.md` (Section 8-9 only)
+
+### DO NOT Use:
+- ❌ Standard glass morphism (glass, glass-strong classes)
+- ❌ Standard neon borders (cyan #00d2ff, purple, green, orange)
+- ❌ ModuleHeroSection component
+- ❌ EnhancedCard component
+- ❌ Patterns from CRM/Workspace/Marketplace dashboards
+
+### DO Use:
+- ✅ Holographic glass morphism (custom classes)
+- ✅ Aurora gradient system (violet/cyan/emerald)
+- ✅ Custom color palette: cyan #00b6d6, violet #a78bfa, emerald #10b981
+- ✅ Magnetic hover effects (Framer Motion)
+- ✅ Dark mode backgrounds (slate-900/950)
+- ✅ Quality standards (TypeScript, ESLint, file size <500 lines)
+- ✅ Auth/security patterns from MODULE-DASHBOARD-GUIDE.md
+
+### Reference:
+- **Similar Custom Theme:** REID Analytics (`app/real-estate/rei-analytics/dashboard/page.tsx`)
+- **Different From:** All other module dashboards (CRM, Workspace, etc.)
+
+---
+
 ## Objectives
 
 1. ✅ Create agent builder page
@@ -235,6 +268,96 @@ export function ModelSelector() {
   );
 }
 ```
+
+### Template Gallery Design (Holographic Theme)
+
+**Layout:**
+- Grid: `grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4`
+- Aurora gradient background
+- Holographic template cards
+
+**Template Card Pattern:**
+```tsx
+<motion.div
+  whileHover={{ scale: 1.02, boxShadow: '0 0 30px rgba(6, 182, 212, 0.4)' }}
+  transition={{ duration: 0.3 }}
+  className="
+    bg-slate-900/70
+    backdrop-blur-xl
+    border-2 border-transparent
+    bg-gradient-to-r from-indigo-500/20 to-cyan-500/40
+    rounded-2xl
+    p-6
+  "
+>
+  {/* Template avatar */}
+  <div className="w-16 h-16 rounded-full bg-gradient-to-br from-cyan-500 to-violet-500" />
+
+  {/* Template name with gradient */}
+  <h3 className="text-xl font-semibold bg-gradient-to-r from-cyan-400 to-violet-400 bg-clip-text text-transparent">
+    {template.name}
+  </h3>
+
+  {/* Category badge with aurora styling */}
+  <span className="px-3 py-1 rounded-full bg-emerald-500/10 text-emerald-400">
+    {template.category}
+  </span>
+</motion.div>
+```
+
+**Filtering UI:**
+- Aurora gradient for active filters
+- Magnetic button interactions
+- Holographic dropdown menus
+
+## Quality Standards (From MODULE-DASHBOARD-GUIDE.md)
+
+### Pre-Commit Requirements
+```bash
+cd "(platform)"
+
+# Must pass ALL checks:
+npx tsc --noEmit          # Zero TypeScript errors
+npm run lint              # Zero ESLint warnings
+npm run build             # Must succeed
+wc -l app/real-estate/ai-garage/agent-builder/page.tsx  # Must be <500 lines
+```
+
+### Auth & Security Pattern
+```tsx
+import { requireAuth, getCurrentUser } from '@/lib/auth/auth-helpers';
+import { redirect } from 'next/navigation';
+
+export default async function AgentBuilderPage() {
+  await requireAuth();
+  const user = await getCurrentUser();
+
+  if (!user) redirect('/login');
+
+  const organizationId = user.organization_members[0]?.organization_id;
+  if (!organizationId) redirect('/onboarding/organization');
+
+  // CRITICAL: Filter ALL queries by organizationId
+  const templates = await prisma.agent_templates.findMany({
+    where: { organizationId }
+  });
+
+  // ...
+}
+```
+
+### Accessibility Requirements
+- Proper heading hierarchy (h1 → h2 → h3)
+- ARIA labels on interactive elements
+- Keyboard navigation functional
+- Color contrast AA minimum (4.5:1)
+- Focus states visible
+
+### Responsive Design
+- Mobile-first: grid-cols-1
+- Tablet: md:grid-cols-2
+- Desktop: lg:grid-cols-4
+- Responsive padding: p-4 sm:p-6 lg:p-8
 
 ## Success Criteria
 

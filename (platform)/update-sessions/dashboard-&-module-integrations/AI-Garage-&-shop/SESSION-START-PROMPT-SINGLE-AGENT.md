@@ -45,6 +45,15 @@ Read these files in order (ALWAYS at session start):
 4. **Session Plan**:
    C:\Users\zochr\Desktop\GitHub\Strive-SaaS\(platform)\update-sessions\dashboard-&-module-integrations\AI-Garage-&-shop\session-{SESSION_NUMBER}.plan.md
 
+5. **Dashboard Modernization Guide** (if building UI - Sessions 5+):
+   /Users/grant/Documents/GitHub/Strive-SaaS/(platform)/update-sessions/dashboard-&-module-integrations/AI-Garage-&-shop/DASHBOARD-MODERNIZATION-UPDATE.md
+
+   CRITICAL: AI Garage uses CUSTOM HOLOGRAPHIC THEME
+   - DO NOT use standard modernization patterns (glass/neon borders)
+   - DO use holographic glass, aurora gradients, magnetic interactions
+   - Follow quality standards (TypeScript, ESLint, auth, accessibility)
+   - Reference: Similar to REID Analytics (custom theme)
+
 ---
 
 ## STEP 2: LAUNCH DEVELOPMENT AGENT
@@ -90,13 +99,14 @@ Architecture:
 - File size limit: 500 lines max (hard ESLint block)
 
 UI/UX:
-- Clean professional design system
-- Elevation: var(--elevate-1), var(--elevate-2)
-- Primary color: hsl(240 100% 27%)
-- Use hover-elevate class for interactions
-- Mobile-first responsive (Tailwind breakpoints)
-- Light/dark mode support
-- AI agent cards with status indicators
+- CUSTOM HOLOGRAPHIC THEME (see DASHBOARD-MODERNIZATION-UPDATE.md)
+- Holographic glass morphism with aurora gradients
+- Colors: cyan #00b6d6, violet #a78bfa, emerald #10b981
+- Magnetic hover effects (Framer Motion)
+- Dark mode backgrounds (slate-900/950)
+- DO NOT use standard glass/neon borders or ModuleHeroSection
+- Quality standards: TypeScript 0 errors, ESLint 0 warnings, <500 lines
+- Accessibility: WCAG AA, responsive mobile-first
 
 Implementation:
 1. Create TodoWrite list FIRST (granular tasks with activeForm)

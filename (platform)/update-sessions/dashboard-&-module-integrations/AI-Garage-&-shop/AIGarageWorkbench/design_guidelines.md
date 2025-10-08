@@ -161,3 +161,79 @@
 - Focus indicators with cyan rings visible on all interactive elements
 - Reduced motion variants for all animations
 - Semantic HTML with proper ARIA labels
+
+---
+
+## Quality Standards & Platform Integration
+
+### Alignment with Platform Standards
+
+While AI Garage maintains a custom holographic theme, it MUST follow platform quality standards:
+
+#### 1. Code Quality
+- **TypeScript:** Zero errors required
+- **ESLint:** Zero warnings in new code
+- **File Size:** <500 lines per file (hard limit)
+- **Build:** Must succeed without errors
+
+#### 2. Authentication & Security
+```tsx
+// REQUIRED in ALL AI Garage pages
+import { requireAuth, getCurrentUser } from '@/lib/auth/auth-helpers';
+
+export default async function Page() {
+  await requireAuth();
+  const user = await getCurrentUser();
+  if (!user) redirect('/login');
+
+  const orgId = user.organization_members[0]?.organization_id;
+  if (!orgId) redirect('/onboarding/organization');
+
+  // CRITICAL: Filter by organizationId
+  const data = await prisma.model.findMany({
+    where: { organizationId: orgId }
+  });
+}
+```
+
+#### 3. Multi-Tenancy
+- **ALWAYS filter queries** by organizationId
+- **Test tenant isolation:** Users cannot see other orgs' data
+- **RLS policies:** Enabled on all tables (from Session 1)
+
+#### 4. Accessibility (WCAG AA)
+- **Heading hierarchy:** h1 → h2 → h3 (semantic)
+- **ARIA labels:** All interactive elements
+- **Keyboard navigation:** Full support
+- **Color contrast:** 4.5:1 minimum
+- **Focus states:** Visible on all focusable elements
+
+#### 5. Responsive Design
+- **Mobile-first:** Design for mobile, enhance for desktop
+- **Breakpoints:** sm: 640px, md: 768px, lg: 1024px, xl: 1280px
+- **Test viewports:** 375px (mobile), 768px (tablet), 1440px (desktop)
+- **Touch targets:** Minimum 44x44px for all interactive elements
+
+#### 6. Performance
+- **Server Components:** Default pattern (reduce client JS)
+- **Code splitting:** Dynamic imports for heavy components
+- **Image optimization:** Use next/image for all images
+- **Bundle size:** Monitor with `npm run build`
+
+#### 7. Mock Data Patterns (Development)
+```tsx
+// Mark clearly as mock data
+// Mock data for demonstration - replace with real queries
+const MOCK_ORDERS = [
+  { id: '1', title: 'Sales Assistant', status: 'IN_PROGRESS' },
+  // ...
+];
+
+// Plan transition to real data
+// TODO: Replace with actual Prisma query when backend ready
+```
+
+### Reference Documentation
+- **Complete Quality Guide:** `(platform)/docs/MODULE-DASHBOARD-GUIDE.md`
+- **Platform Standards:** `(platform)/CLAUDE.md`
+- **Custom Theme Alignment:** `DASHBOARD-MODERNIZATION-UPDATE.md`

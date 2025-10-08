@@ -7,6 +7,39 @@
 **Complexity:** Low
 **Dependencies:** Sessions 1-7
 
+---
+
+## ⚠️ CRITICAL: CUSTOM THEME REQUIREMENTS
+
+**AI Garage uses a CUSTOM HOLOGRAPHIC THEME - DO NOT apply standard modernization patterns**
+
+### Required Reading BEFORE Starting:
+1. **Custom Theme Guide:** `DASHBOARD-MODERNIZATION-UPDATE.md` (this folder)
+2. **Design Guidelines:** `AIGarageWorkbench/design_guidelines.md`
+3. **Quality Standards:** `(platform)/docs/MODULE-DASHBOARD-GUIDE.md` (Section 8-9 only)
+
+### DO NOT Use:
+- ❌ Standard glass morphism (glass, glass-strong classes)
+- ❌ Standard neon borders (cyan #00d2ff, purple, green, orange)
+- ❌ ModuleHeroSection component
+- ❌ EnhancedCard component
+- ❌ Patterns from CRM/Workspace/Marketplace dashboards
+
+### DO Use:
+- ✅ Holographic glass morphism (custom classes)
+- ✅ Aurora gradient system (violet/cyan/emerald)
+- ✅ Custom color palette: cyan #00b6d6, violet #a78bfa, emerald #10b981
+- ✅ Magnetic hover effects (Framer Motion)
+- ✅ Dark mode backgrounds (slate-900/950)
+- ✅ Quality standards (TypeScript, ESLint, file size <500 lines)
+- ✅ Auth/security patterns from MODULE-DASHBOARD-GUIDE.md
+
+### Reference:
+- **Similar Custom Theme:** REID Analytics (`app/real-estate/rei-analytics/dashboard/page.tsx`)
+- **Different From:** All other module dashboards (CRM, Workspace, etc.)
+
+---
+
 ## Objectives
 
 1. ✅ Update platform sidebar with AI Garage navigation
@@ -264,6 +297,107 @@ export function getAIGarageLimits(tier: SubscriptionTier) {
   return limits[tier];
 }
 ```
+
+### Showcase Gallery Design (Holographic Theme)
+
+**Gallery Layout:**
+```tsx
+<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+  <motion.article
+    whileHover={{ y: -8, boxShadow: '0 0 40px rgba(99, 102, 241, 0.4)' }}
+    className="
+      bg-slate-900/70
+      backdrop-blur-xl
+      border-2 border-transparent
+      bg-gradient-to-br from-indigo-500/20 via-cyan-500/20 to-violet-500/20
+      rounded-2xl
+      overflow-hidden
+    "
+  >
+    {/* Project showcase card */}
+  </motion.article>
+</div>
+```
+
+**Review System:**
+```tsx
+// Holographic star rating
+<div className="flex gap-1">
+  {[1, 2, 3, 4, 5].map((star) => (
+    <Star
+      key={star}
+      className={`
+        h-5 w-5 transition-all
+        ${filled ? 'fill-cyan-400 text-cyan-400' : 'text-slate-600'}
+        ${filled && 'drop-shadow-[0_0_8px_rgba(6,182,212,0.8)]'}
+      `}
+    />
+  ))}
+</div>
+
+// Aurora gradient for rating bars
+<div className="h-2 rounded-full bg-slate-800 overflow-hidden">
+  <div
+    className="h-full bg-gradient-to-r from-cyan-500 to-violet-500"
+    style={{ width: `${percentage}%` }}
+  />
+</div>
+```
+
+**Filtering & Sorting:**
+- Holographic dropdown menus
+- Aurora gradient for active filters
+- Magnetic button interactions
+- Category badges with holographic styling
+
+## Quality Standards (From MODULE-DASHBOARD-GUIDE.md)
+
+### Pre-Commit Requirements
+```bash
+cd "(platform)"
+
+# Must pass ALL checks:
+npx tsc --noEmit          # Zero TypeScript errors
+npm run lint              # Zero ESLint warnings
+npm run build             # Must succeed
+wc -l app/real-estate/ai-garage/**/page.tsx  # Must be <500 lines
+```
+
+### Auth & Security Pattern
+```tsx
+import { requireAuth, getCurrentUser } from '@/lib/auth/auth-helpers';
+import { redirect } from 'next/navigation';
+
+export default async function AIGaragePage() {
+  await requireAuth();
+  const user = await getCurrentUser();
+
+  if (!user) redirect('/login');
+
+  const organizationId = user.organization_members[0]?.organization_id;
+  if (!organizationId) redirect('/onboarding/organization');
+
+  // CRITICAL: Filter ALL queries by organizationId
+  const showcases = await prisma.project_showcases.findMany({
+    where: { organizationId }
+  });
+
+  // ...
+}
+```
+
+### Accessibility Requirements
+- Proper heading hierarchy (h1 → h2 → h3)
+- ARIA labels on interactive elements
+- Keyboard navigation functional
+- Color contrast AA minimum (4.5:1)
+- Focus states visible
+
+### Responsive Design
+- Mobile-first: grid-cols-1
+- Tablet: md:grid-cols-2
+- Desktop: lg:grid-cols-3
+- Responsive padding: p-4 sm:p-6 lg:p-8
 
 ## Success Criteria
 
