@@ -10,7 +10,7 @@
         "--project-ref=bztkedvdjbxffpjxihtc"
       ],
       "env": {
-        "SUPABASE_ACCESS_TOKEN": "sbp_a0a57781efe1470fb30ffa7be92c30831ff9e42f"
+        "SUPABASE_ACCESS_TOKEN": "[YOUR-SUPABASE-ACCESS-TOKEN]"
       }
     },
     "supabase-test": {
@@ -23,7 +23,7 @@
         "--read-only"
       ],
       "env": {
-        "SUPABASE_ACCESS_TOKEN": "sbp_a0a57781efe1470fb30ffa7be92c30831ff9e42f"
+        "SUPABASE_ACCESS_TOKEN": "[YOUR-SUPABASE-ACCESS-TOKEN]"
       }
     }
   }
