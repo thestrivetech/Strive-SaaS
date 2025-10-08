@@ -50,7 +50,6 @@ export async function handlePlatformAuth(request: NextRequest): Promise<NextResp
     path.startsWith('/real-estate/dashboard') ||
     path.startsWith('/real-estate/workspace') ||
     path.startsWith('/real-estate/ai-hub') ||
-    path.startsWith('/real-estate/rei-analytics') ||
     path.startsWith('/real-estate/expense-tax') ||
     path.startsWith('/real-estate/cms-marketing') ||
     path.startsWith('/real-estate/marketplace') ||

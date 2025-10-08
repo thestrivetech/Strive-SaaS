@@ -68,16 +68,7 @@ export const purchaseBundleSchema = z.object({
   organization_id: z.string().uuid(),
 });
 
-/**
- * Tool Review Schema
- * For creating/updating tool reviews
- */
-export const createToolReviewSchema = z.object({
-  tool_id: z.string().uuid(),
-  rating: z.number().int().min(1).max(5),
-  review: z.string().max(2000).optional(),
-  organization_id: z.string().uuid(),
-});
+// Note: Review schemas have been moved to ./reviews/schemas.ts
 
 /**
  * Shopping Cart Add Item Schema
@@ -112,7 +103,6 @@ export const checkoutSchema = z.object({
 export type ToolFilters = z.infer<typeof toolFiltersSchema>;
 export type PurchaseToolInput = z.infer<typeof purchaseToolSchema>;
 export type PurchaseBundleInput = z.infer<typeof purchaseBundleSchema>;
-export type CreateToolReviewInput = z.infer<typeof createToolReviewSchema>;
 export type AddToCartInput = z.infer<typeof addToCartSchema>;
 export type RemoveFromCartInput = z.infer<typeof removeFromCartSchema>;
 export type CheckoutInput = z.infer<typeof checkoutSchema>;

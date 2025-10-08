@@ -16,7 +16,7 @@
 export {
   purchaseTool,
   purchaseBundle,
-  createToolReview,
+  trackToolUsage,
 } from './actions';
 
 export {
@@ -25,6 +25,12 @@ export {
   clearCart,
   checkout,
 } from './cart/actions';
+
+export {
+  createToolReview,
+  updateToolReview,
+  deleteToolReview,
+} from './reviews/actions';
 
 // Export queries
 export {
@@ -36,6 +42,8 @@ export {
   getToolBundleById,
   getPurchasedBundles,
   getMarketplaceStats,
+  getPurchasedToolsWithStats,
+  getToolPurchaseDetails,
 } from './queries';
 
 export {
@@ -43,23 +51,42 @@ export {
   getCartWithItems,
 } from './cart/queries';
 
+export {
+  getToolReviews,
+  getUserReviewForTool,
+  getReviewStats,
+  getUserReviews,
+  hasUserPurchasedTool,
+  type ReviewWithReviewer,
+  type ReviewStats,
+} from './reviews/queries';
+
 // Export schemas
 export {
   toolFiltersSchema,
   purchaseToolSchema,
   purchaseBundleSchema,
-  createToolReviewSchema,
   addToCartSchema,
   removeFromCartSchema,
   checkoutSchema,
   type ToolFilters,
   type PurchaseToolInput,
   type PurchaseBundleInput,
-  type CreateToolReviewInput,
   type AddToCartInput,
   type RemoveFromCartInput,
   type CheckoutInput,
 } from './schemas';
+
+export {
+  createToolReviewSchema,
+  updateToolReviewSchema,
+  deleteToolReviewSchema,
+  reviewFiltersSchema,
+  type CreateToolReviewInput,
+  type UpdateToolReviewInput,
+  type DeleteToolReviewInput,
+  type ReviewFilters,
+} from './reviews/schemas';
 
 // Re-export Prisma types
 export type {

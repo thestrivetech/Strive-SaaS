@@ -36,7 +36,7 @@ const FEATURE_TIERS: Record<string, SubscriptionTier[]> = {
   'ai-hub': ['GROWTH', 'ELITE', 'ENTERPRISE'],
   tools: ['GROWTH', 'ELITE', 'ENTERPRISE'],
   analytics: ['GROWTH', 'ELITE', 'ENTERPRISE'],
-  'rei-analytics': ['GROWTH', 'ELITE', 'ENTERPRISE'],
+  reid: ['GROWTH', 'ELITE', 'ENTERPRISE'],
   'expense-tax': ['GROWTH', 'ELITE', 'ENTERPRISE'],
   'cms-marketing': ['GROWTH', 'ELITE', 'ENTERPRISE'],
 

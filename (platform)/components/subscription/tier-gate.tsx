@@ -44,6 +44,12 @@ const TIER_HIERARCHY: Record<string, number> = {
 export function TierGate({ requiredTier, children, feature, userTier = 'FREE' }: TierGateProps) {
   const router = useRouter();
 
+  // SUPER_ADMIN bypass - full access to all features for platform administrators
+  // Note: SUPER_ADMIN is not in TIER_HIERARCHY as it's a user role, not a subscription tier
+  if (userTier === 'SUPER_ADMIN') {
+    return <>{children}</>;
+  }
+
   // Compare user's tier with required tier using hierarchy
   const userTierLevel = TIER_HIERARCHY[userTier] || 0;
   const requiredTierLevel = TIER_HIERARCHY[requiredTier] || 0;

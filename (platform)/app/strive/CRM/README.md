@@ -1,0 +1,1 @@
+This CRM module should be an exact replica of the existing CRM module and dashboards/pages that're in real estate. This will be updated to be more specific to the Strive Tech organization in the future.

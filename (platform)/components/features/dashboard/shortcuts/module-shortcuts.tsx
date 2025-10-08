@@ -55,7 +55,7 @@ const modules = [
     name: 'Analytics',
     description: 'View reports and insights',
     icon: BarChart3,
-    href: '/real-estate/rei-analytics',
+    href: '/real-estate/reid',
     color: 'purple',
   },
   {

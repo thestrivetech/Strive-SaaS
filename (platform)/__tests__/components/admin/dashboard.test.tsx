@@ -87,11 +87,7 @@ describe('Admin Dashboard', () => {
 
   describe('AdminSidebar Component', () => {
     it('should render all navigation items', () => {
-      const mockSetActiveTab = jest.fn();
-
-      render(
-        <AdminSidebar activeTab="dashboard" setActiveTab={mockSetActiveTab} />
-      );
+      render(<AdminSidebar />);
 
       expect(screen.getByText('Dashboard')).toBeInTheDocument();
       expect(screen.getByText('Users')).toBeInTheDocument();
@@ -103,35 +99,15 @@ describe('Admin Dashboard', () => {
       expect(screen.getByText('Settings')).toBeInTheDocument();
     });
 
-    it('should call setActiveTab when navigation item is clicked', () => {
-      const mockSetActiveTab = jest.fn();
+    it('should render navigation items as Links', () => {
+      render(<AdminSidebar />);
 
-      render(
-        <AdminSidebar activeTab="dashboard" setActiveTab={mockSetActiveTab} />
-      );
-
-      fireEvent.click(screen.getByText('Users'));
-      expect(mockSetActiveTab).toHaveBeenCalledWith('users');
-    });
-
-    it('should highlight active tab', () => {
-      const mockSetActiveTab = jest.fn();
-
-      const { container } = render(
-        <AdminSidebar activeTab="users" setActiveTab={mockSetActiveTab} />
-      );
-
-      // Find the Users button and check if it has the active class
-      const usersButton = screen.getByText('Users').closest('button');
-      expect(usersButton).toHaveClass('bg-primary');
+      const usersLink = screen.getByText('Users').closest('a');
+      expect(usersLink).toHaveAttribute('href', '/admin/users');
     });
 
     it('should render Exit Admin button', () => {
-      const mockSetActiveTab = jest.fn();
-
-      render(
-        <AdminSidebar activeTab="dashboard" setActiveTab={mockSetActiveTab} />
-      );
+      render(<AdminSidebar />);
 
       expect(screen.getByText('Exit Admin')).toBeInTheDocument();
     });
@@ -148,7 +124,7 @@ describe('Admin Dashboard', () => {
       expect(screen.getByText('Dashboard')).toBeInTheDocument();
     });
 
-    it('should switch tabs when sidebar item is clicked', async () => {
+    it('should render sidebar navigation links', async () => {
       render(<AdminDashboardPage />, { wrapper });
 
       // Wait for initial render
@@ -156,13 +132,9 @@ describe('Admin Dashboard', () => {
         expect(screen.getByText('Admin Dashboard')).toBeInTheDocument();
       });
 
-      // Click on Users tab
-      fireEvent.click(screen.getByText('Users'));
-
-      // Check if content changed
-      await waitFor(() => {
-        expect(screen.queryByText('Admin Dashboard')).not.toBeInTheDocument();
-      });
+      // Check if Users link exists with correct href
+      const usersLink = screen.getByText('Users').closest('a');
+      expect(usersLink).toHaveAttribute('href', '/admin/users');
     });
   });
 

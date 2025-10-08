@@ -279,6 +279,15 @@ Database:      Supabase via Prisma
 │   │   ├── billing/            # Billing & subscription
 │   │   └── organization/       # Organization settings
 │   │
+│   ├── strive/                  # ✅ STRIVE TECH INTERNAL (SUPER_ADMIN only)
+│   │   ├── platform-admin/     # Platform-wide administration dashboard
+│   │   ├── projects-future/    # Future projects module (not implemented)
+│   │   ├── admin/              # Organization & user admin tools
+│   │   ├── dashboard/          # Internal analytics and monitoring
+│   │   ├── sid/                # Strive Internal Development tools
+│   │   ├── CRM/                # Internal CRM for Strive Tech org
+│   │   └── README.md           # Strive directory documentation
+│   │
 │   ├── real-estate/             # INDUSTRY: Real Estate
 │   │   ├── dashboard/          # ✅ PAGE: Industry main dashboard
 │   │   │
@@ -387,6 +396,68 @@ Database:      Supabase via Prisma
 │
 └── middleware.ts                # Next.js middleware (auth + RBAC)
 ```
+
+---
+
+## 📂 /strive Directory - Strive Tech Internal
+
+**Location:** `app/strive/`
+**Access:** SUPER_ADMIN only (3 users in Strive Tech organization)
+
+### Purpose
+Internal Strive Tech organization management, platform-wide system administration, and future feature development area.
+
+### Structure
+
+#### /platform-admin
+- **Route:** `/strive/platform-admin`
+- **Access:** SUPER_ADMIN role only
+- **Purpose:** Platform-wide administration dashboard
+- **Features:**
+  - System monitoring and health metrics
+  - All organization management
+  - Platform-wide user administration
+  - Subscription and billing overview
+  - Security center and audit logs
+- **Moved from:** `app/(platform-admin)/platform-admin/` (2025-10-08)
+- **Access method:** User dropdown menu (Shield icon)
+
+#### /projects-future
+- **Status:** Not yet implemented (planned Q2 2026)
+- **Purpose:** Future projects module implementation
+- **Components:** 8 components preserved from original projects module
+- **Note:** Do not use in production - components ready for future implementation
+
+#### Other Internal Tools
+- `/admin` - Organization and user administration tools
+- `/dashboard` - Internal analytics and monitoring
+- `/sid` - Strive Internal Development tools
+- `/CRM` - Internal CRM for Strive Tech organization
+
+### SUPER_ADMIN Access
+
+Only 3 individuals have SUPER_ADMIN access:
+- Grant Ramey - Platform administrator
+- Garrett Holland - Platform administrator
+- Jeff Meyer - Platform administrator
+
+**Capabilities:**
+- Full platform visibility across all organizations
+- Access to all organization data (multi-tenant admin)
+- System administration capabilities
+- Platform-wide metrics and monitoring
+- Bypass all subscription tier gates (via TierGate component)
+
+**Mock Data & Development:**
+- Mock data enabled for showcase and development
+- SUPER_ADMIN users bypass authentication on localhost (demo-user, demo-org)
+- All feature restrictions bypassed for testing
+
+**Security Notes:**
+- All SUPER_ADMIN actions logged for security and compliance
+- Used only for platform-level administration tasks
+- Never used for regular business operations
+- Restricted to authorized Strive Tech personnel only
 
 ---
 

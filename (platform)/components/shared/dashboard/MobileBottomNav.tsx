@@ -39,7 +39,7 @@ export function MobileBottomNav() {
       id: 'analytics',
       icon: BarChart3,
       label: 'Analytics',
-      href: '/real-estate/rei-analytics/dashboard',
+      href: '/real-estate/reid/dashboard',
     },
     {
       id: 'add',

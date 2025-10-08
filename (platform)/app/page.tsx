@@ -1,10 +1,10 @@
-// app/app/page.tsx
-// Single root page that dispatches to web or platform based on hostname
-// This prevents the "parallel pages" build error while maintaining
-// clean separation between marketing (web) and SaaS (platform) sites
+// app/page.tsx
+// Root redirect page - redirects to appropriate dashboard based on user role
 
-import HostDependent from '@/components/HostDependent';
+import { redirect } from 'next/navigation';
 
 export default function RootPage() {
-  return <HostDependent />;
+  // Redirect to Real Estate dashboard by default
+  // Middleware will handle auth and role-based redirects
+  redirect('/real-estate/dashboard');
 }

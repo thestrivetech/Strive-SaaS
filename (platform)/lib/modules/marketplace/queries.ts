@@ -328,3 +328,81 @@ export async function getMarketplaceStats() {
     }
   });
 }
+
+/**
+ * Get purchased tools with detailed stats for organization
+ *
+ * @returns List of purchased tools with usage stats
+ */
+export async function getPurchasedToolsWithStats() {
+  return withTenantContext(async () => {
+    try {
+      const purchases = await prisma.tool_purchases.findMany({
+        where: {
+          status: 'ACTIVE',
+        },
+        include: {
+          tool: true,
+          purchaser: {
+            select: {
+              id: true,
+              name: true,
+              email: true,
+            },
+          },
+        },
+        orderBy: { purchase_date: 'desc' },
+      });
+
+      // Calculate total investment
+      const totalInvestment = purchases.reduce(
+        (sum: number, purchase: { price_at_purchase: number }) => sum + purchase.price_at_purchase,
+        0
+      );
+
+      return {
+        purchases,
+        totalInvestment,
+        totalCount: purchases.length,
+      };
+    } catch (error) {
+      const dbError = handleDatabaseError(error);
+      console.error('[Marketplace Queries] getPurchasedToolsWithStats failed:', dbError);
+      throw error;
+    }
+  });
+}
+
+/**
+ * Get individual tool purchase details
+ *
+ * @param toolId - Tool ID
+ * @returns Purchase details with tool info
+ */
+export async function getToolPurchaseDetails(toolId: string) {
+  return withTenantContext(async () => {
+    try {
+      return await prisma.tool_purchases.findFirst({
+        where: {
+          tool_id: toolId,
+          status: 'ACTIVE',
+        },
+        include: {
+          tool: true,
+          purchaser: {
+            select: {
+              id: true,
+              name: true,
+              email: true,
+              avatar_url: true,
+            },
+          },
+        },
+      });
+    } catch (error) {
+      const dbError = handleDatabaseError(error);
+      console.error('[Marketplace Queries] getToolPurchaseDetails failed:', dbError);
+      throw error;
+    }
+  });
+}

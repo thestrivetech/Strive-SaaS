@@ -97,7 +97,7 @@ export async function canAccessRoute(route: string): Promise<boolean> {
     '/real-estate/dashboard': ['SUPER_ADMIN', 'ADMIN', 'MODERATOR', 'USER'],
     '/real-estate/workspace': ['SUPER_ADMIN', 'ADMIN', 'MODERATOR', 'USER'],
     '/real-estate/ai-hub': ['SUPER_ADMIN', 'ADMIN', 'MODERATOR', 'USER'],
-    '/real-estate/rei-analytics': ['SUPER_ADMIN', 'ADMIN', 'MODERATOR', 'USER'],
+    '/real-estate/reid': ['SUPER_ADMIN', 'ADMIN', 'MODERATOR', 'USER'],
     '/real-estate/expense-tax': ['SUPER_ADMIN', 'ADMIN', 'MODERATOR', 'USER'],
     '/real-estate/cms-marketing': ['SUPER_ADMIN', 'ADMIN', 'MODERATOR', 'USER'],
     '/real-estate/marketplace': ['SUPER_ADMIN', 'ADMIN', 'MODERATOR', 'USER'],
@@ -153,7 +153,7 @@ export function getNavigationItems(role: UserRole) {
     },
     {
       title: 'Analytics',
-      href: '/real-estate/rei-analytics/dashboard',
+      href: '/real-estate/reid/dashboard',
       icon: 'BarChart',
       roles: ['SUPER_ADMIN', 'ADMIN', 'MODERATOR', 'USER'] as UserRole[],
       badge: 'Coming Soon',

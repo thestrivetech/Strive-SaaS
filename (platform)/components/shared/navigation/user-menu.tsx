@@ -81,7 +81,7 @@ export function UserMenu({ user }: UserMenuProps) {
         {/* Platform Admin - SUPER_ADMIN only */}
         {user.role === 'SUPER_ADMIN' && (
           <DropdownMenuItem asChild>
-            <Link href="/platform-admin" className="flex items-center text-primary">
+            <Link href="/strive/platform-admin" className="flex items-center text-primary">
               <Shield className="mr-2 h-4 w-4" />
               Platform Admin
             </Link>

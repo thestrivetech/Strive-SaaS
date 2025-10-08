@@ -8,10 +8,8 @@ import { handleDatabaseError } from '@/lib/database/errors';
 import {
   purchaseToolSchema,
   purchaseBundleSchema,
-  createToolReviewSchema,
   type PurchaseToolInput,
   type PurchaseBundleInput,
-  type CreateToolReviewInput,
 } from './schemas';
 
 /**
@@ -175,7 +173,7 @@ export async function purchaseBundle(input: PurchaseBundleInput) {
       });
 
       // Create individual tool purchases for each tool in bundle
-      const toolPurchasePromises = bundle.tools.map((bundleTool) =>
+      const toolPurchasePromises = bundle.tools.map((bundleTool: { tool_id: string }) =>
         prisma.tool_purchases.upsert({
           where: {
             tool_id_organization_id: {
@@ -209,12 +207,12 @@ export async function purchaseBundle(input: PurchaseBundleInput) {
 }
 
 /**
- * Create a tool review
+ * Track tool usage - updates usage count and last used timestamp
  *
- * @param input - Review data
- * @returns Created review
+ * @param toolId - Tool ID to track usage for
+ * @returns Updated purchase record
  */
-export async function createToolReview(input: CreateToolReviewInput) {
+export async function trackToolUsage(toolId: string) {
   await requireAuth();
   const user = await getCurrentUser();
 
@@ -224,70 +222,38 @@ export async function createToolReview(input: CreateToolReviewInput) {
 
   const organizationId = user.organization_members[0].organization_id;
 
-  const { canAccessMarketplace } = await import('@/lib/auth/rbac');
-
-  if (!canAccessMarketplace(user.role)) {
-    throw new Error('Unauthorized: Marketplace access required');
-  }
-
-  const validated = createToolReviewSchema.parse(input);
-
   return withTenantContext(async () => {
     try {
-      // Check if user's org has purchased the tool
       const purchase = await prisma.tool_purchases.findFirst({
         where: {
-          tool_id: validated.tool_id,
+          tool_id: toolId,
           organization_id: organizationId,
           status: 'ACTIVE',
         },
       });
 
       if (!purchase) {
-        throw new Error('You must purchase the tool before reviewing it');
+        throw new Error('Tool purchase not found');
       }
 
-      // Create or update review
-      const review = await prisma.tool_reviews.upsert({
+      return await prisma.tool_purchases.update({
         where: {
-          tool_id_reviewer_id: {
-            tool_id: validated.tool_id,
-            reviewer_id: user.id,
+          id: purchase.id,
+        },
+        data: {
+          usage_count: {
+            increment: 1,
           },
-        },
-        update: {
-          rating: validated.rating,
-          review: validated.review,
-        },
-        create: {
-          tool_id: validated.tool_id,
-          rating: validated.rating,
-          review: validated.review,
-          organization_id: organizationId,
-          reviewer_id: user.id,
+          last_used: new Date(),
         },
       });
-
-      // Recalculate tool average rating
-      const reviews = await prisma.tool_reviews.findMany({
-        where: { tool_id: validated.tool_id },
-      });
-
-      const avgRating =
-        reviews.reduce((sum, r) => sum + r.rating, 0) / reviews.length;
-
-      await prisma.marketplace_tools.update({
-        where: { id: validated.tool_id },
-        data: { rating: avgRating },
-      });
-
-      revalidatePath(`/real-estate/marketplace/tools/${validated.tool_id}`);
-
-      return review;
     } catch (error) {
       const dbError = handleDatabaseError(error);
-      console.error('[Marketplace Actions] createToolReview failed:', dbError);
-      throw new Error('Failed to create review');
+      console.error('[Marketplace Actions] trackToolUsage failed:', dbError);
+      throw new Error('Failed to track tool usage');
     }
   });
 }
+
+// Note: Review actions have been moved to ./reviews/actions.ts
+// This keeps the marketplace actions focused on purchases only

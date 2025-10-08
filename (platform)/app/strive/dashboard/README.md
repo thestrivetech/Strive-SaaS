@@ -1,0 +1,1 @@
+This user dashboard should be an exact replica of the existing user dashboard that's in real estate. This dashboard will be updated to be more specific to the Strive Tech organization in the future.

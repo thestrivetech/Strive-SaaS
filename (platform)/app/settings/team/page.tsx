@@ -21,7 +21,7 @@ import {
 import { MoreHorizontal, Shield, UserCheck, Eye } from 'lucide-react';
 import { getCurrentUser } from '@/lib/auth/auth-helpers';
 import { getOrganizationMembers, getUserOrganizations } from '@/lib/modules/organization/queries';
-import { InviteMemberDialog } from '@/components/real-estate/projects/organization/invite-member-dialog';
+import { InviteMemberDialog } from '@/app/strive/projects-future/components/organization/invite-member-dialog';
 
 export default async function TeamPage() {
   const user = await getCurrentUser();

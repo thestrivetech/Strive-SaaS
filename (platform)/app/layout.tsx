@@ -5,6 +5,7 @@ import "@/lib/env"; // Validate environment variables at startup
 import { Providers } from "@/components/shared/providers";
 import { Toaster } from "sonner";
 import { UnregisterServiceWorker } from "./unregister-sw";
+import { ErrorBoundary } from "@/components/shared/error-boundary";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -31,10 +32,12 @@ export default function RootLayout({
     <html lang="en" suppressHydrationWarning>
       <body className={`${inter.variable} font-sans antialiased`}>
         <UnregisterServiceWorker />
-        <Providers>
-          {children}
-          <Toaster />
-        </Providers>
+        <ErrorBoundary>
+          <Providers>
+            {children}
+            <Toaster />
+          </Providers>
+        </ErrorBoundary>
       </body>
     </html>
   );

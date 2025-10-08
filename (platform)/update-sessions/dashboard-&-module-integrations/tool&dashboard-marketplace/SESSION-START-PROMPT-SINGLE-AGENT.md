@@ -9,7 +9,7 @@ Use this prompt at the beginning of each session. Replace `{SESSION_NUMBER}` wit
 ## 📋 SESSION START PROMPT
 
 ```
-I'm starting Session {SESSION_NUMBER} of the Tool & Dashboard Marketplace integration.
+I'm starting Session {7} of the Tool & Dashboard Marketplace integration.
 
 ## STEP 1: READ ESSENTIAL DOCUMENTATION
 

@@ -94,7 +94,7 @@ const eslintConfig = [
   },
   {
     // Exception: Data/content files can be any size
-    files: ["**/data/**/*.ts", "**/data/**/*.tsx"],
+    files: ["**/data/**/*.ts", "**/data/**/*.tsx", "lib/data/**/*.ts"],
     rules: {
       "max-lines": "off",
     },

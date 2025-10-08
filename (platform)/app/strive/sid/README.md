@@ -1,0 +1,1 @@
+"SID" will be Strive's own version of REID -> Strive Intelligence Dashboard -> We will also have a heatmap which tracks all sales data (connected to CRM), markets that we're in, and even future market potential with areas we haven't tapped into.

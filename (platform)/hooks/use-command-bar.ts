@@ -99,7 +99,7 @@ export function useCommandBar(): UseCommandBarReturn {
           id: '3',
           title: 'Go to Analytics',
           description: 'View business insights',
-          action: '/real-estate/rei-analytics/dashboard',
+          action: '/real-estate/reid/dashboard',
           icon: 'TrendingUp',
           shortcut: '⌘3',
         },

@@ -2,6 +2,7 @@
 
 import React, { useState } from 'react';
 import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 import {
   LayoutDashboard,
   Users,
@@ -17,11 +18,6 @@ import {
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 
-interface AdminSidebarProps {
-  activeTab: string;
-  setActiveTab: (tab: string) => void;
-}
-
 const NAV_ITEMS = [
   { id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard, href: '/admin' },
   { id: 'users', label: 'Users', icon: Users, href: '/admin/users' },
@@ -33,8 +29,9 @@ const NAV_ITEMS = [
   { id: 'settings', label: 'Settings', icon: Settings, href: '/admin/settings' },
 ];
 
-export function AdminSidebar({ activeTab, setActiveTab }: AdminSidebarProps) {
+export function AdminSidebar() {
   const [isOpen, setIsOpen] = useState(false);
+  const pathname = usePathname();
 
   return (
     <>
@@ -69,15 +66,13 @@ export function AdminSidebar({ activeTab, setActiveTab }: AdminSidebarProps) {
           <nav className="flex-1 overflow-y-auto p-4 space-y-2">
             {NAV_ITEMS.map((item) => {
               const Icon = item.icon;
-              const isActive = activeTab === item.id;
+              const isActive = pathname === item.href;
 
               return (
-                <button
+                <Link
                   key={item.id}
-                  onClick={() => {
-                    setActiveTab(item.id);
-                    setIsOpen(false); // Close mobile menu
-                  }}
+                  href={item.href}
+                  onClick={() => setIsOpen(false)}
                   className={cn(
                     'w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-colors',
                     isActive
@@ -87,7 +82,7 @@ export function AdminSidebar({ activeTab, setActiveTab }: AdminSidebarProps) {
                 >
                   <Icon className="h-5 w-5" />
                   <span className="font-medium">{item.label}</span>
-                </button>
+                </Link>
               );
             })}
           </nav>
