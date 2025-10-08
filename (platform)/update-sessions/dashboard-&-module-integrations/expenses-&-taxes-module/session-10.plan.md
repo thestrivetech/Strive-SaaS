@@ -24,6 +24,35 @@
 - [x] Testing infrastructure configured
 - [x] Understanding of testing best practices
 
+## Design System Integration
+
+**Dashboard Pattern:** This module uses the platform's standard dashboard components:
+- `ModuleHeroSection` for hero sections with integrated stats
+- `EnhancedCard` with glass effects (`glassEffect="strong"`) and neon borders (`neonBorder="cyan|purple|orange"`)
+- Framer Motion for page transition animations
+- 2-column responsive layout (lg:col-span-2 + lg:col-span-1)
+
+**Reference Implementations:**
+- Expense Dashboard: `app/real-estate/expense-tax/dashboard/page.tsx`
+- CRM Dashboard: `app/real-estate/crm/dashboard/page.tsx`
+- Workspace Dashboard: `app/real-estate/workspace/dashboard/page.tsx`
+
+**Component Imports:**
+```tsx
+import { ModuleHeroSection } from '@/components/shared/dashboard/ModuleHeroSection';
+import { EnhancedCard, CardHeader, CardTitle, CardContent } from '@/components/shared/dashboard/EnhancedCard';
+import { HeroSkeleton } from '@/components/shared/dashboard/skeletons';
+import { motion } from 'framer-motion';
+```
+
+**Testing Focus:**
+- Test `ModuleHeroSection` integration and stat display
+- Verify `EnhancedCard` hover effects and animations
+- Test Framer Motion animations (no performance degradation)
+- Ensure glass effects render correctly in light/dark mode
+- Verify neon borders display properly on all cards
+- Test responsive layout on mobile (375px), tablet (768px), desktop (1440px)
+
 ## Testing Checklist
 
 ### Unit Tests

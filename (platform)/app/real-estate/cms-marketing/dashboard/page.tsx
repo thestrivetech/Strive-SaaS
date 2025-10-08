@@ -330,7 +330,7 @@ interface StatCardProps {
   trend?: 'positive' | 'negative';
 }
 
-function StatCard({ icon: Icon, title, value, description, trend }: StatCardProps) {
+function StatCard({ icon: Icon, title, value, description }: StatCardProps) {
   return (
     <Card className="glass-strong neon-border-purple hover:shadow-lg transition-all">
       <CardHeader className="flex flex-row items-center justify-between pb-2">

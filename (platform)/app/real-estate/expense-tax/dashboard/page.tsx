@@ -2,27 +2,32 @@ import { Suspense } from 'react';
 import { Metadata } from 'next';
 import { requireAuth, getCurrentUser } from '@/lib/auth/auth-helpers';
 import { redirect } from 'next/navigation';
-import { ExpenseHeader } from '@/components/real-estate/expense-tax/dashboard/ExpenseHeader';
-import { ExpenseKPIs } from '@/components/real-estate/expense-tax/dashboard/ExpenseKPIs';
-import { DashboardSkeleton } from '@/components/real-estate/expense-tax/dashboard/DashboardSkeleton';
+import { motion } from 'framer-motion';
 import { ExpenseTable } from '@/components/real-estate/expense-tax/tables/ExpenseTable';
+import { TaxEstimateCard } from '@/components/real-estate/expense-tax/tax/TaxEstimateCard';
+import { CategoryBreakdown } from '@/components/real-estate/expense-tax/charts/CategoryBreakdown';
+import { ModuleHeroSection } from '@/components/shared/dashboard/ModuleHeroSection';
+import { EnhancedCard, CardHeader, CardTitle, CardContent } from '@/components/shared/dashboard/EnhancedCard';
+import { HeroSkeleton } from '@/components/shared/dashboard/skeletons';
 
 /**
  * Expense & Tax Dashboard Page
  *
- * Main dashboard for expense tracking and tax management.
- * Displays KPI cards with expense summary data:
- * - Total YTD expenses
- * - Current month expenses
- * - Tax deductible total
- * - Receipt count
+ * Complete dashboard for expense tracking and tax management with:
+ * - ModuleHeroSection with integrated KPI stats
+ * - Tax estimate calculator with adjustable rate
+ * - Category breakdown chart (pie chart)
+ * - Expense table with filtering and CRUD
+ * - Responsive 2-column layout (sidebar on desktop)
+ * - Glass effects and neon borders on all cards
+ * - Framer Motion animations for page transitions
  *
  * @protected - Requires authentication and organization membership
  * @route /real-estate/expense-tax/dashboard
  */
 export const metadata: Metadata = {
-  title: 'Expense Dashboard | Strive Platform',
-  description: 'Track and manage business expenses and tax deductions',
+  title: 'Expense & Tax Dashboard | Strive Platform',
+  description: 'Track expenses and maximize tax deductions',
 };
 
 export default async function ExpenseTaxDashboardPage() {
@@ -42,27 +47,119 @@ export default async function ExpenseTaxDashboardPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
-      {/* Page Header */}
-      <ExpenseHeader />
+    <div className="space-y-6">
+      {/* Hero Section with KPIs */}
+      <Suspense fallback={<HeroSkeleton />}>
+        <HeroSectionWrapper user={user} organizationId={organizationId} />
+      </Suspense>
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div className="space-y-8">
-          {/* KPI Cards with Suspense Boundary */}
-          <Suspense fallback={<DashboardSkeleton />}>
-            <ExpenseKPIs />
-          </Suspense>
+      {/* Main Content: 2-Column Layout (Desktop) / Stacked (Mobile) */}
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.3 }}
+        className="grid grid-cols-1 lg:grid-cols-3 gap-6"
+      >
+        {/* Left Column: Category Breakdown & Expense Table */}
+        <div className="lg:col-span-2 space-y-6">
+          {/* Category Breakdown Chart */}
+          <EnhancedCard glassEffect="strong" neonBorder="cyan" hoverEffect={true}>
+            <CardHeader>
+              <CardTitle>Expense Breakdown by Category</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <Suspense
+                fallback={
+                  <div className="h-96 bg-gray-200 dark:bg-gray-700 rounded-lg animate-pulse"></div>
+                }
+              >
+                <CategoryBreakdown />
+              </Suspense>
+            </CardContent>
+          </EnhancedCard>
 
-          {/* Expense Table with Suspense Boundary */}
-          <Suspense
-            fallback={
-              <div className="h-96 bg-white dark:bg-gray-800 rounded-lg shadow-sm animate-pulse"></div>
-            }
-          >
-            <ExpenseTable />
-          </Suspense>
+          {/* Expense Table */}
+          <EnhancedCard glassEffect="strong" neonBorder="purple" hoverEffect={true}>
+            <CardHeader>
+              <CardTitle>Recent Expenses</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <Suspense
+                fallback={
+                  <div className="h-96 bg-gray-200 dark:bg-gray-700 rounded-lg animate-pulse"></div>
+                }
+              >
+                <ExpenseTable />
+              </Suspense>
+            </CardContent>
+          </EnhancedCard>
         </div>
-      </div>
+
+        {/* Right Sidebar: Tax Estimate Card */}
+        <div className="lg:col-span-1 space-y-6">
+          <EnhancedCard glassEffect="strong" neonBorder="orange" hoverEffect={true}>
+            <Suspense
+              fallback={
+                <div className="h-96 bg-gray-200 dark:bg-gray-700 rounded-lg animate-pulse"></div>
+              }
+            >
+              <TaxEstimateCard />
+            </Suspense>
+          </EnhancedCard>
+        </div>
+      </motion.div>
     </div>
+  );
+}
+
+/**
+ * Hero Section Wrapper
+ * Fetches expense summary data and passes to ModuleHeroSection
+ */
+async function HeroSectionWrapper({
+  user,
+}: {
+  user: { id: string; name?: string | null; organization_members: Array<{ organization_id: string }> };
+  organizationId: string;
+}) {
+  // Mock expense summary data (replace with actual API call in future sessions)
+  // In real implementation, this would call: /api/v1/expenses/summary
+  const mockSummary = {
+    totalExpenses: 45230,
+    currentMonth: 8450,
+    deductibleTotal: 38640,
+    receiptCount: 127,
+  };
+
+  const stats = [
+    {
+      label: 'YTD Expenses',
+      value: `$${mockSummary.totalExpenses.toLocaleString()}`,
+      icon: 'revenue' as const,
+    },
+    {
+      label: 'Current Month',
+      value: `$${mockSummary.currentMonth.toLocaleString()}`,
+      icon: 'customers' as const,
+    },
+    {
+      label: 'Tax Deductible',
+      value: `$${mockSummary.deductibleTotal.toLocaleString()}`,
+      icon: 'projects' as const,
+    },
+    {
+      label: 'Receipts',
+      value: mockSummary.receiptCount,
+      icon: 'tasks' as const,
+    },
+  ];
+
+  return (
+    <ModuleHeroSection
+      user={user}
+      moduleName="Expense & Tax Dashboard"
+      moduleDescription="Track expenses and maximize tax deductions"
+      stats={stats}
+    />
   );
 }

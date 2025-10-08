@@ -23,6 +23,33 @@
 - [x] Reports backend complete
 - [x] Chart libraries configured
 
+## Design System Integration
+
+**Dashboard Pattern:** This module uses the platform's standard dashboard components:
+- `ModuleHeroSection` for hero sections with integrated stats
+- `EnhancedCard` with glass effects (`glassEffect="strong"`) and neon borders (`neonBorder="cyan|purple|orange"`)
+- Framer Motion for page transition animations
+- 2-column responsive layout (lg:col-span-2 + lg:col-span-1)
+
+**Reference Implementations:**
+- Expense Dashboard: `app/real-estate/expense-tax/dashboard/page.tsx`
+- CRM Dashboard: `app/real-estate/crm/dashboard/page.tsx`
+- Workspace Dashboard: `app/real-estate/workspace/dashboard/page.tsx`
+
+**Component Imports:**
+```tsx
+import { ModuleHeroSection } from '@/components/shared/dashboard/ModuleHeroSection';
+import { EnhancedCard, CardHeader, CardTitle, CardContent } from '@/components/shared/dashboard/EnhancedCard';
+import { HeroSkeleton } from '@/components/shared/dashboard/skeletons';
+import { motion } from 'framer-motion';
+```
+
+**Visual Design:**
+- Use `EnhancedCard` for all report cards and analytics sections
+- Apply neon borders: cyan (primary), purple (secondary), orange (accent)
+- Wrap main content in `motion.div` with fade-in animation
+- Ensure glass effects work in light and dark mode
+
 ## Component Structure
 
 ```
