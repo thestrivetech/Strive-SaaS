@@ -1,0 +1,30 @@
+{
+  "$schema": "https://modelcontextprotocol.io/schemas/mcp.json",
+  "mcpServers": {
+    "supabase-production": {
+      "type": "stdio",
+      "command": "npx",
+      "args": [
+        "-y",
+        "@supabase/mcp-server-supabase@latest",
+        "--project-ref=bztkedvdjbxffpjxihtc"
+      ],
+      "env": {
+        "SUPABASE_ACCESS_TOKEN": "sbp_a0a57781efe1470fb30ffa7be92c30831ff9e42f"
+      }
+    },
+    "supabase-test": {
+      "type": "stdio",
+      "command": "npx",
+      "args": [
+        "-y",
+        "@supabase/mcp-server-supabase@latest",
+        "--project-ref=epstwhwqjvmczzpiioqz",
+        "--read-only"
+      ],
+      "env": {
+        "SUPABASE_ACCESS_TOKEN": "sbp_a0a57781efe1470fb30ffa7be92c30831ff9e42f"
+      }
+    }
+  }
+}
