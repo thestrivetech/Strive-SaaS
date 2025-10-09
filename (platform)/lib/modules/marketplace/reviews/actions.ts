@@ -1,5 +1,6 @@
 'use server';
 
+import { revalidatePath } from 'next/cache';
 import { prisma } from '@/lib/database/prisma';
 import { requireAuth } from '@/lib/auth/auth-helpers';
 import { handleDatabaseError } from '@/lib/database/errors';
@@ -11,7 +12,9 @@ import {
   type UpdateToolReviewInput,
   type DeleteToolReviewInput,
 } from './schemas';
-import { hasUserPurchasedTool } from './queries';
+import { hasUserPurchasedTool, getUserReviewForTool } from './queries';
+import { dataConfig } from '@/lib/data/config';
+import { reviewsProvider } from '@/lib/data';
 
 /**
  * Marketplace Reviews Actions Module
@@ -43,7 +46,12 @@ export async function createToolReview(input: CreateToolReviewInput) {
     // Require authentication
     const user = await requireAuth();
     const userId = user.id;
-    const organizationId = user.organizationId;
+    const organizationId =
+      user.organizationId || user.organization_members?.[0]?.organization_id;
+
+    if (!organizationId) {
+      throw new Error('User is not part of an organization');
+    }
 
     // Verify user has purchased the tool
     const hasPurchased = await hasUserPurchasedTool(validated.tool_id, userId);
@@ -51,7 +59,29 @@ export async function createToolReview(input: CreateToolReviewInput) {
       throw new Error('You must purchase this tool before reviewing it');
     }
 
-    // Upsert review (create or update if exists)
+    // Check if already reviewed
+    const existingReview = await getUserReviewForTool(validated.tool_id, userId);
+    if (existingReview) {
+      throw new Error('You have already reviewed this tool');
+    }
+
+    // Mock data path
+    if (dataConfig.useMocks) {
+      const review = await reviewsProvider.create({
+        toolId: validated.tool_id,
+        userId,
+        orgId: organizationId,
+        rating: validated.rating,
+        text: validated.review,
+      });
+
+      revalidatePath(`/real-estate/marketplace/tools/${validated.tool_id}`);
+      revalidatePath('/real-estate/marketplace');
+
+      return review as any;
+    }
+
+    // Real Prisma mutation
     const review = await prisma.tool_reviews.upsert({
       where: {
         // Unique constraint: tool_id + reviewer_id
@@ -85,6 +115,9 @@ export async function createToolReview(input: CreateToolReviewInput) {
     // Update tool's average rating (denormalized for performance)
     await updateToolAverageRating(validated.tool_id);
 
+    revalidatePath(`/real-estate/marketplace/tools/${validated.tool_id}`);
+    revalidatePath('/real-estate/marketplace');
+
     return review;
   } catch (error) {
     const dbError = handleDatabaseError(error);
@@ -112,6 +145,15 @@ export async function updateToolReview(input: UpdateToolReviewInput) {
     const user = await requireAuth();
     const userId = user.id;
 
+    // Mock data path
+    if (dataConfig.useMocks) {
+      // Mock provider doesn't have update yet
+      // Return success for now (would need to add to provider)
+      revalidatePath(`/real-estate/marketplace`);
+      return { success: true } as any;
+    }
+
+    // Real Prisma mutation
     // Check if review exists and belongs to user
     const existingReview = await prisma.tool_reviews.findUnique({
       where: { id: validated.review_id },
@@ -146,6 +188,9 @@ export async function updateToolReview(input: UpdateToolReviewInput) {
     // Update tool's average rating
     await updateToolAverageRating(existingReview.tool_id);
 
+    revalidatePath(`/real-estate/marketplace/tools/${existingReview.tool_id}`);
+    revalidatePath('/real-estate/marketplace');
+
     return review;
   } catch (error) {
     const dbError = handleDatabaseError(error);
@@ -173,6 +218,15 @@ export async function deleteToolReview(input: DeleteToolReviewInput) {
     const user = await requireAuth();
     const userId = user.id;
 
+    // Mock data path
+    if (dataConfig.useMocks) {
+      // Mock provider doesn't have delete yet
+      // Return success for now
+      revalidatePath('/real-estate/marketplace');
+      return { success: true } as any;
+    }
+
+    // Real Prisma mutation
     // Check if review exists and belongs to user
     const existingReview = await prisma.tool_reviews.findUnique({
       where: { id: validated.review_id },
@@ -193,6 +247,9 @@ export async function deleteToolReview(input: DeleteToolReviewInput) {
 
     // Update tool's average rating
     await updateToolAverageRating(existingReview.tool_id);
+
+    revalidatePath(`/real-estate/marketplace/tools/${existingReview.tool_id}`);
+    revalidatePath('/real-estate/marketplace');
 
     return deletedReview;
   } catch (error) {

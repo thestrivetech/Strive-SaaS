@@ -1005,6 +1005,13 @@ model organizations {
   tool_blueprints   tool_blueprints[]
   template_reviews  template_reviews[]
   project_showcases project_showcases[]
+
+  // NeuroFlow Hub Relations
+  neuroflow_workflows          neuroflow_workflows[]
+  neuroflow_ai_agents          neuroflow_ai_agents[]
+  neuroflow_agent_teams        neuroflow_agent_teams[]
+  neuroflow_integrations       neuroflow_integrations[]
+  neuroflow_workflow_templates neuroflow_workflow_templates[]
 }
 
 model page_views {
@@ -1234,6 +1241,13 @@ model users {
   tool_blueprints_created   tool_blueprints[]     @relation("BlueprintCreator")
   template_reviews_created  template_reviews[]    @relation("TemplateReviewer")
   project_showcases_created project_showcases[]   @relation("ShowcaseCreator")
+
+  // NeuroFlow Hub Relations
+  neuroflow_workflows          neuroflow_workflows[]          @relation("NeuroFlowWorkflowCreator")
+  neuroflow_ai_agents          neuroflow_ai_agents[]          @relation("NeuroFlowAIAgentCreator")
+  neuroflow_agent_teams        neuroflow_agent_teams[]        @relation("NeuroFlowAgentTeamCreator")
+  neuroflow_integrations       neuroflow_integrations[]       @relation("NeuroFlowIntegrationCreator")
+  neuroflow_workflow_templates neuroflow_workflow_templates[] @relation("NeuroFlowWorkflowTemplateCreator")
 }
 
 /// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
@@ -2683,6 +2697,64 @@ enum ShowcaseCategory {
 }
 
 // ============================================================================
+// NeuroFlow Hub (AI-HUB) Enums
+// ============================================================================
+
+enum AgentStatus {
+  IDLE
+  BUSY
+  OFFLINE
+  ERROR
+}
+
+enum TeamStructure {
+  HIERARCHICAL // Leader delegates to workers
+  COLLABORATIVE // All agents contribute equally
+  PIPELINE // Sequential processing
+  DEMOCRATIC // Voting/consensus-based
+}
+
+enum TeamRole {
+  LEADER
+  WORKER
+  COORDINATOR
+  SPECIALIST
+}
+
+enum ExecutionStatus {
+  PENDING
+  RUNNING
+  COMPLETED
+  FAILED
+  CANCELLED
+}
+
+enum IntegrationStatus {
+  CONNECTED
+  DISCONNECTED
+  ERROR
+  TESTING
+}
+
+enum TemplateCategory {
+  SALES
+  SUPPORT
+  MARKETING
+  DATA_PROCESSING
+  AUTOMATION
+  ANALYTICS
+  CONTENT
+  COMMUNICATION
+}
+
+enum DifficultyLevel {
+  BEGINNER
+  INTERMEDIATE
+  ADVANCED
+  EXPERT
+}
+
+// ============================================================================
 // REID (Real Estate Intelligence Dashboard) Models
 // ============================================================================
 
@@ -3342,4 +3414,248 @@ model project_showcases {
   @@index([is_public])
   @@index([is_featured])
   @@map("project_showcases")
+}
+
+// ============================================================================
+// NeuroFlow Hub (AI-HUB) Models
+// ============================================================================
+
+/// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
+model neuroflow_workflows {
+  id              String    @id @default(cuid())
+  name            String    @db.VarChar(100)
+  description     String?   @db.Text
+  nodes           Json      @db.JsonB
+  edges           Json      @db.JsonB
+  variables       Json?     @db.JsonB
+  is_active       Boolean   @default(true)
+  version         String    @default("1.0.0") @db.VarChar(20)
+  tags            String[]  @default([])
+  execution_count Int       @default(0)
+  last_executed   DateTime?
+  template_id     String?
+  created_at      DateTime  @default(now())
+  updated_at      DateTime  @updatedAt
+  organization_id String
+  created_by      String
+
+  template      neuroflow_workflow_templates?   @relation(fields: [template_id], references: [id], onDelete: SetNull)
+  organizations organizations                   @relation(fields: [organization_id], references: [id], onDelete: Cascade)
+  creator       users                           @relation("NeuroFlowWorkflowCreator", fields: [created_by], references: [id], onDelete: Cascade)
+  executions    neuroflow_workflow_executions[]
+
+  @@index([organization_id])
+  @@index([created_by])
+  @@index([is_active])
+  @@index([template_id])
+  @@index([created_at])
+  @@map("neuroflow_workflows")
+}
+
+/// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
+model neuroflow_ai_agents {
+  id                String      @id @default(cuid())
+  name              String      @db.VarChar(100)
+  description       String?     @db.Text
+  avatar            String?     @db.VarChar(500)
+  personality       Json        @db.JsonB
+  model_config      Json        @db.JsonB
+  capabilities      String[]    @default([])
+  memory            Json        @db.JsonB
+  execution_count   Int         @default(0)
+  success_rate      Float?
+  avg_response_time Float?
+  is_active         Boolean     @default(true)
+  status            AgentStatus @default(IDLE)
+  created_at        DateTime    @default(now())
+  updated_at        DateTime    @updatedAt
+  organization_id   String
+  created_by        String
+
+  organizations organizations                @relation(fields: [organization_id], references: [id], onDelete: Cascade)
+  creator       users                        @relation("NeuroFlowAIAgentCreator", fields: [created_by], references: [id], onDelete: Cascade)
+  team_members  neuroflow_team_members[]
+  executions    neuroflow_agent_executions[]
+
+  @@index([organization_id])
+  @@index([created_by])
+  @@index([status])
+  @@index([is_active])
+  @@map("neuroflow_ai_agents")
+}
+
+/// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
+model neuroflow_agent_teams {
+  id              String        @id @default(cuid())
+  name            String        @db.VarChar(100)
+  description     String?       @db.Text
+  structure       TeamStructure
+  coordination    Json          @db.JsonB
+  execution_count Int           @default(0)
+  success_rate    Float?
+  created_at      DateTime      @default(now())
+  updated_at      DateTime      @updatedAt
+  organization_id String
+  created_by      String
+
+  organizations organizations               @relation(fields: [organization_id], references: [id], onDelete: Cascade)
+  creator       users                       @relation("NeuroFlowAgentTeamCreator", fields: [created_by], references: [id], onDelete: Cascade)
+  members       neuroflow_team_members[]
+  executions    neuroflow_team_executions[]
+
+  @@index([organization_id])
+  @@index([created_by])
+  @@index([structure])
+  @@map("neuroflow_agent_teams")
+}
+
+/// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
+model neuroflow_team_members {
+  id        String   @id @default(cuid())
+  team_id   String
+  agent_id  String
+  role      TeamRole
+  priority  Int      @default(0)
+  joined_at DateTime @default(now())
+
+  team  neuroflow_agent_teams @relation(fields: [team_id], references: [id], onDelete: Cascade)
+  agent neuroflow_ai_agents   @relation(fields: [agent_id], references: [id], onDelete: Cascade)
+
+  @@unique([team_id, agent_id])
+  @@index([team_id])
+  @@index([agent_id])
+  @@map("neuroflow_team_members")
+}
+
+/// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
+model neuroflow_workflow_executions {
+  id             String          @id @default(cuid())
+  workflow_id    String
+  status         ExecutionStatus @default(PENDING)
+  started_at     DateTime        @default(now())
+  completed_at   DateTime?
+  duration       Int?
+  input          Json?           @db.JsonB
+  output         Json?           @db.JsonB
+  error          String?         @db.Text
+  logs           Json[]          @default([])
+  nodes_executed Int             @default(0)
+  tokens_used    Int             @default(0)
+  cost           Decimal         @default(0) @db.Decimal(12, 2)
+
+  workflow         neuroflow_workflows          @relation(fields: [workflow_id], references: [id], onDelete: Cascade)
+  agent_executions neuroflow_agent_executions[]
+
+  @@index([workflow_id])
+  @@index([status])
+  @@index([started_at])
+  @@map("neuroflow_workflow_executions")
+}
+
+/// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
+model neuroflow_agent_executions {
+  id                    String          @id @default(cuid())
+  agent_id              String
+  workflow_execution_id String?
+  task                  String          @db.Text
+  input                 Json            @db.JsonB
+  output                Json?           @db.JsonB
+  status                ExecutionStatus @default(PENDING)
+  started_at            DateTime        @default(now())
+  completed_at          DateTime?
+  duration              Int?
+  tokens_used           Int             @default(0)
+  cost                  Decimal         @default(0) @db.Decimal(12, 2)
+  model                 String?         @db.VarChar(100)
+  provider              String?         @db.VarChar(50)
+
+  agent              neuroflow_ai_agents            @relation(fields: [agent_id], references: [id], onDelete: Cascade)
+  workflow_execution neuroflow_workflow_executions? @relation(fields: [workflow_execution_id], references: [id], onDelete: SetNull)
+
+  @@index([agent_id])
+  @@index([workflow_execution_id])
+  @@index([status])
+  @@index([started_at])
+  @@map("neuroflow_agent_executions")
+}
+
+/// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
+model neuroflow_team_executions {
+  id            String          @id @default(cuid())
+  team_id       String
+  task          String          @db.Text
+  pattern       TeamStructure
+  input         Json            @db.JsonB
+  output        Json?           @db.JsonB
+  status        ExecutionStatus @default(PENDING)
+  started_at    DateTime        @default(now())
+  completed_at  DateTime?
+  duration      Int?
+  agent_results Json[]          @default([])
+
+  team neuroflow_agent_teams @relation(fields: [team_id], references: [id], onDelete: Cascade)
+
+  @@index([team_id])
+  @@index([status])
+  @@index([started_at])
+  @@map("neuroflow_team_executions")
+}
+
+/// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
+model neuroflow_integrations {
+  id              String            @id @default(cuid())
+  name            String            @db.VarChar(100)
+  provider        String            @db.VarChar(50)
+  credentials     Json              @db.JsonB
+  config          Json              @db.JsonB
+  is_active       Boolean           @default(true)
+  last_tested     DateTime?
+  status          IntegrationStatus @default(DISCONNECTED)
+  created_at      DateTime          @default(now())
+  updated_at      DateTime          @updatedAt
+  organization_id String
+  created_by      String
+
+  organizations organizations @relation(fields: [organization_id], references: [id], onDelete: Cascade)
+  creator       users         @relation("NeuroFlowIntegrationCreator", fields: [created_by], references: [id], onDelete: Cascade)
+
+  @@index([organization_id])
+  @@index([created_by])
+  @@index([provider])
+  @@index([status])
+  @@map("neuroflow_integrations")
+}
+
+/// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
+model neuroflow_workflow_templates {
+  id              String           @id @default(cuid())
+  name            String           @db.VarChar(100)
+  description     String           @db.Text
+  category        TemplateCategory
+  nodes           Json             @db.JsonB
+  edges           Json             @db.JsonB
+  variables       Json?            @db.JsonB
+  icon            String?          @db.VarChar(100)
+  tags            String[]         @default([])
+  difficulty      DifficultyLevel  @default(BEGINNER)
+  estimated_time  Int?
+  usage_count     Int              @default(0)
+  rating          Float?
+  is_public       Boolean          @default(false)
+  is_featured     Boolean          @default(false)
+  created_at      DateTime         @default(now())
+  updated_at      DateTime         @updatedAt
+  organization_id String?
+  created_by      String?
+
+  organization organizations?        @relation(fields: [organization_id], references: [id], onDelete: Cascade)
+  creator      users?                @relation("NeuroFlowWorkflowTemplateCreator", fields: [created_by], references: [id], onDelete: SetNull)
+  workflows    neuroflow_workflows[]
+
+  @@index([organization_id])
+  @@index([created_by])
+  @@index([category])
+  @@index([is_public])
+  @@index([is_featured])
+  @@map("neuroflow_workflow_templates")
 }

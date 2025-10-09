@@ -8,9 +8,15 @@ interface MarketplaceGridProps {
 
 export async function MarketplaceGrid({ searchParams }: MarketplaceGridProps) {
   // Parse filters from search params
+  // Note: URL params come as comma-separated strings (e.g., "FOUNDATION,GROWTH")
+  // but provider expects arrays, so we split them here
   const filters: ToolFilters = {
-    category: searchParams.category as any,
-    tier: searchParams.tier as any,
+    category: searchParams.category
+      ? (searchParams.category as string).split(',').filter(Boolean) as any
+      : undefined,
+    tier: searchParams.tier
+      ? (searchParams.tier as string).split(',').filter(Boolean) as any
+      : undefined,
     search: searchParams.search as string,
     is_active: true,
     limit: 50,

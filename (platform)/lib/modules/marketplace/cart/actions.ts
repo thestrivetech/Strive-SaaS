@@ -11,6 +11,8 @@ import {
   type AddToCartInput,
   type RemoveFromCartInput,
 } from '../schemas';
+import { dataConfig } from '@/lib/data/config';
+import { cartProvider, purchasesProvider, toolsProvider } from '@/lib/data';
 
 /**
  * Shopping Cart Server Actions Module
@@ -33,6 +35,20 @@ export async function addToCart(input: AddToCartInput) {
   const organizationId = user.organization_members[0].organization_id;
   const validated = addToCartSchema.parse(input);
 
+  // Mock data path
+  if (dataConfig.useMocks) {
+    if (validated.item_type === 'tool') {
+      const cart = await cartProvider.addTool(user.id, validated.item_id);
+      revalidatePath('/real-estate/marketplace/cart');
+      return cart as any;
+    } else if (validated.item_type === 'bundle') {
+      const cart = await cartProvider.addBundle(user.id, validated.item_id);
+      revalidatePath('/real-estate/marketplace/cart');
+      return cart as any;
+    }
+  }
+
+  // Real Prisma mutation
   return withTenantContext(async () => {
     try {
       // Get or create cart
@@ -119,6 +135,20 @@ export async function removeFromCart(input: RemoveFromCartInput) {
 
   const validated = removeFromCartSchema.parse(input);
 
+  // Mock data path
+  if (dataConfig.useMocks) {
+    if (validated.item_type === 'tool') {
+      const cart = await cartProvider.removeTool(user.id, validated.item_id);
+      revalidatePath('/real-estate/marketplace/cart');
+      return cart as any;
+    } else if (validated.item_type === 'bundle') {
+      const cart = await cartProvider.removeBundle(user.id, validated.item_id);
+      revalidatePath('/real-estate/marketplace/cart');
+      return cart as any;
+    }
+  }
+
+  // Real Prisma mutation
   return withTenantContext(async () => {
     try {
       const cart = await prisma.shopping_carts.findUnique({
@@ -189,6 +219,14 @@ export async function clearCart() {
     throw new Error('Unauthorized: User not found');
   }
 
+  // Mock data path
+  if (dataConfig.useMocks) {
+    await cartProvider.clear(user.id);
+    revalidatePath('/real-estate/marketplace/cart');
+    return { success: true } as any;
+  }
+
+  // Real Prisma mutation
   return withTenantContext(async () => {
     try {
       const cart = await prisma.shopping_carts.update({
@@ -226,6 +264,48 @@ export async function checkout() {
 
   const organizationId = user.organization_members[0].organization_id;
 
+  // Mock data path
+  if (dataConfig.useMocks) {
+    // Get cart items
+    const cart = await cartProvider.get(user.id);
+
+    if (!cart || (cart.tools.length === 0 && cart.bundles.length === 0)) {
+      throw new Error('Cart is empty');
+    }
+
+    // Get tool prices and create purchases
+    const toolPurchases = await Promise.all(
+      cart.tools.map(async (toolId) => {
+        const tool = await toolsProvider.findById(toolId);
+        if (!tool) return null;
+
+        return purchasesProvider.create({
+          toolId,
+          orgId: organizationId,
+          userId: user.id,
+          price: tool.price,
+        });
+      })
+    );
+
+    // TODO: Bundle purchases when provider is ready
+    const bundlePurchases: any[] = [];
+
+    // Clear cart
+    await cartProvider.clear(user.id);
+
+    // Revalidate pages
+    revalidatePath('/real-estate/marketplace');
+    revalidatePath('/real-estate/marketplace/cart');
+    revalidatePath('/real-estate/marketplace/purchases');
+
+    return {
+      toolPurchases: toolPurchases.filter(Boolean),
+      bundlePurchases: bundlePurchases.filter(Boolean),
+    } as any;
+  }
+
+  // Real Prisma mutation
   return withTenantContext(async () => {
     try {
       const cart = await prisma.shopping_carts.findUnique({

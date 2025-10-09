@@ -1,1 +1,0 @@
-This admin dashboard will be the SUPER_ADMIN dashboard instead of the regular admin dashboard which is still accessed through the user profile dropdown menu

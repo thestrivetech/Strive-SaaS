@@ -3,22 +3,15 @@ import { requireAuth, getCurrentUser } from '@/lib/auth/auth-helpers';
 import { redirect } from 'next/navigation';
 import Link from 'next/link';
 import { Suspense } from 'react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import type { UserWithOrganization } from '@/lib/auth/user-helpers';
+import { EnhancedCard, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/shared/dashboard/EnhancedCard';
+import { ModuleHeroSection } from '@/components/shared/dashboard/ModuleHeroSection';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import {
   Store,
   Package,
-  DollarSign,
   TrendingUp,
-  Mail,
-  FileSignature,
-  BarChart3,
-  Link2,
-  Megaphone,
-  FileText,
-  Calendar,
-  MessageSquare,
   Users,
   CheckCircle2,
   Clock,
@@ -29,6 +22,7 @@ import { MarketplaceGrid } from '@/components/real-estate/marketplace/grid/Marke
 import { BundleGrid } from '@/components/real-estate/marketplace/bundles/BundleGrid';
 import { ShoppingCartPanel } from '@/components/real-estate/marketplace/cart/ShoppingCartPanel';
 import { getShoppingCart } from '@/lib/modules/marketplace';
+import { motion } from 'framer-motion';
 
 /**
  * Marketplace Dashboard Page
@@ -56,104 +50,6 @@ export const metadata: Metadata = {
 };
 
 // Mock Data for demonstration
-const MOCK_STATS = {
-  availableTools: 47,
-  activeSubscriptions: 8,
-  monthlySavings: 340,
-  popularTools: 12,
-};
-
-const MOCK_FEATURED_TOOLS = [
-  {
-    id: '1',
-    name: 'Email Automation Pro',
-    category: 'Marketing',
-    description: 'Automate email campaigns and lead nurturing workflows',
-    price: 29,
-    priceLabel: '$29/mo',
-    borderColor: 'neon-border-cyan',
-    iconBg: 'bg-cyan-500',
-    icon: Mail,
-  },
-  {
-    id: '2',
-    name: 'DocuSign Integration',
-    category: 'Legal',
-    description: 'Digital document signing and contract management',
-    price: 49,
-    priceLabel: '$49/mo',
-    borderColor: 'neon-border-green',
-    iconBg: 'bg-green-500',
-    icon: FileSignature,
-  },
-  {
-    id: '3',
-    name: 'Analytics Pro',
-    category: 'Analytics',
-    description: 'Advanced analytics and data visualization platform',
-    price: 79,
-    priceLabel: '$79/mo',
-    borderColor: 'neon-border-orange',
-    iconBg: 'bg-orange-500',
-    icon: BarChart3,
-  },
-  {
-    id: '4',
-    name: 'CRM Sync Hub',
-    category: 'Integration',
-    description: 'Connect and sync data with external CRM systems',
-    price: 39,
-    priceLabel: '$39/mo',
-    borderColor: 'neon-border-purple',
-    iconBg: 'bg-purple-500',
-    icon: Link2,
-  },
-  {
-    id: '5',
-    name: 'Lead Capture Widget',
-    category: 'Marketing',
-    description: 'Customizable lead capture forms and popups',
-    price: 0,
-    priceLabel: 'FREE',
-    borderColor: 'neon-border-cyan',
-    iconBg: 'bg-cyan-500',
-    icon: Megaphone,
-  },
-  {
-    id: '6',
-    name: 'Report Builder Plus',
-    category: 'Analytics',
-    description: 'Create custom reports and automated dashboards',
-    price: 59,
-    priceLabel: '$59/mo',
-    borderColor: 'neon-border-green',
-    iconBg: 'bg-green-500',
-    icon: FileText,
-  },
-  {
-    id: '7',
-    name: 'Calendar Sync Pro',
-    category: 'Productivity',
-    description: 'Sync calendars across platforms and teams',
-    price: 19,
-    priceLabel: '$19/mo',
-    borderColor: 'neon-border-orange',
-    iconBg: 'bg-orange-500',
-    icon: Calendar,
-  },
-  {
-    id: '8',
-    name: 'SMS Gateway',
-    category: 'Communication',
-    description: 'Send automated SMS notifications and reminders',
-    price: 25,
-    priceLabel: '$25/mo',
-    borderColor: 'neon-border-purple',
-    iconBg: 'bg-purple-500',
-    icon: MessageSquare,
-  },
-];
-
 const MOCK_SUBSCRIPTIONS = [
   {
     id: '1',
@@ -215,75 +111,26 @@ export default async function MarketplaceDashboardPage({
 
   // Get cart data for checking what's in cart
   const cart = await getShoppingCart(user.id).catch(() => null);
-  const cartToolIds = (cart?.tools as string[]) || [];
   const cartBundleIds = (cart?.bundles as string[]) || [];
 
-  // Helper function for personalized greeting
-  const getGreeting = () => {
-    const hour = new Date().getHours();
-    if (hour < 12) return 'Good Morning';
-    if (hour < 17) return 'Good Afternoon';
-    return 'Good Evening';
-  };
-
-  const firstName = user.name?.split(' ')[0] || 'User';
   const activeTab = (searchParams.tab as string) || 'tools';
 
   return (
-    <div className="container mx-auto py-6 px-4 max-w-7xl">
-      <div className="grid lg:grid-cols-4 gap-6">
-        {/* Main Content - Left 3 columns */}
+    <div className="space-y-6">
+      {/* Hero Section with KPIs */}
+      <Suspense fallback={<div>Loading...</div>}>
+        <HeroSectionWrapper user={user} />
+      </Suspense>
+
+      {/* Main Content Grid */}
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.3 }}
+        className="grid gap-6 lg:grid-cols-4"
+      >
+        {/* Left Column - 3/4 width */}
         <div className="lg:col-span-3 space-y-6">
-          {/* Hero Section with Personalized Greeting */}
-          <div className="glass-strong rounded-2xl p-6 sm:p-8 neon-border-cyan">
-            <div>
-              <h1 className="text-3xl sm:text-4xl font-bold mb-2">
-                <span className="inline-block">{getGreeting()},</span>{' '}
-                <span className="bg-gradient-to-r from-primary via-chart-2 to-chart-3 bg-clip-text text-transparent">
-                  {firstName}
-                </span>
-              </h1>
-              <h2 className="text-xl sm:text-2xl font-semibold text-primary mb-2">
-                Tool Marketplace
-              </h2>
-              <p className="text-muted-foreground">
-                Discover and manage third-party tools and integrations
-              </p>
-            </div>
-          </div>
-
-          {/* Stats Cards */}
-          <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-            <StatCard
-              icon={Store}
-              title="Available Tools"
-              value={MOCK_STATS.availableTools.toString()}
-              description="In marketplace"
-              borderColor="neon-border-purple"
-            />
-            <StatCard
-              icon={Package}
-              title="Active Subscriptions"
-              value={MOCK_STATS.activeSubscriptions.toString()}
-              description="Your tools"
-              borderColor="neon-border-purple"
-            />
-            <StatCard
-              icon={DollarSign}
-              title="Total Savings"
-              value={`$${MOCK_STATS.monthlySavings}/mo`}
-              description="vs individual purchase"
-              borderColor="neon-border-purple"
-            />
-            <StatCard
-              icon={TrendingUp}
-              title="Popular Tools"
-              value={MOCK_STATS.popularTools.toString()}
-              description="Trending"
-              borderColor="neon-border-purple"
-            />
-          </div>
-
           {/* Tabs for Tools and Bundles */}
           <Tabs defaultValue={activeTab} className="space-y-6">
             <TabsList className="grid w-full grid-cols-2 max-w-md">
@@ -334,7 +181,7 @@ export default async function MarketplaceDashboardPage({
           </Tabs>
 
           {/* Active Subscriptions Section */}
-          <Card className="glass-strong neon-border-green">
+          <EnhancedCard glassEffect="strong" neonBorder="green" hoverEffect={true}>
             <CardHeader>
               <div className="flex items-center justify-between">
                 <CardTitle>Active Subscriptions</CardTitle>
@@ -366,10 +213,10 @@ export default async function MarketplaceDashboardPage({
                 </div>
               )}
             </CardContent>
-          </Card>
+          </EnhancedCard>
 
           {/* Popular Tools Widget */}
-          <Card className="glass-strong neon-border-orange">
+          <EnhancedCard glassEffect="strong" neonBorder="orange" hoverEffect={true}>
             <CardHeader>
               <CardTitle>Popular Tools</CardTitle>
               <CardDescription>Most installed by real estate professionals</CardDescription>
@@ -398,10 +245,10 @@ export default async function MarketplaceDashboardPage({
                 ))}
               </div>
             </CardContent>
-          </Card>
+          </EnhancedCard>
 
           {/* Quick Actions */}
-          <Card className="glass neon-border-purple">
+          <EnhancedCard glassEffect="medium" neonBorder="purple" hoverEffect={true}>
             <CardHeader>
               <CardTitle>Quick Actions</CardTitle>
               <CardDescription>Common marketplace tasks</CardDescription>
@@ -425,88 +272,57 @@ export default async function MarketplaceDashboardPage({
                 </Button>
               </div>
             </CardContent>
-          </Card>
+          </EnhancedCard>
         </div>
 
         {/* Shopping Cart Panel - Right column (always visible) */}
         <div className="lg:col-span-1">
           <ShoppingCartPanel userId={user.id} />
         </div>
-      </div>
+      </motion.div>
     </div>
   );
 }
 
+/**
+ * Hero Section Wrapper
+ * Passes marketplace stats to ModuleHeroSection
+ */
+async function HeroSectionWrapper({ user }: { user: UserWithOrganization }) {
+  const stats = [
+    {
+      label: 'Available Tools',
+      value: '47',
+      icon: 'projects' as const,
+    },
+    {
+      label: 'Active Subscriptions',
+      value: '8',
+      icon: 'tasks' as const,
+    },
+    {
+      label: 'Total Savings',
+      value: '$340/mo',
+      icon: 'revenue' as const,
+    },
+    {
+      label: 'Popular Tools',
+      value: '12',
+      icon: 'customers' as const,
+    },
+  ];
+
+  return (
+    <ModuleHeroSection
+      user={user}
+      moduleName="Tool Marketplace"
+      moduleDescription="Discover and manage third-party tools and integrations"
+      stats={stats}
+    />
+  );
+}
+
 // Helper Components
-
-interface StatCardProps {
-  icon: React.ComponentType<{ className?: string }>;
-  title: string;
-  value: string;
-  description: string;
-  borderColor?: string;
-}
-
-function StatCard({ icon: Icon, title, value, description, borderColor = 'neon-border-purple' }: StatCardProps) {
-  return (
-    <Card className={`glass-strong ${borderColor} hover:shadow-lg transition-all`}>
-      <CardHeader className="flex flex-row items-center justify-between pb-2">
-        <CardTitle className="text-sm font-medium">{title}</CardTitle>
-        <Icon className="h-4 w-4 text-muted-foreground" />
-      </CardHeader>
-      <CardContent>
-        <div className="text-2xl font-bold">{value}</div>
-        <p className="text-xs text-muted-foreground mt-1">
-          {description}
-        </p>
-      </CardContent>
-    </Card>
-  );
-}
-
-interface ToolCardProps {
-  tool: {
-    id: string;
-    name: string;
-    category: string;
-    description: string;
-    priceLabel: string;
-    borderColor: string;
-    iconBg: string;
-    icon: React.ComponentType<{ className?: string }>;
-  };
-}
-
-function ToolCard({ tool }: ToolCardProps) {
-  const Icon = tool.icon;
-
-  return (
-    <Card className={`glass ${tool.borderColor} hover:shadow-md transition-all hover:-translate-y-1`}>
-      <CardHeader>
-        <div className="flex items-start justify-between mb-3">
-          <div className={`p-3 rounded-full ${tool.iconBg}`}>
-            <Icon className="h-6 w-6 text-white" />
-          </div>
-          <div className="px-3 py-1 rounded-full bg-primary/10 text-primary text-xs font-semibold">
-            {tool.priceLabel}
-          </div>
-        </div>
-        <CardTitle className="text-lg">{tool.name}</CardTitle>
-        <CardDescription className="text-xs">{tool.category}</CardDescription>
-      </CardHeader>
-      <CardContent>
-        <p className="text-sm text-muted-foreground mb-4">
-          {tool.description}
-        </p>
-        <Button asChild variant="outline" size="sm" className="w-full">
-          <Link href={`/real-estate/marketplace/tools/${tool.id}`}>
-            View Details
-          </Link>
-        </Button>
-      </CardContent>
-    </Card>
-  );
-}
 
 interface SubscriptionCardProps {
   subscription: {

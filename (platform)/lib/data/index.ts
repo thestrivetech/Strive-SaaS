@@ -16,6 +16,15 @@ export { dataConfig, simulateDelay, maybeThrowError } from './config';
 // CRM Providers
 export { contactsProvider, leadsProvider, customersProvider } from './providers/crm-provider';
 
+// Marketplace Providers
+export {
+  toolsProvider,
+  bundlesProvider,
+  purchasesProvider,
+  reviewsProvider,
+  cartProvider,
+} from './providers/marketplace-provider';
+
 // Analytics Providers
 export { getOverviewKPIs, getSalesFunnelData, getAgentPerformance } from './providers/analytics-provider';
 
@@ -27,3 +36,10 @@ export { getRecentActivities } from './providers/activities-provider';
 
 // Mock types (for TypeScript)
 export type { MockContact, MockLead, MockCustomer } from './mocks/crm';
+export type {
+  MockTool,
+  MockBundle,
+  MockPurchase,
+  MockReview,
+  MockCart,
+} from './mocks/marketplace';

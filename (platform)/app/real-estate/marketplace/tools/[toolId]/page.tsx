@@ -1,5 +1,6 @@
 import { Suspense } from 'react';
 import { notFound } from 'next/navigation';
+import type { Metadata } from 'next';
 import { requireAuth } from '@/lib/auth/auth-helpers';
 import {
   getMarketplaceToolById,
@@ -27,6 +28,30 @@ import {
 interface PageProps {
   params: {
     toolId: string;
+  };
+}
+
+/**
+ * Generate dynamic metadata for tool detail pages
+ */
+export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
+  const tool = await getMarketplaceToolById(params.toolId);
+
+  if (!tool) {
+    return {
+      title: 'Tool Not Found | Strive Tech Marketplace',
+    };
+  }
+
+  return {
+    title: `${tool.name} | Strive Tech Marketplace`,
+    description: tool.description || `${tool.name} - Available in the Strive Tech Marketplace`,
+    keywords: [tool.name, tool.category, tool.tier, 'marketplace', 'real estate tools'],
+    openGraph: {
+      title: `${tool.name} | Strive Tech Marketplace`,
+      description: tool.description || `${tool.name} - Available in the Strive Tech Marketplace`,
+      type: 'website',
+    },
   };
 }
 
