@@ -59,7 +59,6 @@ export function RecentReportsSection({ organizationId }: RecentReportsSectionPro
         description: `Format: ${format.toUpperCase()}`,
       });
 
-      console.log('Download URL:', url);
       // window.open(url, '_blank'); // Uncomment for real downloads
     } catch (error) {
       toast.error('Failed to download report');

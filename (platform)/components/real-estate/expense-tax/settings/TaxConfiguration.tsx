@@ -79,8 +79,7 @@ export function TaxConfiguration({ organizationId }: TaxConfigurationProps) {
       // Simulate API call delay
       await new Promise((resolve) => setTimeout(resolve, 1000));
 
-      // TODO: Replace with actual API call
-      console.log('Saving tax configuration:', { ...data, organizationId });
+      // TODO: Replace with actual API call when backend is ready
 
       toast.success('Tax configuration saved successfully');
     } catch (error) {

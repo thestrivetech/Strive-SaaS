@@ -10,7 +10,6 @@ import {
   TrendingUp,
   DollarSign,
   Bot,
-  BarChart,
   Calculator,
   Megaphone,
   ShoppingBag,
@@ -31,7 +30,10 @@ import {
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { cn } from '@/lib/utils';
+import { QuickAddDialog } from './QuickAddDialog';
+import { MiniCalendar } from './MiniCalendar';
 
 interface SidebarProps {
   isOpen?: boolean;
@@ -48,20 +50,13 @@ interface NavItem {
 }
 
 /**
- * Sidebar Component
- *
- * Main navigation sidebar for the platform
- *
- * Features:
- * - Collapsible sub-menus
- * - Active state highlighting
- * - Fixed on desktop, overlay on mobile
- * - Favorites dock at bottom
- * - Glass morphism design
+ * Sidebar Component - Main navigation with collapsible menus, favorites dock, and glass morphism design
  */
 export function Sidebar({ isOpen = true, onClose }: SidebarProps) {
   const pathname = usePathname();
   const [openItems, setOpenItems] = useState<string[]>([]);
+  const [quickAddOpen, setQuickAddOpen] = useState(false);
+  const [calendarOpen, setCalendarOpen] = useState(false);
 
   const toggleItem = (itemId: string) => {
     setOpenItems((prev) =>
@@ -276,12 +271,6 @@ export function Sidebar({ isOpen = true, onClose }: SidebarProps) {
     },
   ];
 
-  const favoriteActions = [
-    { id: 'add', icon: Plus, color: 'primary', label: 'Quick Add' },
-    { id: 'calendar', icon: Calendar, color: 'secondary', label: 'Calendar' },
-    { id: 'settings', icon: Settings, color: 'accent', label: 'Settings' },
-  ];
-
   const isActiveRoute = (href?: string) => {
     if (!href) return false;
     return pathname === href || pathname.startsWith(href + '/');
@@ -448,32 +437,56 @@ export function Sidebar({ isOpen = true, onClose }: SidebarProps) {
               Favorites
             </h3>
             <div className="flex gap-2">
-              {favoriteActions.map((action) => {
-                const Icon = action.icon;
-                return (
+              {/* Quick Add Button */}
+              <button
+                onClick={() => setQuickAddOpen(true)}
+                className={cn(
+                  'flex-1 h-10 rounded-lg glass flex items-center justify-center cursor-pointer transition-all hover:scale-105',
+                  'neon-border-cyan hover:bg-primary/10'
+                )}
+                title="Quick Add"
+                aria-label="Open quick add dialog"
+              >
+                <Plus className="w-5 h-5 text-primary" />
+              </button>
+
+              {/* Calendar Popover */}
+              <Popover open={calendarOpen} onOpenChange={setCalendarOpen}>
+                <PopoverTrigger asChild>
                   <button
-                    key={action.id}
                     className={cn(
                       'flex-1 h-10 rounded-lg glass flex items-center justify-center cursor-pointer transition-all hover:scale-105',
-                      action.color === 'primary' && 'neon-border-cyan hover:bg-primary/10',
-                      action.color === 'secondary' && 'neon-border-green hover:bg-secondary/10',
-                      action.color === 'accent' && 'neon-border-purple hover:bg-accent/10'
+                      'neon-border-green hover:bg-secondary/10'
                     )}
-                    title={action.label}
+                    title="Calendar"
+                    aria-label="Open calendar"
                   >
-                    <Icon
-                      className={cn(
-                        'w-5 h-5',
-                        action.color === 'primary' && 'text-primary',
-                        action.color === 'secondary' && 'text-secondary',
-                        action.color === 'accent' && 'text-accent'
-                      )}
-                    />
+                    <Calendar className="w-5 h-5 text-secondary" />
                   </button>
-                );
-              })}
+                </PopoverTrigger>
+                <PopoverContent className="w-80 p-4" align="end" side="top">
+                  <MiniCalendar />
+                </PopoverContent>
+              </Popover>
+
+              {/* Settings Button */}
+              <Link href="/settings">
+                <button
+                  className={cn(
+                    'flex-1 h-10 rounded-lg glass flex items-center justify-center cursor-pointer transition-all hover:scale-105',
+                    'neon-border-purple hover:bg-accent/10'
+                  )}
+                  title="Settings"
+                  aria-label="Go to settings"
+                >
+                  <Settings className="w-5 h-5 text-accent" />
+                </button>
+              </Link>
             </div>
           </div>
+
+          {/* Quick Add Dialog */}
+          <QuickAddDialog open={quickAddOpen} onOpenChange={setQuickAddOpen} />
         </div>
       </aside>
     </>

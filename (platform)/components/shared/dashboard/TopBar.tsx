@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Search, Mic, Moon, Sun, Bell, Menu, Check, Trash2, ExternalLink } from 'lucide-react';
+import { Search, Moon, Sun, Bell, Menu, Check, Trash2, ExternalLink } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useTheme } from '@/hooks/use-theme';
 import type { UserWithOrganization } from '@/lib/auth/user-helpers';
@@ -84,10 +84,6 @@ export function TopBar({ user, onMenuToggle, onCommandBarOpen }: TopBarProps) {
     }
   };
 
-  const handleVoiceCommand = () => {
-    // Voice command placeholder (to be connected later)
-    console.log('Voice command triggered');
-  };
 
   const handleThemeToggle = () => {
     // Cycle through themes: light -> dark -> system -> light
@@ -192,18 +188,6 @@ export function TopBar({ user, onMenuToggle, onCommandBarOpen }: TopBarProps) {
 
         {/* Right Section - Actions */}
         <div className="flex items-center gap-2 sm:gap-3">
-          {/* Voice Command Button */}
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={handleVoiceCommand}
-            className="glass hover:bg-primary/10 neon-cyan hidden sm:flex"
-            aria-label="Activate voice command"
-            title="Voice Command"
-          >
-            <Mic className="w-5 h-5 text-primary" />
-          </Button>
-
           {/* Theme Toggle Button */}
           <Button
             variant="ghost"

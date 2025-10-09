@@ -2,7 +2,7 @@ import type { Metadata } from 'next';
 import { Suspense } from 'react';
 import { ChartSkeleton } from '@/components/real-estate/reid/shared/REIDSkeleton';
 import { REIDBreadcrumb } from '@/components/real-estate/reid/shared/REIDBreadcrumb';
-import { REIDCard, REIDCardHeader, REIDCardContent } from '@/components/real-estate/reid/shared/REIDCard';
+import { AIProfilesClient } from '@/components/real-estate/reid/ai-profiles/AIProfilesClient';
 import { Brain } from 'lucide-react';
 
 export const metadata: Metadata = {
@@ -30,21 +30,7 @@ export default function AIProfilesPage() {
       </div>
 
       <Suspense fallback={<ChartSkeleton />}>
-        <REIDCard>
-          <REIDCardHeader>
-            <div className="flex items-center gap-2">
-              <Brain className="w-5 h-5 text-purple-400" />
-              <h3 className="text-lg font-semibold text-white">AI Market Analysis</h3>
-            </div>
-          </REIDCardHeader>
-          <REIDCardContent>
-            <div className="text-center py-12">
-              <p className="text-slate-400">
-                AI market profile generator coming soon...
-              </p>
-            </div>
-          </REIDCardContent>
-        </REIDCard>
+        <AIProfilesClient />
       </Suspense>
     </div>
   );

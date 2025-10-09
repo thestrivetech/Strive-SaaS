@@ -86,8 +86,7 @@ export function ExpensePreferences({ organizationId }: ExpensePreferencesProps) 
       // Simulate API call delay
       await new Promise((resolve) => setTimeout(resolve, 1000));
 
-      // TODO: Replace with actual API call
-      console.log('Saving preferences:', { ...data, organizationId });
+      // TODO: Replace with actual API call when backend is ready
 
       toast.success('Preferences saved successfully');
     } catch (error) {

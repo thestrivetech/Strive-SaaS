@@ -130,7 +130,6 @@ const FloatingChat = () => {
 
     // End performance tracking
     const report = performanceMonitor.endTracking(performanceId.current);
-    console.log('Chat session performance:', report);
 
     // Send analytics
     if (window.gtag) {

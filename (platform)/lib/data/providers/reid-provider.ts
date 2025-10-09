@@ -17,6 +17,8 @@ import {
   generateMockAlerts,
   generateMockSchool,
   generateMockSchools,
+  generateMockAIProfile,
+  generateMockAIProfiles,
   generateMockREIDReport,
   type MockMarketData,
   type MockTrendPoint,
@@ -24,6 +26,7 @@ import {
   type MockROISimulation,
   type MockAlert,
   type MockSchool,
+  type MockAIProfile,
   type MockREIDReport,
   MAJOR_METROS,
 } from '../mocks/reid';
@@ -35,6 +38,7 @@ import {
 let mockMarketDataStore: MockMarketData[] = [];
 let mockDemographicsStore: MockDemographics[] = [];
 let mockAlertsStore: MockAlert[] = [];
+let mockAIProfilesStore: MockAIProfile[] = [];
 let mockReportsStore: MockREIDReport[] = [];
 
 /**
@@ -50,6 +54,9 @@ function initializeMockData() {
 
     // Generate 10 active alerts
     mockAlertsStore = generateMockAlerts(10);
+
+    // Generate 10 AI profiles
+    mockAIProfilesStore = generateMockAIProfiles(10);
 
     // Generate 2-3 sample reports
     const sampleZips1 = ['90210', '10001', '33139'];
@@ -611,6 +618,170 @@ export const alertsProvider = {
       await simulateDelay();
 
       return mockAlertsStore.filter((a) => !a.is_read && !a.is_dismissed).length;
+    }
+
+    // TODO: Replace with real Prisma query
+    throw new Error('Real database not implemented yet - enable mock mode');
+  },
+};
+
+// ============================================================================
+// AI PROFILES PROVIDER
+// ============================================================================
+
+export const aiProfilesProvider = {
+  /**
+   * Find all AI profiles with optional filters
+   */
+  async findAll(filters?: {
+    status?: 'active' | 'archived';
+    min_score?: number;
+    recommendation?: MockAIProfile['recommendation'];
+  }): Promise<MockAIProfile[]> {
+    if (dataConfig.useMocks) {
+      initializeMockData();
+      await simulateDelay();
+      maybeThrowError('Failed to fetch AI profiles');
+
+      let profiles = [...mockAIProfilesStore];
+
+      if (filters?.status) {
+        profiles = profiles.filter((p) => p.status === filters.status);
+      }
+
+      if (filters?.min_score !== undefined) {
+        profiles = profiles.filter((p) => p.ai_score >= filters.min_score);
+      }
+
+      if (filters?.recommendation) {
+        profiles = profiles.filter((p) => p.recommendation === filters.recommendation);
+      }
+
+      return profiles.sort((a, b) => b.analysis_date.getTime() - a.analysis_date.getTime());
+    }
+
+    // TODO: Replace with real Prisma query
+    throw new Error('Real database not implemented yet - enable mock mode');
+  },
+
+  /**
+   * Find profile by ID
+   */
+  async findById(id: string): Promise<MockAIProfile | null> {
+    if (dataConfig.useMocks) {
+      initializeMockData();
+      await simulateDelay();
+      maybeThrowError('Failed to fetch AI profile');
+
+      return mockAIProfilesStore.find((p) => p.id === id) || null;
+    }
+
+    // TODO: Replace with real Prisma query
+    throw new Error('Real database not implemented yet - enable mock mode');
+  },
+
+  /**
+   * Create new AI profile
+   */
+  async create(data: Partial<MockAIProfile>): Promise<MockAIProfile> {
+    if (dataConfig.useMocks) {
+      initializeMockData();
+      await simulateDelay();
+      maybeThrowError('Failed to create AI profile');
+
+      const newProfile = generateMockAIProfile(data);
+      mockAIProfilesStore.push(newProfile);
+
+      return newProfile;
+    }
+
+    // TODO: Replace with real Prisma query
+    throw new Error('Real database not implemented yet - enable mock mode');
+  },
+
+  /**
+   * Update profile
+   */
+  async update(id: string, data: Partial<MockAIProfile>): Promise<MockAIProfile> {
+    if (dataConfig.useMocks) {
+      initializeMockData();
+      await simulateDelay();
+      maybeThrowError('Failed to update AI profile');
+
+      const index = mockAIProfilesStore.findIndex((p) => p.id === id);
+      if (index === -1) throw new Error('Profile not found');
+
+      mockAIProfilesStore[index] = { ...mockAIProfilesStore[index], ...data };
+      return mockAIProfilesStore[index];
+    }
+
+    // TODO: Replace with real Prisma query
+    throw new Error('Real database not implemented yet - enable mock mode');
+  },
+
+  /**
+   * Archive profile
+   */
+  async archive(id: string): Promise<MockAIProfile> {
+    return this.update(id, { status: 'archived' });
+  },
+
+  /**
+   * Unarchive profile
+   */
+  async unarchive(id: string): Promise<MockAIProfile> {
+    return this.update(id, { status: 'active' });
+  },
+
+  /**
+   * Delete profile
+   */
+  async delete(id: string): Promise<void> {
+    if (dataConfig.useMocks) {
+      initializeMockData();
+      await simulateDelay();
+      maybeThrowError('Failed to delete AI profile');
+
+      const index = mockAIProfilesStore.findIndex((p) => p.id === id);
+      if (index === -1) throw new Error('Profile not found');
+
+      mockAIProfilesStore.splice(index, 1);
+      return;
+    }
+
+    // TODO: Replace with real Prisma query
+    throw new Error('Real database not implemented yet - enable mock mode');
+  },
+
+  /**
+   * Get summary stats
+   */
+  async getStats(): Promise<{
+    total: number;
+    active: number;
+    archived: number;
+    avg_score: number;
+    strong_buy_count: number;
+  }> {
+    if (dataConfig.useMocks) {
+      initializeMockData();
+      await simulateDelay();
+
+      const total = mockAIProfilesStore.length;
+      const active = mockAIProfilesStore.filter((p) => p.status === 'active').length;
+      const archived = mockAIProfilesStore.filter((p) => p.status === 'archived').length;
+      const avgScore = Math.floor(
+        mockAIProfilesStore.reduce((sum, p) => sum + p.ai_score, 0) / total
+      );
+      const strongBuyCount = mockAIProfilesStore.filter((p) => p.recommendation === 'strong-buy').length;
+
+      return {
+        total,
+        active,
+        archived,
+        avg_score: avgScore,
+        strong_buy_count: strongBuyCount,
+      };
     }
 
     // TODO: Replace with real Prisma query

@@ -39,17 +39,13 @@ interface ReportCardProps {
 
 export function ReportCard({ report, onDownload, onDelete }: ReportCardProps) {
   const handleDownload = () => {
-    // Placeholder for download functionality
-    console.log('Downloading report:', report.id);
     onDownload?.(report.id);
     alert(`Download started for: ${report.name}`);
   };
 
   const handleDelete = () => {
-    // Placeholder for delete functionality
     const confirmed = confirm(`Are you sure you want to delete "${report.name}"?`);
     if (confirmed) {
-      console.log('Deleting report:', report.id);
       onDelete?.(report.id);
       alert(`Report deleted: ${report.name}`);
     }

@@ -91,9 +91,7 @@ export function ReportGenerator() {
   const onSubmit = async (data: ReportFormValues) => {
     setIsGenerating(true);
 
-    // Placeholder for report generation
-    // In future: Call API endpoint /api/v1/expenses/reports/generate
-    console.log('Generating report:', data);
+    // TODO: Call API endpoint /api/v1/expenses/reports/generate
 
     // Simulate API call
     await new Promise((resolve) => setTimeout(resolve, 2000));

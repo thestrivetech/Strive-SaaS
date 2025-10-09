@@ -68,6 +68,7 @@ export {
   demographicsProvider,
   roiProvider,
   alertsProvider,
+  aiProfilesProvider,
   schoolsProvider,
   reidReportsProvider,
   reidAnalyticsProvider,
@@ -128,6 +129,7 @@ export type {
   MockDemographics,
   MockROISimulation,
   MockAlert,
+  MockAIProfile,
   MockSchool,
   MockREIDReport,
 } from './mocks/reid';

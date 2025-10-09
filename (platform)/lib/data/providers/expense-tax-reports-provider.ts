@@ -18,7 +18,7 @@ import {
 // IN-MEMORY MOCK STORAGE
 // ============================================================================
 
-const mockGeneratedReportsStore: MockGeneratedReport[] = [];
+let mockGeneratedReportsStore: MockGeneratedReport[] = [];
 
 /**
  * Initialize mock data stores

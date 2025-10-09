@@ -2,7 +2,7 @@ import type { Metadata } from 'next';
 import { Suspense } from 'react';
 import { ChartSkeleton } from '@/components/real-estate/reid/shared/REIDSkeleton';
 import { REIDBreadcrumb } from '@/components/real-estate/reid/shared/REIDBreadcrumb';
-import { REIDCard, REIDCardHeader, REIDCardContent } from '@/components/real-estate/reid/shared/REIDCard';
+import { SchoolsClient } from '@/components/real-estate/reid/schools/SchoolsClient';
 import { GraduationCap } from 'lucide-react';
 
 export const metadata: Metadata = {
@@ -30,21 +30,7 @@ export default function SchoolsPage() {
       </div>
 
       <Suspense fallback={<ChartSkeleton />}>
-        <REIDCard>
-          <REIDCardHeader>
-            <div className="flex items-center gap-2">
-              <GraduationCap className="w-5 h-5 text-green-400" />
-              <h3 className="text-lg font-semibold text-white">School District Analysis</h3>
-            </div>
-          </REIDCardHeader>
-          <REIDCardContent>
-            <div className="text-center py-12">
-              <p className="text-slate-400">
-                School district analysis component coming soon...
-              </p>
-            </div>
-          </REIDCardContent>
-        </REIDCard>
+        <SchoolsClient />
       </Suspense>
     </div>
   );

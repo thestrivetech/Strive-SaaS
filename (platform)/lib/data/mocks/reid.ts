@@ -133,6 +133,34 @@ export type MockSchool = {
   district: string;
 };
 
+export type MockAIProfile = {
+  id: string;
+  property_address: string;
+  profile_name: string;
+  analysis_date: Date;
+  ai_score: number; // 0-100
+  score_breakdown: {
+    location: number;
+    financials: number;
+    appreciation: number;
+    cash_flow: number;
+    risk: number;
+  };
+  insights: string[];
+  market_comparison: {
+    average_roi: number;
+    average_cash_flow: number;
+    appreciation_rate: number;
+  };
+  recommendation: 'strong-buy' | 'buy' | 'hold' | 'pass';
+  estimated_roi: number;
+  estimated_cash_flow: number;
+  status: 'active' | 'archived';
+  zip_code: string;
+  city: string;
+  state: string;
+};
+
 export type MockREIDReport = {
   id: string;
   title: string;
@@ -752,6 +780,101 @@ export function generateMockSchool(
  */
 export function generateMockSchools(zipCode: string, count: number = 8): MockSchool[] {
   return Array.from({ length: count }, () => generateMockSchool(zipCode));
+}
+
+// ============================================================================
+// AI PROFILE GENERATORS
+// ============================================================================
+
+const AI_INSIGHTS = [
+  'Strong rental demand in area with 95% occupancy rate',
+  'Property value appreciation trending 8% above market average',
+  'Excellent school district ratings increase property desirability',
+  'Low property tax rates compared to surrounding areas',
+  'High walkability score with access to amenities',
+  'Growing job market with 12% employment growth',
+  'New development projects planned within 2 miles',
+  'Below-market purchase price represents 15% value opportunity',
+  'Strong cash flow potential with estimated 9% cap rate',
+  'Minimal deferred maintenance reduces renovation costs',
+  'HOA fees significantly lower than comparable properties',
+  'Property located in designated opportunity zone for tax benefits',
+  'Rental income potential 20% above mortgage payment',
+  'Low crime rates and stable neighborhood demographics',
+  'Public transportation access within walking distance',
+];
+
+/**
+ * Generate a mock AI profile
+ */
+export function generateMockAIProfile(
+  overrides?: Partial<MockAIProfile>
+): MockAIProfile {
+  const metro = overrides?.zip_code
+    ? MAJOR_METROS.find(m => m.zip === overrides.zip_code) || randomFromArray(MAJOR_METROS)
+    : randomFromArray(MAJOR_METROS);
+
+  // Generate scores
+  const locationScore = randomInt(60, 95);
+  const financialsScore = randomInt(55, 90);
+  const appreciationScore = randomInt(50, 95);
+  const cashFlowScore = randomInt(60, 95);
+  const riskScore = randomInt(70, 95);
+
+  const aiScore = Math.floor((locationScore + financialsScore + appreciationScore + cashFlowScore + riskScore) / 5);
+
+  // Determine recommendation based on score
+  let recommendation: MockAIProfile['recommendation'];
+  if (aiScore >= 85) recommendation = 'strong-buy';
+  else if (aiScore >= 70) recommendation = 'buy';
+  else if (aiScore >= 55) recommendation = 'hold';
+  else recommendation = 'pass';
+
+  // Select random insights
+  const insightCount = randomInt(3, 5);
+  const insights = Array.from({ length: insightCount }, () =>
+    randomFromArray(AI_INSIGHTS)
+  ).filter((value, index, self) => self.indexOf(value) === index); // Remove duplicates
+
+  const streetNumber = randomInt(100, 9999);
+  const streetNames = ['Main St', 'Oak Ave', 'Park Blvd', 'Market St', 'Hill Dr', 'Lake Rd', 'Valley Way', 'River Ln'];
+  const propertyAddress = `${streetNumber} ${randomFromArray(streetNames)}, ${metro.city}, ${metro.state} ${metro.zip}`;
+
+  return {
+    id: generateId(),
+    property_address: propertyAddress,
+    profile_name: `Investment Analysis: ${streetNumber} ${randomFromArray(streetNames)}`,
+    analysis_date: randomPastDate(30),
+    ai_score: aiScore,
+    score_breakdown: {
+      location: locationScore,
+      financials: financialsScore,
+      appreciation: appreciationScore,
+      cash_flow: cashFlowScore,
+      risk: riskScore,
+    },
+    insights,
+    market_comparison: {
+      average_roi: randomInt(6, 12) + (randomInt(0, 99) / 100),
+      average_cash_flow: randomInt(500, 2500),
+      appreciation_rate: randomInt(3, 8) + (randomInt(0, 99) / 100),
+    },
+    recommendation,
+    estimated_roi: randomInt(8, 15) + (randomInt(0, 99) / 100),
+    estimated_cash_flow: randomInt(800, 3500),
+    status: randomBoolean() && randomBoolean() && randomBoolean() ? 'archived' : 'active', // 12.5% archived
+    zip_code: metro.zip,
+    city: metro.city,
+    state: metro.state,
+    ...overrides,
+  };
+}
+
+/**
+ * Generate multiple AI profiles
+ */
+export function generateMockAIProfiles(count: number = 10): MockAIProfile[] {
+  return Array.from({ length: count }, () => generateMockAIProfile());
 }
 
 // ============================================================================
