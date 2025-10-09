@@ -47,7 +47,7 @@ export async function handlePlatformAuth(request: NextRequest): Promise<NextResp
   const isTransactionRoute = path.startsWith('/transactions') || path.startsWith('/real-estate/workspace');
   const isREIDRoute = path.startsWith('/real-estate/reid');
   const isProtectedRoute = path.startsWith('/dashboard') ||
-    path.startsWith('/real-estate/dashboard') ||
+    path.startsWith('/real-estate/user-dashboard') ||
     path.startsWith('/real-estate/workspace') ||
     path.startsWith('/real-estate/ai-hub') ||
     path.startsWith('/real-estate/expense-tax') ||
@@ -82,7 +82,7 @@ export async function handlePlatformAuth(request: NextRequest): Promise<NextResp
     });
 
     if (!dbUser || dbUser.role !== 'SUPER_ADMIN') {
-      const redirectResponse = NextResponse.redirect(new URL('/real-estate/dashboard', request.url));
+      const redirectResponse = NextResponse.redirect(new URL('/real-estate/user-dashboard', request.url));
       setNoCacheHeaders(redirectResponse);
       return redirectResponse;
     }
@@ -97,7 +97,7 @@ export async function handlePlatformAuth(request: NextRequest): Promise<NextResp
     });
 
     if (!dbUser || (dbUser.role !== 'SUPER_ADMIN' && dbUser.role !== 'ADMIN')) {
-      const redirectResponse = NextResponse.redirect(new URL('/real-estate/dashboard', request.url));
+      const redirectResponse = NextResponse.redirect(new URL('/real-estate/user-dashboard', request.url));
       setNoCacheHeaders(redirectResponse);
       return redirectResponse;
     }
@@ -113,7 +113,7 @@ export async function handlePlatformAuth(request: NextRequest): Promise<NextResp
 
     // Check user role (only USER, MODERATOR, ADMIN, SUPER_ADMIN can access)
     if (!dbUser || !['USER', 'MODERATOR', 'ADMIN', 'SUPER_ADMIN'].includes(dbUser.role)) {
-      const redirectResponse = NextResponse.redirect(new URL('/real-estate/dashboard', request.url));
+      const redirectResponse = NextResponse.redirect(new URL('/real-estate/user-dashboard', request.url));
       setNoCacheHeaders(redirectResponse);
       return redirectResponse;
     }
@@ -122,7 +122,7 @@ export async function handlePlatformAuth(request: NextRequest): Promise<NextResp
     // Tier hierarchy: FREE < CUSTOM < STARTER < GROWTH < ELITE < ENTERPRISE
     const tierAccess = ['STARTER', 'GROWTH', 'ELITE', 'ENTERPRISE']; // Transaction module requires STARTER+
     if (!tierAccess.includes(dbUser.subscription_tier)) {
-      const redirectResponse = NextResponse.redirect(new URL('/real-estate/dashboard?upgrade=starter', request.url));
+      const redirectResponse = NextResponse.redirect(new URL('/real-estate/user-dashboard?upgrade=starter', request.url));
       setNoCacheHeaders(redirectResponse);
       return redirectResponse;
     }
@@ -138,7 +138,7 @@ export async function handlePlatformAuth(request: NextRequest): Promise<NextResp
 
     // Check user role (only USER, MODERATOR, ADMIN, SUPER_ADMIN can access)
     if (!dbUser || !['USER', 'MODERATOR', 'ADMIN', 'SUPER_ADMIN'].includes(dbUser.role)) {
-      const redirectResponse = NextResponse.redirect(new URL('/real-estate/dashboard', request.url));
+      const redirectResponse = NextResponse.redirect(new URL('/real-estate/user-dashboard', request.url));
       setNoCacheHeaders(redirectResponse);
       return redirectResponse;
     }
@@ -147,7 +147,7 @@ export async function handlePlatformAuth(request: NextRequest): Promise<NextResp
     // Tier hierarchy: FREE < CUSTOM < STARTER < GROWTH < ELITE < ENTERPRISE
     const tierAccess = ['ELITE', 'ENTERPRISE']; // REID requires ELITE+
     if (!tierAccess.includes(dbUser.subscription_tier)) {
-      const redirectResponse = NextResponse.redirect(new URL('/real-estate/dashboard?upgrade=elite', request.url));
+      const redirectResponse = NextResponse.redirect(new URL('/real-estate/user-dashboard?upgrade=elite', request.url));
       setNoCacheHeaders(redirectResponse);
       return redirectResponse;
     }
@@ -167,27 +167,27 @@ export async function handlePlatformAuth(request: NextRequest): Promise<NextResp
 
     // If user has organization, redirect to dashboard (onboarding complete)
     if (dbUser?.organization_members && dbUser.organization_members.length > 0) {
-      const redirectResponse = NextResponse.redirect(new URL('/real-estate/dashboard', request.url));
+      const redirectResponse = NextResponse.redirect(new URL('/real-estate/user-dashboard', request.url));
       setNoCacheHeaders(redirectResponse);
       return redirectResponse;
     }
   }
 
   if (user && path === '/login') {
-    const redirectResponse = NextResponse.redirect(new URL('/real-estate/dashboard', request.url));
+    const redirectResponse = NextResponse.redirect(new URL('/real-estate/user-dashboard', request.url));
     setNoCacheHeaders(redirectResponse);
     return redirectResponse;
   }
 
   if (user && path === '/') {
-    const redirectResponse = NextResponse.redirect(new URL('/real-estate/dashboard', request.url));
+    const redirectResponse = NextResponse.redirect(new URL('/real-estate/user-dashboard', request.url));
     setNoCacheHeaders(redirectResponse);
     return redirectResponse;
   }
 
-  // Redirect old /dashboard to new /real-estate/dashboard
+  // Redirect old /dashboard to new /real-estate/user-dashboard
   if (user && path === '/dashboard') {
-    const redirectResponse = NextResponse.redirect(new URL('/real-estate/dashboard', request.url));
+    const redirectResponse = NextResponse.redirect(new URL('/real-estate/user-dashboard', request.url));
     setNoCacheHeaders(redirectResponse);
     return redirectResponse;
   }

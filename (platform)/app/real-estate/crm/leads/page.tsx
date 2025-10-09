@@ -8,7 +8,7 @@ import { LeadTable } from '@/components/real-estate/crm/leads/lead-table';
 import { LeadFormDialog } from '@/components/real-estate/crm/leads/lead-form-dialog';
 import { LeadFilters as LeadFiltersBar } from '@/components/real-estate/crm/leads/lead-filters';
 import { LeadSearch } from '@/components/real-estate/crm/leads/lead-search';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { EnhancedCard, CardContent, CardHeader, CardTitle } from '@/components/shared/dashboard/EnhancedCard';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Skeleton } from '@/components/ui/skeleton';
@@ -74,9 +74,15 @@ export default async function LeadsPage({
         <StatsCards />
       </Suspense>
 
-      <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between">
-        <LeadSearch />
-        <LeadFiltersBar />
+      <div>
+        <EnhancedCard glassEffect="medium" neonBorder="green" hoverEffect={true}>
+          <CardContent className="pt-6">
+            <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between">
+              <LeadSearch />
+              <LeadFiltersBar />
+            </div>
+          </CardContent>
+        </EnhancedCard>
       </div>
 
       <Tabs value={view} className="space-y-4">
@@ -118,38 +124,38 @@ async function StatsCards() {
 
   return (
     <div className="grid gap-4 md:grid-cols-4">
-      <Card>
+      <EnhancedCard glassEffect="medium" neonBorder="cyan" hoverEffect={true}>
         <CardHeader className="pb-3">
           <CardTitle className="text-sm font-medium">Total Leads</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="text-2xl font-bold">{stats.totalLeads}</div>
         </CardContent>
-      </Card>
-      <Card>
+      </EnhancedCard>
+      <EnhancedCard glassEffect="medium" neonBorder="green" hoverEffect={true}>
         <CardHeader className="pb-3">
           <CardTitle className="text-sm font-medium">New Leads</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="text-2xl font-bold">{stats.newLeads}</div>
         </CardContent>
-      </Card>
-      <Card>
+      </EnhancedCard>
+      <EnhancedCard glassEffect="medium" neonBorder="purple" hoverEffect={true}>
         <CardHeader className="pb-3">
           <CardTitle className="text-sm font-medium">Hot Leads</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="text-2xl font-bold text-red-600">{stats.hotLeads}</div>
         </CardContent>
-      </Card>
-      <Card>
+      </EnhancedCard>
+      <EnhancedCard glassEffect="medium" neonBorder="orange" hoverEffect={true}>
         <CardHeader className="pb-3">
           <CardTitle className="text-sm font-medium">Qualified</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="text-2xl font-bold text-green-600">{stats.qualifiedLeads}</div>
         </CardContent>
-      </Card>
+      </EnhancedCard>
     </div>
   );
 }
@@ -159,14 +165,14 @@ async function LeadsGrid({ filters, organizationId }: { filters: LeadFilters; or
 
   if (leads.length === 0) {
     return (
-      <Card>
+      <EnhancedCard glassEffect="medium" neonBorder="purple" hoverEffect={false}>
         <CardContent className="py-12 text-center">
           <p className="text-muted-foreground">No leads found.</p>
           <p className="text-sm text-muted-foreground mt-1">
             Create your first lead to get started.
           </p>
         </CardContent>
-      </Card>
+      </EnhancedCard>
     );
   }
 
@@ -186,17 +192,19 @@ async function LeadsTableView({ filters, organizationId }: { filters: LeadFilter
 }
 
 function StatsCardsSkeleton() {
+  const neonColors: Array<'cyan' | 'green' | 'purple' | 'orange'> = ['cyan', 'green', 'purple', 'orange'];
+
   return (
     <div className="grid gap-4 md:grid-cols-4">
       {Array.from({ length: 4 }).map((_, i) => (
-        <Card key={i}>
+        <EnhancedCard key={i} glassEffect="medium" neonBorder={neonColors[i]} hoverEffect={true}>
           <CardHeader className="pb-3">
             <Skeleton className="h-4 w-24" />
           </CardHeader>
           <CardContent>
             <Skeleton className="h-8 w-16" />
           </CardContent>
-        </Card>
+        </EnhancedCard>
       ))}
     </div>
   );
@@ -206,7 +214,7 @@ function LeadsGridSkeleton() {
   return (
     <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
       {Array.from({ length: 6 }).map((_, i) => (
-        <Card key={i}>
+        <EnhancedCard key={i} glassEffect="medium" neonBorder="purple" hoverEffect={true}>
           <CardHeader className="pb-3">
             <div className="flex items-center gap-3">
               <Skeleton className="h-10 w-10 rounded-full" />
@@ -219,7 +227,7 @@ function LeadsGridSkeleton() {
           <CardContent>
             <Skeleton className="h-20" />
           </CardContent>
-        </Card>
+        </EnhancedCard>
       ))}
     </div>
   );
@@ -227,8 +235,10 @@ function LeadsGridSkeleton() {
 
 function LeadsTableSkeleton() {
   return (
-    <div className="border rounded-lg p-4">
-      <Skeleton className="h-64" />
-    </div>
+    <EnhancedCard glassEffect="medium" neonBorder="purple" hoverEffect={false}>
+      <CardContent className="p-4">
+        <Skeleton className="h-64" />
+      </CardContent>
+    </EnhancedCard>
   );
 }

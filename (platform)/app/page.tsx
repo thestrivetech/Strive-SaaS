@@ -6,5 +6,5 @@ import { redirect } from 'next/navigation';
 export default function RootPage() {
   // Redirect to Real Estate dashboard by default
   // Middleware will handle auth and role-based redirects
-  redirect('/real-estate/dashboard');
+  redirect('/real-estate/user-dashboard');
 }

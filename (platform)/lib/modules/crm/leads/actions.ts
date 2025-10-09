@@ -81,7 +81,7 @@ export async function createLead(input: CreateLeadInput) {
 
       // Revalidate leads page
       revalidatePath('/crm/leads');
-      revalidatePath('/crm/dashboard');
+      revalidatePath('/crm/crm-dashboard');
 
       return lead;
     } catch (error) {
@@ -154,7 +154,7 @@ export async function updateLead(input: UpdateLeadInput) {
 
       revalidatePath('/crm/leads');
       revalidatePath(`/crm/leads/${id}`);
-      revalidatePath('/crm/dashboard');
+      revalidatePath('/crm/crm-dashboard');
 
       return lead;
     } catch (error) {
@@ -212,7 +212,7 @@ export async function deleteLead(leadId: string) {
       });
 
       revalidatePath('/crm/leads');
-      revalidatePath('/crm/dashboard');
+      revalidatePath('/crm/crm-dashboard');
 
       return { success: true };
     } catch (error) {
@@ -494,7 +494,7 @@ export async function convertLead(leadId: string) {
 
       revalidatePath('/crm/leads');
       revalidatePath('/crm/contacts');
-      revalidatePath('/crm/dashboard');
+      revalidatePath('/crm/crm-dashboard');
 
       return { contact };
     } catch (error) {

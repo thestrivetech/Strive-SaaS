@@ -2,7 +2,6 @@ import { Suspense } from 'react';
 import { Metadata } from 'next';
 import { requireAuth, getCurrentUser } from '@/lib/auth/auth-helpers';
 import { redirect } from 'next/navigation';
-import { motion } from 'framer-motion';
 import { CategoryManager } from '@/components/real-estate/expense-tax/settings/CategoryManager';
 import { ExpensePreferences } from '@/components/real-estate/expense-tax/settings/ExpensePreferences';
 import { TaxConfiguration } from '@/components/real-estate/expense-tax/settings/TaxConfiguration';
@@ -54,12 +53,7 @@ export default async function ExpenseSettingsPage() {
       </Suspense>
 
       {/* Main Content: 2-Column Layout (Desktop) / Stacked (Mobile) */}
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.3 }}
-        className="grid grid-cols-1 lg:grid-cols-3 gap-6"
-      >
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Left Column: Category Management */}
         <div className="lg:col-span-2 space-y-6">
           {/* Category Manager */}
@@ -112,7 +106,7 @@ export default async function ExpenseSettingsPage() {
             </CardContent>
           </EnhancedCard>
         </div>
-      </motion.div>
+      </div>
     </div>
   );
 }

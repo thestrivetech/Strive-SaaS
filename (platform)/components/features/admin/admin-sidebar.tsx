@@ -90,7 +90,7 @@ export function AdminSidebar() {
           {/* Footer */}
           <div className="p-4 border-t">
             <Button variant="outline" className="w-full" asChild>
-              <Link href="/real-estate/dashboard">Exit Admin</Link>
+              <Link href="/real-estate/user-dashboard">Exit Admin</Link>
             </Button>
           </div>
         </div>

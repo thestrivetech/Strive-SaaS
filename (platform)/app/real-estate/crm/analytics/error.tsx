@@ -35,7 +35,7 @@ export default function AnalyticsError({
             Retry
           </Button>
           <Button asChild variant="outline" className="w-full">
-            <Link href="/real-estate/crm/dashboard">
+            <Link href="/real-estate/crm/crm-dashboard">
               <ArrowLeft className="mr-2 h-4 w-4" />
               Back to CRM
             </Link>

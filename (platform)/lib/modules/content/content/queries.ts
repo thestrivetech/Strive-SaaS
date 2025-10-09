@@ -5,6 +5,7 @@ import { requireAuth, getCurrentUser } from '@/lib/auth/middleware';
 import { ContentFilters } from './schemas';
 import { cache } from 'react';
 import { getUserOrganizationId } from '@/lib/auth/user-helpers';
+import { contentProvider } from '@/lib/data/providers/content-provider';
 
 /**
  * Content Module - Data Queries
@@ -48,11 +49,17 @@ async function withContentContext<T>(callback: () => Promise<T>): Promise<T> {
  * - Cached at request level with React cache()
  */
 export const getContentItems = cache(async (filters?: ContentFilters) => {
-  return withContentContext(async () => {
-    const user = await getCurrentUser();
-    if (!user) throw new Error('Unauthorized');
+  const user = await getCurrentUser();
+  if (!user) throw new Error('Unauthorized');
 
-    const organization_id = getUserOrganizationId(user);
+  const organization_id = getUserOrganizationId(user);
+  const useMocks = process.env.NEXT_PUBLIC_USE_MOCKS === 'true';
+
+  if (useMocks) {
+    return contentProvider.findMany(organization_id, filters);
+  }
+
+  return withContentContext(async () => {
     const where: any = {
       organization_id, // Multi-tenant isolation
     };
@@ -195,12 +202,17 @@ export const getContentBySlug = cache(async (slug: string, org_id: string) => {
  * @returns Promise<object> - Content stats (total, published, draft, scheduled)
  */
 export const getContentStats = cache(async () => {
+  const user = await getCurrentUser();
+  if (!user) throw new Error('Unauthorized');
+
+  const organization_id = getUserOrganizationId(user);
+  const useMocks = process.env.NEXT_PUBLIC_USE_MOCKS === 'true';
+
+  if (useMocks) {
+    return contentProvider.getStats(organization_id);
+  }
+
   return withContentContext(async () => {
-    const user = await getCurrentUser();
-    if (!user) throw new Error('Unauthorized');
-
-    const organization_id = getUserOrganizationId(user);
-
     const [total, published, draft, scheduled] = await Promise.all([
       prisma.content_items.count({
         where: { organization_id },

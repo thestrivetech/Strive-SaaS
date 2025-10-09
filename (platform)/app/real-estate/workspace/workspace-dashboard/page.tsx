@@ -13,7 +13,6 @@ import { EnhancedCard, CardHeader, CardTitle, CardDescription, CardContent } fro
 import { HeroSkeleton } from '@/components/shared/dashboard/skeletons';
 import { getCurrentUser } from '@/lib/auth/auth-helpers';
 import { redirect } from 'next/navigation';
-import { motion } from 'framer-motion';
 
 export const metadata = {
   title: 'Workspace Dashboard | Transaction Management',
@@ -84,12 +83,7 @@ export default async function WorkspaceDashboardPage() {
       </Suspense>
 
       {/* Main Content */}
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.3 }}
-        className="space-y-6 px-4 sm:px-6"
-      >
+      <div className="space-y-6 px-4 sm:px-6">
         {/* Stats Cards */}
         <EnhancedCard glassEffect="strong" neonBorder="cyan" hoverEffect={true}>
           <StatsCards stats={stats} />
@@ -180,15 +174,10 @@ export default async function WorkspaceDashboardPage() {
             )}
           </CardContent>
         </EnhancedCard>
-      </motion.div>
+      </div>
 
       {/* Navigation Cards */}
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.5 }}
-        className="grid grid-cols-1 md:grid-cols-3 gap-4 px-4 sm:px-6"
-      >
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 px-4 sm:px-6">
         <Link href="/real-estate/workspace/listings">
           <EnhancedCard glassEffect="medium" neonBorder="orange" hoverEffect={true} className="cursor-pointer">
             <CardHeader>
@@ -207,7 +196,7 @@ export default async function WorkspaceDashboardPage() {
           </EnhancedCard>
         </Link>
 
-        <Link href="/real-estate/crm/dashboard">
+        <Link href="/real-estate/crm/crm-dashboard">
           <EnhancedCard glassEffect="medium" neonBorder="purple" hoverEffect={true} className="cursor-pointer">
             <CardHeader>
               <CardTitle className="text-lg">CRM</CardTitle>
@@ -215,7 +204,7 @@ export default async function WorkspaceDashboardPage() {
             </CardHeader>
           </EnhancedCard>
         </Link>
-      </motion.div>
+      </div>
     </div>
   );
 }

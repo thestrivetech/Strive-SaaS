@@ -16,6 +16,10 @@ export { dataConfig, simulateDelay, maybeThrowError } from './config';
 // CRM Providers
 export { contactsProvider, leadsProvider, customersProvider } from './providers/crm-provider';
 
+// CMS & Marketing Providers
+export { contentProvider } from './providers/content-provider';
+export { campaignsProvider } from './providers/campaigns-provider';
+
 // Marketplace Providers
 export {
   toolsProvider,
@@ -36,6 +40,7 @@ export { getRecentActivities } from './providers/activities-provider';
 
 // Mock types (for TypeScript)
 export type { MockContact, MockLead, MockCustomer } from './mocks/crm';
+export type { MockContentItem, MockCampaign, MockEmailCampaign } from './mocks/content';
 export type {
   MockTool,
   MockBundle,

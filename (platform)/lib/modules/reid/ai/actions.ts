@@ -77,7 +77,7 @@ export async function requestAIProfile(input: AIProfileRequest) {
   });
 
   // Revalidate relevant paths
-  revalidatePath('/real-estate/reid/dashboard');
+  revalidatePath('/real-estate/reid/reid-dashboard');
   revalidatePath('/real-estate/reid/insights');
   revalidatePath(`/real-estate/reid/insights/${insight.id}`);
 
@@ -289,7 +289,7 @@ export async function regenerateAIProfile(insightId: string) {
   });
 
   // Revalidate paths
-  revalidatePath('/real-estate/reid/dashboard');
+  revalidatePath('/real-estate/reid/reid-dashboard');
   revalidatePath('/real-estate/reid/insights');
   revalidatePath(`/real-estate/reid/insights/${insight.id}`);
 

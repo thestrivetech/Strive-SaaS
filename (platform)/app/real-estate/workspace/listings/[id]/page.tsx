@@ -5,7 +5,7 @@ import Image from 'next/image';
 import { requireAuth, getCurrentUser } from '@/lib/auth/auth-helpers';
 import { getListingWithFullHistory } from '@/lib/modules/transactions/listings';
 import { ListingStatusBadge } from '@/components/real-estate/crm/listings/listing-status-badge';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { EnhancedCard, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/shared/dashboard/EnhancedCard';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Skeleton } from '@/components/ui/skeleton';
@@ -95,7 +95,7 @@ async function ListingDetail({ listingId }: { listingId: string }) {
         {/* Left Column - Main Info */}
         <div className="md:col-span-2 space-y-6">
           {/* Image */}
-          <Card>
+          <EnhancedCard glassEffect="strong" neonBorder="cyan" hoverEffect={true}>
             <CardContent className="p-0">
               <div className="relative h-96 w-full bg-gray-100">
                 <Image
@@ -126,10 +126,10 @@ async function ListingDetail({ listingId }: { listingId: string }) {
                 </div>
               )}
             </CardContent>
-          </Card>
+          </EnhancedCard>
 
           {/* Description */}
-          <Card>
+          <EnhancedCard glassEffect="strong" neonBorder="purple" hoverEffect={true}>
             <CardHeader>
               <CardTitle>Description</CardTitle>
             </CardHeader>
@@ -138,11 +138,11 @@ async function ListingDetail({ listingId }: { listingId: string }) {
                 {listing.description || 'No description provided.'}
               </p>
             </CardContent>
-          </Card>
+          </EnhancedCard>
 
           {/* Features */}
           {listing.features && listing.features.length > 0 && (
-            <Card>
+            <EnhancedCard glassEffect="strong" neonBorder="green" hoverEffect={true}>
               <CardHeader>
                 <CardTitle>Features</CardTitle>
               </CardHeader>
@@ -155,12 +155,12 @@ async function ListingDetail({ listingId }: { listingId: string }) {
                   ))}
                 </div>
               </CardContent>
-            </Card>
+            </EnhancedCard>
           )}
 
           {/* Activities */}
           {listing.activities && listing.activities.length > 0 && (
-            <Card>
+            <EnhancedCard glassEffect="strong" neonBorder="orange" hoverEffect={true}>
               <CardHeader>
                 <CardTitle>Recent Activity</CardTitle>
                 <CardDescription>Property showings and updates</CardDescription>
@@ -179,14 +179,14 @@ async function ListingDetail({ listingId }: { listingId: string }) {
                   ))}
                 </div>
               </CardContent>
-            </Card>
+            </EnhancedCard>
           )}
         </div>
 
         {/* Right Column - Details */}
         <div className="space-y-6">
           {/* Price */}
-          <Card>
+          <EnhancedCard glassEffect="strong" neonBorder="cyan" hoverEffect={true}>
             <CardHeader>
               <CardTitle className="text-3xl text-green-600">
                 {formatCurrency(Number(listing.price))}
@@ -197,10 +197,10 @@ async function ListingDetail({ listingId }: { listingId: string }) {
                 </CardDescription>
               )}
             </CardHeader>
-          </Card>
+          </EnhancedCard>
 
           {/* Property Details */}
-          <Card>
+          <EnhancedCard glassEffect="strong" neonBorder="purple" hoverEffect={true}>
             <CardHeader>
               <CardTitle>Property Details</CardTitle>
             </CardHeader>
@@ -262,11 +262,11 @@ async function ListingDetail({ listingId }: { listingId: string }) {
                 </>
               )}
             </CardContent>
-          </Card>
+          </EnhancedCard>
 
           {/* Agent Info */}
           {listing.assigned_to && (
-            <Card>
+            <EnhancedCard glassEffect="strong" neonBorder="green" hoverEffect={true}>
               <CardHeader>
                 <CardTitle>Listing Agent</CardTitle>
               </CardHeader>
@@ -293,12 +293,12 @@ async function ListingDetail({ listingId }: { listingId: string }) {
                   </div>
                 </div>
               </CardContent>
-            </Card>
+            </EnhancedCard>
           )}
 
           {/* Virtual Tour */}
           {listing.virtual_tour_url && (
-            <Card>
+            <EnhancedCard glassEffect="strong" neonBorder="orange" hoverEffect={true}>
               <CardHeader>
                 <CardTitle>Virtual Tour</CardTitle>
               </CardHeader>
@@ -310,7 +310,7 @@ async function ListingDetail({ listingId }: { listingId: string }) {
                   </a>
                 </Button>
               </CardContent>
-            </Card>
+            </EnhancedCard>
           )}
         </div>
       </div>

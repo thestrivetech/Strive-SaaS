@@ -55,7 +55,7 @@ export async function createNeighborhoodInsight(input: NeighborhoodInsightInput)
     }
   });
 
-  revalidatePath('/real-estate/reid/dashboard');
+  revalidatePath('/real-estate/reid/reid-dashboard');
   revalidatePath('/real-estate/reid/insights');
 
   return insight;
@@ -100,7 +100,7 @@ export async function updateNeighborhoodInsight(
     }
   });
 
-  revalidatePath('/real-estate/reid/dashboard');
+  revalidatePath('/real-estate/reid/reid-dashboard');
   revalidatePath(`/real-estate/reid/insights/${id}`);
 
   return updated;
@@ -129,6 +129,6 @@ export async function deleteNeighborhoodInsight(id: string) {
     where: { id }
   });
 
-  revalidatePath('/real-estate/reid/dashboard');
+  revalidatePath('/real-estate/reid/reid-dashboard');
   revalidatePath('/real-estate/reid/insights');
 }

@@ -3,7 +3,7 @@ import { requireAuth, getCurrentUser } from '@/lib/auth/auth-helpers';
 import { getDealsByStage, getDealMetrics } from '@/lib/modules/crm/deals';
 import { PipelineBoard } from '@/components/real-estate/crm/deals/pipeline-board';
 import { DealFormDialog } from '@/components/real-estate/crm/deals/deal-form-dialog';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { EnhancedCard, CardContent, CardHeader, CardTitle } from '@/components/shared/dashboard/EnhancedCard';
 import { Loader2, DollarSign, TrendingUp, BarChart3, Target } from 'lucide-react';
 import { formatCurrency } from '@/lib/utils';
 
@@ -52,7 +52,7 @@ async function MetricsCards() {
 
   return (
     <div className="grid gap-4 md:grid-cols-4">
-      <Card>
+      <EnhancedCard glassEffect="medium" neonBorder="cyan" hoverEffect={true}>
         <CardHeader className="pb-2">
           <CardTitle className="text-sm font-medium flex items-center gap-2">
             <DollarSign className="h-4 w-4 text-green-600" />
@@ -67,9 +67,9 @@ async function MetricsCards() {
             {metrics.activeDeals} active deals
           </p>
         </CardContent>
-      </Card>
+      </EnhancedCard>
 
-      <Card>
+      <EnhancedCard glassEffect="medium" neonBorder="green" hoverEffect={true}>
         <CardHeader className="pb-2">
           <CardTitle className="text-sm font-medium flex items-center gap-2">
             <TrendingUp className="h-4 w-4 text-blue-600" />
@@ -84,9 +84,9 @@ async function MetricsCards() {
             {metrics.wonDeals} deals won
           </p>
         </CardContent>
-      </Card>
+      </EnhancedCard>
 
-      <Card>
+      <EnhancedCard glassEffect="medium" neonBorder="purple" hoverEffect={true}>
         <CardHeader className="pb-2">
           <CardTitle className="text-sm font-medium flex items-center gap-2">
             <Target className="h-4 w-4 text-purple-600" />
@@ -101,9 +101,9 @@ async function MetricsCards() {
             Conversion rate
           </p>
         </CardContent>
-      </Card>
+      </EnhancedCard>
 
-      <Card>
+      <EnhancedCard glassEffect="medium" neonBorder="orange" hoverEffect={true}>
         <CardHeader className="pb-2">
           <CardTitle className="text-sm font-medium flex items-center gap-2">
             <BarChart3 className="h-4 w-4 text-orange-600" />
@@ -118,7 +118,7 @@ async function MetricsCards() {
             Per deal average
           </p>
         </CardContent>
-      </Card>
+      </EnhancedCard>
     </div>
   );
 }
@@ -135,10 +135,12 @@ async function PipelineContent() {
 }
 
 function MetricsCardsSkeleton() {
+  const neonColors: Array<'cyan' | 'green' | 'purple' | 'orange'> = ['cyan', 'green', 'purple', 'orange'];
+
   return (
     <div className="grid gap-4 md:grid-cols-4">
       {[...Array(4)].map((_, i) => (
-        <Card key={i}>
+        <EnhancedCard key={i} glassEffect="medium" neonBorder={neonColors[i]} hoverEffect={true}>
           <CardHeader className="pb-2">
             <div className="h-4 bg-muted rounded w-24 animate-pulse" />
           </CardHeader>
@@ -146,7 +148,7 @@ function MetricsCardsSkeleton() {
             <div className="h-8 bg-muted rounded w-32 animate-pulse" />
             <div className="h-3 bg-muted rounded w-20 mt-2 animate-pulse" />
           </CardContent>
-        </Card>
+        </EnhancedCard>
       ))}
     </div>
   );
@@ -159,7 +161,7 @@ function PipelineSkeleton() {
       <div className="flex gap-4 overflow-x-auto">
         {[...Array(5)].map((_, i) => (
           <div key={i} className="flex-shrink-0 w-80">
-            <Card>
+            <EnhancedCard glassEffect="medium" neonBorder="purple" hoverEffect={false}>
               <CardHeader className="pb-3">
                 <div className="h-4 bg-muted rounded w-20 animate-pulse" />
               </CardHeader>
@@ -168,7 +170,7 @@ function PipelineSkeleton() {
                   <Loader2 className="h-8 w-8 animate-spin mx-auto mt-40 text-muted-foreground" />
                 </div>
               </CardContent>
-            </Card>
+            </EnhancedCard>
           </div>
         ))}
       </div>

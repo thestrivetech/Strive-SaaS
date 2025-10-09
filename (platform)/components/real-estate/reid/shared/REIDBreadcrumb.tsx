@@ -32,7 +32,7 @@ export function REIDBreadcrumb() {
   return (
     <nav className="flex items-center space-x-2 text-sm">
       <Link
-        href="/real-estate/dashboard"
+        href="/real-estate/user-dashboard"
         className="flex items-center text-slate-400 hover:text-cyan-400 transition-colors"
       >
         <Home className="w-4 h-4" />

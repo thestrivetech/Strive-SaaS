@@ -22,7 +22,6 @@ import { MarketplaceGrid } from '@/components/real-estate/marketplace/grid/Marke
 import { BundleGrid } from '@/components/real-estate/marketplace/bundles/BundleGrid';
 import { ShoppingCartPanel } from '@/components/real-estate/marketplace/cart/ShoppingCartPanel';
 import { getShoppingCart } from '@/lib/modules/marketplace';
-import { motion } from 'framer-motion';
 
 /**
  * Marketplace Dashboard Page
@@ -123,12 +122,7 @@ export default async function MarketplaceDashboardPage({
       </Suspense>
 
       {/* Main Content Grid */}
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.3 }}
-        className="grid gap-6 lg:grid-cols-4"
-      >
+      <div className="grid gap-6 lg:grid-cols-4">
         {/* Left Column - 3/4 width */}
         <div className="lg:col-span-3 space-y-6">
           {/* Tabs for Tools and Bundles */}
@@ -279,7 +273,7 @@ export default async function MarketplaceDashboardPage({
         <div className="lg:col-span-1">
           <ShoppingCartPanel userId={user.id} />
         </div>
-      </motion.div>
+      </div>
     </div>
   );
 }

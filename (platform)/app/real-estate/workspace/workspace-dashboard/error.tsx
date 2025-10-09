@@ -46,7 +46,7 @@ export default function WorkspaceDashboardError({
               <RefreshCw className="h-4 w-4 mr-2" />
               Try Again
             </Button>
-            <Link href="/real-estate/dashboard">
+            <Link href="/real-estate/user-dashboard">
               <Button variant="outline">
                 <Home className="h-4 w-4 mr-2" />
                 Return to Industry Dashboard

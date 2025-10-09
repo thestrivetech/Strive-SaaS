@@ -2,7 +2,9 @@ import { Suspense } from 'react';
 import { requireAuth, getCurrentUser } from '@/lib/auth/auth-helpers';
 import { redirect } from 'next/navigation';
 import Link from 'next/link';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardDescription } from '@/components/ui/card';
+import { ModuleHeroSection } from '@/components/shared/dashboard/ModuleHeroSection';
+import { EnhancedCard, CardHeader, CardTitle, CardContent } from '@/components/shared/dashboard/EnhancedCard';
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
 import {
@@ -14,7 +16,6 @@ import {
   CheckCircle2,
   TrendingUp,
   ArrowRight,
-  Plus,
 } from 'lucide-react';
 import {
   getCMSDashboardStats,
@@ -48,43 +49,47 @@ export default async function CMSMarketingDashboardPage() {
     redirect('/onboarding/organization');
   }
 
-  // Helper function for personalized greeting
-  const getGreeting = () => {
-    const hour = new Date().getHours();
-    if (hour < 12) return 'Good Morning';
-    if (hour < 17) return 'Good Afternoon';
-    return 'Good Evening';
-  };
+  // Fetch stats for ModuleHeroSection
+  const dashboardStats = await getCMSDashboardStats();
 
-  const firstName = user.name?.split(' ')[0] || 'User';
+  // Create stats array for hero
+  const stats = [
+    {
+      label: 'Total Content',
+      value: dashboardStats.totalContent.toString(),
+      icon: 'custom' as const,
+      customIcon: FileText,
+    },
+    {
+      label: 'Published',
+      value: dashboardStats.publishedContent.toString(),
+      icon: 'custom' as const,
+      customIcon: CheckCircle2,
+    },
+    {
+      label: 'Active Campaigns',
+      value: dashboardStats.activeCampaigns.toString(),
+      icon: 'custom' as const,
+      customIcon: TrendingUp,
+    },
+    {
+      label: 'Total Views',
+      value: dashboardStats.totalViews.toLocaleString(),
+      icon: 'custom' as const,
+      customIcon: Eye,
+    },
+  ];
 
   return (
     <div className="space-y-6">
       {/* Hero Section */}
-      <div className="glass-strong rounded-2xl p-6 sm:p-8 neon-border-cyan mb-6">
-        <div>
-          <h1 className="text-3xl sm:text-4xl font-bold mb-2">
-            <span className="inline-block">{getGreeting()},</span>{' '}
-            <span className="bg-gradient-to-r from-primary via-chart-2 to-chart-3 bg-clip-text text-transparent">
-              {firstName}
-            </span>
-          </h1>
-          <h2 className="text-xl sm:text-2xl font-semibold text-primary mb-2">
-            CMS & Marketing
-          </h2>
-          <p className="text-muted-foreground">
-            Manage your content and marketing campaigns
-          </p>
-        </div>
-        <div className="mt-6">
-          <Button asChild>
-            <Link href="/real-estate/cms-marketing/content/editor">
-              <Plus className="mr-2 h-4 w-4" />
-              Create Content
-            </Link>
-          </Button>
-        </div>
-      </div>
+      <ModuleHeroSection
+        user={user}
+        moduleName="CMS & Marketing"
+        moduleDescription="Manage your content and marketing campaigns"
+        stats={stats}
+        showWeather={false}
+      />
 
       {/* Overview Stats */}
       <Suspense fallback={<StatsLoadingSkeleton />}>
@@ -135,7 +140,7 @@ export default async function CMSMarketingDashboardPage() {
       </div>
 
       {/* Quick Actions */}
-      <Card className="glass neon-border-orange">
+      <EnhancedCard glassEffect="medium" neonBorder="orange" hoverEffect={true}>
         <CardHeader>
           <CardTitle>Quick Actions</CardTitle>
           <CardDescription>Common tasks to get you started</CardDescription>
@@ -159,7 +164,7 @@ export default async function CMSMarketingDashboardPage() {
             </Button>
           </div>
         </CardContent>
-      </Card>
+      </EnhancedCard>
     </div>
   );
 }
@@ -205,7 +210,7 @@ async function RecentContentSection() {
   const recentContent = await getRecentContent();
 
   return (
-    <Card className="glass-strong neon-border-green">
+    <EnhancedCard glassEffect="strong" neonBorder="green" hoverEffect={true}>
       <CardHeader>
         <div className="flex items-center justify-between">
           <CardTitle>Recent Content</CardTitle>
@@ -256,7 +261,7 @@ async function RecentContentSection() {
           </div>
         )}
       </CardContent>
-    </Card>
+    </EnhancedCard>
   );
 }
 
@@ -265,7 +270,7 @@ async function RecentCampaignsSection() {
   const recentCampaigns = await getRecentCampaigns();
 
   return (
-    <Card className="glass-strong neon-border-green">
+    <EnhancedCard glassEffect="strong" neonBorder="green" hoverEffect={true}>
       <CardHeader>
         <div className="flex items-center justify-between">
           <CardTitle>Recent Campaigns</CardTitle>
@@ -316,7 +321,7 @@ async function RecentCampaignsSection() {
           </div>
         )}
       </CardContent>
-    </Card>
+    </EnhancedCard>
   );
 }
 
@@ -332,7 +337,7 @@ interface StatCardProps {
 
 function StatCard({ icon: Icon, title, value, description }: StatCardProps) {
   return (
-    <Card className="glass-strong neon-border-purple hover:shadow-lg transition-all">
+    <EnhancedCard glassEffect="strong" neonBorder="purple" hoverEffect={true}>
       <CardHeader className="flex flex-row items-center justify-between pb-2">
         <CardTitle className="text-sm font-medium">{title}</CardTitle>
         <Icon className="h-4 w-4 text-muted-foreground" />
@@ -343,7 +348,7 @@ function StatCard({ icon: Icon, title, value, description }: StatCardProps) {
           {description}
         </p>
       </CardContent>
-    </Card>
+    </EnhancedCard>
   );
 }
 
@@ -358,7 +363,7 @@ interface FeatureCardProps {
 
 function FeatureCard({ icon: Icon, title, description, href, stats, badge }: FeatureCardProps) {
   return (
-    <Card className="glass neon-border-cyan hover:shadow-md transition-all hover:-translate-y-1">
+    <EnhancedCard glassEffect="medium" neonBorder="cyan" hoverEffect={true}>
       <CardHeader>
         <div className="flex items-start justify-between">
           <div className="flex items-center gap-3">
@@ -390,7 +395,7 @@ function FeatureCard({ icon: Icon, title, description, href, stats, badge }: Fea
           )}
         </div>
       </CardContent>
-    </Card>
+    </EnhancedCard>
   );
 }
 

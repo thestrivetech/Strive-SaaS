@@ -16,7 +16,6 @@ import { Button } from '@/components/ui/button';
 import { ArrowRight } from 'lucide-react';
 import Link from 'next/link';
 import { subDays } from 'date-fns';
-import { motion } from 'framer-motion';
 
 /**
  * CRM Dashboard Page
@@ -73,12 +72,7 @@ export default async function CRMDashboardPage() {
       </div>
 
       {/* Main Content Grid */}
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.3 }}
-        className="grid gap-6 lg:grid-cols-3"
-      >
+      <div className="grid gap-6 lg:grid-cols-3">
         {/* Left Column - 2/3 width */}
         <div className="lg:col-span-2 space-y-6">
           {/* Recent Leads */}
@@ -217,7 +211,7 @@ export default async function CRMDashboardPage() {
             <AgentLeaderboard agents={agentPerformance.slice(0, 4) as any} />
           </EnhancedCard>
         </div>
-      </motion.div>
+      </div>
     </div>
   );
 }

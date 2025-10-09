@@ -23,7 +23,7 @@ export default async function PlatformAdminLayout({
 
   // RBAC: Only SUPER_ADMIN can access platform admin
   if (!canAccessPlatformAdmin(user.role)) {
-    redirect('/real-estate/dashboard');
+    redirect('/real-estate/user-dashboard');
   }
 
   return (

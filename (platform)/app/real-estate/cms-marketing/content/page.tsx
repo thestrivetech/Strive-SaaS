@@ -1,7 +1,7 @@
 import { Suspense } from 'react';
 import { redirect } from 'next/navigation';
 import Link from 'next/link';
-import { requireAuth } from '@/lib/auth/auth-helpers';
+import { requireAuth, getCurrentUser } from '@/lib/auth/auth-helpers';
 import { canAccessContent } from '@/lib/auth/rbac';
 import {
   getContentItems,
@@ -9,7 +9,9 @@ import {
   type ContentFilters,
 } from '@/lib/modules/content/content';
 import { ContentListTable } from '@/components/real-estate/content/content-list-table';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { ModuleHeroSection } from '@/components/shared/dashboard/ModuleHeroSection';
+import { EnhancedCard, CardHeader, CardTitle, CardContent } from '@/components/shared/dashboard/EnhancedCard';
+import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Skeleton } from '@/components/ui/skeleton';
@@ -31,7 +33,18 @@ interface ContentPageProps {
 }
 
 export default async function ContentPage({ searchParams }: ContentPageProps) {
-  const user = await requireAuth();
+  await requireAuth();
+  const user = await getCurrentUser();
+
+  if (!user) {
+    redirect('/login');
+  }
+
+  const organizationId = user.organization_members[0]?.organization_id;
+
+  if (!organizationId) {
+    redirect('/onboarding/organization');
+  }
 
   // Check RBAC permissions
   if (!canAccessContent(user)) {
@@ -51,6 +64,37 @@ export default async function ContentPage({ searchParams }: ContentPageProps) {
     );
   }
 
+  // Fetch stats BEFORE return for ModuleHeroSection
+  const stats = await getContentStats();
+
+  // Create stats array for ModuleHeroSection
+  const heroStats = [
+    {
+      label: 'Total Content',
+      value: stats.total.toString(),
+      icon: 'custom' as const,
+      customIcon: FileText,
+    },
+    {
+      label: 'Published',
+      value: stats.published.toString(),
+      icon: 'custom' as const,
+      customIcon: CheckCircle,
+    },
+    {
+      label: 'Draft',
+      value: stats.draft.toString(),
+      icon: 'custom' as const,
+      customIcon: Archive,
+    },
+    {
+      label: 'Scheduled',
+      value: stats.scheduled.toString(),
+      icon: 'custom' as const,
+      customIcon: Clock,
+    },
+  ];
+
   const params = await searchParams;
 
   // Build filters
@@ -64,14 +108,17 @@ export default async function ContentPage({ searchParams }: ContentPageProps) {
 
   return (
     <div className="space-y-6 p-6">
-      {/* Header */}
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-3xl font-bold tracking-tight">Content Library</h1>
-          <p className="text-muted-foreground">
-            Create and manage your content for websites, blogs, and marketing materials
-          </p>
-        </div>
+      {/* Hero Section */}
+      <ModuleHeroSection
+        user={user}
+        moduleName="Content Library"
+        moduleDescription="Create and manage your content for websites, blogs, and marketing materials"
+        stats={heroStats}
+        showWeather={false}
+      />
+
+      {/* Action button */}
+      <div className="flex justify-end">
         <Link href="/real-estate/cms-marketing/content/editor">
           <Button>
             <Plus className="mr-2 h-4 w-4" />
@@ -80,108 +127,58 @@ export default async function ContentPage({ searchParams }: ContentPageProps) {
         </Link>
       </div>
 
-      {/* Stats Cards */}
-      <Suspense fallback={<StatsCardsSkeleton />}>
-        <StatsCards />
-      </Suspense>
-
       {/* Filters & Search */}
-      <Card>
-        <CardContent className="pt-6">
-          <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4">
-            <div className="relative flex-1 w-full">
-              <label htmlFor="content-search" className="sr-only">
-                Search content
-              </label>
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" aria-hidden="true" />
-              <Input
-                id="content-search"
-                type="search"
-                placeholder="Search content..."
-                className="pl-10 min-h-[44px]"
-                defaultValue={params.search}
-                aria-label="Search content items"
-              />
+      <div>
+        <EnhancedCard glassEffect="medium" neonBorder="cyan" hoverEffect={true}>
+          <CardContent className="pt-6">
+            <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4">
+              <div className="relative flex-1 w-full">
+                <label htmlFor="content-search" className="sr-only">
+                  Search content
+                </label>
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" aria-hidden="true" />
+                <Input
+                  id="content-search"
+                  type="search"
+                  placeholder="Search content..."
+                  className="pl-10 min-h-[44px]"
+                  defaultValue={params.search}
+                  aria-label="Search content items"
+                />
+              </div>
+              <div className="flex gap-2 flex-wrap" role="group" aria-label="Filter content by status">
+                <FilterButton
+                  href="?"
+                  label="All"
+                  active={!params.status}
+                />
+                <FilterButton
+                  href="?status=PUBLISHED"
+                  label="Published"
+                  active={params.status === 'PUBLISHED'}
+                />
+                <FilterButton
+                  href="?status=DRAFT"
+                  label="Draft"
+                  active={params.status === 'DRAFT'}
+                />
+                <FilterButton
+                  href="?status=SCHEDULED"
+                  label="Scheduled"
+                  active={params.status === 'SCHEDULED'}
+                />
+              </div>
             </div>
-            <div className="flex gap-2 flex-wrap" role="group" aria-label="Filter content by status">
-              <FilterButton
-                href="?"
-                label="All"
-                active={!params.status}
-              />
-              <FilterButton
-                href="?status=PUBLISHED"
-                label="Published"
-                active={params.status === 'PUBLISHED'}
-              />
-              <FilterButton
-                href="?status=DRAFT"
-                label="Draft"
-                active={params.status === 'DRAFT'}
-              />
-              <FilterButton
-                href="?status=SCHEDULED"
-                label="Scheduled"
-                active={params.status === 'SCHEDULED'}
-              />
-            </div>
-          </div>
-        </CardContent>
-      </Card>
+          </CardContent>
+        </EnhancedCard>
+      </div>
 
       {/* Content List */}
-      <Suspense fallback={<ContentListSkeleton />}>
-        <ContentList filters={filters} organizationId={user.organizationId} />
-      </Suspense>
-    </div>
-  );
-}
-
-// Stats Cards Component
-async function StatsCards() {
-  const stats = await getContentStats();
-
-  return (
-    <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-      <Card>
-        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-          <CardTitle className="text-sm font-medium">Total Content</CardTitle>
-          <FileText className="h-4 w-4 text-muted-foreground" />
-        </CardHeader>
-        <CardContent>
-          <div className="text-2xl font-bold">{stats.total}</div>
-        </CardContent>
-      </Card>
-
-      <Card>
-        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-          <CardTitle className="text-sm font-medium">Published</CardTitle>
-          <CheckCircle className="h-4 w-4 text-muted-foreground" />
-        </CardHeader>
-        <CardContent>
-          <div className="text-2xl font-bold">{stats.published}</div>
-        </CardContent>
-      </Card>
-
-      <Card>
-        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-          <CardTitle className="text-sm font-medium">Draft</CardTitle>
-          <Archive className="h-4 w-4 text-muted-foreground" />
-        </CardHeader>
-        <CardContent>
-          <div className="text-2xl font-bold">{stats.draft}</div>
-        </CardContent>
-      </Card>
-
-      <Card>
-        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-          <CardTitle className="text-sm font-medium">Scheduled</CardTitle>
-          <Clock className="h-4 w-4 text-muted-foreground" />
-        </CardHeader>
-        <CardContent>
-          <div className="text-2xl font-bold">{stats.scheduled}</div>
-        </CardContent>
-      </Card>
+      <div>
+        <Suspense fallback={<ContentListSkeleton />}>
+          <ContentList filters={filters} organizationId={organizationId} />
+        </Suspense>
+      </div>
     </div>
   );
 }
@@ -198,7 +195,7 @@ async function ContentList({
 
   if (content.length === 0) {
     return (
-      <Card>
+      <EnhancedCard glassEffect="medium" neonBorder="green" hoverEffect={false}>
         <CardContent className="text-center py-12">
           <p className="text-muted-foreground">
             No content found. {filters.search || filters.status
@@ -214,7 +211,7 @@ async function ContentList({
             </Link>
           )}
         </CardContent>
-      </Card>
+      </EnhancedCard>
     );
   }
 
@@ -241,25 +238,6 @@ function FilterButton({
 }
 
 // Loading Skeletons
-function StatsCardsSkeleton() {
-  return (
-    <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4" role="status" aria-label="Loading statistics">
-      <span className="sr-only">Loading content statistics...</span>
-      {[...Array(4)].map((_, i) => (
-        <Card key={i}>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <Skeleton className="h-4 w-24" />
-            <Skeleton className="h-4 w-4 rounded-full" />
-          </CardHeader>
-          <CardContent>
-            <Skeleton className="h-8 w-16" />
-          </CardContent>
-        </Card>
-      ))}
-    </div>
-  );
-}
-
 function ContentListSkeleton() {
   return (
     <div className="space-y-2" role="status" aria-label="Loading content">

@@ -80,7 +80,7 @@ export default function MarketplaceError({
             </Button>
             <Button
               variant="outline"
-              onClick={() => (window.location.href = '/real-estate/dashboard')}
+              onClick={() => (window.location.href = '/real-estate/user-dashboard')}
               className="flex items-center gap-2 flex-1"
             >
               <Home className="h-4 w-4" />

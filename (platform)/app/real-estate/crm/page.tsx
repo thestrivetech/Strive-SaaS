@@ -6,5 +6,5 @@ import { redirect } from 'next/navigation';
  * Redirects to the CRM dashboard
  */
 export default function CRMPage() {
-  redirect('/real-estate/crm/dashboard');
+  redirect('/real-estate/crm/crm-dashboard');
 }

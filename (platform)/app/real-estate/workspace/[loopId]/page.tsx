@@ -8,7 +8,7 @@ import { TaskChecklist } from '@/components/real-estate/workspace/task-checklist
 import { SignatureRequests } from '@/components/real-estate/workspace/signature-requests';
 import { notFound } from 'next/navigation';
 
-const statusColors = {
+const statusColors: Record<string, string> = {
   DRAFT: 'bg-gray-500',
   ACTIVE: 'bg-blue-500',
   UNDER_CONTRACT: 'bg-yellow-500',
@@ -50,41 +50,43 @@ export default async function LoopDetailPage({
         </p>
       </div>
 
-      <Tabs defaultValue="overview" className="space-y-4">
-        <TabsList>
-          <TabsTrigger value="overview">Overview</TabsTrigger>
-          <TabsTrigger value="documents">
-            Documents ({documentCount})
-          </TabsTrigger>
-          <TabsTrigger value="parties">
-            Parties ({partyCount})
-          </TabsTrigger>
-          <TabsTrigger value="tasks">
-            Tasks ({taskCount})
-          </TabsTrigger>
-          <TabsTrigger value="signatures">Signatures</TabsTrigger>
-        </TabsList>
+      <div>
+        <Tabs defaultValue="overview" className="space-y-4">
+          <TabsList>
+            <TabsTrigger value="overview">Overview</TabsTrigger>
+            <TabsTrigger value="documents">
+              Documents ({documentCount})
+            </TabsTrigger>
+            <TabsTrigger value="parties">
+              Parties ({partyCount})
+            </TabsTrigger>
+            <TabsTrigger value="tasks">
+              Tasks ({taskCount})
+            </TabsTrigger>
+            <TabsTrigger value="signatures">Signatures</TabsTrigger>
+          </TabsList>
 
-        <TabsContent value="overview">
-          <LoopOverview loop={loop} />
-        </TabsContent>
+          <TabsContent value="overview">
+            <LoopOverview loop={loop} />
+          </TabsContent>
 
-        <TabsContent value="documents">
-          <DocumentList loopId={loop.id} />
-        </TabsContent>
+          <TabsContent value="documents">
+            <DocumentList loopId={loop.id} />
+          </TabsContent>
 
-        <TabsContent value="parties">
-          <PartyList loopId={loop.id} />
-        </TabsContent>
+          <TabsContent value="parties">
+            <PartyList loopId={loop.id} />
+          </TabsContent>
 
-        <TabsContent value="tasks">
-          <TaskChecklist loopId={loop.id} />
-        </TabsContent>
+          <TabsContent value="tasks">
+            <TaskChecklist loopId={loop.id} />
+          </TabsContent>
 
-        <TabsContent value="signatures">
-          <SignatureRequests loopId={loop.id} />
-        </TabsContent>
-      </Tabs>
+          <TabsContent value="signatures">
+            <SignatureRequests loopId={loop.id} />
+          </TabsContent>
+        </Tabs>
+      </div>
     </div>
   );
 }

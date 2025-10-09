@@ -61,7 +61,7 @@ interface NavItem {
  */
 export function Sidebar({ isOpen = true, onClose }: SidebarProps) {
   const pathname = usePathname();
-  const [openItems, setOpenItems] = useState<string[]>(['crm']);
+  const [openItems, setOpenItems] = useState<string[]>([]);
 
   const toggleItem = (itemId: string) => {
     setOpenItems((prev) =>
@@ -74,7 +74,7 @@ export function Sidebar({ isOpen = true, onClose }: SidebarProps) {
       id: 'dashboard',
       title: 'Dashboard',
       icon: Home,
-      href: '/real-estate/dashboard',
+      href: '/real-estate/user-dashboard',
     },
     {
       id: 'crm',
@@ -85,7 +85,7 @@ export function Sidebar({ isOpen = true, onClose }: SidebarProps) {
           id: 'crm-dashboard',
           title: 'Dashboard',
           icon: Home,
-          href: '/real-estate/crm/dashboard',
+          href: '/real-estate/crm/crm-dashboard',
         },
         {
           id: 'leads',
@@ -128,7 +128,7 @@ export function Sidebar({ isOpen = true, onClose }: SidebarProps) {
           id: 'workspace-dashboard',
           title: 'Dashboard',
           icon: Home,
-          href: '/real-estate/workspace/dashboard',
+          href: '/real-estate/workspace/workspace-dashboard',
         },
         {
           id: 'listings',
@@ -148,7 +148,7 @@ export function Sidebar({ isOpen = true, onClose }: SidebarProps) {
       id: 'ai-hub',
       title: 'AI Hub',
       icon: Bot,
-      href: '/real-estate/ai-hub/dashboard',
+      href: '/real-estate/ai-hub/ai-hub-dashboard',
       badge: 'Coming Soon',
     },
     {
@@ -161,7 +161,7 @@ export function Sidebar({ isOpen = true, onClose }: SidebarProps) {
           id: 'reid-dashboard',
           title: 'Dashboard',
           icon: Home,
-          href: '/real-estate/reid/dashboard',
+          href: '/real-estate/reid/reid-dashboard',
         },
         {
           id: 'trends',
@@ -222,7 +222,7 @@ export function Sidebar({ isOpen = true, onClose }: SidebarProps) {
           id: 'expense-tax-dashboard',
           title: 'Dashboard',
           icon: Home,
-          href: '/real-estate/expense-tax/dashboard',
+          href: '/real-estate/expense-tax/expense-tax-dashboard',
         },
         {
           id: 'expenses',
@@ -253,7 +253,7 @@ export function Sidebar({ isOpen = true, onClose }: SidebarProps) {
           id: 'cms-dashboard',
           title: 'Dashboard',
           icon: Home,
-          href: '/real-estate/cms-marketing/dashboard',
+          href: '/real-estate/cms-marketing/cms-dashboard',
         },
         {
           id: 'content',

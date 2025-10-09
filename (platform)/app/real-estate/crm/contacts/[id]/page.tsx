@@ -10,7 +10,7 @@ import { ContactFormDialog } from '@/components/real-estate/crm/contacts/contact
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { EnhancedCard, CardContent, CardHeader, CardTitle } from '@/components/shared/dashboard/EnhancedCard';
 import { Skeleton } from '@/components/ui/skeleton';
 import { ArrowLeft, Mail, Phone, Building2, Briefcase, Calendar, Linkedin, Twitter, MessageCircle } from 'lucide-react';
 import { formatDistanceToNow, format } from 'date-fns';
@@ -93,51 +93,54 @@ async function ContactDetail({ contactId, organizationId }: { contactId: string;
       {/* Main Content */}
       <div className="lg:col-span-2 space-y-6">
         {/* Header Card */}
-        <Card>
-          <CardHeader>
-            <div className="flex items-start justify-between">
-              <div className="flex items-center space-x-4">
-                <Avatar className="h-16 w-16">
-                  <AvatarFallback className="text-lg">{getInitials(contact.name)}</AvatarFallback>
-                </Avatar>
-                <div>
-                  <h1 className="text-2xl font-bold">{contact.name}</h1>
-                  {contact.position && contact.company && (
-                    <p className="text-muted-foreground">
-                      {contact.position} at {contact.company}
-                    </p>
-                  )}
-                  {contact.position && !contact.company && (
-                    <p className="text-muted-foreground">{contact.position}</p>
-                  )}
-                  {!contact.position && contact.company && (
-                    <p className="text-muted-foreground">{contact.company}</p>
-                  )}
-                  <div className="flex gap-2 mt-2">
-                    <Badge variant={typeConfig.variant}>{typeConfig.label}</Badge>
-                    <Badge variant={statusConfig.variant}>{statusConfig.label}</Badge>
+        <div>
+          <EnhancedCard glassEffect="strong" neonBorder="cyan" hoverEffect={true}>
+            <CardHeader>
+              <div className="flex items-start justify-between">
+                <div className="flex items-center space-x-4">
+                  <Avatar className="h-16 w-16">
+                    <AvatarFallback className="text-lg">{getInitials(contact.name)}</AvatarFallback>
+                  </Avatar>
+                  <div>
+                    <h1 className="text-2xl font-bold">{contact.name}</h1>
+                    {contact.position && contact.company && (
+                      <p className="text-muted-foreground">
+                        {contact.position} at {contact.company}
+                      </p>
+                    )}
+                    {contact.position && !contact.company && (
+                      <p className="text-muted-foreground">{contact.position}</p>
+                    )}
+                    {!contact.position && contact.company && (
+                      <p className="text-muted-foreground">{contact.company}</p>
+                    )}
+                    <div className="flex gap-2 mt-2">
+                      <Badge variant={typeConfig.variant}>{typeConfig.label}</Badge>
+                      <Badge variant={statusConfig.variant}>{statusConfig.label}</Badge>
+                    </div>
                   </div>
                 </div>
+                <div className="flex gap-2">
+                  <ContactFormDialog
+                    mode="edit"
+                    contact={contact}
+                    organizationId={organizationId}
+                    trigger={<Button variant="outline">Edit</Button>}
+                  />
+                  <ContactActionsMenu contact={contact} />
+                </div>
               </div>
-              <div className="flex gap-2">
-                <ContactFormDialog
-                  mode="edit"
-                  contact={contact}
-                  organizationId={organizationId}
-                  trigger={<Button variant="outline">Edit</Button>}
-                />
-                <ContactActionsMenu contact={contact} />
-              </div>
-            </div>
-          </CardHeader>
-        </Card>
+            </CardHeader>
+          </EnhancedCard>
+        </div>
 
         {/* Contact Information */}
-        <Card>
-          <CardHeader>
-            <CardTitle>Contact Information</CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-4">
+        <div>
+          <EnhancedCard glassEffect="strong" neonBorder="purple" hoverEffect={true}>
+            <CardHeader>
+              <CardTitle>Contact Information</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
             {contact.email && (
               <div className="flex items-center gap-3">
                 <Mail className="h-4 w-4 text-muted-foreground" />
@@ -200,34 +203,40 @@ async function ContactDetail({ contactId, organizationId }: { contactId: string;
               </div>
             )}
           </CardContent>
-        </Card>
+        </EnhancedCard>
+        </div>
 
         {/* Notes */}
         {contact.notes && (
-          <Card>
-            <CardHeader>
-              <CardTitle>Notes</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <p className="text-sm text-muted-foreground whitespace-pre-wrap">{contact.notes}</p>
-            </CardContent>
-          </Card>
+          <div>
+            <EnhancedCard glassEffect="strong" neonBorder="green" hoverEffect={true}>
+              <CardHeader>
+                <CardTitle>Notes</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <p className="text-sm text-muted-foreground whitespace-pre-wrap">{contact.notes}</p>
+              </CardContent>
+            </EnhancedCard>
+          </div>
         )}
 
         {/* Communication History */}
         {contact.activities && (
-          <ContactCommunications activities={contact.activities} />
+          <div>
+            <ContactCommunications activities={contact.activities} />
+          </div>
         )}
       </div>
 
       {/* Sidebar */}
       <div className="space-y-6">
         {/* Details */}
-        <Card>
-          <CardHeader>
-            <CardTitle>Details</CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-4">
+        <div>
+          <EnhancedCard glassEffect="strong" neonBorder="orange" hoverEffect={true}>
+            <CardHeader>
+              <CardTitle>Details</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
             {contact.assigned_to && contact.assigned_to.name && (
               <div>
                 <p className="text-xs text-muted-foreground mb-1">Assigned To</p>
@@ -271,29 +280,32 @@ async function ContactDetail({ contactId, organizationId }: { contactId: string;
               </div>
             )}
           </CardContent>
-        </Card>
+        </EnhancedCard>
+        </div>
 
         {/* Related Deals */}
         {contact.deals && contact.deals.length > 0 && (
-          <Card>
-            <CardHeader>
-              <CardTitle>Related Deals</CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-2">
-              {contact.deals.map((deal) => (
-                <Link
-                  key={deal.id}
-                  href={`/real-estate/crm/deals/${deal.id}`}
-                  className="block p-3 rounded-lg border hover:bg-muted/50 transition-colors"
-                >
-                  <p className="font-medium text-sm">{deal.title}</p>
-                  <p className="text-xs text-muted-foreground">
-                    ${deal.value?.toString() || '0'} • {deal.stage}
-                  </p>
-                </Link>
-              ))}
-            </CardContent>
-          </Card>
+          <div>
+            <EnhancedCard glassEffect="strong" neonBorder="cyan" hoverEffect={true}>
+              <CardHeader>
+                <CardTitle>Related Deals</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-2">
+                {contact.deals.map((deal) => (
+                  <Link
+                    key={deal.id}
+                    href={`/real-estate/crm/deals/${deal.id}`}
+                    className="block p-3 rounded-lg border hover:bg-muted/50 transition-colors"
+                  >
+                    <p className="font-medium text-sm">{deal.title}</p>
+                    <p className="text-xs text-muted-foreground">
+                      ${deal.value?.toString() || '0'} • {deal.stage}
+                    </p>
+                  </Link>
+                ))}
+              </CardContent>
+            </EnhancedCard>
+          </div>
         )}
       </div>
     </div>
@@ -304,7 +316,7 @@ function ContactDetailSkeleton() {
   return (
     <div className="grid gap-6 lg:grid-cols-3">
       <div className="lg:col-span-2 space-y-6">
-        <Card>
+        <EnhancedCard glassEffect="strong" neonBorder="cyan" hoverEffect={false}>
           <CardHeader>
             <div className="flex items-start justify-between">
               <div className="flex items-center space-x-4">
@@ -316,9 +328,9 @@ function ContactDetailSkeleton() {
               </div>
             </div>
           </CardHeader>
-        </Card>
+        </EnhancedCard>
 
-        <Card>
+        <EnhancedCard glassEffect="strong" neonBorder="purple" hoverEffect={false}>
           <CardHeader>
             <Skeleton className="h-6 w-48" />
           </CardHeader>
@@ -327,11 +339,11 @@ function ContactDetailSkeleton() {
             <Skeleton className="h-4 w-full" />
             <Skeleton className="h-4 w-3/4" />
           </CardContent>
-        </Card>
+        </EnhancedCard>
       </div>
 
       <div className="space-y-6">
-        <Card>
+        <EnhancedCard glassEffect="strong" neonBorder="orange" hoverEffect={false}>
           <CardHeader>
             <Skeleton className="h-6 w-24" />
           </CardHeader>
@@ -340,7 +352,7 @@ function ContactDetailSkeleton() {
             <Skeleton className="h-4 w-full" />
             <Skeleton className="h-4 w-2/3" />
           </CardContent>
-        </Card>
+        </EnhancedCard>
       </div>
     </div>
   );

@@ -6,7 +6,7 @@ import { searchListings, getListingStats, type ListingFilters } from '@/lib/modu
 import { ListingCard } from '@/components/real-estate/crm/listings/listing-card';
 import { ListingFilters as ListingFiltersBar } from '@/components/real-estate/crm/listings/listing-filters';
 import { ListingSearch } from '@/components/real-estate/crm/listings/listing-search';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { EnhancedCard, CardContent, CardHeader, CardTitle } from '@/components/shared/dashboard/EnhancedCard';
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Home, CheckCircle, DollarSign, TrendingUp, LayoutGrid, List } from 'lucide-react';
@@ -87,29 +87,35 @@ export default async function ListingsPage({ searchParams }: ListingsPageProps) 
       </Suspense>
 
       {/* Filters & Search */}
-      <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4">
-        <ListingSearch />
-        <ListingFiltersBar />
-        <div className="flex gap-2 ml-auto">
-          <a href={`?${new URLSearchParams({ ...params, view: 'grid' }).toString()}`}>
-            <Button
-              variant={viewMode === 'grid' ? 'default' : 'outline'}
-              size="sm"
-            >
-              <LayoutGrid className="h-4 w-4 mr-2" />
-              Grid
-            </Button>
-          </a>
-          <a href={`?${new URLSearchParams({ ...params, view: 'table' }).toString()}`}>
-            <Button
-              variant={viewMode === 'table' ? 'default' : 'outline'}
-              size="sm"
-            >
-              <List className="h-4 w-4 mr-2" />
-              Table
-            </Button>
-          </a>
-        </div>
+      <div>
+        <EnhancedCard glassEffect="medium" neonBorder="green" hoverEffect={true}>
+          <CardContent className="pt-6">
+            <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4">
+              <ListingSearch />
+              <ListingFiltersBar />
+              <div className="flex gap-2 ml-auto">
+                <a href={`?${new URLSearchParams({ ...params, view: 'grid' }).toString()}`}>
+                  <Button
+                    variant={viewMode === 'grid' ? 'default' : 'outline'}
+                    size="sm"
+                  >
+                    <LayoutGrid className="h-4 w-4 mr-2" />
+                    Grid
+                  </Button>
+                </a>
+                <a href={`?${new URLSearchParams({ ...params, view: 'table' }).toString()}`}>
+                  <Button
+                    variant={viewMode === 'table' ? 'default' : 'outline'}
+                    size="sm"
+                  >
+                    <List className="h-4 w-4 mr-2" />
+                    Table
+                  </Button>
+                </a>
+              </div>
+            </div>
+          </CardContent>
+        </EnhancedCard>
       </div>
 
       {/* Listings List */}
@@ -126,7 +132,7 @@ async function StatsCards() {
 
   return (
     <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-      <Card>
+      <EnhancedCard glassEffect="medium" neonBorder="cyan" hoverEffect={true}>
         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
           <CardTitle className="text-sm font-medium">Total Listings</CardTitle>
           <Home className="h-4 w-4 text-muted-foreground" />
@@ -134,9 +140,9 @@ async function StatsCards() {
         <CardContent>
           <div className="text-2xl font-bold">{stats.totalListings}</div>
         </CardContent>
-      </Card>
+      </EnhancedCard>
 
-      <Card>
+      <EnhancedCard glassEffect="medium" neonBorder="green" hoverEffect={true}>
         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
           <CardTitle className="text-sm font-medium">Active Listings</CardTitle>
           <CheckCircle className="h-4 w-4 text-green-600" />
@@ -144,9 +150,9 @@ async function StatsCards() {
         <CardContent>
           <div className="text-2xl font-bold text-green-600">{stats.activeListings}</div>
         </CardContent>
-      </Card>
+      </EnhancedCard>
 
-      <Card>
+      <EnhancedCard glassEffect="medium" neonBorder="purple" hoverEffect={true}>
         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
           <CardTitle className="text-sm font-medium">Total Value</CardTitle>
           <DollarSign className="h-4 w-4 text-muted-foreground" />
@@ -156,9 +162,9 @@ async function StatsCards() {
             ${(Number(stats.totalValue) / 1000000).toFixed(2)}M
           </div>
         </CardContent>
-      </Card>
+      </EnhancedCard>
 
-      <Card>
+      <EnhancedCard glassEffect="medium" neonBorder="orange" hoverEffect={true}>
         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
           <CardTitle className="text-sm font-medium">Avg Price</CardTitle>
           <TrendingUp className="h-4 w-4 text-muted-foreground" />
@@ -168,7 +174,7 @@ async function StatsCards() {
             ${(Number(stats.avgPrice) / 1000).toFixed(0)}K
           </div>
         </CardContent>
-      </Card>
+      </EnhancedCard>
     </div>
   );
 }
@@ -195,11 +201,11 @@ async function ListingsList({
 
   if (viewMode === 'table') {
     return (
-      <Card>
+      <EnhancedCard glassEffect="strong" neonBorder="purple" hoverEffect={true}>
         <CardContent className="p-6">
           <p className="text-muted-foreground">Table view coming soon. Use grid view for now.</p>
         </CardContent>
-      </Card>
+      </EnhancedCard>
     );
   }
 
@@ -214,10 +220,12 @@ async function ListingsList({
 
 // Loading Skeletons
 function StatsCardsSkeleton() {
+  const neonColors: Array<'cyan' | 'green' | 'purple' | 'orange'> = ['cyan', 'green', 'purple', 'orange'];
+
   return (
     <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
       {[...Array(4)].map((_, i) => (
-        <Card key={i}>
+        <EnhancedCard key={i} glassEffect="medium" neonBorder={neonColors[i]} hoverEffect={true}>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <Skeleton className="h-4 w-24" />
             <Skeleton className="h-4 w-4 rounded-full" />
@@ -225,7 +233,7 @@ function StatsCardsSkeleton() {
           <CardContent>
             <Skeleton className="h-8 w-16" />
           </CardContent>
-        </Card>
+        </EnhancedCard>
       ))}
     </div>
   );
@@ -235,7 +243,7 @@ function ListingsGridSkeleton() {
   return (
     <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
       {[...Array(6)].map((_, i) => (
-        <Card key={i} className="overflow-hidden">
+        <EnhancedCard key={i} glassEffect="medium" neonBorder="purple" hoverEffect={true} className="overflow-hidden">
           <Skeleton className="h-48 w-full" />
           <CardHeader>
             <Skeleton className="h-6 w-32" />
@@ -246,7 +254,7 @@ function ListingsGridSkeleton() {
             <Skeleton className="h-4 w-full" />
             <Skeleton className="h-4 w-2/3" />
           </CardContent>
-        </Card>
+        </EnhancedCard>
       ))}
     </div>
   );

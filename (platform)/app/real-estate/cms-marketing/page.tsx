@@ -6,5 +6,5 @@ import { redirect } from 'next/navigation';
  * Redirects to the module's main dashboard
  */
 export default function CMSMarketingPage() {
-  redirect('/real-estate/cms-marketing/dashboard');
+  redirect('/real-estate/cms-marketing/cms-dashboard');
 }

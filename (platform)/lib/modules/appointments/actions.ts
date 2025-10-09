@@ -100,7 +100,7 @@ export async function createAppointment(input: CreateAppointmentInput) {
       });
 
       revalidatePath('/crm/calendar');
-      revalidatePath('/crm/dashboard');
+      revalidatePath('/crm/crm-dashboard');
 
       return appointment;
     } catch (error) {

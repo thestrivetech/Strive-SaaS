@@ -126,7 +126,7 @@ export async function completeOnboarding(sessionToken: string) {
   await markSessionComplete(sessionToken, organization.id);
 
   // Revalidate dashboard
-  revalidatePath('/real-estate/dashboard');
+  revalidatePath('/real-estate/user-dashboard');
   revalidatePath('/dashboard');
 
   return { organization, subscription };

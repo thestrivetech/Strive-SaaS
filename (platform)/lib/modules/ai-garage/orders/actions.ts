@@ -75,7 +75,7 @@ export async function createOrder(input: CreateOrderInput) {
       });
 
       revalidatePath('/real-estate/ai-hub/orders');
-      revalidatePath('/real-estate/ai-hub/dashboard');
+      revalidatePath('/real-estate/ai-hub/ai-hub-dashboard');
 
       return order;
     } catch (error) {
@@ -132,7 +132,7 @@ export async function updateOrder(input: UpdateOrderInput) {
 
       revalidatePath('/real-estate/ai-hub/orders');
       revalidatePath(`/real-estate/ai-hub/orders/${id}`);
-      revalidatePath('/real-estate/ai-hub/dashboard');
+      revalidatePath('/real-estate/ai-hub/ai-hub-dashboard');
 
       return order;
     } catch (error) {
@@ -327,7 +327,7 @@ export async function deleteOrder(orderId: string) {
       });
 
       revalidatePath('/real-estate/ai-hub/orders');
-      revalidatePath('/real-estate/ai-hub/dashboard');
+      revalidatePath('/real-estate/ai-hub/ai-hub-dashboard');
 
       return { success: true };
     } catch (error) {

@@ -8,7 +8,7 @@ import { LeadScoreBadge } from '@/components/real-estate/crm/leads/lead-score-ba
 import { LeadFormDialog } from '@/components/real-estate/crm/leads/lead-form-dialog';
 import { LeadActionsMenu } from '@/components/real-estate/crm/leads/lead-actions-menu';
 import { LeadActivityTimeline } from '@/components/real-estate/crm/leads/lead-activity-timeline';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { EnhancedCard, CardContent, CardHeader, CardTitle } from '@/components/shared/dashboard/EnhancedCard';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
@@ -69,26 +69,27 @@ async function LeadDetailContent({ leadId, organizationId }: { leadId: string; o
       {/* Main Content - 2 columns */}
       <div className="md:col-span-2 space-y-6">
         {/* Lead Information */}
-        <Card>
-          <CardHeader>
-            <div className="flex items-start justify-between">
-              <div className="space-y-1">
-                <CardTitle className="text-2xl">{lead.name}</CardTitle>
-                {lead.company && (
-                  <p className="text-muted-foreground">{lead.company}</p>
-                )}
+        <div>
+          <EnhancedCard glassEffect="strong" neonBorder="cyan" hoverEffect={true}>
+            <CardHeader>
+              <div className="flex items-start justify-between">
+                <div className="space-y-1">
+                  <CardTitle className="text-2xl">{lead.name}</CardTitle>
+                  {lead.company && (
+                    <p className="text-muted-foreground">{lead.company}</p>
+                  )}
+                </div>
+                <div className="flex items-center gap-2">
+                  <LeadFormDialog
+                    mode="edit"
+                    lead={lead}
+                    organizationId={organizationId}
+                    trigger={<Button variant="outline">Edit</Button>}
+                  />
+                  <LeadActionsMenu lead={lead} />
+                </div>
               </div>
-              <div className="flex items-center gap-2">
-                <LeadFormDialog
-                  mode="edit"
-                  lead={lead}
-                  organizationId={organizationId}
-                  trigger={<Button variant="outline">Edit</Button>}
-                />
-                <LeadActionsMenu lead={lead} />
-              </div>
-            </div>
-          </CardHeader>
+            </CardHeader>
           <CardContent className="space-y-6">
             {/* Score and Status */}
             <div className="flex flex-wrap gap-3">
@@ -146,19 +147,23 @@ async function LeadDetailContent({ leadId, organizationId }: { leadId: string; o
               </>
             )}
           </CardContent>
-        </Card>
+        </EnhancedCard>
+        </div>
 
         {/* Activity Timeline */}
-        <LeadActivityTimeline activities={lead.activities || []} />
+        <div>
+          <LeadActivityTimeline activities={lead.activities || []} />
+        </div>
       </div>
 
       {/* Sidebar - 1 column */}
       <div className="space-y-6">
         {/* Details Card */}
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-lg">Details</CardTitle>
-          </CardHeader>
+        <div>
+          <EnhancedCard glassEffect="strong" neonBorder="purple" hoverEffect={true}>
+            <CardHeader>
+              <CardTitle className="text-lg">Details</CardTitle>
+            </CardHeader>
           <CardContent className="space-y-4">
             <div className="space-y-1">
               <p className="text-sm text-muted-foreground">Lead Score Value</p>
@@ -207,47 +212,52 @@ async function LeadDetailContent({ leadId, organizationId }: { leadId: string; o
               </p>
             </div>
           </CardContent>
-        </Card>
+        </EnhancedCard>
+        </div>
 
         {/* Tags (if implemented) */}
         {lead.tags && lead.tags.length > 0 && (
-          <Card>
-            <CardHeader>
-              <CardTitle className="text-lg">Tags</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="flex flex-wrap gap-2">
-                {lead.tags.map((tag, index) => (
-                  <Badge key={index} variant="secondary">
-                    {tag}
-                  </Badge>
-                ))}
-              </div>
-            </CardContent>
-          </Card>
+          <div>
+            <EnhancedCard glassEffect="strong" neonBorder="green" hoverEffect={true}>
+              <CardHeader>
+                <CardTitle className="text-lg">Tags</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="flex flex-wrap gap-2">
+                  {lead.tags.map((tag, index) => (
+                    <Badge key={index} variant="secondary">
+                      {tag}
+                    </Badge>
+                  ))}
+                </div>
+              </CardContent>
+            </EnhancedCard>
+          </div>
         )}
 
         {/* Related Deals (if any) */}
         {lead.deals && lead.deals.length > 0 && (
-          <Card>
-            <CardHeader>
-              <CardTitle className="text-lg">Related Deals</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-2">
-                {lead.deals.map((deal) => (
-                  <div key={deal.id} className="text-sm">
-                    <Link
-                      href={`/real-estate/crm/deals/${deal.id}`}
-                      className="text-primary hover:underline"
-                    >
-                      {deal.title}
-                    </Link>
-                  </div>
-                ))}
-              </div>
-            </CardContent>
-          </Card>
+          <div>
+            <EnhancedCard glassEffect="strong" neonBorder="orange" hoverEffect={true}>
+              <CardHeader>
+                <CardTitle className="text-lg">Related Deals</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-2">
+                  {lead.deals.map((deal) => (
+                    <div key={deal.id} className="text-sm">
+                      <Link
+                        href={`/real-estate/crm/deals/${deal.id}`}
+                        className="text-primary hover:underline"
+                      >
+                        {deal.title}
+                      </Link>
+                    </div>
+                  ))}
+                </div>
+              </CardContent>
+            </EnhancedCard>
+          </div>
         )}
       </div>
     </div>
@@ -258,7 +268,7 @@ function LeadDetailSkeleton() {
   return (
     <div className="grid gap-6 md:grid-cols-3">
       <div className="md:col-span-2 space-y-6">
-        <Card>
+        <EnhancedCard glassEffect="strong" neonBorder="cyan" hoverEffect={false}>
           <CardHeader>
             <Skeleton className="h-8 w-48" />
             <Skeleton className="h-4 w-32 mt-2" />
@@ -266,17 +276,17 @@ function LeadDetailSkeleton() {
           <CardContent>
             <Skeleton className="h-64" />
           </CardContent>
-        </Card>
+        </EnhancedCard>
       </div>
       <div className="space-y-6">
-        <Card>
+        <EnhancedCard glassEffect="strong" neonBorder="purple" hoverEffect={false}>
           <CardHeader>
             <Skeleton className="h-6 w-24" />
           </CardHeader>
           <CardContent>
             <Skeleton className="h-32" />
           </CardContent>
-        </Card>
+        </EnhancedCard>
       </div>
     </div>
   );

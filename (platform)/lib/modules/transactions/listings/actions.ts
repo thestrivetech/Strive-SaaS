@@ -72,7 +72,7 @@ export async function createListing(input: CreateListingInput) {
 
       // Revalidate listings page
       revalidatePath('/crm/listings');
-      revalidatePath('/crm/dashboard');
+      revalidatePath('/crm/crm-dashboard');
 
       return listing;
     } catch (error) {
@@ -154,7 +154,7 @@ export async function updateListing(input: UpdateListingInput) {
       // Revalidate pages
       revalidatePath('/crm/listings');
       revalidatePath(`/crm/listings/${id}`);
-      revalidatePath('/crm/dashboard');
+      revalidatePath('/crm/crm-dashboard');
 
       return listing;
     } catch (error) {
@@ -211,7 +211,7 @@ export async function deleteListing(id: string) {
 
       // Revalidate pages
       revalidatePath('/crm/listings');
-      revalidatePath('/crm/dashboard');
+      revalidatePath('/crm/crm-dashboard');
 
       return { success: true };
     } catch (error) {

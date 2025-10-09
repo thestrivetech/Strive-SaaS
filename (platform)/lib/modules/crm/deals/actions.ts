@@ -92,7 +92,7 @@ export async function createDeal(input: CreateDealInput) {
 
       // Revalidate deals pages
       revalidatePath('/crm/deals');
-      revalidatePath('/crm/dashboard');
+      revalidatePath('/crm/crm-dashboard');
 
       return deal;
     } catch (error) {
@@ -176,7 +176,7 @@ export async function updateDeal(input: UpdateDealInput) {
       // Revalidate pages
       revalidatePath('/crm/deals');
       revalidatePath(`/crm/deals/${id}`);
-      revalidatePath('/crm/dashboard');
+      revalidatePath('/crm/crm-dashboard');
 
       return deal;
     } catch (error) {
@@ -348,7 +348,7 @@ export async function closeDeal(input: CloseDealInput) {
       // Revalidate pages
       revalidatePath('/crm/deals');
       revalidatePath(`/crm/deals/${validated.id}`);
-      revalidatePath('/crm/dashboard');
+      revalidatePath('/crm/crm-dashboard');
 
       return deal;
     } catch (error) {
@@ -423,7 +423,7 @@ export async function bulkUpdateDeals(input: BulkUpdateDealsInput) {
 
       // Revalidate deals page
       revalidatePath('/crm/deals');
-      revalidatePath('/crm/dashboard');
+      revalidatePath('/crm/crm-dashboard');
 
       return result.count;
     } catch (error) {
@@ -504,7 +504,7 @@ export async function deleteDeal(input: DeleteDealInput) {
 
       // Revalidate pages
       revalidatePath('/crm/deals');
-      revalidatePath('/crm/dashboard');
+      revalidatePath('/crm/crm-dashboard');
 
       return { success: true };
     } catch (error) {

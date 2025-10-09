@@ -43,7 +43,7 @@ export async function updateUserPreferences(input: Partial<UserPreferenceInput>)
     }
   });
 
-  revalidatePath('/real-estate/reid/dashboard');
+  revalidatePath('/real-estate/reid/reid-dashboard');
   revalidatePath('/real-estate/reid/settings');
 
   return updated;

@@ -45,7 +45,7 @@ export default function REIDDashboardError({
                 Try Again
               </Button>
               <Button
-                onClick={() => window.location.href = '/real-estate/dashboard'}
+                onClick={() => window.location.href = '/real-estate/user-dashboard'}
                 variant="outline"
                 className="border-slate-600 text-slate-300 hover:bg-slate-800"
               >

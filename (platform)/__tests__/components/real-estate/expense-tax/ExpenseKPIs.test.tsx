@@ -6,7 +6,7 @@
 
 import { render, screen, waitFor } from '@testing-library/react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { ExpenseKPIs } from '@/components/real-estate/expense-tax/dashboard/ExpenseKPIs';
+import { ExpenseKPIs } from '@/components/real-estate/expense-tax/expense-tax-dashboard/ExpenseKPIs';
 
 // Mock fetch globally
 global.fetch = jest.fn();

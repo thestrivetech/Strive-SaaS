@@ -216,7 +216,7 @@ export function UpgradePrompt({ currentTier, requiredTier, feature }: UpgradePro
               </Link>
             </Button>
             <Button variant="outline" asChild className="flex-1">
-              <Link href="/real-estate/dashboard">
+              <Link href="/real-estate/user-dashboard">
                 Back to Dashboard
               </Link>
             </Button>

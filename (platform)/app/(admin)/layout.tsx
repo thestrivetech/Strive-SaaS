@@ -21,7 +21,7 @@ export default async function AdminLayout({
 
   // RBAC: ADMIN and SUPER_ADMIN can access organization admin panel
   if (!canAccessAdminPanel(user.role)) {
-    redirect('/real-estate/dashboard');
+    redirect('/real-estate/user-dashboard');
   }
 
   return (

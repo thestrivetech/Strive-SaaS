@@ -130,7 +130,7 @@ function OnboardingContent() {
   };
 
   const handleComplete = () => {
-    window.location.href = '/real-estate/dashboard';
+    window.location.href = '/real-estate/user-dashboard';
   };
 
   return (

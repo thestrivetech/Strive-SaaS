@@ -40,7 +40,7 @@ export default function AIHubDashboardError({
             <Button onClick={reset} variant="default" size="sm">
               Try Again
             </Button>
-            <Button onClick={() => window.location.href = '/real-estate/dashboard'} variant="outline" size="sm">
+            <Button onClick={() => window.location.href = '/real-estate/user-dashboard'} variant="outline" size="sm">
               Return to Dashboard
             </Button>
           </div>

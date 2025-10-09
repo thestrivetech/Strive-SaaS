@@ -54,7 +54,7 @@ export default function AnalyticsError({
                 Try Again
               </Button>
               <Button asChild variant="outline" className="flex-1">
-                <Link href="/real-estate/cms-marketing/dashboard">
+                <Link href="/real-estate/cms-marketing/cms-dashboard">
                   <Home className="mr-2 h-4 w-4" />
                   Dashboard
                 </Link>

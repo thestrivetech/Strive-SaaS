@@ -98,7 +98,7 @@ export async function uploadReceipt(formData: FormData) {
     });
 
     revalidatePath('/real-estate/expense-tax');
-    revalidatePath('/real-estate/expense-tax/dashboard');
+    revalidatePath('/real-estate/expense-tax/expense-tax-dashboard');
 
     return {
       success: true,
@@ -180,7 +180,7 @@ export async function deleteReceipt(expenseId: string) {
     });
 
     revalidatePath('/real-estate/expense-tax');
-    revalidatePath('/real-estate/expense-tax/dashboard');
+    revalidatePath('/real-estate/expense-tax/expense-tax-dashboard');
 
     return { success: true };
   } catch (error) {

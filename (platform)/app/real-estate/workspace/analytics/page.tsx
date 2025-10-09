@@ -1,5 +1,5 @@
 import { Suspense } from 'react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { EnhancedCard, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/shared/dashboard/EnhancedCard';
 import { Skeleton } from '@/components/ui/skeleton';
 import {
   getTransactionAnalytics,
@@ -34,7 +34,7 @@ async function AnalyticsDashboard() {
       <div>
         <h2 className="text-2xl font-bold mb-4">Transaction Overview</h2>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
-          <Card>
+          <EnhancedCard glassEffect="medium" neonBorder="cyan" hoverEffect={true}>
             <CardHeader className="flex flex-row items-center justify-between pb-2">
               <CardTitle className="text-sm font-medium">Total Loops</CardTitle>
               <BarChart3 className="h-4 w-4 text-muted-foreground" />
@@ -42,9 +42,9 @@ async function AnalyticsDashboard() {
             <CardContent>
               <div className="text-2xl font-bold">{overview.totalLoops}</div>
             </CardContent>
-          </Card>
+          </EnhancedCard>
 
-          <Card>
+          <EnhancedCard glassEffect="medium" neonBorder="green" hoverEffect={true}>
             <CardHeader className="flex flex-row items-center justify-between pb-2">
               <CardTitle className="text-sm font-medium">Active</CardTitle>
               <TrendingUp className="h-4 w-4 text-green-600" />
@@ -52,9 +52,9 @@ async function AnalyticsDashboard() {
             <CardContent>
               <div className="text-2xl font-bold text-green-600">{overview.activeLoops}</div>
             </CardContent>
-          </Card>
+          </EnhancedCard>
 
-          <Card>
+          <EnhancedCard glassEffect="medium" neonBorder="purple" hoverEffect={true}>
             <CardHeader className="flex flex-row items-center justify-between pb-2">
               <CardTitle className="text-sm font-medium">Closed</CardTitle>
               <Activity className="h-4 w-4 text-blue-600" />
@@ -62,9 +62,9 @@ async function AnalyticsDashboard() {
             <CardContent>
               <div className="text-2xl font-bold text-blue-600">{overview.closedLoops}</div>
             </CardContent>
-          </Card>
+          </EnhancedCard>
 
-          <Card>
+          <EnhancedCard glassEffect="medium" neonBorder="orange" hoverEffect={true}>
             <CardHeader className="flex flex-row items-center justify-between pb-2">
               <CardTitle className="text-sm font-medium">Avg Days to Close</CardTitle>
               <TrendingUp className="h-4 w-4 text-muted-foreground" />
@@ -72,9 +72,9 @@ async function AnalyticsDashboard() {
             <CardContent>
               <div className="text-2xl font-bold">{overview.avgClosingDays}</div>
             </CardContent>
-          </Card>
+          </EnhancedCard>
 
-          <Card>
+          <EnhancedCard glassEffect="medium" neonBorder="cyan" hoverEffect={true}>
             <CardHeader className="flex flex-row items-center justify-between pb-2">
               <CardTitle className="text-sm font-medium">Total Value</CardTitle>
               <BarChart3 className="h-4 w-4 text-muted-foreground" />
@@ -82,44 +82,46 @@ async function AnalyticsDashboard() {
             <CardContent>
               <div className="text-2xl font-bold">{formatCurrency(overview.totalValue)}</div>
             </CardContent>
-          </Card>
+          </EnhancedCard>
         </div>
       </div>
 
       {/* Compliance Status */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <AlertCircle className="h-5 w-5" />
-            Compliance Status
-          </CardTitle>
-          <CardDescription>Organization-wide compliance alerts</CardDescription>
-        </CardHeader>
-        <CardContent>
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-            <div>
-              <div className="text-sm text-muted-foreground">Total Alerts</div>
-              <div className="text-2xl font-bold">{complianceStats.total}</div>
+      <div>
+        <EnhancedCard glassEffect="strong" neonBorder="orange" hoverEffect={true}>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <AlertCircle className="h-5 w-5" />
+              Compliance Status
+            </CardTitle>
+            <CardDescription>Organization-wide compliance alerts</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+              <div>
+                <div className="text-sm text-muted-foreground">Total Alerts</div>
+                <div className="text-2xl font-bold">{complianceStats.total}</div>
+              </div>
+              <div>
+                <div className="text-sm text-muted-foreground">Errors</div>
+                <div className="text-2xl font-bold text-red-600">{complianceStats.error}</div>
+              </div>
+              <div>
+                <div className="text-sm text-muted-foreground">Warnings</div>
+                <div className="text-2xl font-bold text-amber-600">{complianceStats.warning}</div>
+              </div>
+              <div>
+                <div className="text-sm text-muted-foreground">Info</div>
+                <div className="text-2xl font-bold text-blue-600">{complianceStats.info}</div>
+              </div>
             </div>
-            <div>
-              <div className="text-sm text-muted-foreground">Errors</div>
-              <div className="text-2xl font-bold text-red-600">{complianceStats.error}</div>
-            </div>
-            <div>
-              <div className="text-sm text-muted-foreground">Warnings</div>
-              <div className="text-2xl font-bold text-amber-600">{complianceStats.warning}</div>
-            </div>
-            <div>
-              <div className="text-sm text-muted-foreground">Info</div>
-              <div className="text-2xl font-bold text-blue-600">{complianceStats.info}</div>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
+          </CardContent>
+        </EnhancedCard>
+      </div>
 
       {/* Document, Task, Signature Stats */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <Card>
+        <EnhancedCard glassEffect="strong" neonBorder="cyan" hoverEffect={true}>
           <CardHeader>
             <CardTitle>Documents by Status</CardTitle>
           </CardHeader>
@@ -138,9 +140,9 @@ async function AnalyticsDashboard() {
               )}
             </div>
           </CardContent>
-        </Card>
+        </EnhancedCard>
 
-        <Card>
+        <EnhancedCard glassEffect="strong" neonBorder="purple" hoverEffect={true}>
           <CardHeader>
             <CardTitle>Tasks by Status</CardTitle>
           </CardHeader>
@@ -159,9 +161,9 @@ async function AnalyticsDashboard() {
               )}
             </div>
           </CardContent>
-        </Card>
+        </EnhancedCard>
 
-        <Card>
+        <EnhancedCard glassEffect="strong" neonBorder="green" hoverEffect={true}>
           <CardHeader>
             <CardTitle>Signatures by Status</CardTitle>
           </CardHeader>
@@ -180,12 +182,12 @@ async function AnalyticsDashboard() {
               )}
             </div>
           </CardContent>
-        </Card>
+        </EnhancedCard>
       </div>
 
       {/* Transaction Types & Status Distribution */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <Card>
+        <EnhancedCard glassEffect="strong" neonBorder="purple" hoverEffect={true}>
           <CardHeader>
             <CardTitle>By Transaction Type</CardTitle>
           </CardHeader>
@@ -201,9 +203,9 @@ async function AnalyticsDashboard() {
               ))}
             </div>
           </CardContent>
-        </Card>
+        </EnhancedCard>
 
-        <Card>
+        <EnhancedCard glassEffect="strong" neonBorder="orange" hoverEffect={true}>
           <CardHeader>
             <CardTitle>By Status</CardTitle>
           </CardHeader>
@@ -219,29 +221,31 @@ async function AnalyticsDashboard() {
               ))}
             </div>
           </CardContent>
-        </Card>
+        </EnhancedCard>
       </div>
 
       {/* Loop Velocity (Last 6 Months) */}
-      <Card>
-        <CardHeader>
-          <CardTitle>Loop Velocity (Last 6 Months)</CardTitle>
-          <CardDescription>Loops created per month</CardDescription>
-        </CardHeader>
-        <CardContent>
-          <div className="space-y-2">
-            {velocity.map(point => (
-              <div key={point.month} className="flex justify-between items-center">
-                <span className="text-sm text-muted-foreground">{point.month}</span>
-                <span className="text-sm font-medium">{point.count}</span>
-              </div>
-            ))}
-            {velocity.length === 0 && (
-              <p className="text-sm text-muted-foreground">No data for the selected period</p>
-            )}
-          </div>
-        </CardContent>
-      </Card>
+      <div>
+        <EnhancedCard glassEffect="strong" neonBorder="green" hoverEffect={true}>
+          <CardHeader>
+            <CardTitle>Loop Velocity (Last 6 Months)</CardTitle>
+            <CardDescription>Loops created per month</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-2">
+              {velocity.map(point => (
+                <div key={point.month} className="flex justify-between items-center">
+                  <span className="text-sm text-muted-foreground">{point.month}</span>
+                  <span className="text-sm font-medium">{point.count}</span>
+                </div>
+              ))}
+              {velocity.length === 0 && (
+                <p className="text-sm text-muted-foreground">No data for the selected period</p>
+              )}
+            </div>
+          </CardContent>
+        </EnhancedCard>
+      </div>
     </div>
   );
 }
@@ -264,24 +268,34 @@ export default function AnalyticsPage() {
 }
 
 function AnalyticsSkeleton() {
+  const neonColors: Array<'cyan' | 'green' | 'purple' | 'orange'> = ['cyan', 'green', 'purple', 'orange', 'cyan'];
+
   return (
     <div className="space-y-6">
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
         {[...Array(5)].map((_, i) => (
-          <Card key={i}>
+          <EnhancedCard key={i} glassEffect="medium" neonBorder={neonColors[i]} hoverEffect={true}>
             <CardHeader>
               <Skeleton className="h-4 w-24" />
             </CardHeader>
             <CardContent>
               <Skeleton className="h-8 w-16" />
             </CardContent>
-          </Card>
+          </EnhancedCard>
         ))}
       </div>
-      <Skeleton className="h-48 w-full" />
+      <EnhancedCard glassEffect="strong" neonBorder="orange" hoverEffect={true}>
+        <CardContent className="p-6">
+          <Skeleton className="h-48 w-full" />
+        </CardContent>
+      </EnhancedCard>
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         {[...Array(3)].map((_, i) => (
-          <Skeleton key={i} className="h-48 w-full" />
+          <EnhancedCard key={i} glassEffect="strong" neonBorder={neonColors[i]} hoverEffect={true}>
+            <CardContent className="p-6">
+              <Skeleton className="h-48 w-full" />
+            </CardContent>
+          </EnhancedCard>
         ))}
       </div>
     </div>

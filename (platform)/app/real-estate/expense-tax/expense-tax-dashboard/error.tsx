@@ -6,7 +6,12 @@ import { Button } from '@/components/ui/button';
 import { AlertCircle, RefreshCcw, Home } from 'lucide-react';
 import Link from 'next/link';
 
-export default function DashboardError({
+/**
+ * Expense & Tax Dashboard Error Boundary
+ *
+ * Handles errors in the expense & tax dashboard with retry and recovery options
+ */
+export default function ExpenseTaxDashboardError({
   error,
   reset,
 }: {
@@ -14,7 +19,7 @@ export default function DashboardError({
   reset: () => void;
 }) {
   useEffect(() => {
-    console.error('[CRM Dashboard Error]:', error);
+    console.error('[Expense & Tax Dashboard Error]:', error);
   }, [error]);
 
   return (
@@ -24,7 +29,7 @@ export default function DashboardError({
           <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-full bg-destructive/10">
             <AlertCircle className="h-8 w-8 text-destructive" />
           </div>
-          <CardTitle>Failed to Load CRM Dashboard</CardTitle>
+          <CardTitle>Failed to Load Expense & Tax Dashboard</CardTitle>
           <CardDescription className="mt-2">
             {error.message || 'Unable to load dashboard data. Please try again.'}
           </CardDescription>
@@ -35,9 +40,9 @@ export default function DashboardError({
             Retry
           </Button>
           <Button asChild variant="outline" className="w-full">
-            <Link href="/real-estate/dashboard">
+            <Link href="/real-estate/user-dashboard">
               <Home className="mr-2 h-4 w-4" />
-              Main Dashboard
+              Real Estate Dashboard
             </Link>
           </Button>
         </CardContent>

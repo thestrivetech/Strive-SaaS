@@ -1,15 +1,15 @@
 import { Suspense } from 'react';
 import { redirect } from 'next/navigation';
 import { requireAuth, getCurrentUser } from '@/lib/auth/auth-helpers';
-import { getDashboardStats } from '@/lib/modules/dashboard/queries';
 import { getDashboardMetrics } from '@/lib/modules/dashboard/metrics/queries';
 import { getDashboardWidgets } from '@/lib/modules/dashboard/widgets/queries';
 import { getRecentActivities } from '@/lib/modules/dashboard/activities/queries';
 import { getQuickActions } from '@/lib/modules/dashboard/quick-actions/queries';
+import { getOverviewKPIs } from '@/lib/modules/analytics';
 import { DashboardGrid } from '@/components/shared/dashboard/DashboardGrid';
-import { HeroSection } from '@/components/shared/dashboard/HeroSection';
+import { ModuleHeroSection } from '@/components/shared/dashboard/ModuleHeroSection';
+import { EnhancedCard, CardHeader, CardTitle, CardContent } from '@/components/shared/dashboard/EnhancedCard';
 import { HeroSkeleton, GridSkeleton } from '@/components/shared/dashboard/skeletons';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
 import {
@@ -19,11 +19,9 @@ import {
   FileText,
   TrendingUp,
   ArrowRight,
-  CheckCircle,
   Clock,
   DollarSign,
   Activity,
-  Settings,
 } from 'lucide-react';
 import Link from 'next/link';
 import { Metadata } from 'next';
@@ -101,7 +99,7 @@ export default async function DashboardPage() {
           </Suspense>
 
           {/* Main Content Grid */}
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+          <div className="grid gap-6 lg:grid-cols-3">
             {/* Left Column - Activity Feed & Metrics */}
             <div className="lg:col-span-2 space-y-8">
               <Suspense fallback={<ActivityFeedSkeleton />}>
@@ -133,82 +131,46 @@ export default async function DashboardPage() {
 /**
  * Hero Section Wrapper - Server Component for data fetching
  */
-async function HeroSectionWrapper({
-  organizationId,
-  user,
-}: {
-  organizationId: string;
-  user: UserWithOrganization;
-}) {
-  const stats = await getDashboardStats(organizationId);
-  return <HeroSection user={user} stats={stats} />;
-}
+async function HeroSectionWrapper({ user }: { organizationId?: string; user: any }) {
+  const kpis = await getOverviewKPIs();
 
-
-/**
- * KPI Cards Section
- * Displays key performance indicators with data from dashboard stats
- */
-async function KPICardsSection({ organizationId }: { organizationId: string }) {
-  const stats = await getDashboardStats(organizationId);
-
-  const kpis = [
+  const stats = [
     {
-      title: 'Revenue',
-      value: `$${stats.revenue.toLocaleString()}`,
-      description: 'Monthly recurring',
-      icon: DollarSign,
-      color: 'text-green-600 dark:text-green-400',
-      bgColor: 'bg-green-100 dark:bg-green-900/20',
+      label: 'Total Revenue',
+      value: `$${(kpis.revenue.thisMonth / 1000).toFixed(1)}K`,
+      change: kpis.revenue.change,
+      changeType: 'percentage' as const,
+      icon: 'revenue' as const,
     },
     {
-      title: 'Customers',
-      value: stats.customers.toString(),
-      description: 'Total customers',
-      icon: Users,
-      color: 'text-blue-600 dark:text-blue-400',
-      bgColor: 'bg-blue-100 dark:bg-blue-900/20',
+      label: 'Active Projects',
+      value: ((kpis.pipeline as any).activeDealCount || (kpis.pipeline as any).activeDeals || 0).toString(),
+      icon: 'projects' as const,
     },
     {
-      title: 'Active Projects',
-      value: stats.activeProjects.toString(),
-      description: `${stats.projects} total projects`,
-      icon: FolderKanban,
-      color: 'text-purple-600 dark:text-purple-400',
-      bgColor: 'bg-purple-100 dark:bg-purple-900/20',
+      label: 'Total Customers',
+      value: kpis.leads.total.toString(),
+      change: kpis.leads.change,
+      changeType: 'count' as const,
+      icon: 'customers' as const,
     },
     {
-      title: 'Task Completion',
-      value: `${stats.taskCompletionRate}%`,
-      description: `${stats.completedTasks}/${stats.tasks} tasks`,
-      icon: CheckCircle,
-      color: 'text-orange-600 dark:text-orange-400',
-      bgColor: 'bg-orange-100 dark:bg-orange-900/20',
+      label: 'Task Completion',
+      value: `${kpis.conversionRate}%`,
+      icon: 'tasks' as const,
     },
   ];
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-      {kpis.map((kpi) => {
-        const Icon = kpi.icon;
-        return (
-          <Card key={kpi.title} className="hover:shadow-lg transition-shadow">
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">{kpi.title}</CardTitle>
-              <div className={`p-2 rounded-lg ${kpi.bgColor}`}>
-                <Icon className={`h-4 w-4 ${kpi.color}`} />
-              </div>
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">{kpi.value}</div>
-              <p className="text-xs text-muted-foreground">{kpi.description}</p>
-            </CardContent>
-          </Card>
-        );
-      })}
-    </div>
+    <ModuleHeroSection
+      user={user}
+      moduleName="User Dashboard"
+      moduleDescription="Your personalized platform overview"
+      stats={stats}
+    />
   );
 }
+
 
 /**
  * Quick Actions Section
@@ -229,7 +191,7 @@ async function QuickActionsSection({ organizationId }: { organizationId: string 
       name: 'New Transaction',
       description: 'Start a transaction loop',
       icon: 'FileText',
-      target_url: '/real-estate/workspace/dashboard',
+      target_url: '/real-estate/workspace/workspace-dashboard',
       color: 'green',
     },
     {
@@ -244,7 +206,7 @@ async function QuickActionsSection({ organizationId }: { organizationId: string 
   const displayActions = actions.length > 0 ? actions : defaultActions;
 
   return (
-    <Card>
+    <EnhancedCard glassEffect="strong" neonBorder="cyan" hoverEffect={true}>
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
           <Activity className="h-5 w-5" />
@@ -253,7 +215,7 @@ async function QuickActionsSection({ organizationId }: { organizationId: string 
       </CardHeader>
       <CardContent>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          {displayActions.slice(0, 3).map((action, index) => {
+          {displayActions.slice(0, 3).map((action: any, index: number) => {
             // Icon mapping
             const iconMap: Record<string, any> = {
               Users,
@@ -280,7 +242,7 @@ async function QuickActionsSection({ organizationId }: { organizationId: string 
           })}
         </div>
       </CardContent>
-    </Card>
+    </EnhancedCard>
   );
 }
 
@@ -292,7 +254,7 @@ async function ActivityFeedSection({ organizationId }: { organizationId: string 
   const activities = await getRecentActivities(10);
 
   return (
-    <Card>
+    <EnhancedCard glassEffect="strong" neonBorder="green" hoverEffect={true}>
       <CardHeader>
         <div className="flex items-center justify-between">
           <CardTitle className="flex items-center gap-2">
@@ -314,7 +276,7 @@ async function ActivityFeedSection({ organizationId }: { organizationId: string 
           </p>
         ) : (
           <div className="space-y-4">
-            {activities.map((activity) => (
+            {activities.map((activity: any) => (
               <div
                 key={activity.id}
                 className="flex items-start gap-3 pb-3 border-b border-gray-100 dark:border-gray-800 last:border-0"
@@ -339,7 +301,7 @@ async function ActivityFeedSection({ organizationId }: { organizationId: string 
           </div>
         )}
       </CardContent>
-    </Card>
+    </EnhancedCard>
   );
 }
 
@@ -351,7 +313,7 @@ async function MetricsSection({ organizationId }: { organizationId: string }) {
   const metrics = await getDashboardMetrics();
 
   return (
-    <Card>
+    <EnhancedCard glassEffect="strong" neonBorder="purple" hoverEffect={true}>
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
           <TrendingUp className="h-5 w-5" />
@@ -365,7 +327,7 @@ async function MetricsSection({ organizationId }: { organizationId: string }) {
           </p>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {metrics.slice(0, 4).map((metric) => (
+            {metrics.slice(0, 4).map((metric: any) => (
               <div
                 key={metric.id}
                 className="p-4 border border-gray-200 dark:border-gray-700 rounded-lg"
@@ -386,7 +348,7 @@ async function MetricsSection({ organizationId }: { organizationId: string }) {
           </div>
         )}
       </CardContent>
-    </Card>
+    </EnhancedCard>
   );
 }
 
@@ -420,7 +382,7 @@ function ModuleShortcutsSection() {
   ];
 
   return (
-    <Card>
+    <EnhancedCard glassEffect="strong" neonBorder="orange" hoverEffect={true}>
       <CardHeader>
         <CardTitle>Quick Access</CardTitle>
       </CardHeader>
@@ -449,7 +411,7 @@ function ModuleShortcutsSection() {
           })}
         </div>
       </CardContent>
-    </Card>
+    </EnhancedCard>
   );
 }
 
@@ -465,7 +427,7 @@ async function WidgetsSection({ organizationId }: { organizationId: string }) {
   }
 
   return (
-    <Card>
+    <EnhancedCard glassEffect="strong" neonBorder="cyan" hoverEffect={true}>
       <CardHeader>
         <CardTitle>Custom Widgets</CardTitle>
       </CardHeader>
@@ -474,21 +436,11 @@ async function WidgetsSection({ organizationId }: { organizationId: string }) {
           {widgets.length} widget(s) configured
         </p>
       </CardContent>
-    </Card>
+    </EnhancedCard>
   );
 }
 
 // Loading Skeletons
-function KPICardsSkeleton() {
-  return (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-      {Array.from({ length: 4 }).map((_, i) => (
-        <Skeleton key={i} className="h-32 rounded-lg" />
-      ))}
-    </div>
-  );
-}
-
 function QuickActionsSkeleton() {
   return <Skeleton className="h-48 rounded-lg" />;
 }

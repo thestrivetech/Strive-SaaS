@@ -91,7 +91,7 @@ export async function createContact(input: CreateContactInput) {
 
       // Revalidate contacts page
       revalidatePath('/crm/contacts');
-      revalidatePath('/crm/dashboard');
+      revalidatePath('/crm/crm-dashboard');
 
       return contact;
     } catch (error) {
@@ -183,7 +183,7 @@ export async function updateContact(input: UpdateContactInput) {
       // Revalidate pages
       revalidatePath('/crm/contacts');
       revalidatePath(`/crm/contacts/${id}`);
-      revalidatePath('/crm/dashboard');
+      revalidatePath('/crm/crm-dashboard');
 
       return contact;
     } catch (error) {
@@ -257,7 +257,7 @@ export async function deleteContact(id: string) {
 
       // Revalidate pages
       revalidatePath('/crm/contacts');
-      revalidatePath('/crm/dashboard');
+      revalidatePath('/crm/crm-dashboard');
 
       return { success: true };
     } catch (error) {

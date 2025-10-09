@@ -4,6 +4,8 @@ import { prisma } from '@/lib/database/prisma';
 import { requireAuth, getCurrentUser } from '@/lib/auth/middleware';
 import { getUserOrganizationId } from '@/lib/auth/user-helpers';
 import { cache } from 'react';
+import { contentProvider } from '@/lib/data/providers/content-provider';
+import { campaignsProvider } from '@/lib/data/providers/campaigns-provider';
 
 /**
  * CMS & Marketing Dashboard Queries
@@ -46,8 +48,25 @@ export const getCMSDashboardStats = cache(async (): Promise<CMSDashboardStats> =
   if (!user) throw new Error('Unauthorized');
 
   const organization_id = getUserOrganizationId(user);
+  const useMocks = process.env.NEXT_PUBLIC_USE_MOCKS === 'true';
 
-  // Fetch all stats in parallel for performance
+  if (useMocks) {
+    // Use mock providers
+    const [contentStats, campaignMetrics, totalViews] = await Promise.all([
+      contentProvider.getStats(organization_id),
+      campaignsProvider.getMetrics(organization_id),
+      contentProvider.getTotalViews(organization_id),
+    ]);
+
+    return {
+      totalContent: contentStats.total,
+      publishedContent: contentStats.published,
+      activeCampaigns: campaignMetrics.active,
+      totalViews,
+    };
+  }
+
+  // Original Prisma code for production
   const [
     totalContent,
     publishedContent,
@@ -101,7 +120,13 @@ export const getRecentContent = cache(async (): Promise<RecentContentItem[]> => 
   if (!user) throw new Error('Unauthorized');
 
   const organization_id = getUserOrganizationId(user);
+  const useMocks = process.env.NEXT_PUBLIC_USE_MOCKS === 'true';
 
+  if (useMocks) {
+    return contentProvider.getRecent(organization_id, 5);
+  }
+
+  // Original Prisma code for production
   const items = await prisma.content_items.findMany({
     where: { organization_id },
     select: {
@@ -129,7 +154,13 @@ export const getRecentCampaigns = cache(async (): Promise<RecentCampaign[]> => {
   if (!user) throw new Error('Unauthorized');
 
   const organization_id = getUserOrganizationId(user);
+  const useMocks = process.env.NEXT_PUBLIC_USE_MOCKS === 'true';
 
+  if (useMocks) {
+    return campaignsProvider.getRecent(organization_id, 5);
+  }
+
+  // Original Prisma code for production
   const campaigns = await prisma.campaigns.findMany({
     where: { organization_id },
     select: {

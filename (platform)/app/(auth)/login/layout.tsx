@@ -13,7 +13,7 @@ export default async function AuthLayout({
 
   // If user is already logged in, redirect to dashboard
   if (session) {
-    redirect('/real-estate/dashboard');
+    redirect('/real-estate/user-dashboard');
   }
 
   return (

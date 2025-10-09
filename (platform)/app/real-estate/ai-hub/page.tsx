@@ -6,5 +6,5 @@ import { redirect } from 'next/navigation';
  * Redirects to the AI Hub dashboard
  */
 export default function AIHubPage() {
-  redirect('/real-estate/ai-hub/dashboard');
+  redirect('/real-estate/ai-hub/ai-hub-dashboard');
 }

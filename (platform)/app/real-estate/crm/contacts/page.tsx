@@ -8,7 +8,7 @@ import { ContactTable } from '@/components/real-estate/crm/contacts/contact-tabl
 import { ContactFormDialog } from '@/components/real-estate/crm/contacts/contact-form-dialog';
 import { ContactFilters as ContactFiltersBar } from '@/components/real-estate/crm/contacts/contact-filters';
 import { ContactSearch } from '@/components/real-estate/crm/contacts/contact-search';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { EnhancedCard, CardContent, CardHeader, CardTitle } from '@/components/shared/dashboard/EnhancedCard';
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Users, UserCheck, Building2, UserX } from 'lucide-react';
@@ -71,27 +71,33 @@ export default async function ContactsPage({ searchParams }: ContactsPageProps) 
       </Suspense>
 
       {/* Filters & Search */}
-      <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4">
-        <ContactSearch />
-        <ContactFiltersBar />
-        <div className="flex gap-2 ml-auto">
-          <a href={`?${new URLSearchParams({ ...params, view: 'grid' }).toString()}`}>
-            <Button
-              variant={viewMode === 'grid' ? 'default' : 'outline'}
-              size="sm"
-            >
-              Grid
-            </Button>
-          </a>
-          <a href={`?${new URLSearchParams({ ...params, view: 'table' }).toString()}`}>
-            <Button
-              variant={viewMode === 'table' ? 'default' : 'outline'}
-              size="sm"
-            >
-              Table
-            </Button>
-          </a>
-        </div>
+      <div>
+        <EnhancedCard glassEffect="medium" neonBorder="green" hoverEffect={true}>
+          <CardContent className="pt-6">
+            <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4">
+              <ContactSearch />
+              <ContactFiltersBar />
+              <div className="flex gap-2 ml-auto">
+                <a href={`?${new URLSearchParams({ ...params, view: 'grid' }).toString()}`}>
+                  <Button
+                    variant={viewMode === 'grid' ? 'default' : 'outline'}
+                    size="sm"
+                  >
+                    Grid
+                  </Button>
+                </a>
+                <a href={`?${new URLSearchParams({ ...params, view: 'table' }).toString()}`}>
+                  <Button
+                    variant={viewMode === 'table' ? 'default' : 'outline'}
+                    size="sm"
+                  >
+                    Table
+                  </Button>
+                </a>
+              </div>
+            </div>
+          </CardContent>
+        </EnhancedCard>
       </div>
 
       {/* Contacts List */}
@@ -108,7 +114,7 @@ async function StatsCards() {
 
   return (
     <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-      <Card>
+      <EnhancedCard glassEffect="medium" neonBorder="cyan" hoverEffect={true}>
         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
           <CardTitle className="text-sm font-medium">Total Contacts</CardTitle>
           <Users className="h-4 w-4 text-muted-foreground" />
@@ -116,9 +122,9 @@ async function StatsCards() {
         <CardContent>
           <div className="text-2xl font-bold">{stats.total}</div>
         </CardContent>
-      </Card>
+      </EnhancedCard>
 
-      <Card>
+      <EnhancedCard glassEffect="medium" neonBorder="green" hoverEffect={true}>
         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
           <CardTitle className="text-sm font-medium">Active</CardTitle>
           <UserCheck className="h-4 w-4 text-muted-foreground" />
@@ -126,9 +132,9 @@ async function StatsCards() {
         <CardContent>
           <div className="text-2xl font-bold">{stats.active}</div>
         </CardContent>
-      </Card>
+      </EnhancedCard>
 
-      <Card>
+      <EnhancedCard glassEffect="medium" neonBorder="purple" hoverEffect={true}>
         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
           <CardTitle className="text-sm font-medium">Clients</CardTitle>
           <Building2 className="h-4 w-4 text-muted-foreground" />
@@ -136,9 +142,9 @@ async function StatsCards() {
         <CardContent>
           <div className="text-2xl font-bold">{stats.clients}</div>
         </CardContent>
-      </Card>
+      </EnhancedCard>
 
-      <Card>
+      <EnhancedCard glassEffect="medium" neonBorder="orange" hoverEffect={true}>
         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
           <CardTitle className="text-sm font-medium">Past Clients</CardTitle>
           <UserX className="h-4 w-4 text-muted-foreground" />
@@ -146,7 +152,7 @@ async function StatsCards() {
         <CardContent>
           <div className="text-2xl font-bold">{stats.pastClients}</div>
         </CardContent>
-      </Card>
+      </EnhancedCard>
     </div>
   );
 }
@@ -186,10 +192,12 @@ async function ContactsList({
 
 // Loading Skeletons
 function StatsCardsSkeleton() {
+  const neonColors: Array<'cyan' | 'green' | 'purple' | 'orange'> = ['cyan', 'green', 'purple', 'orange'];
+
   return (
     <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
       {[...Array(4)].map((_, i) => (
-        <Card key={i}>
+        <EnhancedCard key={i} glassEffect="medium" neonBorder={neonColors[i]} hoverEffect={true}>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <Skeleton className="h-4 w-24" />
             <Skeleton className="h-4 w-4 rounded-full" />
@@ -197,7 +205,7 @@ function StatsCardsSkeleton() {
           <CardContent>
             <Skeleton className="h-8 w-16" />
           </CardContent>
-        </Card>
+        </EnhancedCard>
       ))}
     </div>
   );
@@ -207,7 +215,7 @@ function ContactsGridSkeleton() {
   return (
     <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
       {[...Array(6)].map((_, i) => (
-        <Card key={i}>
+        <EnhancedCard key={i} glassEffect="medium" neonBorder="purple" hoverEffect={true}>
           <CardHeader>
             <div className="flex items-center space-x-3">
               <Skeleton className="h-10 w-10 rounded-full" />
@@ -222,7 +230,7 @@ function ContactsGridSkeleton() {
             <Skeleton className="h-4 w-full" />
             <Skeleton className="h-4 w-2/3" />
           </CardContent>
-        </Card>
+        </EnhancedCard>
       ))}
     </div>
   );

@@ -5,7 +5,7 @@ import { requireAuth, getCurrentUser } from '@/lib/auth/auth-helpers';
 import { getDealById, getStageTitle, getStageColor } from '@/lib/modules/crm/deals';
 import { DealFormDialog } from '@/components/real-estate/crm/deals/deal-form-dialog';
 import { DealActionsMenu } from '@/components/real-estate/crm/deals/deal-actions-menu';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { EnhancedCard, CardContent, CardHeader, CardTitle } from '@/components/shared/dashboard/EnhancedCard';
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
 import { Button } from '@/components/ui/button';
@@ -53,11 +53,12 @@ async function DealDetailContent({ dealId }: { dealId: string }) {
       {/* Main Content */}
       <div className="lg:col-span-2 space-y-6">
         {/* Deal Header */}
-        <Card>
-          <CardHeader>
-            <div className="flex items-start justify-between">
-              <div className="space-y-2">
-                <CardTitle className="text-2xl">{deal.title}</CardTitle>
+        <div>
+          <EnhancedCard glassEffect="strong" neonBorder="cyan" hoverEffect={true}>
+            <CardHeader>
+              <div className="flex items-start justify-between">
+                <div className="space-y-2">
+                  <CardTitle className="text-2xl">{deal.title}</CardTitle>
                 <div className="flex items-center gap-2">
                   <Badge
                     variant="outline"
@@ -123,14 +124,16 @@ async function DealDetailContent({ dealId }: { dealId: string }) {
               </>
             )}
           </CardContent>
-        </Card>
+        </EnhancedCard>
+        </div>
 
         {/* Contact/Lead Association */}
         {(deal.contact || deal.lead) && (
-          <Card>
-            <CardHeader>
-              <CardTitle className="text-lg">Associated Contact</CardTitle>
-            </CardHeader>
+          <div>
+            <EnhancedCard glassEffect="strong" neonBorder="purple" hoverEffect={true}>
+              <CardHeader>
+                <CardTitle className="text-lg">Associated Contact</CardTitle>
+              </CardHeader>
             <CardContent>
               {deal.contact ? (
                 <div className="space-y-2">
@@ -163,17 +166,19 @@ async function DealDetailContent({ dealId }: { dealId: string }) {
                 </div>
               ) : null}
             </CardContent>
-          </Card>
+          </EnhancedCard>
+          </div>
         )}
       </div>
 
       {/* Sidebar */}
       <div className="space-y-6">
         {/* Details Card */}
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-lg">Details</CardTitle>
-          </CardHeader>
+        <div>
+          <EnhancedCard glassEffect="strong" neonBorder="green" hoverEffect={true}>
+            <CardHeader>
+              <CardTitle className="text-lg">Details</CardTitle>
+            </CardHeader>
           <CardContent className="space-y-4">
             {deal.assigned_to && (
               <div className="space-y-1">
@@ -230,18 +235,21 @@ async function DealDetailContent({ dealId }: { dealId: string }) {
               </div>
             )}
           </CardContent>
-        </Card>
+        </EnhancedCard>
+        </div>
 
         {/* Lost Reason */}
         {deal.status === 'LOST' && deal.lost_reason && (
-          <Card>
-            <CardHeader>
-              <CardTitle className="text-lg">Lost Reason</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <p className="text-sm text-muted-foreground">{deal.lost_reason}</p>
-            </CardContent>
-          </Card>
+          <div>
+            <EnhancedCard glassEffect="strong" neonBorder="orange" hoverEffect={true}>
+              <CardHeader>
+                <CardTitle className="text-lg">Lost Reason</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <p className="text-sm text-muted-foreground">{deal.lost_reason}</p>
+              </CardContent>
+            </EnhancedCard>
+          </div>
         )}
       </div>
     </div>
@@ -252,7 +260,7 @@ function DealDetailSkeleton() {
   return (
     <div className="grid gap-6 lg:grid-cols-3">
       <div className="lg:col-span-2 space-y-6">
-        <Card>
+        <EnhancedCard glassEffect="strong" neonBorder="cyan" hoverEffect={false}>
           <CardHeader>
             <div className="h-8 bg-muted rounded w-1/2 animate-pulse" />
             <div className="h-4 bg-muted rounded w-1/4 animate-pulse mt-2" />
@@ -260,17 +268,17 @@ function DealDetailSkeleton() {
           <CardContent>
             <div className="h-40 bg-muted rounded animate-pulse" />
           </CardContent>
-        </Card>
+        </EnhancedCard>
       </div>
       <div className="space-y-6">
-        <Card>
+        <EnhancedCard glassEffect="strong" neonBorder="green" hoverEffect={false}>
           <CardHeader>
             <div className="h-6 bg-muted rounded w-24 animate-pulse" />
           </CardHeader>
           <CardContent>
             <div className="h-32 bg-muted rounded animate-pulse" />
           </CardContent>
-        </Card>
+        </EnhancedCard>
       </div>
     </div>
   );

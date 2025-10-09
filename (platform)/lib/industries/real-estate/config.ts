@@ -151,7 +151,7 @@ export const realEstateConfig: IndustryConfig = {
   // Routes - real estate-specific pages
   routes: [
     {
-      path: '/industries/real-estate/dashboard',
+      path: '/industries/real-estate/user-dashboard',
       name: 'Real Estate Dashboard',
       description: 'Overview of properties, transactions, and market trends',
       componentPath: '@/lib/industries/real-estate/features/dashboard',

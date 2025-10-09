@@ -40,7 +40,7 @@ export default function MarketplaceDashboardError({
             Retry
           </Button>
           <Button asChild variant="outline" className="w-full">
-            <Link href="/real-estate/dashboard">
+            <Link href="/real-estate/user-dashboard">
               <Home className="mr-2 h-4 w-4" />
               Main Dashboard
             </Link>

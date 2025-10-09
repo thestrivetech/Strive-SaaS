@@ -57,7 +57,7 @@ export async function createExpense(input: ExpenseInput) {
     });
 
     revalidatePath('/real-estate/expense-tax');
-    revalidatePath('/real-estate/expense-tax/dashboard');
+    revalidatePath('/real-estate/expense-tax/expense-tax-dashboard');
 
     return {
       success: true,
@@ -155,7 +155,7 @@ export async function updateExpense(input: ExpenseUpdate) {
     });
 
     revalidatePath('/real-estate/expense-tax');
-    revalidatePath('/real-estate/expense-tax/dashboard');
+    revalidatePath('/real-estate/expense-tax/expense-tax-dashboard');
 
     return {
       success: true,
@@ -230,7 +230,7 @@ export async function deleteExpense(id: string) {
     });
 
     revalidatePath('/real-estate/expense-tax');
-    revalidatePath('/real-estate/expense-tax/dashboard');
+    revalidatePath('/real-estate/expense-tax/expense-tax-dashboard');
 
     return { success: true };
   } catch (error) {

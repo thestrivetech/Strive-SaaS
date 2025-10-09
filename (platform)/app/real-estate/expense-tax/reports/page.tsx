@@ -2,7 +2,6 @@ import { Suspense } from 'react';
 import { Metadata } from 'next';
 import { requireAuth, getCurrentUser } from '@/lib/auth/auth-helpers';
 import { redirect } from 'next/navigation';
-import { motion } from 'framer-motion';
 import { ReportGenerator } from '@/components/real-estate/expense-tax/reports/ReportGenerator';
 import { ReportList } from '@/components/real-estate/expense-tax/reports/ReportList';
 import type { Report } from '@/components/real-estate/expense-tax/reports/ReportCard';
@@ -53,11 +52,7 @@ export default async function ExpenseReportsPage() {
       </Suspense>
 
       {/* Report Generator Section */}
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.3 }}
-      >
+      <div>
         <EnhancedCard glassEffect="strong" neonBorder="cyan" hoverEffect={false}>
           <CardHeader>
             <CardTitle>Generate New Report</CardTitle>
@@ -72,14 +67,10 @@ export default async function ExpenseReportsPage() {
             </Suspense>
           </CardContent>
         </EnhancedCard>
-      </motion.div>
+      </div>
 
       {/* Reports List Section */}
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.5 }}
-      >
+      <div>
         <EnhancedCard glassEffect="strong" neonBorder="purple" hoverEffect={false}>
           <CardHeader>
             <CardTitle>Generated Reports</CardTitle>
@@ -94,7 +85,7 @@ export default async function ExpenseReportsPage() {
             </Suspense>
           </CardContent>
         </EnhancedCard>
-      </motion.div>
+      </div>
     </div>
   );
 }

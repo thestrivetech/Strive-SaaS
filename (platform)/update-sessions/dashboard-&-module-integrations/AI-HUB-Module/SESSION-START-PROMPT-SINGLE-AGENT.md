@@ -9,7 +9,7 @@ Use this prompt at the beginning of each session. Replace `{SESSION_NUMBER}` wit
 ## 📋 SESSION START PROMPT
 
 ```
-I'm starting Session {SESSION_NUMBER} of the AI-HUB Module (NeuroFlow Hub) integration.
+I'm starting Session {1} of the AI-HUB Module integration.
 
 ## STEP 1: READ ESSENTIAL DOCUMENTATION
 
@@ -229,7 +229,7 @@ After agent reports complete, independently verify:
 - [ ] Backend logic in lib/modules/
 - [ ] No files exceed 500 lines (unless it goes into lib/data)
 - [ ] Follows Industry > Module > Page hierarchy
-- [ ] NeuroFlow design system applied (electric colors, glass effects)
+- [ ] Platform design system applied (electric colors, glass effects)
 
 ### Follow-Up Verification (If Needed)
 If agent report lacks detail or you need additional verification:
@@ -404,12 +404,9 @@ app/api/v1/
     └── ai-providers/        # AI provider webhooks (usage tracking)
 ```
 
-### NeuroFlow Design System
+### Design System
 ```css
-/* Electric colors */
---electric-blue: #00D2FF;
---cyber-green: #39FF14;
---neon-violet: #8B5CF6;
+USE PLATFORM DESIGN 
 
 /* Glass morphism classes */
 .glass              /* Standard glass effect */

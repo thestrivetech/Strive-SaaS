@@ -38,7 +38,7 @@ interface SidebarNavProps {
 export const defaultNavItems: NavItem[] = [
   {
     title: 'Dashboard',
-    href: '/real-estate/dashboard',
+    href: '/real-estate/user-dashboard',
     icon: LayoutDashboard,
   },
   {
@@ -108,7 +108,7 @@ export function SidebarNav({ items }: SidebarNavProps) {
   return (
     <aside className="flex h-screen w-64 flex-col border-r bg-background">
       <div className="flex h-14 items-center border-b px-4">
-        <Link href="/real-estate/dashboard" className="flex items-center gap-2 font-semibold">
+        <Link href="/real-estate/user-dashboard" className="flex items-center gap-2 font-semibold">
           <div className="h-8 w-8 rounded-lg bg-primary" />
           <span>Strive Tech</span>
         </Link>

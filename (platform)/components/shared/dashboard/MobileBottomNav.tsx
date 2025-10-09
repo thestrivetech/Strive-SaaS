@@ -33,13 +33,13 @@ export function MobileBottomNav() {
       id: 'home',
       icon: Home,
       label: 'Home',
-      href: '/real-estate/dashboard',
+      href: '/real-estate/user-dashboard',
     },
     {
       id: 'analytics',
       icon: BarChart3,
       label: 'Analytics',
-      href: '/real-estate/reid/dashboard',
+      href: '/real-estate/reid/reid-dashboard',
     },
     {
       id: 'add',
