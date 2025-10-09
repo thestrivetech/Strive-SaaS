@@ -860,3 +860,159 @@ export const aiUsageProvider = {
     throw new Error('Real database not implemented yet - enable mock mode');
   },
 };
+
+// ============================================================================
+// DASHBOARD DATA PROVIDER
+// ============================================================================
+
+export const aiHubDashboardProvider = {
+  /**
+   * Get dashboard data (usage stats + featured tools)
+   */
+  async getDashboardData(orgId: string, userId?: string): Promise<{
+    usageStats: {
+      conversationsThisMonth: number;
+      tokensUsedThisMonth: number;
+      mostUsedFeatures: Array<{ name: string; count: number; percentage: number }>;
+      usageTrends: Array<{ month: string; conversations: number; tokens: number }>;
+    };
+    featuredTools: Array<{
+      id: string;
+      name: string;
+      description: string;
+      icon: string;
+      usageCount: number;
+      category: string;
+    }>;
+  }> {
+    if (dataConfig.useMocks) {
+      initializeMockData(orgId, userId);
+      await simulateDelay();
+      maybeThrowError('Failed to fetch dashboard data');
+
+      // Calculate usage stats
+      const now = new Date();
+      const thisMonth = new Date(now.getFullYear(), now.getMonth(), 1);
+
+      // Filter conversations and usage for this month
+      const conversationsThisMonth = mockConversationsStore.filter(
+        (c) =>
+          c.organization_id === orgId &&
+          new Date(c.started_at) >= thisMonth
+      ).length;
+
+      const usageThisMonth = mockAIUsageStore.filter(
+        (u) =>
+          u.organization_id === orgId &&
+          new Date(u.timestamp) >= thisMonth
+      );
+
+      const tokensUsedThisMonth = usageThisMonth.reduce(
+        (sum, u) => sum + u.tokens_used,
+        0
+      );
+
+      // Calculate most used features
+      const featureUsageMap = new Map<string, number>();
+      usageThisMonth.forEach((u) => {
+        featureUsageMap.set(u.feature, (featureUsageMap.get(u.feature) || 0) + 1);
+      });
+
+      const totalUsage = usageThisMonth.length;
+      const mostUsedFeatures = Array.from(featureUsageMap.entries())
+        .map(([feature, count]) => ({
+          name: feature.replace('_', ' '),
+          count,
+          percentage: totalUsage > 0 ? Math.round((count / totalUsage) * 100) : 0,
+        }))
+        .sort((a, b) => b.count - a.count)
+        .slice(0, 5);
+
+      // Calculate usage trends (last 3 months)
+      const usageTrends: Array<{ month: string; conversations: number; tokens: number }> =
+        [];
+      const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+
+      for (let i = 2; i >= 0; i--) {
+        const monthDate = new Date(now.getFullYear(), now.getMonth() - i, 1);
+        const nextMonth = new Date(now.getFullYear(), now.getMonth() - i + 1, 1);
+        const monthName = monthNames[monthDate.getMonth()];
+
+        const conversationsCount = mockConversationsStore.filter(
+          (c) =>
+            c.organization_id === orgId &&
+            new Date(c.started_at) >= monthDate &&
+            new Date(c.started_at) < nextMonth
+        ).length;
+
+        const monthUsage = mockAIUsageStore.filter(
+          (u) =>
+            u.organization_id === orgId &&
+            new Date(u.timestamp) >= monthDate &&
+            new Date(u.timestamp) < nextMonth
+        );
+
+        const tokensCount = monthUsage.reduce((sum, u) => sum + u.tokens_used, 0);
+
+        usageTrends.push({
+          month: monthName,
+          conversations: conversationsCount,
+          tokens: tokensCount,
+        });
+      }
+
+      // Define featured tools
+      const featuredTools = [
+        {
+          id: 'property-description-gen',
+          name: 'Property Description Generator',
+          description:
+            'Create compelling property listings with AI-powered descriptions that highlight key features and attract buyers.',
+          icon: 'FileText',
+          usageCount: 1247,
+          category: 'Content Generation',
+        },
+        {
+          id: 'email-writer',
+          name: 'Email Writer',
+          description:
+            'Craft professional emails for client communication, follow-ups, and marketing campaigns with intelligent AI assistance.',
+          icon: 'Mail',
+          usageCount: 892,
+          category: 'Communication',
+        },
+        {
+          id: 'market-analysis',
+          name: 'Market Analysis AI',
+          description:
+            'Get instant market insights, pricing recommendations, and competitive analysis powered by advanced AI algorithms.',
+          icon: 'TrendingUp',
+          usageCount: 634,
+          category: 'Analysis',
+        },
+        {
+          id: 'document-analyzer',
+          name: 'Document Analyzer',
+          description:
+            'Automatically extract key information from contracts, agreements, and transaction documents with AI precision.',
+          icon: 'FileSearch',
+          usageCount: 521,
+          category: 'Document Processing',
+        },
+      ];
+
+      return {
+        usageStats: {
+          conversationsThisMonth,
+          tokensUsedThisMonth,
+          mostUsedFeatures,
+          usageTrends,
+        },
+        featuredTools,
+      };
+    }
+
+    // TODO: Replace with real Prisma query
+    throw new Error('Real database not implemented yet - enable mock mode');
+  },
+};

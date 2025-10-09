@@ -14,6 +14,25 @@ export {
   removeMember,
 } from './organization/actions';
 
+// Billing actions
+export {
+  updatePlan,
+  addPaymentMethod,
+  updatePaymentMethod,
+  removePaymentMethod,
+  downloadInvoice,
+  cancelSubscription,
+} from './billing/actions';
+
+// Security actions
+export {
+  changePassword,
+  enable2FA,
+  disable2FA,
+  revokeSession,
+  revokeAllSessions,
+} from './security/actions';
+
 // Profile queries
 export {
   getUserProfile,
@@ -27,6 +46,20 @@ export {
   getOrganizationMembers,
   getOrganizationStats,
 } from './organization/queries';
+
+// Billing queries
+export {
+  getSubscription,
+  getPaymentMethods,
+  getInvoices,
+} from './billing/queries';
+
+// Security queries
+export {
+  getActiveSessions,
+  getSecurityLog,
+  get2FAStatus,
+} from './security/queries';
 
 // Profile schemas
 export type {
@@ -42,3 +75,21 @@ export type {
   UpdateMemberRoleInput,
   RemoveMemberInput,
 } from './organization/schemas';
+
+// Billing schemas
+export type {
+  SubscriptionTier,
+  UpdatePlanInput,
+  AddPaymentMethodInput,
+  UpdatePaymentMethodInput,
+  RemovePaymentMethodInput,
+  DownloadInvoiceInput,
+} from './billing/schemas';
+
+// Security schemas
+export type {
+  ChangePasswordInput,
+  Enable2FAInput,
+  Disable2FAInput,
+  RevokeSessionInput,
+} from './security/schemas';

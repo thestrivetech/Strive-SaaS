@@ -59,6 +59,8 @@ export {
   reportsProvider,
 } from './providers/expenses-provider';
 
+export { expenseTaxReportsProvider } from './providers/expense-tax-reports-provider';
+
 // REID Providers
 export {
   marketDataProvider,
@@ -79,6 +81,7 @@ export {
   insightsProvider,
   contentGenerationProvider,
   aiUsageProvider,
+  aiHubDashboardProvider,
 } from './providers/ai-hub-provider';
 
 // User Dashboard Providers
@@ -114,6 +117,11 @@ export type {
   MockReceipt,
   MockTaxReport,
 } from './mocks/expenses';
+export type {
+  MockReportTemplate,
+  MockGeneratedReport,
+  ReportFormat,
+} from './mocks/expense-tax-reports';
 export type {
   MockMarketData,
   MockTrendPoint,

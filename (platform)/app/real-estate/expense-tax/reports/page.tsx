@@ -2,33 +2,31 @@ import { Suspense } from 'react';
 import { Metadata } from 'next';
 import { requireAuth, getCurrentUser } from '@/lib/auth/auth-helpers';
 import { redirect } from 'next/navigation';
-import { ReportGenerator } from '@/components/real-estate/expense-tax/reports/ReportGenerator';
-import { ReportList } from '@/components/real-estate/expense-tax/reports/ReportList';
-import type { Report } from '@/components/real-estate/expense-tax/reports/ReportCard';
 import { ModuleHeroSection } from '@/components/shared/dashboard/ModuleHeroSection';
-import { EnhancedCard, CardHeader, CardTitle, CardContent } from '@/components/shared/dashboard/EnhancedCard';
 import { HeroSkeleton } from '@/components/shared/dashboard/skeletons';
+import { ReportTemplatesSection } from './report-templates-section';
+import { RecentReportsSection } from './recent-reports-section';
+import { expenseTaxReportsProvider } from '@/lib/data';
 
 /**
- * Expense Reports Page
+ * Tax Reports Page
  *
- * Report generation and management dashboard with:
- * - ModuleHeroSection with report KPI stats
- * - Report generator form (date range, categories, format)
- * - List of generated reports with download/delete
- * - Single column layout
- * - Glass effects and neon borders
- * - Framer Motion animations
+ * Complete page for generating and managing tax reports with:
+ * - ModuleHeroSection with report statistics
+ * - Report template cards (Schedule E, Form 1040, etc.)
+ * - Recent reports list with download/share/delete actions
+ * - Share report dialog
+ * - Responsive layout
  *
  * @protected - Requires authentication and organization membership
  * @route /real-estate/expense-tax/reports
  */
 export const metadata: Metadata = {
-  title: 'Expense Reports | Strive Platform',
-  description: 'Generate and manage expense reports',
+  title: 'Tax Reports | Strive Platform',
+  description: 'Generate and manage your tax reports',
 };
 
-export default async function ExpenseReportsPage() {
+export default async function TaxReportsPage() {
   // Require authentication
   await requireAuth();
   const user = await getCurrentUser();
@@ -46,166 +44,101 @@ export default async function ExpenseReportsPage() {
 
   return (
     <div className="space-y-6">
-      {/* Hero Section with Report KPIs */}
+      {/* Hero Section with Stats */}
       <Suspense fallback={<HeroSkeleton />}>
-        <HeroSectionWrapper user={user} />
+        <HeroSectionWrapper user={user} organizationId={organizationId} />
       </Suspense>
 
-      {/* Report Generator Section */}
-      <div>
-        <EnhancedCard glassEffect="strong" neonBorder="cyan" hoverEffect={false}>
-          <CardHeader>
-            <CardTitle>Generate New Report</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <Suspense
-              fallback={
-                <div className="h-96 bg-gray-200 dark:bg-gray-700 rounded-lg animate-pulse"></div>
-              }
-            >
-              <ReportGenerator />
-            </Suspense>
-          </CardContent>
-        </EnhancedCard>
-      </div>
+      {/* Report Templates Section */}
+      <section>
+        <div className="mb-4">
+          <h2 className="text-2xl font-bold">Generate Reports</h2>
+          <p className="text-muted-foreground">
+            Select a report template to generate tax documentation
+          </p>
+        </div>
+        <Suspense
+          fallback={
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {[1, 2, 3, 4].map((i) => (
+                <div key={i} className="h-64 bg-gray-200 dark:bg-gray-700 rounded-lg animate-pulse" />
+              ))}
+            </div>
+          }
+        >
+          <ReportTemplatesSection organizationId={organizationId} />
+        </Suspense>
+      </section>
 
-      {/* Reports List Section */}
-      <div>
-        <EnhancedCard glassEffect="strong" neonBorder="purple" hoverEffect={false}>
-          <CardHeader>
-            <CardTitle>Generated Reports</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <Suspense
-              fallback={
-                <div className="h-64 bg-gray-200 dark:bg-gray-700 rounded-lg animate-pulse"></div>
-              }
-            >
-              <ReportListWrapper />
-            </Suspense>
-          </CardContent>
-        </EnhancedCard>
-      </div>
+      {/* Recent Reports Section */}
+      <section>
+        <div className="mb-4">
+          <h2 className="text-2xl font-bold">Recent Reports</h2>
+          <p className="text-muted-foreground">
+            View, download, and share your generated reports
+          </p>
+        </div>
+        <Suspense
+          fallback={
+            <div className="h-96 bg-gray-200 dark:bg-gray-700 rounded-lg animate-pulse" />
+          }
+        >
+          <RecentReportsSection organizationId={organizationId} />
+        </Suspense>
+      </section>
     </div>
   );
 }
 
 /**
  * Hero Section Wrapper
- * Fetches report summary data and passes to ModuleHeroSection
+ * Fetches report statistics and passes to ModuleHeroSection
  */
 async function HeroSectionWrapper({
   user,
+  organizationId,
 }: {
   user: { id: string; name?: string | null; organization_members: Array<{ organization_id: string }> };
+  organizationId: string;
 }) {
-  // Mock report summary data (replace with actual API call in future)
-  // API endpoint: /api/v1/expenses/reports/summary
-  const mockReportSummary = {
-    totalReports: 24,
-    thisMonth: 5,
-    reportsYTD: 18,
-    lastGenerated: '2 hours ago',
-  };
+  // Fetch recent reports to calculate stats
+  const reports = await expenseTaxReportsProvider.getRecentReports(organizationId);
+  const currentYear = new Date().getFullYear();
+
+  const totalReports = reports.length;
+  const thisYearReports = reports.filter((r) => r.year === currentYear).length;
+  const completedReports = reports.filter((r) => r.status === 'completed').length;
+  const sharedReports = reports.filter((r) => r.sharedWith.length > 0).length;
 
   const stats = [
     {
       label: 'Total Reports',
-      value: mockReportSummary.totalReports,
-      icon: 'tasks' as const,
+      value: totalReports.toString(),
+      icon: 'revenue' as const,
     },
     {
-      label: 'This Month',
-      value: mockReportSummary.thisMonth,
+      label: `${currentYear} Reports`,
+      value: thisYearReports.toString(),
       icon: 'customers' as const,
     },
     {
-      label: 'Reports YTD',
-      value: mockReportSummary.reportsYTD,
+      label: 'Completed',
+      value: completedReports.toString(),
       icon: 'projects' as const,
     },
     {
-      label: 'Last Generated',
-      value: mockReportSummary.lastGenerated,
-      icon: 'revenue' as const,
+      label: 'Shared',
+      value: sharedReports.toString(),
+      icon: 'tasks' as const,
     },
   ];
 
   return (
     <ModuleHeroSection
       user={user}
-      moduleName="Expense Reports"
-      moduleDescription="Generate and manage comprehensive expense reports"
+      moduleName="Tax Reports"
+      moduleDescription="Generate and manage your tax reports"
       stats={stats}
-    />
-  );
-}
-
-/**
- * Report List Wrapper
- * Fetches generated reports for the organization
- */
-async function ReportListWrapper() {
-  // Mock report data (replace with actual API call in future)
-  // API endpoint: /api/v1/expenses/reports?organizationId={organizationId}
-  const mockReports: Report[] = [
-    {
-      id: 'report-1',
-      name: 'Q4 2024 Expense Report',
-      startDate: new Date('2024-10-01'),
-      endDate: new Date('2024-12-31'),
-      categories: ['Marketing', 'Travel', 'Office'],
-      format: 'CSV',
-      generatedAt: new Date('2024-12-15'),
-      fileSize: '245 KB',
-    },
-    {
-      id: 'report-2',
-      name: 'November 2024 Tax Summary',
-      startDate: new Date('2024-11-01'),
-      endDate: new Date('2024-11-30'),
-      categories: ['All Categories'],
-      format: 'PDF',
-      generatedAt: new Date('2024-12-01'),
-      fileSize: '1.2 MB',
-    },
-    {
-      id: 'report-3',
-      name: 'Marketing Expenses YTD',
-      startDate: new Date('2024-01-01'),
-      endDate: new Date('2024-12-31'),
-      categories: ['Marketing'],
-      format: 'CSV',
-      generatedAt: new Date('2024-12-10'),
-      fileSize: '128 KB',
-    },
-    {
-      id: 'report-4',
-      name: 'Travel Expenses H2 2024',
-      startDate: new Date('2024-07-01'),
-      endDate: new Date('2024-12-31'),
-      categories: ['Travel', 'Meals'],
-      format: 'PDF',
-      generatedAt: new Date('2024-12-05'),
-      fileSize: '890 KB',
-    },
-  ];
-
-  const handleDownload = (reportId: string) => {
-    // Placeholder - will be implemented with API
-    console.log('Download report:', reportId);
-  };
-
-  const handleDelete = (reportId: string) => {
-    // Placeholder - will be implemented with API
-    console.log('Delete report:', reportId);
-  };
-
-  return (
-    <ReportList
-      reports={mockReports}
-      onDownload={handleDownload}
-      onDelete={handleDelete}
     />
   );
 }

@@ -149,7 +149,6 @@ export function Sidebar({ isOpen = true, onClose }: SidebarProps) {
       title: 'AI Hub',
       icon: Bot,
       href: '/real-estate/ai-hub/ai-hub-dashboard',
-      badge: 'Coming Soon',
     },
     {
       id: 'reid',
@@ -274,7 +273,6 @@ export function Sidebar({ isOpen = true, onClose }: SidebarProps) {
       title: 'Marketplace',
       icon: ShoppingBag,
       href: '/real-estate/marketplace/dashboard',
-      badge: 'Coming Soon',
     },
   ];
 
