@@ -8,6 +8,7 @@ import { CategoryBreakdown } from '@/components/real-estate/expense-tax/charts/C
 import { ModuleHeroSection } from '@/components/shared/dashboard/ModuleHeroSection';
 import { EnhancedCard, CardHeader, CardTitle, CardContent } from '@/components/shared/dashboard/EnhancedCard';
 import { HeroSkeleton } from '@/components/shared/dashboard/skeletons';
+import { expensesProvider } from '@/lib/data';
 
 /**
  * Expense & Tax Dashboard Page
@@ -112,38 +113,33 @@ export default async function ExpenseTaxDashboardPage() {
  */
 async function HeroSectionWrapper({
   user,
+  organizationId,
 }: {
   user: { id: string; name?: string | null; organization_members: Array<{ organization_id: string }> };
   organizationId: string;
 }) {
-  // Mock expense summary data (replace with actual API call in future sessions)
-  // In real implementation, this would call: /api/v1/expenses/summary
-  const mockSummary = {
-    totalExpenses: 45230,
-    currentMonth: 8450,
-    deductibleTotal: 38640,
-    receiptCount: 127,
-  };
+  // Fetch real expense summary from provider
+  const summary = await expensesProvider.getSummary(organizationId);
 
   const stats = [
     {
       label: 'YTD Expenses',
-      value: `$${mockSummary.totalExpenses.toLocaleString()}`,
+      value: `$${summary.totalExpenses.toLocaleString()}`,
       icon: 'revenue' as const,
     },
     {
       label: 'Current Month',
-      value: `$${mockSummary.currentMonth.toLocaleString()}`,
+      value: `$${summary.currentMonth.toLocaleString()}`,
       icon: 'customers' as const,
     },
     {
       label: 'Tax Deductible',
-      value: `$${mockSummary.deductibleTotal.toLocaleString()}`,
+      value: `$${summary.deductibleTotal.toLocaleString()}`,
       icon: 'projects' as const,
     },
     {
       label: 'Receipts',
-      value: mockSummary.receiptCount,
+      value: summary.receiptCount.toString(),
       icon: 'tasks' as const,
     },
   ];

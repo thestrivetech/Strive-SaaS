@@ -57,26 +57,22 @@ export default async function CMSMarketingDashboardPage() {
     {
       label: 'Total Content',
       value: dashboardStats.totalContent.toString(),
-      icon: 'custom' as const,
-      customIcon: FileText,
+      icon: 'file' as const,
     },
     {
       label: 'Published',
       value: dashboardStats.publishedContent.toString(),
-      icon: 'custom' as const,
-      customIcon: CheckCircle2,
+      icon: 'check' as const,
     },
     {
       label: 'Active Campaigns',
       value: dashboardStats.activeCampaigns.toString(),
-      icon: 'custom' as const,
-      customIcon: TrendingUp,
+      icon: 'trend' as const,
     },
     {
       label: 'Total Views',
       value: dashboardStats.totalViews.toLocaleString(),
-      icon: 'custom' as const,
-      customIcon: Eye,
+      icon: 'eye' as const,
     },
   ];
 

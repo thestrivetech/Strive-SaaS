@@ -30,7 +30,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { createLoop, CreateLoopSchema, type CreateLoopInput } from '@/lib/modules/transactions';
+import { createLoop, CreateLoopSchema, type CreateLoopInput } from '@/lib/modules/transactions/actions';
 import { Plus } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { useRouter } from 'next/navigation';

@@ -4,6 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/com
 import { Button } from '@/components/ui/button';
 import { Bot, Sparkles, Zap, Brain } from 'lucide-react';
 import Link from 'next/link';
+import { conversationsProvider, automationsProvider, insightsProvider } from '@/lib/data';
 
 /**
  * AI Hub Dashboard Page
@@ -38,6 +39,29 @@ export default async function AIHubDashboardPage() {
 
   const firstName = user.name?.split(' ')[0] || 'User';
 
+  // Fetch real data from providers
+  const conversations = await conversationsProvider.findMany(organizationId, user.id);
+  const automations = await automationsProvider.findMany(organizationId);
+  const insights = await insightsProvider.findMany(organizationId);
+
+  // Calculate stats
+  const thisMonth = new Date();
+  thisMonth.setDate(1);
+  thisMonth.setHours(0, 0, 0, 0);
+
+  const thisWeek = new Date();
+  thisWeek.setDate(thisWeek.getDate() - 7);
+
+  const conversationsThisMonth = conversations.filter(
+    c => new Date(c.started_at) >= thisMonth
+  ).length;
+
+  const activeAutomations = automations.filter(a => a.status === 'ACTIVE').length;
+
+  const insightsThisWeek = insights.filter(
+    i => new Date(i.generated_at) >= thisWeek
+  ).length;
+
   return (
     <div className="space-y-6">
       {/* Hero Section */}
@@ -66,7 +90,7 @@ export default async function AIHubDashboardPage() {
             <Bot className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">45</div>
+            <div className="text-2xl font-bold">{conversationsThisMonth}</div>
             <p className="text-xs text-muted-foreground">This month</p>
           </CardContent>
         </Card>
@@ -77,7 +101,7 @@ export default async function AIHubDashboardPage() {
             <Zap className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">12</div>
+            <div className="text-2xl font-bold">{activeAutomations}</div>
             <p className="text-xs text-muted-foreground">Active automations</p>
           </CardContent>
         </Card>
@@ -88,7 +112,7 @@ export default async function AIHubDashboardPage() {
             <Brain className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">8</div>
+            <div className="text-2xl font-bold">{insightsThisWeek}</div>
             <p className="text-xs text-muted-foreground">Generated this week</p>
           </CardContent>
         </Card>
@@ -189,25 +213,39 @@ export default async function AIHubDashboardPage() {
         </CardHeader>
         <CardContent>
           <div className="space-y-4">
-            {[
-              { action: 'AI conversation completed', time: '2 hours ago', icon: Bot },
-              { action: 'Automation workflow executed', time: '4 hours ago', icon: Zap },
-              { action: 'Content generated for listing', time: '6 hours ago', icon: Sparkles },
-              { action: 'AI insight generated', time: '1 day ago', icon: Brain },
-            ].map((activity, index) => {
-              const Icon = activity.icon;
-              return (
-                <div key={index} className="flex items-start gap-3 pb-3 border-b last:border-b-0">
-                  <div className="p-2 rounded-lg bg-primary/10">
-                    <Icon className="h-4 w-4 text-primary" />
-                  </div>
-                  <div className="flex-1">
-                    <p className="text-sm font-medium">{activity.action}</p>
-                    <p className="text-xs text-muted-foreground">{activity.time}</p>
-                  </div>
+            {/* Show most recent conversations */}
+            {conversations.slice(0, 2).map((conv) => (
+              <div key={conv.id} className="flex items-start gap-3 pb-3 border-b">
+                <div className="p-2 rounded-lg bg-primary/10">
+                  <Bot className="h-4 w-4 text-primary" />
                 </div>
-              );
-            })}
+                <div className="flex-1">
+                  <p className="text-sm font-medium">{conv.title}</p>
+                  <p className="text-xs text-muted-foreground">
+                    {new Date(conv.started_at).toLocaleDateString()} - {conv.message_count} messages
+                  </p>
+                </div>
+              </div>
+            ))}
+            {/* Show recent insights */}
+            {insights.slice(0, 2).map((insight) => (
+              <div key={insight.id} className="flex items-start gap-3 pb-3 border-b last:border-b-0">
+                <div className="p-2 rounded-lg bg-primary/10">
+                  <Brain className="h-4 w-4 text-primary" />
+                </div>
+                <div className="flex-1">
+                  <p className="text-sm font-medium">{insight.title}</p>
+                  <p className="text-xs text-muted-foreground">
+                    {new Date(insight.generated_at).toLocaleDateString()} - {insight.insight_type}
+                  </p>
+                </div>
+              </div>
+            ))}
+            {conversations.length === 0 && insights.length === 0 && (
+              <p className="text-sm text-muted-foreground text-center py-4">
+                No recent AI activity
+              </p>
+            )}
           </div>
         </CardContent>
       </Card>

@@ -3,6 +3,7 @@ import { requireAuth, getCurrentUser } from '@/lib/auth/auth-helpers';
 import { getNavigationItems, canAccessRoute } from '@/lib/auth/rbac';
 import { UserRole } from '@/lib/auth/constants';
 import DashboardShell from '@/components/layouts/dashboard-shell';
+import { SettingsSidebar } from '@/components/settings/settings-sidebar';
 
 // Force dynamic rendering to prevent caching issues
 export const dynamic = 'force-dynamic';
@@ -51,7 +52,15 @@ export default async function SettingsLayout({
       organizationId={userOrg.organization_id}
       navigationItems={navigationItems}
     >
-      {children}
+      <div className="flex min-h-screen">
+        <SettingsSidebar
+          user={{
+            name: user.name,
+            email: user.email,
+          }}
+        />
+        <main className="flex-1 p-6 lg:p-8">{children}</main>
+      </div>
     </DashboardShell>
   );
 }

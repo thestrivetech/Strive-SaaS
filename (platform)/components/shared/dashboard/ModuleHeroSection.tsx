@@ -6,7 +6,14 @@ import {
   TrendingUp,
   Users,
   CheckCircle,
+  CheckCircle2,
   DollarSign,
+  FileText,
+  Eye,
+  Megaphone,
+  Clock,
+  Archive,
+  BarChart3,
   type LucideIcon
 } from 'lucide-react';
 import { useEffect, useState } from 'react';
@@ -17,8 +24,8 @@ export interface ModuleStats {
   value: string | number;
   change?: number;
   changeType?: 'percentage' | 'count';
-  icon: 'revenue' | 'customers' | 'projects' | 'tasks' | 'custom';
-  customIcon?: LucideIcon;
+  icon: 'revenue' | 'customers' | 'projects' | 'tasks' | 'file' | 'check' | 'trend' | 'eye' | 'megaphone' | 'clock' | 'archive' | 'barchart3' | 'custom';
+  customIcon?: LucideIcon; // Keep for backward compatibility but deprecated
 }
 
 export interface ModuleHeroSectionProps {
@@ -34,6 +41,14 @@ const iconMap: Record<string, LucideIcon> = {
   customers: Users,
   projects: TrendingUp,
   tasks: CheckCircle,
+  file: FileText,
+  check: CheckCircle2,
+  trend: TrendingUp,
+  eye: Eye,
+  megaphone: Megaphone,
+  clock: Clock,
+  archive: Archive,
+  barchart3: BarChart3,
 };
 
 export function ModuleHeroSection({

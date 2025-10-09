@@ -43,7 +43,24 @@ function initializeMockData() {
     const toolIds = mockToolsStore.map((t) => t.id);
     mockBundlesStore = generateMockBundles(toolIds, 6);
   }
-  // Reviews and purchases are generated on-demand
+  // Initialize some purchases for demo org
+  if (mockPurchasesStore.length === 0) {
+    const demoOrgId = 'demo-org';
+    const demoUserId = 'demo-user';
+
+    // Create 3-5 purchases for demo purposes
+    const numPurchases = 3 + Math.floor(Math.random() * 3);
+    for (let i = 0; i < numPurchases && i < mockToolsStore.length; i++) {
+      const tool = mockToolsStore[i];
+      const purchase = generateMockPurchase(tool.id, demoOrgId, demoUserId, {
+        price_at_purchase: tool.price,
+        status: i === 0 ? 'TRIAL' : 'ACTIVE',
+      });
+      // Populate tool relation
+      purchase.tool = { id: tool.id, name: tool.name };
+      mockPurchasesStore.push(purchase);
+    }
+  }
 }
 
 // ============================================================================
@@ -293,7 +310,19 @@ export const purchasesProvider = {
       await simulateDelay();
       maybeThrowError('Failed to fetch purchases');
 
-      return mockPurchasesStore.filter((p) => p.organization_id === orgId);
+      const purchases = mockPurchasesStore.filter((p) => p.organization_id === orgId);
+
+      // Populate tool relation if not already populated
+      purchases.forEach((purchase) => {
+        if (!purchase.tool) {
+          const tool = mockToolsStore.find((t) => t.id === purchase.tool_id);
+          if (tool) {
+            purchase.tool = { id: tool.id, name: tool.name };
+          }
+        }
+      });
+
+      return purchases;
     }
 
     // TODO: Replace with real Prisma query

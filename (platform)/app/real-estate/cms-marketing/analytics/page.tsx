@@ -14,7 +14,6 @@ import { ModuleHeroSection } from '@/components/shared/dashboard/ModuleHeroSecti
 import { EnhancedCard, CardContent } from '@/components/shared/dashboard/EnhancedCard';
 import { Card } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
-import { BarChart3, TrendingUp, Eye, Users } from 'lucide-react';
 
 export const metadata = {
   title: 'Analytics | Content & Marketing',
@@ -40,27 +39,23 @@ export default async function AnalyticsPage() {
   const heroStats = [
     {
       label: 'Total Views',
-      value: (contentMetrics.totalViews || 0).toLocaleString(),
-      icon: 'custom' as const,
-      customIcon: Eye,
+      value: (contentMetrics.metrics.totalViews || 0).toLocaleString(),
+      icon: 'eye' as const,
     },
     {
       label: 'Engagement Rate',
-      value: `${(contentMetrics.engagementRate || 0)}%`,
-      icon: 'custom' as const,
-      customIcon: TrendingUp,
+      value: `${(contentMetrics.metrics.avgEngagement || 0)}`,
+      icon: 'trend' as const,
     },
     {
       label: 'Active Campaigns',
-      value: (campaignMetrics.active || 0).toString(),
-      icon: 'custom' as const,
-      customIcon: BarChart3,
+      value: (campaignMetrics.campaigns.filter((c: any) => c.status === 'ACTIVE').length || 0).toString(),
+      icon: 'barchart3' as const,
     },
     {
       label: 'Email Opens',
-      value: (emailMetrics.totalOpens || 0).toLocaleString(),
-      icon: 'custom' as const,
-      customIcon: Users,
+      value: (emailMetrics.totals.opened || 0).toLocaleString(),
+      icon: 'customers' as const,
     },
   ];
 

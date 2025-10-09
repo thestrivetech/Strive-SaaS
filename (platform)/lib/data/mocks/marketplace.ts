@@ -58,6 +58,7 @@ export type MockBundle = {
 export type MockPurchase = {
   id: string;
   tool_id: string;
+  tool?: { id: string; name: string }; // Populated relation for convenience
   organization_id: string;
   user_id: string;
   price_at_purchase: number;

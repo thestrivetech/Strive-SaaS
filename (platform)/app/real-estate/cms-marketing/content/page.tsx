@@ -10,16 +10,12 @@ import {
 } from '@/lib/modules/content/content';
 import { ContentListTable } from '@/components/real-estate/content/content-list-table';
 import { ModuleHeroSection } from '@/components/shared/dashboard/ModuleHeroSection';
-import { EnhancedCard, CardHeader, CardTitle, CardContent } from '@/components/shared/dashboard/EnhancedCard';
+import { EnhancedCard, CardContent } from '@/components/shared/dashboard/EnhancedCard';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Skeleton } from '@/components/ui/skeleton';
 import {
-  FileText,
-  CheckCircle,
-  Clock,
-  Archive,
   Plus,
   Search,
 } from 'lucide-react';
@@ -53,7 +49,7 @@ export default async function ContentPage({ searchParams }: ContentPageProps) {
         <Card>
           <CardContent className="p-6 text-center">
             <p className="text-muted-foreground">
-              You don't have permission to access content management.
+              You don&apos;t have permission to access content management.
             </p>
             <p className="text-sm text-muted-foreground mt-2">
               Please contact your administrator to request access.
@@ -72,26 +68,22 @@ export default async function ContentPage({ searchParams }: ContentPageProps) {
     {
       label: 'Total Content',
       value: stats.total.toString(),
-      icon: 'custom' as const,
-      customIcon: FileText,
+      icon: 'file' as const,
     },
     {
       label: 'Published',
       value: stats.published.toString(),
-      icon: 'custom' as const,
-      customIcon: CheckCircle,
+      icon: 'check' as const,
     },
     {
       label: 'Draft',
       value: stats.draft.toString(),
-      icon: 'custom' as const,
-      customIcon: Archive,
+      icon: 'archive' as const,
     },
     {
       label: 'Scheduled',
       value: stats.scheduled.toString(),
-      icon: 'custom' as const,
-      customIcon: Clock,
+      icon: 'clock' as const,
     },
   ];
 

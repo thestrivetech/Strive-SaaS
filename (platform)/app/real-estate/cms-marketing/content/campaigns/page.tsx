@@ -8,7 +8,7 @@ import { CampaignList } from '@/components/real-estate/content/campaigns/campaig
 import { ModuleHeroSection } from '@/components/shared/dashboard/ModuleHeroSection';
 import { EnhancedCard, CardContent } from '@/components/shared/dashboard/EnhancedCard';
 import { Button } from '@/components/ui/button';
-import { Plus, Mail, MessageSquare, Megaphone, TrendingUp, CheckCircle, Clock } from 'lucide-react';
+import { Plus, Mail, MessageSquare } from 'lucide-react';
 import Link from 'next/link';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
@@ -41,26 +41,22 @@ export default async function CampaignsPage() {
     {
       label: 'Total Campaigns',
       value: (metrics.total || 0).toString(),
-      icon: 'custom' as const,
-      customIcon: Megaphone,
+      icon: 'megaphone' as const,
     },
     {
       label: 'Active',
       value: (metrics.active || 0).toString(),
-      icon: 'custom' as const,
-      customIcon: TrendingUp,
+      icon: 'trend' as const,
     },
     {
       label: 'Completed',
       value: (metrics.completed || 0).toString(),
-      icon: 'custom' as const,
-      customIcon: CheckCircle,
+      icon: 'check' as const,
     },
     {
       label: 'Draft',
       value: (metrics.draft || 0).toString(),
-      icon: 'custom' as const,
-      customIcon: Clock,
+      icon: 'clock' as const,
     },
   ];
 

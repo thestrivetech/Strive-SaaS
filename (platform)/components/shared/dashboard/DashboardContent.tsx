@@ -60,7 +60,6 @@ export function DashboardContent({ user, organizationId, children }: DashboardCo
         {/* Top Bar */}
         <TopBar
           user={user}
-          notifications={3}
           onMenuToggle={handleMenuToggle}
           onCommandBarOpen={handleCommandBarOpen}
         />

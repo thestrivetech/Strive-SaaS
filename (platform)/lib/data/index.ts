@@ -38,6 +38,56 @@ export { getUpcomingAppointments } from './providers/appointments-provider';
 // Activities Providers
 export { getRecentActivities } from './providers/activities-provider';
 
+// Workspace/Transactions Providers
+export {
+  loopsProvider,
+  tasksProvider,
+  documentsProvider,
+  partiesProvider,
+  signaturesProvider,
+  listingsProvider,
+  transactionActivityProvider,
+  transactionAnalyticsProvider,
+} from './providers/transactions-provider';
+
+// Expense & Tax Providers
+export {
+  expensesProvider,
+  categoriesProvider,
+  taxProvider,
+  receiptsProvider,
+  reportsProvider,
+} from './providers/expenses-provider';
+
+// REID Providers
+export {
+  marketDataProvider,
+  trendsProvider,
+  demographicsProvider,
+  roiProvider,
+  alertsProvider,
+  schoolsProvider,
+  reidReportsProvider,
+  reidAnalyticsProvider,
+} from './providers/reid-provider';
+
+// AI Hub Providers
+export {
+  conversationsProvider,
+  messagesProvider,
+  automationsProvider,
+  insightsProvider,
+  contentGenerationProvider,
+  aiUsageProvider,
+} from './providers/ai-hub-provider';
+
+// User Dashboard Providers
+export {
+  widgetsProvider,
+  dashboardLayoutsProvider,
+  quickActionsProvider,
+} from './providers/dashboard-provider';
+
 // Mock types (for TypeScript)
 export type { MockContact, MockLead, MockCustomer } from './mocks/crm';
 export type { MockContentItem, MockCampaign, MockEmailCampaign } from './mocks/content';
@@ -48,3 +98,41 @@ export type {
   MockReview,
   MockCart,
 } from './mocks/marketplace';
+export type {
+  MockLoop,
+  MockTask,
+  MockDocument,
+  MockParty,
+  MockSignature,
+  MockListing,
+  MockTransactionActivity,
+} from './mocks/transactions';
+export type {
+  MockExpense,
+  MockExpenseCategory,
+  MockTaxEstimate,
+  MockReceipt,
+  MockTaxReport,
+} from './mocks/expenses';
+export type {
+  MockMarketData,
+  MockTrendPoint,
+  MockDemographics,
+  MockROISimulation,
+  MockAlert,
+  MockSchool,
+  MockREIDReport,
+} from './mocks/reid';
+export type {
+  MockConversation,
+  MockMessage,
+  MockAutomation,
+  MockInsight,
+  MockGeneratedContent,
+  MockAIUsage,
+} from './mocks/ai-hub';
+export type {
+  MockWidget,
+  MockDashboardLayout,
+  MockQuickAction,
+} from './mocks/widgets';

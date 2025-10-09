@@ -1,5 +1,4 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import {
@@ -10,73 +9,39 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
-import { MoreHorizontal, Shield, UserCheck, Eye } from 'lucide-react';
 import { getCurrentUser } from '@/lib/auth/auth-helpers';
-import { getOrganizationMembers, getUserOrganizations } from '@/lib/modules/organization/queries';
-import { InviteMemberDialog } from '@/app/strive/projects-future/components/organization/invite-member-dialog';
+import { getOrganizationMembers, getOrganizationStats, getOrganization } from '@/lib/modules/settings';
+import { RoleBadge } from '@/components/settings/role-badge';
+import { TeamStats } from '@/components/settings/team-stats';
+import { InviteMemberDialog } from '@/components/settings/invite-member-dialog';
+import { TeamMemberActions } from '@/components/settings/team-member-actions';
+import { redirect } from 'next/navigation';
 
 export default async function TeamPage() {
   const user = await getCurrentUser();
 
-  if (!user) {
-    return null;
+  if (!user || !user.organization_id) {
+    redirect('/settings');
   }
 
-  const userOrgs = await getUserOrganizations(user.id);
-  const currentOrg = userOrgs[0];
+  const [organization, members, stats] = await Promise.all([
+    getOrganization(user.organization_id),
+    getOrganizationMembers(user.organization_id),
+    getOrganizationStats(user.organization_id),
+  ]);
 
-  if (!currentOrg) {
+  if (!organization) {
     return (
       <div className="space-y-6">
         <div>
           <h1 className="text-3xl font-bold">Team Management</h1>
           <p className="text-muted-foreground">
-            You need to create an organization first.
+            Organization not found
           </p>
         </div>
       </div>
     );
   }
-
-  const members = await getOrganizationMembers(currentOrg.organization_id);
-
-  const getRoleIcon = (role: string) => {
-    switch (role) {
-      case 'OWNER':
-        return <Shield className="h-4 w-4 text-amber-500" />;
-      case 'ADMIN':
-        return <Shield className="h-4 w-4 text-blue-500" />;
-      case 'MEMBER':
-        return <UserCheck className="h-4 w-4 text-green-500" />;
-      case 'VIEWER':
-        return <Eye className="h-4 w-4 text-gray-500" />;
-      default:
-        return null;
-    }
-  };
-
-  const getRoleBadgeColor = (role: string) => {
-    switch (role) {
-      case 'OWNER':
-        return 'bg-amber-500/10 text-amber-700 hover:bg-amber-500/20';
-      case 'ADMIN':
-        return 'bg-blue-500/10 text-blue-700 hover:bg-blue-500/20';
-      case 'MEMBER':
-        return 'bg-green-500/10 text-green-700 hover:bg-green-500/20';
-      case 'VIEWER':
-        return 'bg-gray-500/10 text-gray-700 hover:bg-gray-500/20';
-      default:
-        return '';
-    }
-  };
 
   return (
     <div className="space-y-6">
@@ -87,54 +52,20 @@ export default async function TeamPage() {
             Manage your organization&apos;s team members and their roles
           </p>
         </div>
-        <InviteMemberDialog organizationId={currentOrg.organization_id} />
+        <InviteMemberDialog organizationId={organization.id} />
       </div>
 
-      <div className="grid gap-4 md:grid-cols-3">
-        <Card>
-          <CardHeader className="pb-3">
-            <CardTitle className="text-sm font-medium">Total Members</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{members.length}</div>
-            <p className="text-xs text-muted-foreground">
-              Across all roles
-            </p>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardHeader className="pb-3">
-            <CardTitle className="text-sm font-medium">Administrators</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">
-              {members.filter((m) => m.role === 'ADMIN' || m.role === 'OWNER').length}
-            </div>
-            <p className="text-xs text-muted-foreground">
-              With full access
-            </p>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardHeader className="pb-3">
-            <CardTitle className="text-sm font-medium">Active Members</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">
-              {members.filter((m) => m.users.is_active).length}
-            </div>
-            <p className="text-xs text-muted-foreground">
-              Currently active
-            </p>
-          </CardContent>
-        </Card>
-      </div>
+      <TeamStats
+        totalMembers={stats.totalMembers}
+        adminCount={stats.adminCount}
+        activeCount={stats.activeCount}
+      />
 
       <Card>
         <CardHeader>
           <CardTitle>Team Members</CardTitle>
           <CardDescription>
-            All members of {currentOrg.organizations.name}
+            All members of {organization.name}
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -170,10 +101,7 @@ export default async function TeamPage() {
                   </TableCell>
                   <TableCell>{member.users.email}</TableCell>
                   <TableCell>
-                    <Badge variant="outline" className={getRoleBadgeColor(member.role)}>
-                      <span className="mr-1">{getRoleIcon(member.role)}</span>
-                      {member.role}
-                    </Badge>
+                    <RoleBadge role={member.role} />
                   </TableCell>
                   <TableCell className="text-muted-foreground">
                     {new Date(member.joined_at).toLocaleDateString('en-US', {
@@ -188,24 +116,12 @@ export default async function TeamPage() {
                     </Badge>
                   </TableCell>
                   <TableCell>
-                    {member.role !== 'OWNER' && (
-                      <DropdownMenu>
-                        <DropdownMenuTrigger asChild>
-                          <Button variant="ghost" size="icon" className="h-8 w-8">
-                            <MoreHorizontal className="h-4 w-4" />
-                          </Button>
-                        </DropdownMenuTrigger>
-                        <DropdownMenuContent align="end">
-                          <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                          <DropdownMenuSeparator />
-                          <DropdownMenuItem>Change Role</DropdownMenuItem>
-                          <DropdownMenuItem>View Profile</DropdownMenuItem>
-                          <DropdownMenuSeparator />
-                          <DropdownMenuItem className="text-destructive">
-                            Remove Member
-                          </DropdownMenuItem>
-                        </DropdownMenuContent>
-                      </DropdownMenu>
+                    {member.role !== 'OWNER' && member.users.id !== user.id && (
+                      <TeamMemberActions
+                        userId={member.users.id}
+                        userName={member.users.name || member.users.email}
+                        currentRole={member.role}
+                      />
                     )}
                   </TableCell>
                 </TableRow>

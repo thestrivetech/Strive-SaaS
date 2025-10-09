@@ -8,6 +8,7 @@ import { CategoryTrends } from '@/components/real-estate/expense-tax/analytics/C
 import { ModuleHeroSection } from '@/components/shared/dashboard/ModuleHeroSection';
 import { EnhancedCard, CardHeader, CardTitle, CardContent } from '@/components/shared/dashboard/EnhancedCard';
 import { HeroSkeleton } from '@/components/shared/dashboard/skeletons';
+import { expensesProvider, categoriesProvider } from '@/lib/data';
 
 /**
  * Expense Analytics Page
@@ -120,34 +121,53 @@ async function HeroSectionWrapper({
 }: {
   user: { id: string; name?: string | null; organization_members: Array<{ organization_id: string }> };
 }) {
-  // Mock analytics summary data (replace with actual API call in future)
-  // API endpoint: /api/v1/expenses/analytics/summary
-  const mockAnalytics = {
-    totalAnalyzed: 45230,
-    ytdGrowth: 12.5,
-    highestCategory: 'Marketing',
-    avgMonthly: 6890,
-  };
+  const organizationId = user.organization_members[0]?.organization_id || '';
+
+  // Fetch real data from providers
+  const summary = await expensesProvider.getSummary(organizationId);
+  const expenses = await expensesProvider.findMany(organizationId);
+  const categories = await categoriesProvider.findAll(organizationId);
+
+  // Calculate YTD growth (comparing to same period last year)
+  const currentYear = new Date().getFullYear();
+  const thisYearExpenses = expenses.filter(e =>
+    new Date(e.date).getFullYear() === currentYear
+  );
+  const lastYearExpenses = expenses.filter(e =>
+    new Date(e.date).getFullYear() === currentYear - 1
+  );
+
+  const thisYearTotal = thisYearExpenses.reduce((sum, e) => sum + e.amount, 0);
+  const lastYearTotal = lastYearExpenses.reduce((sum, e) => sum + e.amount, 0);
+  const ytdGrowth = lastYearTotal > 0
+    ? ((thisYearTotal - lastYearTotal) / lastYearTotal) * 100
+    : 0;
+
+  // Find highest spending category
+  const highestCategory = summary.byCategory[0]?.category || 'N/A';
+
+  // Calculate average monthly spend
+  const avgMonthly = Math.floor(thisYearTotal / (new Date().getMonth() + 1));
 
   const stats = [
     {
       label: 'Total Analyzed',
-      value: `$${mockAnalytics.totalAnalyzed.toLocaleString()}`,
+      value: `$${summary.totalExpenses.toLocaleString()}`,
       icon: 'revenue' as const,
     },
     {
       label: 'YTD Growth',
-      value: `${mockAnalytics.ytdGrowth}%`,
+      value: `${ytdGrowth.toFixed(1)}%`,
       icon: 'projects' as const,
     },
     {
       label: 'Highest Category',
-      value: mockAnalytics.highestCategory,
+      value: highestCategory,
       icon: 'customers' as const,
     },
     {
       label: 'Avg Monthly',
-      value: `$${mockAnalytics.avgMonthly.toLocaleString()}`,
+      value: `$${avgMonthly.toLocaleString()}`,
       icon: 'tasks' as const,
     },
   ];

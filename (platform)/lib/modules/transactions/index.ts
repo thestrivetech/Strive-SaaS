@@ -12,6 +12,13 @@
  * - E-signature workflow
  * - Workflow automation
  * - Milestone tracking
+ *
+ * ⚠️ CLIENT COMPONENT IMPORTS:
+ * If you're in a 'use client' component, import from './actions' instead:
+ *   import { createLoop } from '@/lib/modules/transactions/actions'
+ *
+ * This file exports queries which import Prisma (server-only).
+ * Client components importing this will cause browser errors.
  */
 
 // Core

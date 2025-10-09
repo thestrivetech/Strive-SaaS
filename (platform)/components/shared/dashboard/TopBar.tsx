@@ -1,21 +1,74 @@
 'use client';
 
+import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Search, Mic, Moon, Sun, Bell, Menu } from 'lucide-react';
+import { Search, Mic, Moon, Sun, Bell, Menu, Check, Trash2, ExternalLink } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useTheme } from '@/hooks/use-theme';
 import type { UserWithOrganization } from '@/lib/auth/user-helpers';
+import { UserMenu } from '@/components/shared/navigation/user-menu';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
+import { ScrollArea } from '@/components/ui/scroll-area';
+
+interface Notification {
+  id: string;
+  title: string;
+  message: string;
+  time: string;
+  read: boolean;
+  type: 'INFO' | 'SUCCESS' | 'WARNING' | 'ERROR';
+  action_url?: string;
+}
 
 interface TopBarProps {
   user: UserWithOrganization;
-  notifications?: number;
   onMenuToggle?: () => void;
   onCommandBarOpen?: () => void;
 }
 
-export function TopBar({ user, notifications = 0, onMenuToggle, onCommandBarOpen }: TopBarProps) {
+export function TopBar({ user, onMenuToggle, onCommandBarOpen }: TopBarProps) {
   const { theme, setTheme, resolvedTheme, mounted } = useTheme();
+  const [isNotificationsOpen, setIsNotificationsOpen] = useState(false);
+
+  // Mock notifications data (TODO: Replace with real data when database is ready)
+  const [mockNotifications, setMockNotifications] = useState<Notification[]>([
+    {
+      id: '1',
+      title: 'New lead assigned',
+      message: 'John Doe has been assigned to you',
+      time: '5 minutes ago',
+      read: false,
+      type: 'INFO',
+      action_url: '/real-estate/crm/leads',
+    },
+    {
+      id: '2',
+      title: 'Transaction update',
+      message: 'Property at 123 Main St closing date changed',
+      time: '1 hour ago',
+      read: false,
+      type: 'WARNING',
+      action_url: '/real-estate/workspace',
+    },
+    {
+      id: '3',
+      title: 'Welcome to Strive',
+      message: 'Complete your profile to get started',
+      time: '2 days ago',
+      read: true,
+      type: 'SUCCESS',
+      action_url: '/settings/profile',
+    },
+  ]);
+
+  const unreadCount = mockNotifications.filter((n) => !n.read).length;
 
   const handleCommandBarOpen = () => {
     // Trigger command bar via callback or keyboard event
@@ -47,19 +100,46 @@ export function TopBar({ user, notifications = 0, onMenuToggle, onCommandBarOpen
     }
   };
 
-  const handleNotifications = () => {
-    // Notifications panel (to be implemented)
-    console.log('Notifications opened');
+  const handleMarkAsRead = (notificationId: string) => {
+    setMockNotifications((prev) =>
+      prev.map((n) => (n.id === notificationId ? { ...n, read: true } : n))
+    );
   };
 
-  const getUserInitials = (name: string | null) => {
-    if (!name) return 'U';
-    const parts = name.split(' ');
-    if (parts.length >= 2) {
-      return `${parts[0][0]}${parts[1][0]}`.toUpperCase();
-    }
-    return name.substring(0, 2).toUpperCase();
+  const handleMarkAllAsRead = () => {
+    setMockNotifications((prev) => prev.map((n) => ({ ...n, read: true })));
   };
+
+  const handleDeleteNotification = (notificationId: string) => {
+    setMockNotifications((prev) => prev.filter((n) => n.id !== notificationId));
+  };
+
+  const getTypeIcon = (type: string) => {
+    switch (type) {
+      case 'SUCCESS':
+        return '✅';
+      case 'WARNING':
+        return '⚠️';
+      case 'ERROR':
+        return '❌';
+      default:
+        return 'ℹ️';
+    }
+  };
+
+  const getTypeColor = (type: string) => {
+    switch (type) {
+      case 'SUCCESS':
+        return 'text-green-600';
+      case 'WARNING':
+        return 'text-yellow-600';
+      case 'ERROR':
+        return 'text-red-600';
+      default:
+        return 'text-blue-600';
+    }
+  };
+
 
   return (
     <header className="glass border-b border-border p-4 sticky top-0 z-20">
@@ -152,42 +232,149 @@ export function TopBar({ user, notifications = 0, onMenuToggle, onCommandBarOpen
             </AnimatePresence>
           </Button>
 
-          {/* Notifications Button */}
-          <div className="relative">
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={handleNotifications}
-              className="glass hover:bg-muted/30"
-              aria-label={`Notifications${notifications > 0 ? ` (${notifications} unread)` : ''}`}
-              title="Notifications"
-            >
-              <Bell className="w-5 h-5" />
-            </Button>
-            {notifications > 0 && (
-              <Badge
-                variant="secondary"
-                className="absolute -top-1 -right-1 w-5 h-5 bg-chart-3 text-background rounded-full flex items-center justify-center text-xs font-bold neon-green p-0"
+          {/* Notifications Dropdown */}
+          <DropdownMenu open={isNotificationsOpen} onOpenChange={setIsNotificationsOpen}>
+            <DropdownMenuTrigger asChild>
+              <Button
+                variant="ghost"
+                size="icon"
+                className="glass hover:bg-muted/30 relative"
+                aria-label={`Notifications${unreadCount > 0 ? ` (${unreadCount} unread)` : ''}`}
+                title="Notifications"
               >
-                {notifications > 9 ? '9+' : notifications}
-              </Badge>
-            )}
-          </div>
+                <Bell className="w-5 h-5" />
+                {unreadCount > 0 && (
+                  <Badge
+                    variant="secondary"
+                    className="absolute -top-1 -right-1 w-5 h-5 bg-chart-3 text-background rounded-full flex items-center justify-center text-xs font-bold neon-green p-0"
+                  >
+                    {unreadCount > 9 ? '9+' : unreadCount}
+                  </Badge>
+                )}
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end" className="w-96">
+              <DropdownMenuLabel className="flex items-center justify-between">
+                <span>Notifications</span>
+                {mockNotifications.length > 0 && unreadCount > 0 && (
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    className="h-auto p-1 text-xs"
+                    onClick={handleMarkAllAsRead}
+                  >
+                    Mark all read
+                  </Button>
+                )}
+              </DropdownMenuLabel>
+              <DropdownMenuSeparator />
 
-          {/* User Profile */}
-          <div className="flex items-center gap-3 pl-3 border-l border-border">
-            <div className="text-right hidden md:block">
-              <div className="text-sm font-medium truncate max-w-[150px]">
-                {user.name || 'User'}
-              </div>
-              <div className="text-xs text-muted-foreground">Admin</div>
-            </div>
-            <div
-              className="w-10 h-10 rounded-full bg-gradient-to-br from-primary to-chart-3 flex items-center justify-center font-bold cursor-pointer hover:opacity-80 transition-opacity"
-              title={user.name || 'User Profile'}
-            >
-              {getUserInitials(user.name)}
-            </div>
+              <ScrollArea className="h-[400px]">
+                {mockNotifications.length === 0 ? (
+                  <div className="flex flex-col items-center justify-center py-12 text-center">
+                    <Bell className="h-12 w-12 text-muted-foreground opacity-50 mb-2" />
+                    <p className="text-sm text-muted-foreground">No notifications yet</p>
+                  </div>
+                ) : (
+                  <div className="space-y-1">
+                    {mockNotifications.map((notification) => (
+                      <div
+                        key={notification.id}
+                        className={`group relative p-3 hover:bg-accent cursor-pointer ${
+                          !notification.read ? 'bg-accent/50' : ''
+                        }`}
+                        onClick={() => {
+                          if (!notification.read) {
+                            handleMarkAsRead(notification.id);
+                          }
+                          if (notification.action_url) {
+                            setIsNotificationsOpen(false);
+                            window.location.href = notification.action_url;
+                          }
+                        }}
+                      >
+                        <div className="flex items-start gap-3">
+                          <span className="text-xl">{getTypeIcon(notification.type)}</span>
+                          <div className="flex-1 min-w-0">
+                            <div className="flex items-start justify-between gap-2">
+                              <p className={`text-sm font-medium ${getTypeColor(notification.type)}`}>
+                                {notification.title}
+                              </p>
+                              {!notification.read && (
+                                <div className="h-2 w-2 rounded-full bg-blue-500 flex-shrink-0 mt-1" />
+                              )}
+                            </div>
+                            <p className="text-sm text-muted-foreground mt-1 line-clamp-2">
+                              {notification.message}
+                            </p>
+                            <div className="flex items-center gap-2 mt-2">
+                              <span className="text-xs text-muted-foreground">
+                                {notification.time}
+                              </span>
+                              {notification.action_url && (
+                                <ExternalLink className="h-3 w-3 text-muted-foreground" />
+                              )}
+                            </div>
+                          </div>
+                        </div>
+
+                        {/* Actions (visible on hover) */}
+                        <div className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity flex gap-1">
+                          {!notification.read && (
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              className="h-6 w-6 p-0"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                handleMarkAsRead(notification.id);
+                              }}
+                            >
+                              <Check className="h-3 w-3" />
+                            </Button>
+                          )}
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            className="h-6 w-6 p-0 text-destructive"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleDeleteNotification(notification.id);
+                            }}
+                          >
+                            <Trash2 className="h-3 w-3" />
+                          </Button>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </ScrollArea>
+
+              {mockNotifications.length > 0 && (
+                <>
+                  <DropdownMenuSeparator />
+                  <div className="p-2">
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      className="w-full"
+                      onClick={() => {
+                        setIsNotificationsOpen(false);
+                        window.location.href = '/settings';
+                      }}
+                    >
+                      View all notifications
+                    </Button>
+                  </div>
+                </>
+              )}
+            </DropdownMenuContent>
+          </DropdownMenu>
+
+          {/* User Profile Dropdown */}
+          <div className="pl-3 border-l border-border">
+            <UserMenu user={user} />
           </div>
         </div>
       </div>

@@ -22,6 +22,7 @@ import { MarketplaceGrid } from '@/components/real-estate/marketplace/grid/Marke
 import { BundleGrid } from '@/components/real-estate/marketplace/bundles/BundleGrid';
 import { ShoppingCartPanel } from '@/components/real-estate/marketplace/cart/ShoppingCartPanel';
 import { getShoppingCart } from '@/lib/modules/marketplace';
+import { purchasesProvider, toolsProvider } from '@/lib/data';
 
 /**
  * Marketplace Dashboard Page
@@ -48,45 +49,7 @@ export const metadata: Metadata = {
   description: 'Discover and manage third-party tools and integrations',
 };
 
-// Mock Data for demonstration
-const MOCK_SUBSCRIPTIONS = [
-  {
-    id: '1',
-    toolName: 'Email Automation Pro',
-    renewalDate: '2025-11-08',
-    price: 29,
-    status: 'active',
-  },
-  {
-    id: '2',
-    toolName: 'Analytics Pro',
-    renewalDate: '2025-10-25',
-    price: 79,
-    status: 'active',
-  },
-  {
-    id: '3',
-    toolName: 'CRM Sync Hub',
-    renewalDate: '2025-11-15',
-    price: 39,
-    status: 'active',
-  },
-  {
-    id: '4',
-    toolName: 'Report Builder Plus',
-    renewalDate: '2025-10-20',
-    price: 59,
-    status: 'expiring_soon',
-  },
-];
-
-const MOCK_POPULAR_TOOLS = [
-  { name: 'Email Automation Pro', installs: 1247 },
-  { name: 'DocuSign Integration', installs: 892 },
-  { name: 'Analytics Pro', installs: 756 },
-  { name: 'CRM Sync Hub', installs: 634 },
-  { name: 'SMS Gateway', installs: 521 },
-];
+// Data fetching moved to async components below
 
 export default async function MarketplaceDashboardPage({
   searchParams,
@@ -118,7 +81,7 @@ export default async function MarketplaceDashboardPage({
     <div className="space-y-6">
       {/* Hero Section with KPIs */}
       <Suspense fallback={<div>Loading...</div>}>
-        <HeroSectionWrapper user={user} />
+        <HeroSectionWrapper user={user} organizationId={organizationId} />
       </Suspense>
 
       {/* Main Content Grid */}
@@ -175,71 +138,14 @@ export default async function MarketplaceDashboardPage({
           </Tabs>
 
           {/* Active Subscriptions Section */}
-          <EnhancedCard glassEffect="strong" neonBorder="green" hoverEffect={true}>
-            <CardHeader>
-              <div className="flex items-center justify-between">
-                <CardTitle>Active Subscriptions</CardTitle>
-                <Button asChild variant="ghost" size="sm">
-                  <Link href="/real-estate/marketplace/subscriptions">
-                    Manage All
-                    <ArrowRight className="ml-2 h-4 w-4" />
-                  </Link>
-                </Button>
-              </div>
-              <CardDescription>Your active tool subscriptions</CardDescription>
-            </CardHeader>
-            <CardContent>
-              {MOCK_SUBSCRIPTIONS.length === 0 ? (
-                <div className="text-center py-8 text-muted-foreground">
-                  <Package className="mx-auto h-12 w-12 mb-2 opacity-50" />
-                  <p>No active subscriptions</p>
-                  <Button asChild variant="link" className="mt-2">
-                    <Link href="/real-estate/marketplace/browse">
-                      Browse tools to get started
-                    </Link>
-                  </Button>
-                </div>
-              ) : (
-                <div className="space-y-3">
-                  {MOCK_SUBSCRIPTIONS.map((subscription) => (
-                    <SubscriptionCard key={subscription.id} subscription={subscription} />
-                  ))}
-                </div>
-              )}
-            </CardContent>
-          </EnhancedCard>
+          <Suspense fallback={<div className="h-64 animate-pulse bg-muted rounded-lg" />}>
+            <ActiveSubscriptionsSection userId={user.id} organizationId={organizationId} />
+          </Suspense>
 
           {/* Popular Tools Widget */}
-          <EnhancedCard glassEffect="strong" neonBorder="orange" hoverEffect={true}>
-            <CardHeader>
-              <CardTitle>Popular Tools</CardTitle>
-              <CardDescription>Most installed by real estate professionals</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-3">
-                {MOCK_POPULAR_TOOLS.map((tool, index) => (
-                  <div
-                    key={tool.name}
-                    className="flex items-center justify-between p-3 rounded-lg border hover:bg-accent transition-colors"
-                  >
-                    <div className="flex items-center gap-3">
-                      <div className="flex items-center justify-center w-8 h-8 rounded-full bg-primary/10">
-                        <span className="text-sm font-bold text-primary">
-                          {index + 1}
-                        </span>
-                      </div>
-                      <p className="font-medium">{tool.name}</p>
-                    </div>
-                    <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                      <Users className="h-4 w-4" />
-                      <span>{tool.installs.toLocaleString()} installs</span>
-                      <TrendingUp className="h-4 w-4 text-green-500" />
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </CardContent>
-          </EnhancedCard>
+          <Suspense fallback={<div className="h-96 animate-pulse bg-muted rounded-lg" />}>
+            <PopularToolsSection />
+          </Suspense>
 
           {/* Quick Actions */}
           <EnhancedCard glassEffect="medium" neonBorder="purple" hoverEffect={true}>
@@ -280,28 +186,39 @@ export default async function MarketplaceDashboardPage({
 
 /**
  * Hero Section Wrapper
- * Passes marketplace stats to ModuleHeroSection
+ * Fetches marketplace stats and passes to ModuleHeroSection
  */
-async function HeroSectionWrapper({ user }: { user: UserWithOrganization }) {
+async function HeroSectionWrapper({
+  user,
+  organizationId
+}: {
+  user: UserWithOrganization;
+  organizationId: string;
+}) {
+  // Fetch real data from providers
+  const allTools = await toolsProvider.findMany();
+  const purchases = await purchasesProvider.findMany(organizationId);
+  const activePurchases = purchases.filter(p => p.status === 'ACTIVE');
+
   const stats = [
     {
       label: 'Available Tools',
-      value: '47',
+      value: allTools.length.toString(),
       icon: 'projects' as const,
     },
     {
       label: 'Active Subscriptions',
-      value: '8',
+      value: activePurchases.length.toString(),
       icon: 'tasks' as const,
     },
     {
-      label: 'Total Savings',
-      value: '$340/mo',
+      label: 'Total Value',
+      value: `$${(purchases.reduce((sum, p) => sum + p.price_at_purchase, 0) / 100).toFixed(0)}/mo`,
       icon: 'revenue' as const,
     },
     {
-      label: 'Popular Tools',
-      value: '12',
+      label: 'Your Purchases',
+      value: purchases.length.toString(),
       icon: 'customers' as const,
     },
   ];
@@ -316,20 +233,127 @@ async function HeroSectionWrapper({ user }: { user: UserWithOrganization }) {
   );
 }
 
-// Helper Components
+// Helper Components & Async Sections
+
+/**
+ * Active Subscriptions Section
+ * Displays user's active tool purchases
+ */
+async function ActiveSubscriptionsSection({
+  userId,
+  organizationId
+}: {
+  userId: string;
+  organizationId: string;
+}) {
+  const purchases = await purchasesProvider.findMany(organizationId);
+  const activePurchases = purchases
+    .filter(p => p.status === 'ACTIVE')
+    .sort((a, b) => new Date(b.purchased_at).getTime() - new Date(a.purchased_at).getTime())
+    .slice(0, 4);
+
+  return (
+    <EnhancedCard glassEffect="strong" neonBorder="green" hoverEffect={true}>
+      <CardHeader>
+        <div className="flex items-center justify-between">
+          <CardTitle>Active Subscriptions</CardTitle>
+          <Button asChild variant="ghost" size="sm">
+            <Link href="/real-estate/marketplace/purchases">
+              Manage All
+              <ArrowRight className="ml-2 h-4 w-4" />
+            </Link>
+          </Button>
+        </div>
+        <CardDescription>Your active tool purchases</CardDescription>
+      </CardHeader>
+      <CardContent>
+        {activePurchases.length === 0 ? (
+          <div className="text-center py-8 text-muted-foreground">
+            <Package className="mx-auto h-12 w-12 mb-2 opacity-50" />
+            <p>No active purchases</p>
+            <Button asChild variant="link" className="mt-2">
+              <Link href="/real-estate/marketplace/browse">
+                Browse tools to get started
+              </Link>
+            </Button>
+          </div>
+        ) : (
+          <div className="space-y-3">
+            {activePurchases.map((purchase) => (
+              <SubscriptionCard key={purchase.id} purchase={purchase} />
+            ))}
+          </div>
+        )}
+      </CardContent>
+    </EnhancedCard>
+  );
+}
+
+/**
+ * Popular Tools Section
+ * Displays most popular tools by install count
+ */
+async function PopularToolsSection() {
+  const allTools = await toolsProvider.findMany();
+
+  // Sort by installs and take top 5
+  const popularTools = [...allTools]
+    .sort((a, b) => b.install_count - a.install_count)
+    .slice(0, 5);
+
+  return (
+    <EnhancedCard glassEffect="strong" neonBorder="orange" hoverEffect={true}>
+      <CardHeader>
+        <CardTitle>Popular Tools</CardTitle>
+        <CardDescription>Most installed by real estate professionals</CardDescription>
+      </CardHeader>
+      <CardContent>
+        <div className="space-y-3">
+          {popularTools.map((tool, index) => (
+            <Link
+              key={tool.id}
+              href={`/real-estate/marketplace/tools/${tool.id}`}
+              className="flex items-center justify-between p-3 rounded-lg border hover:bg-accent transition-colors"
+            >
+              <div className="flex items-center gap-3">
+                <div className="flex items-center justify-center w-8 h-8 rounded-full bg-primary/10">
+                  <span className="text-sm font-bold text-primary">
+                    {index + 1}
+                  </span>
+                </div>
+                <p className="font-medium">{tool.name}</p>
+              </div>
+              <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                <Users className="h-4 w-4" />
+                <span>{tool.install_count.toLocaleString()} installs</span>
+                <TrendingUp className="h-4 w-4 text-green-500" />
+              </div>
+            </Link>
+          ))}
+        </div>
+      </CardContent>
+    </EnhancedCard>
+  );
+}
 
 interface SubscriptionCardProps {
-  subscription: {
+  purchase: {
     id: string;
-    toolName: string;
-    renewalDate: string;
-    price: number;
+    tool_id: string;
+    tool?: {
+      name: string;
+      id: string;
+    };
+    purchased_at: Date;
+    price_at_purchase: number;
     status: string;
   };
 }
 
-function SubscriptionCard({ subscription }: SubscriptionCardProps) {
-  const isExpiringSoon = subscription.status === 'expiring_soon';
+function SubscriptionCard({ purchase }: SubscriptionCardProps) {
+  const isExpiringSoon = purchase.status === 'expiring_soon';
+  const purchaseDate = new Date(purchase.purchased_at);
+  const renewalDate = new Date(purchaseDate.setMonth(purchaseDate.getMonth() + 1));
 
   return (
     <div className="flex items-center justify-between p-4 rounded-lg border hover:bg-accent transition-colors">
@@ -343,11 +367,11 @@ function SubscriptionCard({ subscription }: SubscriptionCardProps) {
             )}
           </div>
           <div>
-            <p className="font-medium">{subscription.toolName}</p>
+            <p className="font-medium">{purchase.tool?.name || `Tool ${purchase.tool_id}`}</p>
             <div className="flex items-center gap-2 mt-1 text-sm text-muted-foreground">
-              <span>Renews {new Date(subscription.renewalDate).toLocaleDateString()}</span>
+              <span>Renews {renewalDate.toLocaleDateString()}</span>
               <span>•</span>
-              <span>${subscription.price}/mo</span>
+              <span>${(purchase.price_at_purchase / 100).toFixed(2)}/mo</span>
             </div>
           </div>
         </div>
@@ -359,7 +383,7 @@ function SubscriptionCard({ subscription }: SubscriptionCardProps) {
           </span>
         )}
         <Button asChild variant="ghost" size="sm">
-          <Link href={`/real-estate/marketplace/subscriptions/${subscription.id}`}>
+          <Link href={`/real-estate/marketplace/purchases/${purchase.id}`}>
             Manage
           </Link>
         </Button>
