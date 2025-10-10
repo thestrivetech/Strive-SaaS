@@ -13,7 +13,6 @@ import { prisma } from '@/lib/database/prisma';
 import { getCurrentUser } from '@/lib/auth/middleware';
 import { getUserOrganizationId } from '@/lib/auth/user-helpers';
 import { cache } from 'react';
-import type { MediaFilters } from './schemas';
 
 // ============================================================================
 // Get Media Assets

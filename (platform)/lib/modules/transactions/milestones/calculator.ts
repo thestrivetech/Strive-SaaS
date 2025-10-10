@@ -3,7 +3,6 @@
 import { prisma } from '@/lib/database/prisma';
 import { getCurrentUser } from '@/lib/auth/auth-helpers';
 import { getUserOrganizationId } from '@/lib/auth/user-helpers';
-import { getCurrentMilestone, getNextMilestone } from './schemas';
 
 /**
  * Progress calculation weights

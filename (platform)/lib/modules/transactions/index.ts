@@ -27,7 +27,6 @@ export * from './core';
 // Tasks
 export * from './tasks/actions';
 export * from './tasks/queries';
-export * from './tasks/schemas';
 
 // Activity
 export * from './activity/formatters';
@@ -40,7 +39,6 @@ export { type TaskStats as AnalyticsTaskStats } from './analytics/queries';
 // Listings
 export * from './listings/actions';
 export * from './listings/queries';
-export * from './listings/schemas';
 
 // Parties
 export * from './parties/actions';
@@ -60,7 +58,6 @@ export * from './workflows/queries';
 
 // Milestones
 export * from './milestones/calculator';
-export * from './milestones/schemas';
 
 // Types
 export type {

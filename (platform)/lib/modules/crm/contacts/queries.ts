@@ -5,7 +5,6 @@ import { requireAuth, getCurrentUser } from '@/lib/auth/auth-helpers';
 import { canAccessCRM } from '@/lib/auth/rbac';
 import { withTenantContext } from '@/lib/database/utils';
 import { handleDatabaseError } from '@/lib/database/errors';
-import { contactFiltersSchema, type ContactFilters } from './schemas';
 import type { contacts, users, activities, deals } from '@prisma/client';
 
 /**

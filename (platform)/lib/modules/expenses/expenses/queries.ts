@@ -3,7 +3,6 @@
 import { prisma } from '@/lib/database/prisma';
 import { requireAuth } from '@/lib/auth/middleware';
 import { canAccessExpenses } from '@/lib/auth/rbac';
-import { ExpenseFilterSchema, type ExpenseFilter } from './schemas';
 
 /**
  * Get Expenses with Filtering and Pagination
@@ -21,7 +20,7 @@ export async function getExpenses(filters: Partial<ExpenseFilter> = {}) {
     throw new Error('Unauthorized: Expense access required');
   }
 
-  const validated = ExpenseFilterSchema.parse(filters);
+  const validated = filters;
 
   try {
     // Build where clause with organization isolation

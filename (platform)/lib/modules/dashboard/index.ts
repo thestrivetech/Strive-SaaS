@@ -10,7 +10,6 @@ export {
   getMetricsByCategory,
 } from './metrics/queries';
 export { calculateMetrics } from './metrics/calculator';
-export { DashboardMetricSchema } from './metrics/schemas';
 
 // Widgets
 export {
@@ -23,7 +22,6 @@ export {
   getWidgetById,
   getWidgetsByType,
 } from './widgets/queries';
-export { DashboardWidgetSchema } from './widgets/schemas';
 
 // Activities
 export {
@@ -36,7 +34,6 @@ export {
   getActivitiesByType,
   getActivitiesByEntity,
 } from './activities/queries';
-export { ActivityFeedSchema } from './activities/schemas';
 
 // Quick Actions
 export {
@@ -49,10 +46,5 @@ export {
   getQuickActions,
   getQuickActionById,
 } from './quick-actions/queries';
-export { QuickActionSchema } from './quick-actions/schemas';
 
 // Types
-export type { DashboardMetricInput } from './metrics/schemas';
-export type { DashboardWidgetInput } from './widgets/schemas';
-export type { ActivityFeedInput } from './activities/schemas';
-export type { QuickActionInput } from './quick-actions/schemas';

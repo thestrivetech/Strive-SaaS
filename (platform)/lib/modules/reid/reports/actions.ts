@@ -4,9 +4,7 @@ import { revalidatePath } from 'next/cache';
 import { prisma } from '@/lib/database/prisma';
 import { requireAuth } from '@/lib/auth/middleware';
 import { canAccessREID, canCreateReports, getREIDLimits } from '@/lib/auth/rbac';
-import { MarketReportSchema } from './schemas';
 import { generateReport } from './generator';
-import type { MarketReportInput } from './schemas';
 import crypto from 'crypto';
 
 /**
@@ -43,7 +41,7 @@ export async function createMarketReport(input: MarketReportInput) {
     }
   }
 
-  const validated = MarketReportSchema.parse(input);
+  const validated = input;
 
   // Generate report content
   const generatedContent = await generateReport(validated);

@@ -11,13 +11,3 @@ export {
   getPropertyAlertById,
   getAlertTriggers
 } from './queries';
-
-export {
-  PropertyAlertSchema,
-  AlertTriggerSchema
-} from './schemas';
-
-export type {
-  PropertyAlertInput,
-  AlertTriggerInput
-} from './schemas';

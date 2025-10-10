@@ -8,35 +8,6 @@
  */
 
 // ============================================================================
-// Schemas & Validation
-// ============================================================================
-
-export {
-  MediaAssetSchema,
-  MediaFolderSchema,
-  MediaFiltersSchema,
-  UpdateMediaAssetSchema,
-  ALLOWED_IMAGE_TYPES,
-  ALLOWED_VIDEO_TYPES,
-  ALLOWED_DOCUMENT_TYPES,
-  ALLOWED_FILE_TYPES,
-  MAX_FILE_SIZE,
-  MAX_IMAGE_WIDTH,
-  WEBP_QUALITY,
-  isAllowedImageType,
-  isAllowedVideoType,
-  isAllowedDocumentType,
-  isAllowedFileType,
-} from './schemas';
-
-export type {
-  MediaAssetInput,
-  MediaFolderInput,
-  MediaFilters,
-  UpdateMediaAssetInput,
-} from './schemas';
-
-// ============================================================================
 // Upload Helpers
 // ============================================================================
 

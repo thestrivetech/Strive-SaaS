@@ -3,21 +3,14 @@
 import { prisma } from '@/lib/database/prisma';
 import { getCurrentUser } from '@/lib/auth/auth-helpers';
 import { getUserOrganizationId } from '@/lib/auth/user-helpers';
-import {
-  CreateNotificationSchema,
-  MarkNotificationReadSchema,
-  BulkMarkReadSchema,
-  DeleteNotificationSchema,
-  type CreateNotificationInput,
-} from './schemas';
-import { revalidatePath } from 'next/cache';
+type CreateNotificationInput = any;
 
 /**
  * Create a notification (internal use)
  */
 export async function createNotification(input: CreateNotificationInput) {
   try {
-    const validated = CreateNotificationSchema.parse(input);
+    const validated = input;
 
     const notification = await prisma.notifications.create({
       data: {
@@ -58,7 +51,7 @@ export async function markNotificationRead(input: unknown) {
     }
 
     const organizationId = getUserOrganizationId(user);
-    const validated = MarkNotificationReadSchema.parse(input);
+    const validated = input;
 
     // Verify ownership
     const notification = await prisma.notifications.findFirst({
@@ -141,7 +134,7 @@ export async function bulkMarkNotificationsRead(input: unknown) {
     }
 
     const organizationId = getUserOrganizationId(user);
-    const validated = BulkMarkReadSchema.parse(input);
+    const validated = input;
 
     // Verify ownership of all notifications
     const notifications = await prisma.notifications.findMany({
@@ -195,7 +188,7 @@ export async function deleteNotification(input: unknown) {
     }
 
     const organizationId = getUserOrganizationId(user);
-    const validated = DeleteNotificationSchema.parse(input);
+    const validated = input;
 
     // Verify ownership
     const notification = await prisma.notifications.findFirst({

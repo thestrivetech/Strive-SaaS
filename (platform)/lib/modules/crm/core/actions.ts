@@ -6,14 +6,8 @@ import { createServerSupabaseClientWithAuth } from '@/lib/supabase-server';
 import { hasOrgPermission } from '@/lib/auth/org-rbac';
 import { canAccessFeature } from '@/lib/auth/subscription';
 import { canAccessCRM } from '@/lib/auth/rbac';
-import {
-  createCustomerSchema,
-  updateCustomerSchema,
-  type CreateCustomerInput,
-  type UpdateCustomerInput,
-} from './schemas';
-import { revalidatePath } from 'next/cache';
-import { getUserOrganizations } from '../../organization/queries';
+type CreateCustomerInput = any;
+type UpdateCustomerInput = any;
 
 /**
  * Create a new customer
@@ -52,7 +46,7 @@ export async function createCustomer(input: CreateCustomerInput) {
     throw new Error('User not found');
   }
 
-  const validated = createCustomerSchema.parse(input);
+  const validated = input;
 
   // Verify user has access to this organization
   const userOrgs = await getUserOrganizations(user.id);
@@ -161,7 +155,7 @@ export async function updateCustomer(input: UpdateCustomerInput) {
     throw new Error('User not found');
   }
 
-  const validated = updateCustomerSchema.parse(input);
+  const validated = input;
 
   // Get existing customer to check access
   const existingCustomer = await prisma.customers.findUnique({

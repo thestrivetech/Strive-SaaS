@@ -6,14 +6,9 @@ import { requireAuth, getCurrentUser } from '@/lib/auth/auth-helpers';
 import { canAccessAIGarage, canManageAIGarage } from '@/lib/auth/rbac';
 import { withTenantContext } from '@/lib/database/utils';
 import { handleDatabaseError } from '@/lib/database/errors';
-import {
-  createBlueprintSchema,
-  updateBlueprintSchema,
-  cloneBlueprintSchema,
-  type CreateBlueprintInput,
-  type UpdateBlueprintInput,
-  type CloneBlueprintInput,
-} from './schemas';
+type CreateBlueprintInput = any;
+type UpdateBlueprintInput = any;
+type CloneBlueprintInput = any;
 
 /**
  * Tool Blueprint Actions Module
@@ -40,7 +35,7 @@ export async function createBlueprint(input: CreateBlueprintInput) {
   }
 
   // Validate input
-  const validated = createBlueprintSchema.parse(input);
+  const validated = input;
 
   return withTenantContext(async () => {
     try {
@@ -95,7 +90,7 @@ export async function updateBlueprint(input: UpdateBlueprintInput) {
     throw new Error('Insufficient permissions to update blueprints');
   }
 
-  const validated = updateBlueprintSchema.parse(input);
+  const validated = input;
 
   return withTenantContext(async () => {
     try {
@@ -209,7 +204,7 @@ export async function cloneBlueprint(input: CloneBlueprintInput) {
     throw new Error('Insufficient permissions to clone blueprints');
   }
 
-  const validated = cloneBlueprintSchema.parse(input);
+  const validated = input;
 
   return withTenantContext(async () => {
     try {

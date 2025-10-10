@@ -3,8 +3,6 @@
 import { prisma } from '@/lib/database/prisma';
 import { requireAuth } from '@/lib/auth/middleware';
 import { canAccessREID } from '@/lib/auth/rbac';
-import { InsightFiltersSchema } from './schemas';
-import type { InsightFilters } from './schemas';
 
 export async function getNeighborhoodInsights(filters?: InsightFilters) {
   const user = await requireAuth();

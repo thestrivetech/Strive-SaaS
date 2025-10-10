@@ -37,20 +37,5 @@ export const getLeadsByAssignee = dataConfig.useMocks
   ? async () => []
   : async (userId: string) => (await import('./queries')).getLeadsByAssignee(userId);
 
-export {
-  createLeadSchema,
-  updateLeadSchema,
-  leadFiltersSchema,
-  updateLeadScoreSchema,
-  updateLeadStatusSchema,
-  bulkAssignLeadsSchema,
-  type CreateLeadInput,
-  type UpdateLeadInput,
-  type LeadFilters,
-  type UpdateLeadScoreInput,
-  type UpdateLeadStatusInput,
-  type BulkAssignLeadsInput,
-} from './schemas';
-
 // Re-export Prisma types
 export type { leads as Lead } from '@prisma/client';

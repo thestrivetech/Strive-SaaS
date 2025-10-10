@@ -4,7 +4,6 @@ import { prisma } from '@/lib/database/prisma';
 import { withTenantContext } from '@/lib/database/utils';
 import { handleDatabaseError } from '@/lib/database/errors';
 import type { Prisma } from '@prisma/client';
-import type { ToolFilters } from './schemas';
 import { dataConfig } from '@/lib/data/config';
 import { toolsProvider, bundlesProvider, purchasesProvider } from '@/lib/data';
 

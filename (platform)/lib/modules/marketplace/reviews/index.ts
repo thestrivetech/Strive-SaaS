@@ -22,18 +22,4 @@ export {
   getReviewStats,
   getUserReviews,
   hasUserPurchasedTool,
-  type ReviewWithReviewer,
-  type ReviewStats,
 } from './queries';
-
-// Schemas
-export {
-  createToolReviewSchema,
-  updateToolReviewSchema,
-  deleteToolReviewSchema,
-  reviewFiltersSchema,
-  type CreateToolReviewInput,
-  type UpdateToolReviewInput,
-  type DeleteToolReviewInput,
-  type ReviewFilters,
-} from './schemas';

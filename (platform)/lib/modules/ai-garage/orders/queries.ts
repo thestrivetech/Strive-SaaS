@@ -4,7 +4,6 @@ import { prisma } from '@/lib/database/prisma';
 import { withTenantContext } from '@/lib/database/utils';
 import { handleDatabaseError } from '@/lib/database/errors';
 import type { custom_agent_orders, Prisma } from '@prisma/client';
-import type { OrderFilters } from './schemas';
 
 /**
  * Agent Orders Queries Module

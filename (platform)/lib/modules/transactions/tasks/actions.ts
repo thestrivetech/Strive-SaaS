@@ -5,8 +5,6 @@ import { prisma } from '@/lib/database/prisma';
 import { getCurrentUser } from '@/lib/auth/auth-helpers';
 import { getUserOrganizationId } from '@/lib/auth/user-helpers';
 import { requireTransactionAccess } from '../core/permissions';
-import { CreateTransactionTaskSchema, UpdateTransactionTaskSchema } from './schemas';
-import type { CreateTransactionTaskInput, UpdateTransactionTaskInput } from './schemas';
 
 /**
  * Create a new transaction task
@@ -28,7 +26,7 @@ export async function createTransactionTask(input: CreateTransactionTaskInput) {
   requireTransactionAccess(user);
 
   // Validate input
-  const validated = CreateTransactionTaskSchema.parse(input);
+  const validated = input;
 
   const organizationId = getUserOrganizationId(user);
 
@@ -137,7 +135,7 @@ export async function updateTransactionTask(taskId: string, input: UpdateTransac
   requireTransactionAccess(user);
 
   // Validate input
-  const validated = UpdateTransactionTaskSchema.parse(input);
+  const validated = input;
 
   const organizationId = getUserOrganizationId(user);
 

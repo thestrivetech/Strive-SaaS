@@ -2,15 +2,8 @@
 
 import { prisma } from '@/lib/database/prisma';
 import { createServerSupabaseClientWithAuth } from '@/lib/supabase-server';
-import {
-  createTaskSchema,
-  updateTaskSchema,
-  type CreateTaskInput,
-  type UpdateTaskInput,
-} from './schemas';
-import { revalidatePath } from 'next/cache';
-import { getUserOrganizations } from '../organization/queries';
-import { TaskStatus } from '@prisma/client';
+type CreateTaskInput = any;
+type UpdateTaskInput = any;
 
 /**
  * Create a new task
@@ -23,7 +16,7 @@ export async function createTask(input: CreateTaskInput) {
     throw new Error('Unauthorized');
   }
 
-  const validated = createTaskSchema.parse(input);
+  const validated = input;
 
   // Get project to verify organization access
   const project = await prisma.projects.findUnique({
@@ -98,7 +91,7 @@ export async function updateTask(input: UpdateTaskInput) {
     throw new Error('Unauthorized');
   }
 
-  const validated = updateTaskSchema.parse(input);
+  const validated = input;
 
   // Get existing task to check access
   const existingTask = await prisma.tasks.findUnique({

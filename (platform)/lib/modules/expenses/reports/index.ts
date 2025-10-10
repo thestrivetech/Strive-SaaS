@@ -11,9 +11,3 @@ export {
   getExpenseReports,
   getExpenseReportById,
 } from './queries';
-
-// Schemas & Types
-export {
-  ExpenseReportSchema,
-  type ExpenseReportInput,
-} from './schemas';

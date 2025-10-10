@@ -26,22 +26,3 @@ export const convertLead = convertLeadAction;
 export const updateLeadScore = updateLeadScoreAction;
 export const updateLeadStatus = updateLeadStatusAction;
 export const bulkAssignLeads = bulkAssignLeadsAction;
-
-// Re-export schemas and types that components need
-export {
-  createLeadSchema,
-  updateLeadSchema,
-  leadFiltersSchema,
-  updateLeadScoreSchema,
-  updateLeadStatusSchema,
-  bulkAssignLeadsSchema,
-  type CreateLeadInput,
-  type UpdateLeadInput,
-  type LeadFilters,
-  type UpdateLeadScoreInput,
-  type UpdateLeadStatusInput,
-  type BulkAssignLeadsInput,
-} from '@/lib/modules/crm/leads/schemas';
-
-// Note: LeadWithAssignee is not exported from lib/modules/crm/leads
-// Components that need it define it locally as: leads & { assigned_to: { ... } }

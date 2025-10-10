@@ -21,21 +21,3 @@ export {
   getWorkflowTemplateById,
   getWorkflowsByLoopId,
 } from './queries';
-
-// Schemas
-export {
-  WorkflowStepSchema,
-  CreateWorkflowTemplateSchema,
-  ApplyWorkflowSchema,
-  UpdateWorkflowTemplateSchema,
-  QueryWorkflowTemplatesSchema,
-} from './schemas';
-
-// Types
-export type {
-  WorkflowStep,
-  CreateWorkflowTemplateInput,
-  ApplyWorkflowInput,
-  UpdateWorkflowTemplateInput,
-  QueryWorkflowTemplatesInput,
-} from './schemas';

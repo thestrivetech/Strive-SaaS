@@ -3,7 +3,6 @@
 import { revalidatePath } from 'next/cache';
 import { prisma } from '@/lib/database/prisma';
 import { requireAuth } from '@/lib/auth/middleware';
-import { DashboardMetricSchema, UpdateMetricSchema } from './schemas';
 
 export async function createDashboardMetric(input: unknown) {
   const user = await requireAuth();
@@ -16,7 +15,7 @@ export async function createDashboardMetric(input: unknown) {
     throw new Error('Insufficient permissions - requires SUPER_ADMIN or organization ADMIN/OWNER');
   }
 
-  const validated = DashboardMetricSchema.parse(input);
+  const validated = input;
 
   const metric = await prisma.dashboard_metrics.create({
     data: {
@@ -53,7 +52,7 @@ export async function updateDashboardMetric(input: unknown) {
     throw new Error('Insufficient permissions - requires SUPER_ADMIN or organization ADMIN/OWNER');
   }
 
-  const validated = UpdateMetricSchema.parse(input);
+  const validated = input;
   const { id, ...data } = validated;
 
   // Verify ownership

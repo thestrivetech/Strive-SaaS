@@ -10,13 +10,3 @@ export {
   getNeighborhoodInsightByAreaCode,
   getInsightsStats
 } from './queries';
-
-export {
-  NeighborhoodInsightSchema,
-  InsightFiltersSchema
-} from './schemas';
-
-export type {
-  NeighborhoodInsightInput,
-  InsightFilters
-} from './schemas';

@@ -13,15 +13,3 @@ export {
   recalculateAllLoopProgress,
   getProgressSummary,
 } from './calculator';
-
-// Schemas and utilities
-export {
-  MilestoneSchema,
-  TRANSACTION_MILESTONES,
-  getMilestonesForType,
-  getCurrentMilestone,
-  getNextMilestone,
-} from './schemas';
-
-// Types
-export type { Milestone } from './schemas';

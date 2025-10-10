@@ -29,22 +29,6 @@ export {
   getSignatureStats,
 } from './queries';
 
-// Schemas
-export {
-  CreateSignatureRequestSchema,
-  SignDocumentSchema,
-  DeclineSignatureSchema,
-  QuerySignatureRequestsSchema,
-} from './schemas';
-
-// Types
-export type {
-  CreateSignatureRequestInput,
-  SignDocumentInput,
-  DeclineSignatureInput,
-  QuerySignatureRequestsInput,
-} from './schemas';
-
 // Re-export Prisma types for convenience
 export type {
   signature_requests as SignatureRequest,

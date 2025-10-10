@@ -7,7 +7,5 @@ export { createExpense, updateExpense, deleteExpense } from './actions';
 export { getExpenses, getExpenseById, getExpenseSummary } from './queries';
 
 // Schemas
-export { ExpenseSchema, ExpenseUpdateSchema, ExpenseFilterSchema } from './schemas';
 
 // Types
-export type { ExpenseInput, ExpenseUpdate, ExpenseFilter } from './schemas';

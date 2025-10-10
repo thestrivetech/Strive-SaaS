@@ -4,7 +4,6 @@ import { prisma } from '@/lib/database/prisma';
 import { withTenantContext, getCurrentTenantContext } from '@/lib/database/utils';
 import { handleDatabaseError } from '@/lib/database/errors';
 import type { tool_blueprints, Prisma } from '@prisma/client';
-import type { BlueprintFilters } from './schemas';
 
 /**
  * Tool Blueprint Queries Module

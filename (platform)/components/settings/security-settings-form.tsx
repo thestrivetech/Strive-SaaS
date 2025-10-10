@@ -17,8 +17,14 @@ import {
   revokeSession,
   revokeAllSessions,
 } from '@/lib/modules/settings';
-import { ChangePasswordSchema, type ChangePasswordInput } from '@/lib/modules/settings/security/schemas';
 import { Key, Shield, Smartphone, Monitor, AlertTriangle } from 'lucide-react';
+
+// Temporary type during UI development
+type ChangePasswordInput = {
+  currentPassword: string;
+  newPassword: string;
+  confirmPassword: string;
+};
 
 interface SecuritySettingsFormProps {
   sessions: any[];
@@ -36,7 +42,6 @@ export function SecuritySettingsForm({
   const { toast } = useToast();
 
   const passwordForm = useForm<ChangePasswordInput>({
-    resolver: zodResolver(ChangePasswordSchema),
     defaultValues: {
       currentPassword: '',
       newPassword: '',

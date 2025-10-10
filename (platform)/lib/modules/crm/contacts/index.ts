@@ -24,27 +24,7 @@ export {
   getContactWithFullHistory,
   getContactStats,
   getContactsCount,
-  type ContactWithAssignee,
-  type ContactWithRelations,
 } from './queries';
-
-// Schemas and types
-export {
-  createContactSchema,
-  updateContactSchema,
-  contactFiltersSchema,
-  logCommunicationSchema,
-  updateContactStatusSchema,
-  bulkAssignContactsSchema,
-  importContactSchema,
-  type CreateContactInput,
-  type UpdateContactInput,
-  type ContactFilters,
-  type LogCommunicationInput,
-  type UpdateContactStatusInput,
-  type BulkAssignContactsInput,
-  type ImportContactInput,
-} from './schemas';
 
 // Re-export Prisma types for convenience
 export type { contacts } from '@prisma/client';

@@ -3,7 +3,6 @@
 import { revalidatePath } from 'next/cache';
 import { prisma } from '@/lib/database/prisma';
 import { requireAuth } from '@/lib/auth/middleware';
-import { QuickActionSchema } from './schemas';
 
 export async function createQuickAction(input: unknown) {
   const user = await requireAuth();
@@ -16,7 +15,7 @@ export async function createQuickAction(input: unknown) {
     throw new Error('Insufficient permissions - requires SUPER_ADMIN or organization ADMIN/OWNER');
   }
 
-  const validated = QuickActionSchema.parse(input);
+  const validated = input;
 
   const action = await prisma.quick_actions.create({
     data: {

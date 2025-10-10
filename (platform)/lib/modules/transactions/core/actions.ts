@@ -4,9 +4,7 @@ import { revalidatePath } from 'next/cache';
 import { prisma } from '@/lib/database/prisma';
 import { getCurrentUser } from '@/lib/auth/auth-helpers';
 import { getUserOrganizationId } from '@/lib/auth/user-helpers';
-import { CreateLoopSchema, UpdateLoopSchema } from './schemas';
 import { hasTransactionPermission, canModifyLoop, requireTransactionAccess, TRANSACTION_PERMISSIONS } from './permissions';
-import type { CreateLoopInput, UpdateLoopInput } from './schemas';
 
 /**
  * Create a new transaction loop
@@ -31,7 +29,7 @@ export async function createLoop(input: CreateLoopInput) {
   }
 
   // Validate input
-  const validated = CreateLoopSchema.parse(input);
+  const validated = input;
 
   const organizationId = getUserOrganizationId(user);
 
@@ -91,7 +89,7 @@ export async function updateLoop(loopId: string, input: UpdateLoopInput) {
   requireTransactionAccess(user);
 
   // Validate input
-  const validated = UpdateLoopSchema.parse(input);
+  const validated = input;
 
   const organizationId = getUserOrganizationId(user);
 

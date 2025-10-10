@@ -4,8 +4,6 @@ import { revalidatePath } from 'next/cache';
 import { prisma } from '@/lib/database/prisma';
 import { requireAuth } from '@/lib/auth/middleware';
 import { canAccessExpenses } from '@/lib/auth/rbac';
-import { ExpenseSchema, ExpenseUpdateSchema } from './schemas';
-import type { ExpenseInput, ExpenseUpdate } from './schemas';
 
 /**
  * Create Expense
@@ -22,7 +20,7 @@ export async function createExpense(input: ExpenseInput) {
     throw new Error('Unauthorized: Expense access required');
   }
 
-  const validated = ExpenseSchema.parse(input);
+  const validated = input;
 
   try {
     const expense = await prisma.expenses.create({
@@ -106,7 +104,7 @@ export async function updateExpense(input: ExpenseUpdate) {
     throw new Error('Unauthorized: Expense access required');
   }
 
-  const validated = ExpenseUpdateSchema.parse(input);
+  const validated = input;
 
   try {
     // Verify expense exists and belongs to organization

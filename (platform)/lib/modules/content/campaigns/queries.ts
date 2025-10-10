@@ -2,7 +2,6 @@
 
 import { prisma } from '@/lib/database/prisma';
 import { requireAuth, getCurrentUser } from '@/lib/auth/middleware';
-import { CampaignFilters } from './schemas';
 import { cache } from 'react';
 import { getUserOrganizationId } from '@/lib/auth/user-helpers';
 import { campaignsProvider } from '@/lib/data/providers/campaigns-provider';

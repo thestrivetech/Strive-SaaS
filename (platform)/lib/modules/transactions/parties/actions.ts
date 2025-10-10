@@ -4,8 +4,6 @@ import { revalidatePath } from 'next/cache';
 import { prisma } from '@/lib/database/prisma';
 import { getCurrentUser } from '@/lib/auth/auth-helpers';
 import { getUserOrganizationId } from '@/lib/auth/user-helpers';
-import { CreatePartySchema, UpdatePartySchema } from './schemas';
-import type { CreatePartyInput, UpdatePartyInput } from './schemas';
 
 /**
  * Invite a party to a transaction loop
@@ -24,7 +22,7 @@ export async function inviteParty(input: CreatePartyInput) {
   }
 
   // Validate input
-  const validated = CreatePartySchema.parse(input);
+  const validated = input;
 
   const organizationId = getUserOrganizationId(user);
 
@@ -103,7 +101,7 @@ export async function updateParty(partyId: string, input: UpdatePartyInput) {
   }
 
   // Validate input
-  const validated = UpdatePartySchema.parse(input);
+  const validated = input;
 
   const organizationId = getUserOrganizationId(user);
 

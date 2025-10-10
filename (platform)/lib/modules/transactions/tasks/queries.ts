@@ -3,7 +3,6 @@
 import { prisma } from '@/lib/database/prisma';
 import { getCurrentUser } from '@/lib/auth/auth-helpers';
 import { getUserOrganizationId } from '@/lib/auth/user-helpers';
-import { QueryTransactionTasksSchema, type QueryTransactionTasksInput } from './schemas';
 import { calculatePagination, createPaginatedResult, type PaginationParams, type PaginatedResult } from '../types/pagination';
 
 /**
@@ -25,7 +24,7 @@ export async function getTasksByLoop(
   }
 
   // Validate input
-  const validated = QueryTransactionTasksSchema.parse(input);
+  const validated = input;
   const { loopId, status, priority, assignedTo } = validated;
   const { page, limit, skip } = calculatePagination(paginationParams);
 

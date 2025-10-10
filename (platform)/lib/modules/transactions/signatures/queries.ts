@@ -3,8 +3,6 @@
 import { prisma } from '@/lib/database/prisma';
 import { getCurrentUser } from '@/lib/auth/auth-helpers';
 import { getUserOrganizationId } from '@/lib/auth/user-helpers';
-import { QuerySignatureRequestsSchema } from './schemas';
-import type { QuerySignatureRequestsInput } from './schemas';
 import type { SignatureStatus } from '@prisma/client';
 import { calculatePagination, createPaginatedResult, type PaginationParams } from '../types/pagination';
 

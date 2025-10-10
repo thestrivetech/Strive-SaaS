@@ -57,36 +57,8 @@ export {
   getReviewStats,
   getUserReviews,
   hasUserPurchasedTool,
-  type ReviewWithReviewer,
-  type ReviewStats,
+
 } from './reviews/queries';
-
-// Export schemas
-export {
-  toolFiltersSchema,
-  purchaseToolSchema,
-  purchaseBundleSchema,
-  addToCartSchema,
-  removeFromCartSchema,
-  checkoutSchema,
-  type ToolFilters,
-  type PurchaseToolInput,
-  type PurchaseBundleInput,
-  type AddToCartInput,
-  type RemoveFromCartInput,
-  type CheckoutInput,
-} from './schemas';
-
-export {
-  createToolReviewSchema,
-  updateToolReviewSchema,
-  deleteToolReviewSchema,
-  reviewFiltersSchema,
-  type CreateToolReviewInput,
-  type UpdateToolReviewInput,
-  type DeleteToolReviewInput,
-  type ReviewFilters,
-} from './reviews/schemas';
 
 // Re-export Prisma types
 export type {

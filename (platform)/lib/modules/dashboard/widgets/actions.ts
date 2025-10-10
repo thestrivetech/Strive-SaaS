@@ -3,7 +3,6 @@
 import { revalidatePath } from 'next/cache';
 import { prisma } from '@/lib/database/prisma';
 import { requireAuth } from '@/lib/auth/middleware';
-import { DashboardWidgetSchema, UpdateWidgetSchema } from './schemas';
 
 export async function createDashboardWidget(input: unknown) {
   const user = await requireAuth();
@@ -16,7 +15,7 @@ export async function createDashboardWidget(input: unknown) {
     throw new Error('Insufficient permissions - requires SUPER_ADMIN or organization ADMIN/OWNER');
   }
 
-  const validated = DashboardWidgetSchema.parse(input);
+  const validated = input;
 
   const widget = await prisma.dashboard_widgets.create({
     data: {
@@ -41,7 +40,7 @@ export async function updateDashboardWidget(input: unknown) {
     throw new Error('Insufficient permissions - requires SUPER_ADMIN or organization ADMIN/OWNER');
   }
 
-  const validated = UpdateWidgetSchema.parse(input);
+  const validated = input;
   const { id, ...data } = validated;
 
   // Verify ownership

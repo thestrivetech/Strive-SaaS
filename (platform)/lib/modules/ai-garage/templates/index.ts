@@ -9,22 +9,6 @@
  * - Usage tracking
  */
 
-// Export schemas and types
-export {
-  createTemplateSchema,
-  updateTemplateSchema,
-  templateFiltersSchema,
-  createReviewSchema,
-  updateReviewSchema,
-  templateStatsSchema,
-  type CreateTemplateInput,
-  type UpdateTemplateInput,
-  type TemplateFilters,
-  type CreateReviewInput,
-  type UpdateReviewInput,
-  type TemplateStats,
-} from './schemas';
-
 // Export queries
 export {
   getTemplates,

@@ -4,7 +4,6 @@ import { Prisma } from '@prisma/client';
 import { prisma } from '@/lib/database/prisma';
 import { withTenantContext } from '@/lib/database/utils';
 import { TaskStatus, Priority } from '@prisma/client';
-import { TaskFilters } from './schemas';
 
 /**
  * Tasks Module - Query Functions

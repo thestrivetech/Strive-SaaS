@@ -23,17 +23,4 @@ export {
   getTasksByLoop,
   getTaskById,
   getTaskStats,
-  type TaskWithDetails,
-  type TaskDetail,
-  type TaskStats,
 } from './queries';
-
-// Schemas & Types
-export {
-  CreateTransactionTaskSchema,
-  UpdateTransactionTaskSchema,
-  QueryTransactionTasksSchema,
-  type CreateTransactionTaskInput,
-  type UpdateTransactionTaskInput,
-  type QueryTransactionTasksInput,
-} from './schemas';

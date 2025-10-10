@@ -26,17 +26,3 @@ export {
   getEmailCampaignById,
   getSocialPostById,
 } from './queries';
-
-// Schemas
-export {
-  CampaignSchema,
-  EmailCampaignSchema,
-  SocialPostSchema,
-  UpdateCampaignSchema,
-  CampaignFiltersSchema,
-  type CampaignInput,
-  type EmailCampaignInput,
-  type SocialPostInput,
-  type UpdateCampaignInput,
-  type CampaignFilters,
-} from './schemas';

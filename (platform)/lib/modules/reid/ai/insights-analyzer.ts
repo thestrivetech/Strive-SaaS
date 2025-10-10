@@ -1,6 +1,4 @@
 import type { neighborhood_insights } from '@prisma/client';
-import { AnalysisType } from './schemas';
-import type { AIServiceResponse } from './schemas';
 
 /**
  * Analyze multiple neighborhoods and generate comparative insights

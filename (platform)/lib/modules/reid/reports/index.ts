@@ -13,16 +13,3 @@ export {
   getMarketReportById,
   getPublicReport
 } from './queries';
-
-// Schemas
-export {
-  MarketReportSchema,
-  ReportFiltersSchema,
-  ReportType
-} from './schemas';
-
-// Types
-export type {
-  MarketReportInput,
-  ReportFilters
-} from './schemas';

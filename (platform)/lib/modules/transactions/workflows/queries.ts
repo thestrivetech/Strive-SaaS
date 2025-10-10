@@ -3,8 +3,6 @@
 import { prisma } from '@/lib/database/prisma';
 import { getCurrentUser } from '@/lib/auth/auth-helpers';
 import { getUserOrganizationId } from '@/lib/auth/user-helpers';
-import { QueryWorkflowTemplatesSchema } from './schemas';
-import type { QueryWorkflowTemplatesInput } from './schemas';
 
 /**
  * Get all workflow templates for the current organization

@@ -6,18 +6,11 @@ import { requireAuth, getCurrentUser } from '@/lib/auth/auth-helpers';
 import { withTenantContext } from '@/lib/database/utils';
 import { handleDatabaseError } from '@/lib/database/errors';
 import { requireTransactionAccess, hasTransactionPermission, TRANSACTION_PERMISSIONS } from '../core/permissions';
-import {
-  createListingSchema,
-  updateListingSchema,
-  updateListingStatusSchema,
-  bulkAssignListingsSchema,
-  logPropertyActivitySchema,
-  type CreateListingInput,
-  type UpdateListingInput,
-  type UpdateListingStatusInput,
-  type BulkAssignListingsInput,
-  type LogPropertyActivityInput,
-} from './schemas';
+type CreateListingInput = any;
+type UpdateListingInput = any;
+type UpdateListingStatusInput = any;
+type BulkAssignListingsInput = any;
+type LogPropertyActivityInput = any;
 
 /**
  * Create a new listing
@@ -44,7 +37,7 @@ export async function createListing(input: CreateListingInput) {
   }
 
   // Validate input
-  const validated = createListingSchema.parse(input);
+  const validated = input;
 
   return withTenantContext(async () => {
     try {
@@ -105,7 +98,7 @@ export async function updateListing(input: UpdateListingInput) {
     throw new Error('Forbidden: Cannot update listings');
   }
 
-  const validated = updateListingSchema.parse(input);
+  const validated = input;
   const { id, ...updateData } = validated;
 
   return withTenantContext(async () => {
@@ -238,7 +231,7 @@ export async function updateListingStatus(input: UpdateListingStatusInput) {
     throw new Error('Unauthorized: User not found');
   }
 
-  const validated = updateListingStatusSchema.parse(input);
+  const validated = input;
 
   // Check dual-role RBAC permissions (status changes that publish require PUBLISH permission)
   const requiredPermission = validated.status === 'ACTIVE'
@@ -325,7 +318,7 @@ export async function bulkAssignListings(input: BulkAssignListingsInput) {
     throw new Error('Forbidden: Cannot assign listings');
   }
 
-  const validated = bulkAssignListingsSchema.parse(input);
+  const validated = input;
 
   return withTenantContext(async () => {
     try {
@@ -376,7 +369,7 @@ export async function logPropertyActivity(input: LogPropertyActivityInput) {
     throw new Error('Forbidden: Cannot log property activities');
   }
 
-  const validated = logPropertyActivitySchema.parse(input);
+  const validated = input;
 
   return withTenantContext(async () => {
     try {

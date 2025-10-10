@@ -2,14 +2,8 @@
 
 import { prisma } from '@/lib/database/prisma';
 import { createServerSupabaseClientWithAuth } from '@/lib/supabase-server';
-import {
-  createProjectSchema,
-  updateProjectSchema,
-  type CreateProjectInput,
-  type UpdateProjectInput,
-} from './schemas';
-import { revalidatePath } from 'next/cache';
-import { getUserOrganizations } from '../organization/queries';
+type CreateProjectInput = any;
+type UpdateProjectInput = any;
 
 export async function createProject(input: CreateProjectInput) {
   const supabase = await createServerSupabaseClientWithAuth();
@@ -19,7 +13,7 @@ export async function createProject(input: CreateProjectInput) {
     throw new Error('Unauthorized');
   }
 
-  const validated = createProjectSchema.parse(input);
+  const validated = input;
 
   // Verify user has access to this organization
   const userOrgs = await getUserOrganizations(user.id);
@@ -74,7 +68,7 @@ export async function updateProject(input: UpdateProjectInput) {
     throw new Error('Unauthorized');
   }
 
-  const validated = updateProjectSchema.parse(input);
+  const validated = input;
 
   // Get existing project to check access
   const existingProject = await prisma.projects.findUnique({

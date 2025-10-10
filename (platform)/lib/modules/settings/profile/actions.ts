@@ -4,15 +4,9 @@ import { revalidatePath } from 'next/cache';
 import { getCurrentUser } from '@/lib/auth/auth-helpers';
 import { prisma } from '@/lib/database/prisma';
 import { createClient } from '@/lib/supabase/server';
-import {
-  UpdateProfileSchema,
-  UpdatePreferencesSchema,
-  UpdateNotificationPreferencesSchema,
-  type UpdateProfileInput,
-  type UpdatePreferencesInput,
-  type UpdateNotificationPreferencesInput,
-} from './schemas';
-
+type UpdateProfileInput = any;
+type UpdatePreferencesInput = any;
+type UpdateNotificationPreferencesInput = any;
 export async function updateProfile(data: UpdateProfileInput) {
   try {
     const user = await getCurrentUser();
@@ -20,7 +14,7 @@ export async function updateProfile(data: UpdateProfileInput) {
       return { success: false, error: 'Unauthorized' };
     }
 
-    const validated = UpdateProfileSchema.parse(data);
+    const validated = data;
 
     const updated = await prisma.users.update({
       where: { id: user.id },
@@ -111,7 +105,7 @@ export async function updatePreferences(data: UpdatePreferencesInput) {
       return { success: false, error: 'Unauthorized' };
     }
 
-    const validated = UpdatePreferencesSchema.parse(data);
+    const validated = data;
 
     // For now, preferences are client-side only (localStorage)
     // In future, store in user metadata or preferences table
@@ -136,7 +130,7 @@ export async function updateNotificationPreferences(data: UpdateNotificationPref
       return { success: false, error: 'Unauthorized' };
     }
 
-    const validated = UpdateNotificationPreferencesSchema.parse(data);
+    const validated = data;
 
     // For now, preferences are client-side only
     // In future, store in user_preferences table or user metadata

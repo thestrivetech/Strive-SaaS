@@ -84,43 +84,6 @@ export {
 } from './workflows/actions';
 
 // ============================================================================
-// SCHEMAS (Safe for client import - no Prisma)
-// ============================================================================
-export {
-  CreateLoopSchema,
-  UpdateLoopSchema,
-  QueryLoopsSchema,
-  type CreateLoopInput,
-  type UpdateLoopInput,
-  type QueryLoopsInput,
-} from './core/schemas';
-
-export {
-  CreateTransactionTaskSchema,
-  UpdateTransactionTaskSchema,
-  type CreateTransactionTaskInput,
-  type UpdateTransactionTaskInput,
-} from './tasks/schemas';
-
-export {
-  createListingSchema,
-  updateListingSchema,
-  updateListingStatusSchema,
-  bulkAssignListingsSchema,
-  logPropertyActivitySchema,
-  type CreateListingInput,
-  type UpdateListingInput,
-  type UpdateListingStatusInput,
-  type BulkAssignListingsInput,
-  type LogPropertyActivityInput,
-} from './listings/schemas';
-
-export {
-  MilestoneSchema,
-  type Milestone,
-} from './milestones/schemas';
-
-// ============================================================================
 // TYPES ONLY (Safe for client import - from @prisma/client)
 // ============================================================================
 export type {

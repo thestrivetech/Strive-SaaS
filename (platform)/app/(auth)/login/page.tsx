@@ -2,7 +2,6 @@
 
 import { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter, useSearchParams } from 'next/navigation';
 import { Eye, EyeOff } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -12,7 +11,20 @@ import { Input } from "@/components/ui/input";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useToast } from "@/hooks/use-toast";
 import { ComingSoonBadge } from "@/components/ui/coming-soon-badge";
-import { loginSchema, signupSchema, type LoginFormData, type SignupFormData } from "@/lib/auth/schemas";
+
+type LoginFormData = {
+  email: string;
+  password: string;
+};
+
+type SignupFormData = {
+  username: string;
+  email: string;
+  password: string;
+  confirmPassword: string;
+  firstName: string;
+  lastName: string;
+};
 
 export default function LoginPage() {
   const [activeTab, setActiveTab] = useState("login");
@@ -35,7 +47,6 @@ export default function LoginPage() {
   }, [searchParams]);
 
   const loginForm = useForm<LoginFormData>({
-    resolver: zodResolver(loginSchema),
     defaultValues: {
       email: "",
       password: "",
@@ -43,7 +54,6 @@ export default function LoginPage() {
   });
 
   const signupForm = useForm<SignupFormData>({
-    resolver: zodResolver(signupSchema),
     defaultValues: {
       username: "",
       email: "",

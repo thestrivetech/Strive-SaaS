@@ -5,7 +5,6 @@ import { requireAuth, getCurrentUser } from '@/lib/auth/auth-helpers';
 import { withTenantContext } from '@/lib/database/utils';
 import { handleDatabaseError } from '@/lib/database/errors';
 import { hasTransactionPermission, TRANSACTION_PERMISSIONS } from '../core/permissions';
-import { listingFiltersSchema, type ListingFilters } from './schemas';
 import type { listings, users, activities, deals } from '@prisma/client';
 
 /**

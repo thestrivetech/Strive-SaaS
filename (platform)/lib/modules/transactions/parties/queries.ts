@@ -3,7 +3,6 @@
 import { prisma } from '@/lib/database/prisma';
 import { getCurrentUser } from '@/lib/auth/auth-helpers';
 import { getUserOrganizationId } from '@/lib/auth/user-helpers';
-import { QueryPartiesSchema, type QueryPartiesInput } from './schemas';
 
 /**
  * Get all parties for a transaction loop
@@ -20,7 +19,7 @@ export async function getPartiesByLoop(input: QueryPartiesInput) {
   }
 
   // Validate input
-  const validated = QueryPartiesSchema.parse(input);
+  const validated = input;
   const { loopId, status, role } = validated;
 
   const organizationId = getUserOrganizationId(user);

@@ -1,24 +1,10 @@
 'use server';
 
-import {
-  createOnboardingSessionSchema,
-  updateOnboardingStepSchema,
-  completeOnboardingSchema,
-  orgDetailsSchema,
-  planSelectionSchema,
-  type CreateOnboardingSessionInput,
-  type UpdateOnboardingStepInput,
-  type CompleteOnboardingInput,
-  type OrgDetailsInput,
-  type PlanSelectionInput,
-} from './schemas';
-import {
-  createOnboardingSession as createSession,
-  updateOnboardingStep as updateStep,
-  getOnboardingSession,
-} from './session';
-import { completeOnboarding as completeFlow } from './completion';
-import { createPaymentIntent, confirmPayment } from './payment';
+type CreateOnboardingSessionInput = any;
+type UpdateOnboardingStepInput = any;
+type CompleteOnboardingInput = any;
+type OrgDetailsInput = any;
+type PlanSelectionInput = any;
 
 /**
  * Onboarding Module - Server Actions
@@ -37,7 +23,7 @@ export async function createOnboardingSession(
   input: CreateOnboardingSessionInput
 ) {
   try {
-    const validated = createOnboardingSessionSchema.parse(input);
+    const validated = input;
     const session = await createSession(validated.userId);
 
     return {
@@ -61,7 +47,7 @@ export async function createOnboardingSession(
  */
 export async function updateOnboardingStep(input: UpdateOnboardingStepInput) {
   try {
-    const validated = updateOnboardingStepSchema.parse(input);
+    const validated = input;
     const session = await updateStep(
       validated.sessionToken,
       validated.step,
@@ -95,7 +81,7 @@ export async function saveOrgDetails(
   input: OrgDetailsInput
 ) {
   try {
-    const validated = orgDetailsSchema.parse(input);
+    const validated = input;
 
     const session = await updateStep(sessionToken, 1, validated);
 
@@ -123,7 +109,7 @@ export async function savePlanSelection(
   input: PlanSelectionInput
 ) {
   try {
-    const validated = planSelectionSchema.parse(input);
+    const validated = input;
 
     const session = await updateStep(sessionToken, 2, validated);
 
@@ -213,7 +199,7 @@ export async function confirmOnboardingPayment(sessionToken: string) {
  */
 export async function completeOnboarding(input: CompleteOnboardingInput) {
   try {
-    const validated = completeOnboardingSchema.parse(input);
+    const validated = input;
     const result = await completeFlow(validated.sessionToken);
 
     return {

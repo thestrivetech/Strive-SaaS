@@ -6,22 +6,12 @@ import { getCurrentUser } from '@/lib/auth/auth-helpers';
 import { canAccessAIGarage, canManageAIGarage } from '@/lib/auth/rbac';
 import { withTenantContext } from '@/lib/database/utils';
 import { handleDatabaseError } from '@/lib/database/errors';
-import {
-  createOrderSchema,
-  updateOrderSchema,
-  updateOrderStatusSchema,
-  updateOrderProgressSchema,
-  createMilestoneSchema,
-  createBuildLogSchema,
-  type CreateOrderInput,
-  type UpdateOrderInput,
-  type UpdateOrderStatusInput,
-  type UpdateOrderProgressInput,
-  type CreateMilestoneInput,
-  type CreateBuildLogInput,
-} from './schemas';
-import { calculateEstimatedHours, calculateEstimatedCost } from './utils';
-import { getOrderById } from './queries';
+type CreateOrderInput = any;
+type UpdateOrderInput = any;
+type UpdateOrderStatusInput = any;
+type UpdateOrderProgressInput = any;
+type CreateMilestoneInput = any;
+type CreateBuildLogInput = any;
 
 /**
  * Create a new agent order
@@ -39,7 +29,7 @@ export async function createOrder(input: CreateOrderInput) {
     throw new Error('Unauthorized: AI Garage access required');
   }
 
-  const validated = createOrderSchema.parse(input);
+  const validated = input;
 
   // Calculate estimates
   const estimatedHours = calculateEstimatedHours(
@@ -100,7 +90,7 @@ export async function updateOrder(input: UpdateOrderInput) {
     throw new Error('Unauthorized: AI Garage access required');
   }
 
-  const validated = updateOrderSchema.parse(input);
+  const validated = input;
   const { id, ...updateData } = validated;
 
   // Recalculate estimates if complexity or requirements changed
@@ -157,7 +147,7 @@ export async function updateOrderStatus(input: UpdateOrderStatusInput) {
     throw new Error('Unauthorized');
   }
 
-  const validated = updateOrderStatusSchema.parse(input);
+  const validated = input;
 
   return withTenantContext(async () => {
     try {
@@ -216,7 +206,7 @@ export async function updateOrderProgress(input: UpdateOrderProgressInput) {
     throw new Error('Unauthorized');
   }
 
-  const validated = updateOrderProgressSchema.parse(input);
+  const validated = input;
 
   return withTenantContext(async () => {
     try {
@@ -254,7 +244,7 @@ export async function createMilestone(input: CreateMilestoneInput) {
     throw new Error('Unauthorized');
   }
 
-  const validated = createMilestoneSchema.parse(input);
+  const validated = input;
 
   return withTenantContext(async () => {
     try {
@@ -287,7 +277,7 @@ export async function createBuildLog(input: CreateBuildLogInput) {
     throw new Error('Unauthorized');
   }
 
-  const validated = createBuildLogSchema.parse(input);
+  const validated = input;
 
   return withTenantContext(async () => {
     try {

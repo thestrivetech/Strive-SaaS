@@ -25,25 +25,5 @@ export const updateDealStage = updateDealStageAction;
 export const closeDeal = closeDealAction;
 export const bulkUpdateDeals = bulkUpdateDealsAction;
 
-// Re-export schemas and types that components need
-export {
-  createDealSchema,
-  updateDealSchema,
-  updateDealStageSchema,
-  closeDealSchema,
-  dealFiltersSchema,
-  bulkUpdateDealsSchema,
-  deleteDealSchema,
-  type CreateDealInput,
-  type UpdateDealInput,
-  type UpdateDealStageInput,
-  type CloseDealInput,
-  type DealFilters,
-  type BulkUpdateDealsInput,
-  type DeleteDealInput,
-} from '@/lib/modules/crm/deals/schemas';
-
 // Re-export pipeline constants and types (from client-safe constants file)
 export { PIPELINE_STAGES, type StageConfig } from '@/lib/modules/crm/deals/constants';
-
-// Note: DealWithAssignee is imported directly from @/lib/modules/crm/deals/queries by components that need it

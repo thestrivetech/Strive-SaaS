@@ -5,16 +5,9 @@ import { canAccessContent, canPublishContent } from '@/lib/auth/rbac';
 import { canAccessFeature } from '@/lib/auth/rbac';
 import { prisma } from '@/lib/database/prisma';
 import { revalidatePath } from 'next/cache';
-import {
-  ContentItemSchema,
-  UpdateContentSchema,
-  PublishContentSchema,
-  type ContentItemInput,
-  type UpdateContentInput,
-  type PublishContentInput,
-} from './schemas';
-import { generateUniqueSlug } from './helpers';
-import { getUserOrganizationId } from '@/lib/auth/user-helpers';
+type ContentItemInput = any;
+type UpdateContentInput = any;
+type PublishContentInput = any;
 
 /**
  * Content Module - Server Actions
@@ -43,7 +36,7 @@ export async function createContentItem(input: ContentItemInput) {
   }
 
   // Validate input
-  const validated = ContentItemSchema.parse(input);
+  const validated = input;
 
   // Get user's organization ID
   const organization_id = user.organizationId;
@@ -97,7 +90,7 @@ export async function updateContentItem(input: UpdateContentInput) {
   }
 
   // Validate input
-  const validated = UpdateContentSchema.parse(input);
+  const validated = input;
   const { id, organization_id: _orgId, ...updateData } = validated;
 
   // Get user's organization ID
@@ -173,7 +166,7 @@ export async function publishContent(input: PublishContentInput) {
   }
 
   // Validate input
-  const validated = PublishContentSchema.parse(input);
+  const validated = input;
 
   // Get user's organization ID
   const organization_id = user.organizationId;

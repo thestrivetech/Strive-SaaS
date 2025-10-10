@@ -2,7 +2,6 @@ import { prisma } from '@/lib/database/prisma';
 import { withTenantContext } from '@/lib/database/utils';
 import { handleDatabaseError, DatabaseError } from '@/lib/database/errors';
 import type { appointments, Prisma } from '@prisma/client';
-import type { CalendarFilters } from './schemas';
 
 /**
  * Appointments Queries Module

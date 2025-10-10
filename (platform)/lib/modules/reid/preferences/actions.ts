@@ -3,8 +3,6 @@
 import { revalidatePath } from 'next/cache';
 import { prisma } from '@/lib/database/prisma';
 import { requireAuth } from '@/lib/auth/middleware';
-import { UserPreferenceSchema } from './schemas';
-import type { UserPreferenceInput } from './schemas';
 
 export async function updateUserPreferences(input: Partial<UserPreferenceInput>) {
   const user = await requireAuth();

@@ -72,23 +72,3 @@ export {
   cleanupExpiredSessions,
 } from './completion';
 
-// ============================================================================
-// Schemas & Types
-// ============================================================================
-
-export {
-  createOnboardingSessionSchema,
-  updateOnboardingStepSchema,
-  completeOnboardingSchema,
-  orgDetailsSchema,
-  planSelectionSchema,
-  paymentIntentSchema,
-  confirmPaymentSchema,
-  type CreateOnboardingSessionInput,
-  type UpdateOnboardingStepInput,
-  type CompleteOnboardingInput,
-  type OrgDetailsInput,
-  type PlanSelectionInput,
-  type PaymentIntentInput,
-  type ConfirmPaymentInput,
-} from './schemas';

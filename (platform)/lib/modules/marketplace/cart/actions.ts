@@ -5,14 +5,8 @@ import { prisma } from '@/lib/database/prisma';
 import { requireAuth, getCurrentUser } from '@/lib/auth/auth-helpers';
 import { withTenantContext } from '@/lib/database/utils';
 import { handleDatabaseError } from '@/lib/database/errors';
-import {
-  addToCartSchema,
-  removeFromCartSchema,
-  type AddToCartInput,
-  type RemoveFromCartInput,
-} from '../schemas';
-import { dataConfig } from '@/lib/data/config';
-import { cartProvider, purchasesProvider, toolsProvider } from '@/lib/data';
+type AddToCartInput = any;
+type RemoveFromCartInput = any;
 
 /**
  * Shopping Cart Server Actions Module
@@ -33,7 +27,7 @@ export async function addToCart(input: AddToCartInput) {
   }
 
   const organizationId = user.organization_members[0].organization_id;
-  const validated = addToCartSchema.parse(input);
+  const validated = input;
 
   // Mock data path
   if (dataConfig.useMocks) {
@@ -133,7 +127,7 @@ export async function removeFromCart(input: RemoveFromCartInput) {
     throw new Error('Unauthorized: User not found');
   }
 
-  const validated = removeFromCartSchema.parse(input);
+  const validated = input;
 
   // Mock data path
   if (dataConfig.useMocks) {

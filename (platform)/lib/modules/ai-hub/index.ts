@@ -19,7 +19,6 @@
 // export * from './queries';
 
 // Zod Schemas
-// export * from './schemas';
 
 // Types
 // export type { AIConversation, AIMessage, AITool } from '@prisma/client';

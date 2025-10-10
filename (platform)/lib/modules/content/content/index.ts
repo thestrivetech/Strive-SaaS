@@ -6,24 +6,6 @@
  */
 
 // ============================================================================
-// Schemas & Types
-// ============================================================================
-
-export {
-  ContentItemSchema,
-  UpdateContentSchema,
-  PublishContentSchema,
-  ContentFiltersSchema,
-} from './schemas';
-
-export type {
-  ContentItemInput,
-  UpdateContentInput,
-  PublishContentInput,
-  ContentFilters,
-} from './schemas';
-
-// ============================================================================
 // Queries
 // ============================================================================
 

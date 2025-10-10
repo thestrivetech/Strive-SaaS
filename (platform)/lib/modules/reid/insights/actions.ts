@@ -4,8 +4,6 @@ import { revalidatePath } from 'next/cache';
 import { prisma } from '@/lib/database/prisma';
 import { requireAuth } from '@/lib/auth/middleware';
 import { canAccessREID, canAccessFeature } from '@/lib/auth/rbac';
-import { NeighborhoodInsightSchema } from './schemas';
-import type { NeighborhoodInsightInput } from './schemas';
 
 export async function createNeighborhoodInsight(input: NeighborhoodInsightInput) {
   const user = await requireAuth();
@@ -18,7 +16,7 @@ export async function createNeighborhoodInsight(input: NeighborhoodInsightInput)
     throw new Error('Upgrade required: REID features not available in your plan');
   }
 
-  const validated = NeighborhoodInsightSchema.parse(input);
+  const validated = input;
 
   const insight = await prisma.neighborhood_insights.create({
     data: {

@@ -6,9 +6,7 @@ import { getUserOrganizationId } from '@/lib/auth/user-helpers';
 import { prisma } from '@/lib/database/prisma';
 import { storageService } from '@/lib/storage/supabase-storage';
 import { validateFile, generateUniqueFilename } from '@/lib/storage/validation';
-import { UploadDocumentSchema, UpdateDocumentSchema } from './schemas';
 import { requireTransactionAccess } from '../core/permissions';
-import type { UploadDocumentInput, UpdateDocumentInput } from './schemas';
 
 /**
  * Upload a document to a transaction loop
@@ -60,11 +58,11 @@ export async function uploadDocument(formData: FormData) {
   const description = formData.get('description') as string | null;
 
   // Validate input (convert null to undefined for optional fields)
-  const validatedInput = UploadDocumentSchema.parse({
+  const validatedInput = {
     loopId,
     category,
     description: description || undefined,
-  });
+  };
 
   // Validate file
   const validation = validateFile({
@@ -344,7 +342,7 @@ export async function updateDocument(documentId: string, input: UpdateDocumentIn
   requireTransactionAccess(user);
 
   // Validate input
-  const validated = UpdateDocumentSchema.parse(input);
+  const validated = input;
 
   // Check document ownership (organization isolation)
   const existingDoc = await prisma.documents.findFirst({

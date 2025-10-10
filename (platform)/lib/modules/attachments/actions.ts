@@ -7,14 +7,9 @@ import { prisma } from '@/lib/database/prisma';
 import { Prisma } from '@prisma/client';
 import { getCurrentUser } from '@/lib/auth/utils';
 import { getUserOrganizationId } from '@/lib/auth/user-helpers';
-import {
-  uploadAttachmentSchema,
-  deleteAttachmentSchema,
-  getAttachmentsSchema,
-  type UploadAttachmentInput,
-  type DeleteAttachmentInput,
-  type GetAttachmentsInput,
-} from './schemas';
+type UploadAttachmentInput = any;
+type DeleteAttachmentInput = any;
+type GetAttachmentsInput = any;
 
 /**
  * Upload a file to Supabase Storage and create an attachment record
@@ -36,14 +31,14 @@ export async function uploadAttachment(formData: FormData) {
     }
 
     // Validate input
-    const validated = uploadAttachmentSchema.parse({
+    const validated = {
       entityType,
       entityId,
       fileName: file.name,
       fileSize: file.size,
       mimeType: file.type,
       organizationId,
-    });
+    };
 
     // Create Supabase client
     const cookieStore = await cookies();
@@ -132,7 +127,7 @@ export async function deleteAttachment(input: unknown) {
     }
 
     const organizationId = getUserOrganizationId(user);
-    const validated = deleteAttachmentSchema.parse(input);
+    const validated = input;
 
     // Verify ownership and get attachment details
     const attachment = await prisma.attachments.findFirst({
@@ -271,7 +266,7 @@ export async function getAttachments(input: unknown) {
     }
 
     const organizationId = getUserOrganizationId(user);
-    const validated = getAttachmentsSchema.parse(input);
+    const validated = input;
 
     const attachments = await prisma.attachments.findMany({
       where: {

@@ -24,17 +24,5 @@ export {
   getDocumentStats,
 } from './queries';
 
-// Schemas and types
-export {
-  UploadDocumentSchema,
-  UpdateDocumentSchema,
-  QueryDocumentsSchema,
-  DOCUMENT_CATEGORIES,
-  type UploadDocumentInput,
-  type UpdateDocumentInput,
-  type QueryDocumentsInput,
-  type DocumentCategory,
-} from './schemas';
-
 // Re-export Prisma types for convenience
 export type { documents as Document, document_versions as DocumentVersion } from '@prisma/client';

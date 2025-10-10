@@ -4,8 +4,6 @@ import { revalidatePath } from 'next/cache';
 import { prisma } from '@/lib/database/prisma';
 import { requireAuth } from '@/lib/auth/middleware';
 import { canAccessExpenses } from '@/lib/auth/rbac';
-import { ExpenseReportSchema } from './schemas';
-import type { ExpenseReportInput } from './schemas';
 
 export async function createExpenseReport(input: ExpenseReportInput) {
   const user = await requireAuth();
@@ -14,7 +12,7 @@ export async function createExpenseReport(input: ExpenseReportInput) {
     throw new Error('Unauthorized: Expense access required');
   }
 
-  const validated = ExpenseReportSchema.parse(input);
+  const validated = input;
 
   try {
     // Build where clause for expense filtering

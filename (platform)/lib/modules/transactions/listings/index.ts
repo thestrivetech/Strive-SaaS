@@ -24,27 +24,7 @@ export {
   getListingWithFullHistory,
   getListingStats,
   getListingsCount,
-  type ListingWithAssignee,
-  type ListingWithRelations,
 } from './queries';
-
-// Schemas and types
-export {
-  createListingSchema,
-  updateListingSchema,
-  listingFiltersSchema,
-  updateListingStatusSchema,
-  bulkAssignListingsSchema,
-  importListingSchema,
-  logPropertyActivitySchema,
-  type CreateListingInput,
-  type UpdateListingInput,
-  type ListingFilters,
-  type UpdateListingStatusInput,
-  type BulkAssignListingsInput,
-  type ImportListingInput,
-  type LogPropertyActivityInput,
-} from './schemas';
 
 // Re-export Prisma types for convenience
 export type { listings } from '@prisma/client';

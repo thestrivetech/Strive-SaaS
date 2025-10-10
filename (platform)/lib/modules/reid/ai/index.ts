@@ -13,23 +13,6 @@ export {
   regenerateAIProfile,
 } from './actions';
 
-// Schemas
-export {
-  AIProfileRequestSchema,
-  AIInsightsRequestSchema,
-  InvestmentRecommendationSchema,
-  AIServiceResponseSchema,
-  AnalysisType,
-} from './schemas';
-
-// Types
-export type {
-  AIProfileRequest,
-  AIInsightsRequest,
-  InvestmentRecommendationRequest,
-  AIServiceResponse,
-} from './schemas';
-
 // Service functions (not exported - internal use only)
 // - generateNeighborhoodProfile (profile-generator.ts)
 // - extractKeyInsights (profile-generator.ts)

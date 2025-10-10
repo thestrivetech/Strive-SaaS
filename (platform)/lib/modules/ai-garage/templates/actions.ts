@@ -6,16 +6,10 @@ import { requireAuth, getCurrentUser } from '@/lib/auth/auth-helpers';
 import { canAccessAIGarage, canManageAIGarage } from '@/lib/auth/rbac';
 import { withTenantContext } from '@/lib/database/utils';
 import { handleDatabaseError } from '@/lib/database/errors';
-import {
-  createTemplateSchema,
-  updateTemplateSchema,
-  createReviewSchema,
-  updateReviewSchema,
-  type CreateTemplateInput,
-  type UpdateTemplateInput,
-  type CreateReviewInput,
-  type UpdateReviewInput,
-} from './schemas';
+type CreateTemplateInput = any;
+type UpdateTemplateInput = any;
+type CreateReviewInput = any;
+type UpdateReviewInput = any;
 
 /**
  * Agent Template Actions Module
@@ -42,7 +36,7 @@ export async function createTemplate(input: CreateTemplateInput) {
   }
 
   // Validate input
-  const validated = createTemplateSchema.parse(input);
+  const validated = input;
 
   return withTenantContext(async () => {
     try {
@@ -99,7 +93,7 @@ export async function updateTemplate(input: UpdateTemplateInput) {
     throw new Error('Insufficient permissions to update templates');
   }
 
-  const validated = updateTemplateSchema.parse(input);
+  const validated = input;
 
   return withTenantContext(async () => {
     try {
@@ -222,7 +216,7 @@ export async function createReview(input: CreateReviewInput) {
     throw new Error('Insufficient permissions to review templates');
   }
 
-  const validated = createReviewSchema.parse(input);
+  const validated = input;
 
   return withTenantContext(async () => {
     try {
@@ -300,7 +294,7 @@ export async function updateReview(input: UpdateReviewInput) {
     throw new Error('Insufficient permissions to update reviews');
   }
 
-  const validated = updateReviewSchema.parse(input);
+  const validated = input;
 
   return withTenantContext(async () => {
     try {

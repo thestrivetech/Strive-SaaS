@@ -3,7 +3,6 @@
 import { getCurrentUser } from '@/lib/auth/auth-helpers';
 import { getUserOrganizationId } from '@/lib/auth/user-helpers';
 import { prisma } from '@/lib/database/prisma';
-import type { QueryDocumentsInput } from './schemas';
 import { calculatePagination, createPaginatedResult, type PaginationParams, type PaginatedResult } from '../types/pagination';
 
 /**

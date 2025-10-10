@@ -3,7 +3,6 @@ import 'server-only';
 import { prisma } from '@/lib/database/prisma';
 import { withTenantContext } from '@/lib/database/utils';
 import type { projects } from '@prisma/client';
-import type { ProjectFilters } from './schemas';
 
 /**
  * Projects Module - Query Functions

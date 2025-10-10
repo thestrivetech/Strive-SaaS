@@ -25,24 +25,8 @@ export const logCommunication = logCommunicationAction;
 export const updateContactStatus = updateContactStatusAction;
 export const bulkAssignContacts = bulkAssignContactsAction;
 
-// Re-export schemas and types that components need
-export {
-  createContactSchema,
-  updateContactSchema,
-  contactFiltersSchema,
-  logCommunicationSchema,
-  updateContactStatusSchema,
-  bulkAssignContactsSchema,
-  type CreateContactInput,
-  type UpdateContactInput,
-  type ContactFilters,
-  type LogCommunicationInput,
-  type UpdateContactStatusInput,
-  type BulkAssignContactsInput,
-} from '@/lib/modules/crm/contacts/schemas';
-
-// Re-export Prisma enums (these are safe, but components import them from lib/modules)
+// Re-export Prisma enums
 export { ContactType, ContactStatus } from '@prisma/client';
 
-// Re-export query types (safe to import from queries.ts - types only)
+// Re-export query types
 export type { ContactWithAssignee, ContactWithRelations } from '@/lib/modules/crm/contacts/queries';

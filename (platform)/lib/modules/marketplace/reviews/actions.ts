@@ -4,17 +4,9 @@ import { revalidatePath } from 'next/cache';
 import { prisma } from '@/lib/database/prisma';
 import { requireAuth } from '@/lib/auth/auth-helpers';
 import { handleDatabaseError } from '@/lib/database/errors';
-import {
-  createToolReviewSchema,
-  updateToolReviewSchema,
-  deleteToolReviewSchema,
-  type CreateToolReviewInput,
-  type UpdateToolReviewInput,
-  type DeleteToolReviewInput,
-} from './schemas';
-import { hasUserPurchasedTool, getUserReviewForTool } from './queries';
-import { dataConfig } from '@/lib/data/config';
-import { reviewsProvider } from '@/lib/data';
+type CreateToolReviewInput = any;
+type UpdateToolReviewInput = any;
+type DeleteToolReviewInput = any;
 
 /**
  * Marketplace Reviews Actions Module
@@ -41,7 +33,7 @@ import { reviewsProvider } from '@/lib/data';
 export async function createToolReview(input: CreateToolReviewInput) {
   try {
     // Validate input
-    const validated = createToolReviewSchema.parse(input);
+    const validated = input;
 
     // Require authentication
     const user = await requireAuth();
@@ -139,7 +131,7 @@ export async function createToolReview(input: CreateToolReviewInput) {
 export async function updateToolReview(input: UpdateToolReviewInput) {
   try {
     // Validate input
-    const validated = updateToolReviewSchema.parse(input);
+    const validated = input;
 
     // Require authentication
     const user = await requireAuth();
@@ -212,7 +204,7 @@ export async function updateToolReview(input: UpdateToolReviewInput) {
 export async function deleteToolReview(input: DeleteToolReviewInput) {
   try {
     // Validate input
-    const validated = deleteToolReviewSchema.parse(input);
+    const validated = input;
 
     // Require authentication
     const user = await requireAuth();

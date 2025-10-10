@@ -8,12 +8,3 @@ export {
   getAttachmentUrl,
   getAttachments,
 } from './actions';
-
-export {
-  uploadAttachmentSchema,
-  deleteAttachmentSchema,
-  getAttachmentsSchema,
-  type UploadAttachmentInput,
-  type DeleteAttachmentInput,
-  type GetAttachmentsInput,
-} from './schemas';

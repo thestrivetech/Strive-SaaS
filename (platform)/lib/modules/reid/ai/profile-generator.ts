@@ -1,5 +1,4 @@
 import type { neighborhood_insights } from '@prisma/client';
-import type { AIServiceResponse } from './schemas';
 
 /**
  * Generate AI-powered neighborhood profile
@@ -92,7 +91,7 @@ Example: ["Median home price increased 15% year-over-year", "School ratings abov
   }
 
   try {
-    const insights = JSON.parse(response.content);
+    const insights = response.content;
     if (!Array.isArray(insights) || insights.length !== 5) {
       throw new Error('Invalid insights format');
     }

@@ -13,13 +13,6 @@ import { createClient } from '@supabase/supabase-js';
 import sharp from 'sharp';
 import { getCurrentUser } from '@/lib/auth/middleware';
 import { getUserOrganizationId } from '@/lib/auth/user-helpers';
-import {
-  isAllowedFileType,
-  isAllowedImageType,
-  MAX_FILE_SIZE,
-  MAX_IMAGE_WIDTH,
-  WEBP_QUALITY,
-} from './schemas';
 
 // Initialize Supabase client with service role key
 const supabase = createClient(

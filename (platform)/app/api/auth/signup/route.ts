@@ -1,11 +1,18 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createServerClient } from '@supabase/ssr';
-import { signupApiSchema } from '@/lib/auth/schemas';
+
+type SignupApiData = {
+  email: string;
+  password: string;
+  firstName: string;
+  lastName: string;
+  username: string;
+};
 
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    const { email, password, firstName, lastName, username } = signupApiSchema.parse(body);
+    const { email, password, firstName, lastName, username } = body as SignupApiData;
 
     // Create Supabase client
     const supabase = createServerClient(
@@ -71,13 +78,6 @@ export async function POST(request: NextRequest) {
       { status: 500 }
     );
   } catch (error: unknown) {
-    if (error && typeof error === 'object' && 'name' in error && error.name === 'ZodError') {
-      return NextResponse.json(
-        { error: 'errors' in error && Array.isArray(error.errors) && error.errors[0]?.message || 'Validation error' },
-        { status: 400 }
-      );
-    }
-
     console.error('Signup error:', error);
     return NextResponse.json(
       { error: 'Internal server error' },

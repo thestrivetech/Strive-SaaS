@@ -4,6 +4,7 @@ import { prisma } from '@/lib/database/prisma';
 import { getCurrentUser } from '@/lib/auth/auth-helpers';
 import { canViewPlatformMetrics } from '@/lib/auth/rbac';
 import { cache } from 'react';
+import { Prisma } from '@prisma/client';
 
 /**
  * Get latest platform metrics (cached 1 hour)
@@ -89,7 +90,7 @@ export async function calculatePlatformMetrics() {
   const churnRate = totalOrgs > 0 ? (cancelledSubs / totalOrgs) * 100 : 0;
 
   // Tier distribution
-  const tierCounts = activeSubscriptions.reduce((acc, sub) => {
+  const tierCounts = activeSubscriptions.reduce((acc: Record<string, number>, sub: Prisma.Subscription) => {
     const tier = sub.tier.toLowerCase() + 'Count';
     acc[tier] = (acc[tier] || 0) + 1;
     return acc;

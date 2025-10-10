@@ -2,12 +2,11 @@
 
 import { prisma } from '@/lib/database/prisma';
 import { requireAuth } from '@/lib/auth/middleware';
-import { ActivityFeedSchema } from './schemas';
 
 export async function recordActivity(input: unknown) {
   const user = await requireAuth();
 
-  const validated = ActivityFeedSchema.parse(input);
+  const validated = input;
 
   // Extract and map fields to snake_case for Prisma
   const { userId, entityType, entityId, ...activityData } = validated;

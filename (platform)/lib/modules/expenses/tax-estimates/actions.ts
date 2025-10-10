@@ -4,9 +4,7 @@ import { revalidatePath } from 'next/cache';
 import { prisma } from '@/lib/database/prisma';
 import { requireAuth } from '@/lib/auth/middleware';
 import { canAccessExpenses } from '@/lib/auth/rbac';
-import { TaxEstimateSchema, UpdateTaxEstimateSchema } from './schemas';
 import { calculateYearlyTaxEstimate, calculateQuarterlyTaxEstimate } from './calculations';
-import type { TaxEstimateInput, UpdateTaxEstimateInput } from './schemas';
 
 export async function createTaxEstimate(input: TaxEstimateInput) {
   const user = await requireAuth();
@@ -15,7 +13,7 @@ export async function createTaxEstimate(input: TaxEstimateInput) {
     throw new Error('Unauthorized: Expense access required');
   }
 
-  const validated = TaxEstimateSchema.parse(input);
+  const validated = input;
 
   try {
     // Calculate tax estimate
@@ -63,7 +61,7 @@ export async function updateTaxEstimate(input: UpdateTaxEstimateInput) {
     throw new Error('Unauthorized: Expense access required');
   }
 
-  const validated = UpdateTaxEstimateSchema.parse(input);
+  const validated = input;
   const { id, ...data } = validated;
 
   try {

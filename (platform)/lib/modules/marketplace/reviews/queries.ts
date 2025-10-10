@@ -2,7 +2,6 @@ import { prisma } from '@/lib/database/prisma';
 import { withTenantContext } from '@/lib/database/utils';
 import { handleDatabaseError } from '@/lib/database/errors';
 import type { Prisma } from '@prisma/client';
-import type { ReviewFilters } from './schemas';
 import { dataConfig } from '@/lib/data/config';
 import { reviewsProvider, purchasesProvider } from '@/lib/data';
 

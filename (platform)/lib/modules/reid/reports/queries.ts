@@ -3,8 +3,6 @@
 import { prisma } from '@/lib/database/prisma';
 import { requireAuth } from '@/lib/auth/middleware';
 import { canAccessREID } from '@/lib/auth/rbac';
-import { ReportFiltersSchema } from './schemas';
-import type { ReportFilters } from './schemas';
 
 /**
  * Get all market reports for the current organization

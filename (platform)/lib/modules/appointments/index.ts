@@ -39,24 +39,6 @@ export const getAppointmentStats = dataConfig.useMocks
   ? async () => ({ total: 0, upcoming: 0, completed: 0, cancelled: 0 })
   : async () => (await import('./queries')).getAppointmentStats();
 
-// Schemas
-export {
-  createAppointmentSchema,
-  updateAppointmentSchema,
-  updateAppointmentStatusSchema,
-  calendarFiltersSchema,
-  bulkRescheduleSchema,
-  appointmentTypeSchema,
-  appointmentStatusSchema,
-  type CreateAppointmentInput,
-  type UpdateAppointmentInput,
-  type UpdateAppointmentStatusInput,
-  type CalendarFilters,
-  type BulkRescheduleInput,
-  type AppointmentTypeEnum,
-  type AppointmentStatusEnum,
-} from './schemas';
-
 // Calendar helpers
 export {
   groupAppointmentsByDate,

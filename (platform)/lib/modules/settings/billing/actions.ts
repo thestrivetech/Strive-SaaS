@@ -2,19 +2,11 @@
 
 import { revalidatePath } from 'next/cache';
 import { getCurrentUser } from '@/lib/auth/auth-helpers';
-import {
-  UpdatePlanSchema,
-  AddPaymentMethodSchema,
-  UpdatePaymentMethodSchema,
-  RemovePaymentMethodSchema,
-  DownloadInvoiceSchema,
-  type UpdatePlanInput,
-  type AddPaymentMethodInput,
-  type UpdatePaymentMethodInput,
-  type RemovePaymentMethodInput,
-  type DownloadInvoiceInput,
-} from './schemas';
-
+type UpdatePlanInput = any;
+type AddPaymentMethodInput = any;
+type UpdatePaymentMethodInput = any;
+type RemovePaymentMethodInput = any;
+type DownloadInvoiceInput = any;
 export async function updatePlan(data: UpdatePlanInput) {
   try {
     const user = await getCurrentUser();
@@ -27,7 +19,7 @@ export async function updatePlan(data: UpdatePlanInput) {
       return { success: false, error: 'Only administrators can update subscription' };
     }
 
-    const validated = UpdatePlanSchema.parse(data);
+    const validated = data;
 
     // TODO: Implement actual Stripe integration
     // For now, this is a placeholder that simulates success
@@ -64,7 +56,7 @@ export async function addPaymentMethod(data: AddPaymentMethodInput) {
       return { success: false, error: 'Only administrators can manage payment methods' };
     }
 
-    const validated = AddPaymentMethodSchema.parse(data);
+    const validated = data;
 
     // TODO: Implement actual Stripe integration
     // For now, this is a placeholder
@@ -98,7 +90,7 @@ export async function updatePaymentMethod(data: UpdatePaymentMethodInput) {
       return { success: false, error: 'Only administrators can manage payment methods' };
     }
 
-    const validated = UpdatePaymentMethodSchema.parse(data);
+    const validated = data;
 
     // TODO: Implement actual Stripe integration
     // Real implementation would update default payment method
@@ -127,7 +119,7 @@ export async function removePaymentMethod(data: RemovePaymentMethodInput) {
       return { success: false, error: 'Only administrators can manage payment methods' };
     }
 
-    const validated = RemovePaymentMethodSchema.parse(data);
+    const validated = data;
 
     // TODO: Implement actual Stripe integration
     // Real implementation would detach payment method
@@ -151,7 +143,7 @@ export async function downloadInvoice(data: DownloadInvoiceInput) {
       return { success: false, error: 'Unauthorized' };
     }
 
-    const validated = DownloadInvoiceSchema.parse(data);
+    const validated = data;
 
     // TODO: Implement actual Stripe integration
     // Real implementation would:

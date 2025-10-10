@@ -5,7 +5,6 @@ import { getCurrentUser } from '@/lib/auth/auth-helpers';
 import { getUserOrganizationId } from '@/lib/auth/user-helpers';
 import { getAIService, type AIMessage } from '@/lib/ai/service';
 import { isModelAvailable, getRateLimitForTier, type SubscriptionTier } from '@/lib/ai/config';
-import { SendMessageSchema, CreateConversationSchema } from './schemas';
 import type { Prisma, AIModel } from '@prisma/client';
 
 /**
@@ -45,7 +44,7 @@ export async function sendMessage(input: unknown) {
     const organizationId = getUserOrganizationId(user);
 
     // Validate input
-    const validated = SendMessageSchema.parse(input);
+    const validated = input;
 
     // Check if model is available for user's tier
     const tier = (user.subscription_tier || 'FREE') as SubscriptionTier;
@@ -200,7 +199,7 @@ export async function createConversation(input: unknown) {
     }
 
     const organizationId = getUserOrganizationId(user);
-    const validated = CreateConversationSchema.parse(input);
+    const validated = input;
 
     const conversation = await prisma.ai_conversations.create({
       data: {

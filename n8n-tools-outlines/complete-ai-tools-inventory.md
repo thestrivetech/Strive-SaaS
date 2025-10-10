@@ -14,6 +14,46 @@
 - **AI Hub Management System** - Conversation management and usage analytics
 - **Voice Chat Integration** - Audio conversation capabilities with Sai
 
+# Model leaderboards for each area of business (according to OpenRouter rankings) # -> SUPER IMPORTANT PAGE TO READ AND UNDERSTAND!!! -> https://openrouter.ai/docs/use-cases/for-providers & https://openrouter.ai/docs/use-cases/reasoning-tokens
+
+**Technology**
+    #1 -> OpenAI: GPT-4.1 Mini (1.05M context | $0.40/M input tokens | $1.60/M output tokens)
+    #2 -> Anthropic: Claude Sonnet 4.5
+    #3 -> Google Gemini 2.5 Flash Lite (1.05M context | $0.10/M input tokens | $0.40/M output tokens)
+    #4 -> 
+    #5 ->
+
+**Programming** (Python)
+    #1 -> Anthropic: Claude Sonnet 4.5 (1M context | $3/M input tokens $15/M output tokens)
+    #2 -> Grok Code Fast 1 (256k | $0.20/M input tokens | $1.50/M output tokens)
+    #3 ->
+    #4 ->
+    #5 ->
+
+**Marketing**
+    #1 -> Google Gemini 2.5 Flash (1.05M context | $0.30/M input tokens | $2.50/M output tokens | $1.238/K input imgs) **#1 in Science**
+    #1 -> xAI: Grok 4 Fast (2M context | $0.20/M input tokens | $0.50/M output tokens) **#1 in marketing/SEO** & **#1 in Legal** & **#1 in Health**
+    #2 -> Qwen: Qwen3 30B A3B (Context window = 41k -> Can be used for subagents in marketing team)
+    #3 ->  Meta: Llama 3.3 70B Instruct (Context window = 131k)
+    #4 -> OpenAI: gpt-oss-120b (Context window = 131k)
+
+**Finance**
+    #1 -> Google Gemini 2.5 Flash (1.05M context | $0.30/M input tokens | $2.50/M output tokens | $1.238/K input imgs)
+    #2 -> xAI: Grok 4 Fast (2M context | $0.20/M input tokens | $0.50/M output tokens)
+    #3 -> OpenAI: gpt-oss-120b (Context window = 131k)
+    #4 -> Google Gemini 2.5 Flash Lite (1.05M context | $0.10/M input tokens | $0.40/M output tokens)
+
+**Academia**
+    #1 -> Google Gemini 2.5 Flash (1.05M context | $0.30/M input tokens | $2.50/M output tokens | $1.238/K input imgs)
+    #2 -> xAI: Grok 4 Fast (2M context | $0.20/M input tokens | $0.50/M output tokens)
+    #3 -> OpenAI: GPT-4.1 Mini (1.05M context | $0.40/M input tokens | $1.60/M output tokens)
+    #4 -> Google Gemini 2.5 Flash Lite (1.05M context | $0.10/M input tokens | $0.40/M output tokens)
+    #5 -> 
+
+
+
+# 1 in Translation = Google: Gemini 2.0 Flash (1.05mil context window)
+
 ---
 
 ## Specialized AI Agents

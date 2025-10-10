@@ -24,20 +24,9 @@ export {
   updateLoopProgress,
 } from './actions';
 
-// Schemas & Types
-export {
-  CreateLoopSchema,
-  UpdateLoopSchema,
-  QueryLoopsSchema,
-  type CreateLoopInput,
-  type UpdateLoopInput,
-  type QueryLoopsInput,
-} from './schemas';
-
 // Permissions
 export {
   TRANSACTION_PERMISSIONS,
   hasTransactionPermission,
   canModifyLoop,
-  type TransactionPermission,
 } from './permissions';

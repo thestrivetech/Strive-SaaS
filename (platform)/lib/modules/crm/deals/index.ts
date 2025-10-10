@@ -12,24 +12,6 @@
  * - RBAC enforcement
  */
 
-// Schemas and Types
-export {
-  createDealSchema,
-  updateDealSchema,
-  updateDealStageSchema,
-  closeDealSchema,
-  dealFiltersSchema,
-  bulkUpdateDealsSchema,
-  deleteDealSchema,
-  type CreateDealInput,
-  type UpdateDealInput,
-  type UpdateDealStageInput,
-  type CloseDealInput,
-  type DealFilters,
-  type BulkUpdateDealsInput,
-  type DeleteDealInput,
-} from './schemas';
-
 // Queries - Core
 export {
   getDeals,
@@ -37,14 +19,11 @@ export {
   getDealsCount,
   getDealsByContact,
   getDealsByLead,
-  type DealWithAssignee,
-  type DealWithRelations,
 } from './queries';
 
 // Queries - Pipeline
 export {
   getDealsByStage,
-  type DealsByStageResult,
 } from './queries/pipeline';
 
 // Queries - Analytics
@@ -75,10 +54,6 @@ export {
   analyzePipelineHealth,
   getNextStage,
   calculateStageStats,
-  type StageConfig,
-  type PipelineForecast,
-  type PipelineHealth,
-  type StageStats,
 } from './pipeline';
 
 // Re-export Prisma types

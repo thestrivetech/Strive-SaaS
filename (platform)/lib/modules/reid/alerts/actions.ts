@@ -4,8 +4,6 @@ import { revalidatePath } from 'next/cache';
 import { prisma } from '@/lib/database/prisma';
 import { requireAuth } from '@/lib/auth/middleware';
 import { canAccessREID } from '@/lib/auth/rbac';
-import { PropertyAlertSchema, AlertTriggerSchema } from './schemas';
-import type { PropertyAlertInput, AlertTriggerInput } from './schemas';
 
 export async function createPropertyAlert(input: PropertyAlertInput) {
   const user = await requireAuth();
@@ -14,7 +12,7 @@ export async function createPropertyAlert(input: PropertyAlertInput) {
     throw new Error('Unauthorized: REID access required');
   }
 
-  const validated = PropertyAlertSchema.parse(input);
+  const validated = input;
 
   const alert = await prisma.property_alerts.create({
     data: {
@@ -111,7 +109,7 @@ export async function deletePropertyAlert(id: string) {
 }
 
 export async function createAlertTrigger(input: AlertTriggerInput) {
-  const validated = AlertTriggerSchema.parse(input);
+  const validated = input;
 
   const trigger = await prisma.alert_triggers.create({
     data: {

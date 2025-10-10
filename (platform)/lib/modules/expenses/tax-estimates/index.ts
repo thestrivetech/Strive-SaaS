@@ -13,18 +13,9 @@ export {
   getTaxEstimateById,
 } from './queries';
 
-// Schemas & Types
-export {
-  TaxEstimateSchema,
-  UpdateTaxEstimateSchema,
-  type TaxEstimateInput,
-  type UpdateTaxEstimateInput,
-} from './schemas';
-
 // Calculations
 export {
   calculateTax,
   calculateYearlyTaxEstimate,
   calculateQuarterlyTaxEstimate,
-  type TaxCalculationResult,
 } from './calculations';

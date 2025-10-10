@@ -4,7 +4,6 @@ import { prisma } from '@/lib/database/prisma';
 import { withTenantContext } from '@/lib/database/utils';
 import { handleDatabaseError } from '@/lib/database/errors';
 import type { deals, Prisma } from '@prisma/client';
-import type { DealFilters } from './schemas';
 
 /**
  * Deals Queries Module

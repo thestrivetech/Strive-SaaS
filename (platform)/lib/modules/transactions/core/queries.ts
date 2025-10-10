@@ -3,7 +3,6 @@
 import { prisma } from '@/lib/database/prisma';
 import { getCurrentUser } from '@/lib/auth/auth-helpers';
 import { getUserOrganizationId } from '@/lib/auth/user-helpers';
-import { QueryLoopsSchema, type QueryLoopsInput } from './schemas';
 import { hasTransactionPermission, TRANSACTION_PERMISSIONS } from './permissions';
 
 /**
@@ -26,7 +25,7 @@ export async function getLoops(input: QueryLoopsInput) {
   }
 
   // Validate input
-  const validated = QueryLoopsSchema.parse(input);
+  const validated = input;
   const { page, limit, status, transactionType, search, sortBy, sortOrder } = validated;
 
   const organizationId = getUserOrganizationId(user);
