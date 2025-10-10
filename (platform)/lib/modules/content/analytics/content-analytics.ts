@@ -117,10 +117,10 @@ export const getContentPerformance = cache(async (period: 'week' | 'month' | 'ye
     take: 20,
   });
 
-  const totalViews = content.reduce((sum, item) => sum + item.view_count, 0);
-  const totalShares = content.reduce((sum, item) => sum + item.share_count, 0);
-  const totalLikes = content.reduce((sum, item) => sum + item.like_count, 0);
-  const totalComments = content.reduce((sum, item) => sum + item.comment_count, 0);
+  const totalViews = content.reduce((sum: number, item: { view_count: number }) => sum + item.view_count, 0);
+  const totalShares = content.reduce((sum: number, item: { share_count: number }) => sum + item.share_count, 0);
+  const totalLikes = content.reduce((sum: number, item: { like_count: number }) => sum + item.like_count, 0);
+  const totalComments = content.reduce((sum: number, item: { comment_count: number }) => sum + item.comment_count, 0);
   const avgEngagement =
     content.length > 0 ? (totalLikes + totalShares + totalComments) / content.length : 0;
 
@@ -269,7 +269,7 @@ export const getContentPerformanceByType = cache(async () => {
     },
   });
 
-  return contentByType.map((item) => ({
+  return contentByType.map((item: { type: string; _count: { id: number }; _sum: { view_count: number | null; share_count: number | null; like_count: number | null } }) => ({
     type: item.type,
     count: item._count.id,
     totalViews: item._sum.view_count || 0,

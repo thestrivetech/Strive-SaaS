@@ -20,6 +20,7 @@ import {
 } from '@/lib/modules/marketplace/reviews/actions';
 import { requireAuth } from '@/lib/auth/auth-helpers';
 import { hasUserPurchasedTool } from '@/lib/modules/marketplace/reviews/queries';
+import { mockAsyncFunction } from '@/__tests__/helpers/mock-helpers';
 
 // Mock auth helpers
 jest.mock('@/lib/auth/auth-helpers', () => ({
@@ -50,12 +51,12 @@ describe('Tool Reviews Module', () => {
     it('should create review successfully', async () => {
       const { organization, user } = await createTestOrgWithUser();
 
-      requireAuth.mockResolvedValue({
+      mockAsyncFunction(requireAuth).mockResolvedValue({
         id: user.id,
         organizationId: organization.id,
       });
 
-      hasUserPurchasedTool.mockResolvedValue(true);
+      mockAsyncFunction(hasUserPurchasedTool).mockResolvedValue(true);
 
       const tool = await testPrisma.marketplace_tools.create({
         data: {
@@ -97,12 +98,12 @@ describe('Tool Reviews Module', () => {
     it('should update tool average rating', async () => {
       const { organization, user } = await createTestOrgWithUser();
 
-      requireAuth.mockResolvedValue({
+      mockAsyncFunction(requireAuth).mockResolvedValue({
         id: user.id,
         organizationId: organization.id,
       });
 
-      hasUserPurchasedTool.mockResolvedValue(true);
+      mockAsyncFunction(hasUserPurchasedTool).mockResolvedValue(true);
 
       const tool = await testPrisma.marketplace_tools.create({
         data: {
@@ -133,7 +134,7 @@ describe('Tool Reviews Module', () => {
       const { organization, user: user1 } = await createTestOrgWithUser();
       const { user: user2 } = await createTestOrgWithUser();
 
-      hasUserPurchasedTool.mockResolvedValue(true);
+      mockAsyncFunction(hasUserPurchasedTool).mockResolvedValue(true);
 
       const tool = await testPrisma.marketplace_tools.create({
         data: {
@@ -148,7 +149,7 @@ describe('Tool Reviews Module', () => {
       });
 
       // First review (rating: 5)
-      requireAuth.mockResolvedValue({
+      mockAsyncFunction(requireAuth).mockResolvedValue({
         id: user1.id,
         organizationId: organization.id,
       });
@@ -158,7 +159,7 @@ describe('Tool Reviews Module', () => {
       });
 
       // Second review (rating: 3)
-      requireAuth.mockResolvedValue({
+      mockAsyncFunction(requireAuth).mockResolvedValue({
         id: user2.id,
         organizationId: organization.id,
       });
@@ -178,12 +179,12 @@ describe('Tool Reviews Module', () => {
     it('should require tool purchase before review', async () => {
       const { organization, user } = await createTestOrgWithUser();
 
-      requireAuth.mockResolvedValue({
+      mockAsyncFunction(requireAuth).mockResolvedValue({
         id: user.id,
         organizationId: organization.id,
       });
 
-      hasUserPurchasedTool.mockResolvedValue(false);
+      mockAsyncFunction(hasUserPurchasedTool).mockResolvedValue(false);
 
       const tool = await testPrisma.marketplace_tools.create({
         data: {
@@ -207,12 +208,12 @@ describe('Tool Reviews Module', () => {
     it('should validate rating between 1 and 5', async () => {
       const { organization, user } = await createTestOrgWithUser();
 
-      requireAuth.mockResolvedValue({
+      mockAsyncFunction(requireAuth).mockResolvedValue({
         id: user.id,
         organizationId: organization.id,
       });
 
-      hasUserPurchasedTool.mockResolvedValue(true);
+      mockAsyncFunction(hasUserPurchasedTool).mockResolvedValue(true);
 
       const tool = await testPrisma.marketplace_tools.create({
         data: {
@@ -245,12 +246,12 @@ describe('Tool Reviews Module', () => {
     it('should use upsert to update existing review', async () => {
       const { organization, user } = await createTestOrgWithUser();
 
-      requireAuth.mockResolvedValue({
+      mockAsyncFunction(requireAuth).mockResolvedValue({
         id: user.id,
         organizationId: organization.id,
       });
 
-      hasUserPurchasedTool.mockResolvedValue(true);
+      mockAsyncFunction(hasUserPurchasedTool).mockResolvedValue(true);
 
       const tool = await testPrisma.marketplace_tools.create({
         data: {
@@ -292,7 +293,7 @@ describe('Tool Reviews Module', () => {
     it('should update existing review', async () => {
       const { organization, user } = await createTestOrgWithUser();
 
-      requireAuth.mockResolvedValue({
+      mockAsyncFunction(requireAuth).mockResolvedValue({
         id: user.id,
         organizationId: organization.id,
       });
@@ -332,7 +333,7 @@ describe('Tool Reviews Module', () => {
       const { organization, user: user1 } = await createTestOrgWithUser();
       const { user: user2 } = await createTestOrgWithUser();
 
-      requireAuth.mockResolvedValue({
+      mockAsyncFunction(requireAuth).mockResolvedValue({
         id: user2.id,
         organizationId: organization.id,
       });
@@ -370,7 +371,7 @@ describe('Tool Reviews Module', () => {
     it('should update tool average rating after update', async () => {
       const { organization, user } = await createTestOrgWithUser();
 
-      requireAuth.mockResolvedValue({
+      mockAsyncFunction(requireAuth).mockResolvedValue({
         id: user.id,
         organizationId: organization.id,
       });
@@ -413,7 +414,7 @@ describe('Tool Reviews Module', () => {
     it('should delete review successfully', async () => {
       const { organization, user } = await createTestOrgWithUser();
 
-      requireAuth.mockResolvedValue({
+      mockAsyncFunction(requireAuth).mockResolvedValue({
         id: user.id,
         organizationId: organization.id,
       });
@@ -451,7 +452,7 @@ describe('Tool Reviews Module', () => {
       const { organization, user: user1 } = await createTestOrgWithUser();
       const { user: user2 } = await createTestOrgWithUser();
 
-      requireAuth.mockResolvedValue({
+      mockAsyncFunction(requireAuth).mockResolvedValue({
         id: user2.id,
         organizationId: organization.id,
       });
@@ -523,7 +524,7 @@ describe('Tool Reviews Module', () => {
       });
 
       // Delete first review (rating: 5)
-      requireAuth.mockResolvedValue({
+      mockAsyncFunction(requireAuth).mockResolvedValue({
         id: user1.id,
         organizationId: organization.id,
       });
@@ -541,7 +542,7 @@ describe('Tool Reviews Module', () => {
     it('should set rating to 0 when last review is deleted', async () => {
       const { organization, user } = await createTestOrgWithUser();
 
-      requireAuth.mockResolvedValue({
+      mockAsyncFunction(requireAuth).mockResolvedValue({
         id: user.id,
         organizationId: organization.id,
       });

@@ -212,7 +212,7 @@ describe('Content Queries', () => {
     it('should filter by status (DRAFT, PUBLISHED, ARCHIVED)', async () => {
       const published = await getContentItems({ status: ContentStatus.PUBLISHED, limit: 50, offset: 0 });
       expect(published).toHaveLength(2);
-      published.forEach(item => expect(item.status).toBe(ContentStatus.PUBLISHED));
+      published.forEach((item: { status: ContentStatus }) => expect(item.status).toBe(ContentStatus.PUBLISHED));
 
       const drafts = await getContentItems({ status: ContentStatus.DRAFT, limit: 50, offset: 0 });
       expect(drafts).toHaveLength(1);
@@ -230,7 +230,7 @@ describe('Content Queries', () => {
 
       const articles = await getContentItems({ type: ContentType.ARTICLE, limit: 50, offset: 0 });
       expect(articles).toHaveLength(2);
-      articles.forEach(item => expect(item.type).toBe(ContentType.ARTICLE));
+      articles.forEach((item: { type: ContentType }) => expect(item.type).toBe(ContentType.ARTICLE));
 
       const pages = await getContentItems({ type: ContentType.PAGE, limit: 50, offset: 0 });
       expect(pages).toHaveLength(1);

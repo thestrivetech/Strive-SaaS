@@ -130,7 +130,7 @@ export async function getLeads(
       // Sorting
       const orderBy: Prisma.leadsOrderByWithRelationInput = {};
       if (filters?.sort_by) {
-        orderBy[filters.sort_by] = filters.sort_order || 'desc';
+        (orderBy as Record<string, any>)[filters.sort_by] = filters.sort_order || 'desc';
       } else {
         orderBy.created_at = 'desc'; // Default sort
       }

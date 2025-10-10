@@ -19,6 +19,7 @@ import { purchaseTool } from '@/lib/modules/marketplace/actions';
 import { createToolReview } from '@/lib/modules/marketplace/reviews/actions';
 import { getCurrentUser, requireAuth } from '@/lib/auth/auth-helpers';
 import { hasUserPurchasedTool } from '@/lib/modules/marketplace/reviews/queries';
+import { mockAsyncFunction } from '../../../helpers/mock-helpers';
 
 // Mock auth helpers
 jest.mock('@/lib/auth/auth-helpers', () => ({
@@ -65,11 +66,11 @@ describe('Marketplace Purchase Flow Integration', () => {
     it('should complete full purchase flow: browse → cart → checkout → review', async () => {
       const { organization, user } = await createTestOrgWithUser();
 
-      getCurrentUser.mockResolvedValue({
+      mockAsyncFunction(getCurrentUser).mockResolvedValue({
         ...user,
         organization_members: [{ organization_id: organization.id }],
       });
-      requireAuth.mockResolvedValue({
+      mockAsyncFunction(requireAuth).mockResolvedValue({
         id: user.id,
         organizationId: organization.id,
       });
@@ -123,8 +124,8 @@ describe('Marketplace Purchase Flow Integration', () => {
       // STEP 4: Verify purchases
       const purchases = await getPurchasedTools();
       expect(purchases).toHaveLength(2);
-      expect(purchases.map((p) => p.tool.name)).toContain('CRM Pro');
-      expect(purchases.map((p) => p.tool.name)).toContain('Analytics Dashboard');
+      expect(purchases.map((p: any) => p.tool.name)).toContain('CRM Pro');
+      expect(purchases.map((p: any) => p.tool.name)).toContain('Analytics Dashboard');
 
       // STEP 5: Leave review
       const review = await createToolReview({
@@ -147,7 +148,7 @@ describe('Marketplace Purchase Flow Integration', () => {
     it('should handle bundle purchase flow with tool access', async () => {
       const { organization, user } = await createTestOrgWithUser();
 
-      getCurrentUser.mockResolvedValue({
+      mockAsyncFunction(getCurrentUser).mockResolvedValue({
         ...user,
         organization_members: [{ organization_id: organization.id }],
       });
@@ -221,7 +222,7 @@ describe('Marketplace Purchase Flow Integration', () => {
     it('should allow direct tool purchase without cart', async () => {
       const { organization, user } = await createTestOrgWithUser();
 
-      getCurrentUser.mockResolvedValue({
+      mockAsyncFunction(getCurrentUser).mockResolvedValue({
         ...user,
         organization_members: [{ organization_id: organization.id }],
       });
@@ -258,7 +259,7 @@ describe('Marketplace Purchase Flow Integration', () => {
     it('should prevent purchasing same tool twice', async () => {
       const { organization, user } = await createTestOrgWithUser();
 
-      getCurrentUser.mockResolvedValue({
+      mockAsyncFunction(getCurrentUser).mockResolvedValue({
         ...user,
         organization_members: [{ organization_id: organization.id }],
       });
@@ -292,7 +293,7 @@ describe('Marketplace Purchase Flow Integration', () => {
     it('should prevent checkout with empty cart', async () => {
       const { organization, user } = await createTestOrgWithUser();
 
-      getCurrentUser.mockResolvedValue({
+      mockAsyncFunction(getCurrentUser).mockResolvedValue({
         ...user,
         organization_members: [{ organization_id: organization.id }],
       });
@@ -314,7 +315,7 @@ describe('Marketplace Purchase Flow Integration', () => {
     it('should handle inactive tools gracefully', async () => {
       const { organization, user } = await createTestOrgWithUser();
 
-      getCurrentUser.mockResolvedValue({
+      mockAsyncFunction(getCurrentUser).mockResolvedValue({
         ...user,
         organization_members: [{ organization_id: organization.id }],
       });
@@ -356,7 +357,7 @@ describe('Marketplace Purchase Flow Integration', () => {
       });
 
       // Org 1 purchases tool
-      getCurrentUser.mockResolvedValue({
+      mockAsyncFunction(getCurrentUser).mockResolvedValue({
         ...user1,
         organization_members: [{ organization_id: org1.id }],
       });
@@ -370,7 +371,7 @@ describe('Marketplace Purchase Flow Integration', () => {
       expect(org1Purchases).toHaveLength(1);
 
       // Org 2 should not see Org 1's purchase
-      getCurrentUser.mockResolvedValue({
+      mockAsyncFunction(getCurrentUser).mockResolvedValue({
         ...user2,
         organization_members: [{ organization_id: org2.id }],
       });
@@ -402,7 +403,7 @@ describe('Marketplace Purchase Flow Integration', () => {
     it('should maintain cart state across sessions', async () => {
       const { organization, user } = await createTestOrgWithUser();
 
-      getCurrentUser.mockResolvedValue({
+      mockAsyncFunction(getCurrentUser).mockResolvedValue({
         ...user,
         organization_members: [{ organization_id: organization.id }],
       });
@@ -437,7 +438,7 @@ describe('Marketplace Purchase Flow Integration', () => {
     it('should handle concurrent cart modifications', async () => {
       const { organization, user } = await createTestOrgWithUser();
 
-      getCurrentUser.mockResolvedValue({
+      mockAsyncFunction(getCurrentUser).mockResolvedValue({
         ...user,
         organization_members: [{ organization_id: organization.id }],
       });
@@ -484,11 +485,11 @@ describe('Marketplace Purchase Flow Integration', () => {
     it('should allow reviews only after purchase', async () => {
       const { organization, user } = await createTestOrgWithUser();
 
-      getCurrentUser.mockResolvedValue({
+      mockAsyncFunction(getCurrentUser).mockResolvedValue({
         ...user,
         organization_members: [{ organization_id: organization.id }],
       });
-      requireAuth.mockResolvedValue({
+      mockAsyncFunction(requireAuth).mockResolvedValue({
         id: user.id,
         organizationId: organization.id,
       });
@@ -506,7 +507,7 @@ describe('Marketplace Purchase Flow Integration', () => {
       });
 
       // Try to review without purchase
-      hasUserPurchasedTool.mockResolvedValue(false);
+      mockAsyncFunction(hasUserPurchasedTool).mockResolvedValue(false);
 
       await expect(
         createToolReview({
@@ -522,7 +523,7 @@ describe('Marketplace Purchase Flow Integration', () => {
       });
 
       // Now review should work
-      hasUserPurchasedTool.mockResolvedValue(true);
+      mockAsyncFunction(hasUserPurchasedTool).mockResolvedValue(true);
 
       const review = await createToolReview({
         tool_id: tool.id,

@@ -95,7 +95,7 @@ export async function getAlertTriggers(alertId?: string) {
 
   return await prisma.alert_triggers.findMany({
     where: {
-      alert_id: { in: orgAlertIds.map(a => a.id) }
+      alert_id: { in: orgAlertIds.map((a: { id: string }) => a.id) }
     },
     include: {
       alert: {

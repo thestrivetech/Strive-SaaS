@@ -3,7 +3,6 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
@@ -20,7 +19,7 @@ import { Calendar } from '@/components/ui/calendar';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { CalendarIcon, Save } from 'lucide-react';
 import { format } from 'date-fns';
-import { createCampaign, CampaignSchema } from '@/lib/modules/content/campaigns';
+import { createCampaign } from '@/lib/modules/content/campaigns';
 import { useToast } from '@/hooks/use-toast';
 
 const CAMPAIGN_TYPES = [
@@ -42,7 +41,6 @@ export default function NewCampaignPage() {
   const [isSaving, setIsSaving] = useState(false);
 
   const form = useForm({
-    resolver: zodResolver(CampaignSchema),
     defaultValues: {
       name: '',
       description: '',

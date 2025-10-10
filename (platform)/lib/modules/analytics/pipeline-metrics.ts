@@ -85,7 +85,7 @@ export async function getPipelineByStage(): Promise<PipelineByStage[]> {
       _sum: { value: true },
     });
 
-    return dealsByStage.map((group) => ({
+    return dealsByStage.map((group: any) => ({
       stage: group.stage,
       count: group._count.id,
       value: Number(group._sum.value || 0),
@@ -175,7 +175,7 @@ export async function getAverageTimeInStage(): Promise<
           return { stage, avgDays: 0 };
         }
 
-        const totalDays = deals.reduce((sum, deal) => {
+        const totalDays = deals.reduce((sum: number, deal: any) => {
           const diffMs = deal.updated_at.getTime() - deal.created_at.getTime();
           const diffDays = diffMs / (1000 * 60 * 60 * 24);
           return sum + diffDays;

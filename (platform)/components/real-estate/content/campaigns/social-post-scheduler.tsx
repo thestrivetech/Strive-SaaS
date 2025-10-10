@@ -2,7 +2,6 @@
 
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Textarea } from '@/components/ui/textarea';
 import { Button } from '@/components/ui/button';
@@ -12,7 +11,7 @@ import { Calendar } from '@/components/ui/calendar';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { CalendarIcon, Send, Save, Facebook, Twitter, Instagram, Linkedin } from 'lucide-react';
 import { format } from 'date-fns';
-import { createSocialPost, SocialPostSchema } from '@/lib/modules/content/campaigns';
+import { createSocialPost } from '@/lib/modules/content/campaigns';
 import { useToast } from '@/hooks/use-toast';
 import { useRouter } from 'next/navigation';
 
@@ -38,7 +37,6 @@ export function SocialPostScheduler({ campaignId, organizationId }: SocialPostSc
   const router = useRouter();
 
   const form = useForm({
-    resolver: zodResolver(SocialPostSchema),
     defaultValues: {
       content: '',
       mediaUrls: [],

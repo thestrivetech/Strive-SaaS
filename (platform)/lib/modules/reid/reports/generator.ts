@@ -1,5 +1,28 @@
 import { prisma } from '@/lib/database/prisma';
 
+// Type definitions
+interface MarketReportInput {
+  reportType: ReportType;
+  areaCodes: string[];
+  organizationId: string;
+  title?: string;
+  description?: string;
+  dateRange?: { start: Date; end: Date };
+  filters?: any;
+  isPublic?: boolean;
+  includeInsights?: boolean;
+  includeAlerts?: boolean;
+  includeForecast?: boolean;
+}
+
+enum ReportType {
+  NEIGHBORHOOD_ANALYSIS = 'NEIGHBORHOOD_ANALYSIS',
+  MARKET_OVERVIEW = 'MARKET_OVERVIEW',
+  COMPARATIVE_STUDY = 'COMPARATIVE_STUDY',
+  INVESTMENT_ANALYSIS = 'INVESTMENT_ANALYSIS',
+  DEMOGRAPHIC_REPORT = 'DEMOGRAPHIC_REPORT',
+}
+
 /**
  * Main report generation function
  * Routes to specific template based on report type

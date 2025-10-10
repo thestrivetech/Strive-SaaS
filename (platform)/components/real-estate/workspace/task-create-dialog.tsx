@@ -2,7 +2,6 @@
 
 import { useState, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
 import { Button } from '@/components/ui/button';
 import {
   Dialog,
@@ -34,7 +33,6 @@ import { useToast } from '@/hooks/use-toast';
 import { Plus, Loader2, Calendar } from 'lucide-react';
 import {
   createTransactionTask,
-  CreateTransactionTaskSchema,
   type CreateTransactionTaskInput,
 } from '@/lib/modules/transactions/tasks';
 import { getPartiesByLoop } from '@/lib/modules/transactions/parties';
@@ -56,7 +54,6 @@ export function TaskCreateDialog({ loopId, onSuccess }: TaskCreateDialogProps) {
   const { toast } = useToast();
 
   const form = useForm({
-    resolver: zodResolver(CreateTransactionTaskSchema),
     defaultValues: {
       loopId,
       title: '',

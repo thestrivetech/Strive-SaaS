@@ -2,7 +2,6 @@
 
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
 import { Button } from '@/components/ui/button';
 import {
   Dialog,
@@ -32,7 +31,7 @@ import {
 import { Checkbox } from '@/components/ui/checkbox';
 import { useToast } from '@/hooks/use-toast';
 import { UserPlus, Loader2 } from 'lucide-react';
-import { inviteParty, CreatePartySchema, type CreatePartyInput } from '@/lib/modules/transactions/parties';
+import { inviteParty, type CreatePartyInput } from '@/lib/modules/transactions/parties';
 import { PartyRole } from '@prisma/client';
 
 interface PartyInviteDialogProps {
@@ -46,7 +45,6 @@ export function PartyInviteDialog({ loopId, onSuccess }: PartyInviteDialogProps)
   const { toast } = useToast();
 
   const form = useForm({
-    resolver: zodResolver(CreatePartySchema),
     defaultValues: {
       loopId,
       name: '',

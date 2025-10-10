@@ -18,6 +18,7 @@ import { prisma } from '@/lib/database/prisma';
 import { requireAuth } from '@/lib/auth/middleware';
 import { canAccessREID } from '@/lib/auth/rbac';
 import { revalidatePath } from 'next/cache';
+import { mockAsyncFunction, mockFunction } from '../../../helpers/mock-helpers';
 
 // Mock Prisma
 jest.mock('@/lib/database/prisma', () => ({
@@ -39,18 +40,12 @@ jest.mock('@/lib/database/prisma', () => ({
 
 // Mock auth middleware
 jest.mock('@/lib/auth/middleware', () => ({
-  requireAuth: jest.fn().mockResolvedValue({
-    id: 'user-123',
-    organizationId: 'org-123',
-    globalRole: 'USER',
-    organizationRole: 'MEMBER',
-    subscriptionTier: 'GROWTH',
-  }),
+  requireAuth: jest.fn(),
 }));
 
 // Mock RBAC
 jest.mock('@/lib/auth/rbac', () => ({
-  canAccessREID: jest.fn(() => true),
+  canAccessREID: jest.fn(),
 }));
 
 // Mock Next.js cache
@@ -61,6 +56,27 @@ jest.mock('next/cache', () => ({
 describe('REID Alerts Module', () => {
   beforeEach(() => {
     jest.clearAllMocks();
+
+    // Setup default auth mock
+    mockAsyncFunction(requireAuth).mockResolvedValue({
+      id: 'user-123',
+      email: 'test@example.com',
+      name: 'Test User',
+      avatar_url: null,
+      role: 'USER',
+      globalRole: 'USER',
+      subscription_tier: 'GROWTH',
+      subscriptionTier: 'GROWTH',
+      organizationId: 'org-123',
+      organizationRole: 'MEMBER',
+      is_active: true,
+      created_at: new Date(),
+      updated_at: new Date(),
+      _raw: {} as any,
+    });
+
+    // Setup default RBAC mock
+    mockFunction(canAccessREID).mockReturnValue(true);
   });
 
   describe('createPropertyAlert', () => {
@@ -74,7 +90,7 @@ describe('REID Alerts Module', () => {
         created_at: new Date(),
       };
 
-      prisma.property_alerts.create.mockResolvedValue(mockAlert);
+      mockAsyncFunction(prisma.property_alerts.create).mockResolvedValue(mockAlert);
 
       const result = await createPropertyAlert({
         name: 'Price Drop Alert',
@@ -111,7 +127,7 @@ describe('REID Alerts Module', () => {
     });
 
     it('checks REID access permission', async () => {
-      canAccessREID.mockReturnValue(false);
+      mockFunction(canAccessREID).mockReturnValue(false);
 
       await expect(
         createPropertyAlert({
@@ -123,11 +139,11 @@ describe('REID Alerts Module', () => {
         })
       ).rejects.toThrow('Unauthorized: REID access required');
 
-      canAccessREID.mockReturnValue(true);
+      mockFunction(canAccessREID).mockReturnValue(true);
     });
 
     it('revalidates cache paths', async () => {
-      prisma.property_alerts.create.mockResolvedValue({
+      mockAsyncFunction(prisma.property_alerts.create).mockResolvedValue({
         id: 'alert-123',
         name: 'Test Alert',
         organization_id: 'org-123',
@@ -158,8 +174,8 @@ describe('REID Alerts Module', () => {
         is_active: false,
       };
 
-      prisma.property_alerts.findFirst.mockResolvedValue(mockExisting);
-      prisma.property_alerts.update.mockResolvedValue(mockUpdated);
+      mockAsyncFunction(prisma.property_alerts.findFirst).mockResolvedValue(mockExisting);
+      mockAsyncFunction(prisma.property_alerts.update).mockResolvedValue(mockUpdated);
 
       const result = await updatePropertyAlert('alert-123', {
         name: 'Updated Name',
@@ -171,7 +187,7 @@ describe('REID Alerts Module', () => {
     });
 
     it('verifies organization ownership before update', async () => {
-      prisma.property_alerts.findFirst.mockResolvedValue(null);
+      mockAsyncFunction(prisma.property_alerts.findFirst).mockResolvedValue(null);
 
       await expect(
         updatePropertyAlert('alert-123', {
@@ -191,13 +207,13 @@ describe('REID Alerts Module', () => {
 
     it('prevents updating alert from another organization', async () => {
       // User from org-123 trying to update alert from org-456
-      requireAuth.mockResolvedValue({
+      mockAsyncFunction(requireAuth).mockResolvedValue({
         id: 'user-123',
         organizationId: 'org-123',
         globalRole: 'USER',
       });
 
-      prisma.property_alerts.findFirst.mockResolvedValue(null);
+      mockAsyncFunction(prisma.property_alerts.findFirst).mockResolvedValue(null);
 
       await expect(
         updatePropertyAlert('alert-456', {
@@ -214,8 +230,8 @@ describe('REID Alerts Module', () => {
         organization_id: 'org-123',
       };
 
-      prisma.property_alerts.findFirst.mockResolvedValue(mockAlert);
-      prisma.property_alerts.delete.mockResolvedValue(mockAlert);
+      mockAsyncFunction(prisma.property_alerts.findFirst).mockResolvedValue(mockAlert);
+      mockAsyncFunction(prisma.property_alerts.delete).mockResolvedValue(mockAlert);
 
       await deletePropertyAlert('alert-123');
 
@@ -225,13 +241,13 @@ describe('REID Alerts Module', () => {
     });
 
     it('verifies organization ownership before delete', async () => {
-      prisma.property_alerts.findFirst.mockResolvedValue(null);
+      mockAsyncFunction(prisma.property_alerts.findFirst).mockResolvedValue(null);
 
       await expect(deletePropertyAlert('alert-123')).rejects.toThrow('Alert not found');
     });
 
     it('prevents deleting alert from another organization', async () => {
-      prisma.property_alerts.findFirst.mockResolvedValue(null);
+      mockAsyncFunction(prisma.property_alerts.findFirst).mockResolvedValue(null);
 
       await expect(deletePropertyAlert('alert-456')).rejects.toThrow('Alert not found');
     });
@@ -248,8 +264,8 @@ describe('REID Alerts Module', () => {
         created_at: new Date(),
       };
 
-      prisma.alert_triggers.create.mockResolvedValue(mockTrigger);
-      prisma.property_alerts.update.mockResolvedValue({
+      mockAsyncFunction(prisma.alert_triggers.create).mockResolvedValue(mockTrigger);
+      mockAsyncFunction(prisma.property_alerts.update).mockResolvedValue({
         id: 'alert-123',
         trigger_count: 1,
         last_triggered: new Date(),
@@ -296,7 +312,7 @@ describe('REID Alerts Module', () => {
         acknowledged_by_id: 'user-123',
       };
 
-      prisma.alert_triggers.update.mockResolvedValue(mockUpdated);
+      mockAsyncFunction(prisma.alert_triggers.update).mockResolvedValue(mockUpdated);
 
       const result = await acknowledgeAlertTrigger('trigger-123', 'user-123');
 
@@ -322,7 +338,7 @@ describe('REID Alerts Module', () => {
         { id: 'alert-2', name: 'Alert 2', organization_id: 'org-123' },
       ];
 
-      prisma.property_alerts.findMany.mockResolvedValue(mockAlerts);
+      mockAsyncFunction(prisma.property_alerts.findMany).mockResolvedValue(mockAlerts);
 
       const result = await getPropertyAlerts();
 
@@ -337,7 +353,7 @@ describe('REID Alerts Module', () => {
     });
 
     it('filters by alert type', async () => {
-      prisma.property_alerts.findMany.mockResolvedValue([]);
+      mockAsyncFunction(prisma.property_alerts.findMany).mockResolvedValue([]);
 
       await getPropertyAlerts({
         alertType: 'PRICE_DROP',
@@ -353,7 +369,7 @@ describe('REID Alerts Module', () => {
     });
 
     it('filters by active status', async () => {
-      prisma.property_alerts.findMany.mockResolvedValue([]);
+      mockAsyncFunction(prisma.property_alerts.findMany).mockResolvedValue([]);
 
       await getPropertyAlerts({
         isActive: true,
@@ -369,20 +385,20 @@ describe('REID Alerts Module', () => {
     });
 
     it('checks REID access permission', async () => {
-      canAccessREID.mockReturnValue(false);
+      mockFunction(canAccessREID).mockReturnValue(false);
 
       await expect(getPropertyAlerts()).rejects.toThrow(
         'Unauthorized: REID access required'
       );
 
-      canAccessREID.mockReturnValue(true);
+      mockFunction(canAccessREID).mockReturnValue(true);
     });
   });
 
   describe('Multi-tenant Isolation', () => {
     it('prevents accessing alerts from other organizations', async () => {
       // User from org-123
-      requireAuth.mockResolvedValue({
+      mockAsyncFunction(requireAuth).mockResolvedValue({
         id: 'user-123',
         organizationId: 'org-123',
         globalRole: 'USER',
@@ -395,9 +411,9 @@ describe('REID Alerts Module', () => {
       ];
 
       // Prisma should only return org-123's alerts
-      prisma.property_alerts.findMany.mockImplementation((args) => {
+      mockAsyncFunction(prisma.property_alerts.findMany).mockImplementation((args: { where: { organization_id: string } }) => {
         return allAlerts.filter(
-          (a) => a.organization_id === args.where.organization_id
+          (a: { id: string; organization_id: string }) => a.organization_id === args.where.organization_id
         );
       });
 

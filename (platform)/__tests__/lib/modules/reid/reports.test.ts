@@ -15,7 +15,8 @@ import { prisma } from '@/lib/database/prisma';
 import { requireAuth } from '@/lib/auth/middleware';
 import { canAccessREID } from '@/lib/auth/rbac';
 import { revalidatePath } from 'next/cache';
-import { generateMarketAnalysis } from '@/lib/modules/reid/reports/generator';
+import { generateReport } from '@/lib/modules/reid/reports/generator';
+import { mockAsyncFunction, mockFunction } from '../../../helpers/mock-helpers';
 
 // Mock Prisma
 jest.mock('@/lib/database/prisma', () => ({
@@ -32,18 +33,12 @@ jest.mock('@/lib/database/prisma', () => ({
 
 // Mock auth middleware
 jest.mock('@/lib/auth/middleware', () => ({
-  requireAuth: jest.fn().mockResolvedValue({
-    id: 'user-123',
-    organizationId: 'org-123',
-    globalRole: 'USER',
-    organizationRole: 'MEMBER',
-    subscriptionTier: 'ELITE',
-  }),
+  requireAuth: jest.fn(),
 }));
 
 // Mock RBAC
 jest.mock('@/lib/auth/rbac', () => ({
-  canAccessREID: jest.fn(() => true),
+  canAccessREID: jest.fn(),
 }));
 
 // Mock Next.js cache
@@ -53,16 +48,41 @@ jest.mock('next/cache', () => ({
 
 // Mock report generator
 jest.mock('@/lib/modules/reid/reports/generator', () => ({
-  generateMarketAnalysis: jest.fn(() => ({
-    summary: 'Market is showing strong growth',
-    keyFindings: ['Finding 1', 'Finding 2'],
-    recommendations: ['Recommendation 1', 'Recommendation 2'],
-  })),
+  generateReport: jest.fn(),
 }));
 
 describe('REID Reports Module', () => {
   beforeEach(() => {
     jest.clearAllMocks();
+
+    // Setup default auth mock
+    mockAsyncFunction(requireAuth).mockResolvedValue({
+      id: 'user-123',
+      email: 'test@example.com',
+      name: 'Test User',
+      avatar_url: null,
+      role: 'USER',
+      globalRole: 'USER',
+      subscription_tier: 'ELITE',
+      subscriptionTier: 'ELITE',
+      organizationId: 'org-123',
+      organizationRole: 'MEMBER',
+      is_active: true,
+      created_at: new Date(),
+      updated_at: new Date(),
+      _raw: {} as any,
+    });
+
+    // Setup default RBAC mock
+    mockFunction(canAccessREID).mockReturnValue(true);
+
+    // Setup default generateReport mock
+    mockFunction(generateReport).mockReturnValue({
+      summary: 'Market is showing strong growth',
+      insights: { keyFindings: ['Finding 1', 'Finding 2'] },
+      charts: {},
+      tables: {},
+    });
   });
 
   describe('createMarketReport', () => {
@@ -75,7 +95,7 @@ describe('REID Reports Module', () => {
         created_at: new Date(),
       };
 
-      prisma.market_reports.create.mockResolvedValue(mockReport);
+      mockAsyncFunction(prisma.market_reports.create).mockResolvedValue(mockReport);
 
       const result = await createMarketReport({
         title: 'Q1 2024 Market Report',
@@ -110,7 +130,7 @@ describe('REID Reports Module', () => {
     });
 
     it('checks REID access permission', async () => {
-      canAccessREID.mockReturnValue(false);
+      mockFunction(canAccessREID).mockReturnValue(false);
 
       await expect(
         createMarketReport({
@@ -120,11 +140,11 @@ describe('REID Reports Module', () => {
         })
       ).rejects.toThrow('Unauthorized: REID access required');
 
-      canAccessREID.mockReturnValue(true);
+      mockFunction(canAccessREID).mockReturnValue(true);
     });
 
     it('generates report data using insights', async () => {
-      prisma.market_reports.create.mockResolvedValue({
+      mockAsyncFunction(prisma.market_reports.create).mockResolvedValue({
         id: 'report-123',
         title: 'Test Report',
         organization_id: 'org-123',
@@ -137,11 +157,11 @@ describe('REID Reports Module', () => {
         includeInsights: true,
       });
 
-      expect(generateMarketAnalysis).toHaveBeenCalled();
+      expect(generateReport).toHaveBeenCalled();
     });
 
     it('revalidates cache paths', async () => {
-      prisma.market_reports.create.mockResolvedValue({
+      mockAsyncFunction(prisma.market_reports.create).mockResolvedValue({
         id: 'report-123',
         title: 'Test Report',
         organization_id: 'org-123',
@@ -164,8 +184,8 @@ describe('REID Reports Module', () => {
         organization_id: 'org-123',
       };
 
-      prisma.market_reports.findFirst.mockResolvedValue(mockReport);
-      prisma.market_reports.delete.mockResolvedValue(mockReport);
+      mockAsyncFunction(prisma.market_reports.findFirst).mockResolvedValue(mockReport);
+      mockAsyncFunction(prisma.market_reports.delete).mockResolvedValue(mockReport);
 
       await deleteMarketReport('report-123');
 
@@ -175,7 +195,7 @@ describe('REID Reports Module', () => {
     });
 
     it('verifies organization ownership before delete', async () => {
-      prisma.market_reports.findFirst.mockResolvedValue(null);
+      mockAsyncFunction(prisma.market_reports.findFirst).mockResolvedValue(null);
 
       await expect(deleteMarketReport('report-123')).rejects.toThrow('Report not found');
 
@@ -191,13 +211,13 @@ describe('REID Reports Module', () => {
 
     it('prevents deleting report from another organization', async () => {
       // User from org-123 trying to delete report from org-456
-      requireAuth.mockResolvedValue({
+      mockAsyncFunction(requireAuth).mockResolvedValue({
         id: 'user-123',
         organizationId: 'org-123',
         globalRole: 'USER',
       });
 
-      prisma.market_reports.findFirst.mockResolvedValue(null);
+      mockAsyncFunction(prisma.market_reports.findFirst).mockResolvedValue(null);
 
       await expect(deleteMarketReport('report-456')).rejects.toThrow('Report not found');
     });
@@ -210,7 +230,7 @@ describe('REID Reports Module', () => {
         { id: 'report-2', title: 'Report 2', organization_id: 'org-123' },
       ];
 
-      prisma.market_reports.findMany.mockResolvedValue(mockReports);
+      mockAsyncFunction(prisma.market_reports.findMany).mockResolvedValue(mockReports);
 
       const result = await getMarketReports();
 
@@ -225,7 +245,7 @@ describe('REID Reports Module', () => {
     });
 
     it('filters by report type', async () => {
-      prisma.market_reports.findMany.mockResolvedValue([]);
+      mockAsyncFunction(prisma.market_reports.findMany).mockResolvedValue([]);
 
       await getMarketReports({
         reportType: 'QUARTERLY',
@@ -244,7 +264,7 @@ describe('REID Reports Module', () => {
       const startDate = new Date('2024-01-01');
       const endDate = new Date('2024-03-31');
 
-      prisma.market_reports.findMany.mockResolvedValue([]);
+      mockAsyncFunction(prisma.market_reports.findMany).mockResolvedValue([]);
 
       await getMarketReports({
         startDate,
@@ -264,20 +284,20 @@ describe('REID Reports Module', () => {
     });
 
     it('checks REID access permission', async () => {
-      canAccessREID.mockReturnValue(false);
+      mockFunction(canAccessREID).mockReturnValue(false);
 
       await expect(getMarketReports()).rejects.toThrow(
         'Unauthorized: REID access required'
       );
 
-      canAccessREID.mockReturnValue(true);
+      mockFunction(canAccessREID).mockReturnValue(true);
     });
   });
 
   describe('Multi-tenant Isolation', () => {
     it('prevents accessing reports from other organizations', async () => {
       // User from org-123
-      requireAuth.mockResolvedValue({
+      mockAsyncFunction(requireAuth).mockResolvedValue({
         id: 'user-123',
         organizationId: 'org-123',
         globalRole: 'USER',
@@ -290,9 +310,9 @@ describe('REID Reports Module', () => {
       ];
 
       // Prisma should only return org-123's reports
-      prisma.market_reports.findMany.mockImplementation((args) => {
+      mockAsyncFunction(prisma.market_reports.findMany).mockImplementation((args: { where: { organization_id: string } }) => {
         return allReports.filter(
-          (r) => r.organization_id === args.where.organization_id
+          (r: { id: string; organization_id: string }) => r.organization_id === args.where.organization_id
         );
       });
 

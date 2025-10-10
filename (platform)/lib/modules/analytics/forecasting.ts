@@ -189,7 +189,7 @@ export async function getForecastByStage(): Promise<
       CLOSED_WON: 100,
     };
 
-    return pipelineByStage.map((stage) => {
+    return pipelineByStage.map((stage: any) => {
       const pipelineValue = Number(stage._sum.value || 0);
       const probability = stageProbabilities[stage.stage] || 50;
       const expectedRevenue = pipelineValue * (probability / 100);

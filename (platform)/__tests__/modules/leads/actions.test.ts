@@ -29,6 +29,7 @@ import {
 import type { OrgRole } from '@prisma/client';
 import { getCurrentUser } from '@/lib/auth/auth-helpers';
 import { canAccessCRM, canManageLeads, canDeleteLeads } from '@/lib/auth/rbac';
+import { mockAsyncFunction, mockFunction } from '@/__tests__/helpers/mock-helpers';
 
 // Mock auth helpers
 jest.mock('@/lib/auth/auth-helpers', () => ({
@@ -72,7 +73,7 @@ describe('Leads Actions', () => {
       const { organization, user } = await createTestOrgWithUser();
 
       // Mock getCurrentUser to return our test user with organization membership
-      getCurrentUser.mockResolvedValue({
+      mockAsyncFunction(getCurrentUser).mockResolvedValue({
         ...user,
         organization_members: [{ organization_id: organization.id }],
       });
@@ -113,7 +114,7 @@ describe('Leads Actions', () => {
     it('should validate required fields', async () => {
       const { organization, user } = await createTestOrgWithUser();
 
-      getCurrentUser.mockResolvedValue({
+      mockAsyncFunction(getCurrentUser).mockResolvedValue({
         ...user,
         organization_members: [{ organization_id: organization.id }],
       });
@@ -129,7 +130,7 @@ describe('Leads Actions', () => {
     it('should validate email format if provided', async () => {
       const { organization, user } = await createTestOrgWithUser();
 
-      getCurrentUser.mockResolvedValue({
+      mockAsyncFunction(getCurrentUser).mockResolvedValue({
         ...user,
         organization_members: [{ organization_id: organization.id }],
       });
@@ -146,12 +147,12 @@ describe('Leads Actions', () => {
     it('should enforce RBAC permissions', async () => {
       const { organization, user } = await createTestOrgWithUser();
 
-      getCurrentUser.mockResolvedValue({
+      mockAsyncFunction(getCurrentUser).mockResolvedValue({
         ...user,
         organization_members: [{ organization_id: organization.id }],
       });
 
-      canAccessCRM.mockReturnValue(false);
+      mockFunction(canAccessCRM).mockReturnValue(false);
 
       const leadData = {
         name: 'John Doe',
@@ -163,8 +164,8 @@ describe('Leads Actions', () => {
       );
 
       // Reset for next test
-      canAccessCRM.mockReturnValue(true);
-      canManageLeads.mockReturnValue(false);
+      mockFunction(canAccessCRM).mockReturnValue(true);
+      mockFunction(canManageLeads).mockReturnValue(false);
 
       await expect(createLead(leadData as any)).rejects.toThrow(
         'Unauthorized: Insufficient permissions'
@@ -174,7 +175,7 @@ describe('Leads Actions', () => {
     it('should auto-assign organizationId from current user', async () => {
       const { organization, user } = await createTestOrgWithUser();
 
-      getCurrentUser.mockResolvedValue({
+      mockAsyncFunction(getCurrentUser).mockResolvedValue({
         ...user,
         organization_members: [{ organization_id: organization.id }],
       });
@@ -195,7 +196,7 @@ describe('Leads Actions', () => {
     it('should update lead successfully', async () => {
       const { organization, user } = await createTestOrgWithUser();
 
-      getCurrentUser.mockResolvedValue({
+      mockAsyncFunction(getCurrentUser).mockResolvedValue({
         ...user,
         organization_members: [{ organization_id: organization.id }],
       });
@@ -227,7 +228,7 @@ describe('Leads Actions', () => {
     it('should throw error for non-existent lead', async () => {
       const { organization, user } = await createTestOrgWithUser();
 
-      getCurrentUser.mockResolvedValue({
+      mockAsyncFunction(getCurrentUser).mockResolvedValue({
         ...user,
         organization_members: [{ organization_id: organization.id }],
       });
@@ -245,7 +246,7 @@ describe('Leads Actions', () => {
     it('should delete lead successfully', async () => {
       const { organization, user } = await createTestOrgWithUser();
 
-      getCurrentUser.mockResolvedValue({
+      mockAsyncFunction(getCurrentUser).mockResolvedValue({
         ...user,
         organization_members: [{ organization_id: organization.id }],
       });
@@ -271,12 +272,12 @@ describe('Leads Actions', () => {
     it('should enforce delete permissions', async () => {
       const { organization, user } = await createTestOrgWithUser();
 
-      getCurrentUser.mockResolvedValue({
+      mockAsyncFunction(getCurrentUser).mockResolvedValue({
         ...user,
         organization_members: [{ organization_id: organization.id }],
       });
 
-      canDeleteLeads.mockReturnValue(false);
+      mockFunction(canDeleteLeads).mockReturnValue(false);
 
       const lead = await testPrisma.leads.create({
         data: {
@@ -295,7 +296,7 @@ describe('Leads Actions', () => {
     it('should update lead score successfully', async () => {
       const { organization, user } = await createTestOrgWithUser();
 
-      getCurrentUser.mockResolvedValue({
+      mockAsyncFunction(getCurrentUser).mockResolvedValue({
         ...user,
         organization_members: [{ organization_id: organization.id }],
       });
@@ -322,7 +323,7 @@ describe('Leads Actions', () => {
     it('should validate score_value range (0-100)', async () => {
       const { organization, user } = await createTestOrgWithUser();
 
-      getCurrentUser.mockResolvedValue({
+      mockAsyncFunction(getCurrentUser).mockResolvedValue({
         ...user,
         organization_members: [{ organization_id: organization.id }],
       });
@@ -356,7 +357,7 @@ describe('Leads Actions', () => {
     it('should update lead status successfully', async () => {
       const { organization, user } = await createTestOrgWithUser();
 
-      getCurrentUser.mockResolvedValue({
+      mockAsyncFunction(getCurrentUser).mockResolvedValue({
         ...user,
         organization_members: [{ organization_id: organization.id }],
       });
@@ -384,7 +385,7 @@ describe('Leads Actions', () => {
       const agent = await createTestUser({ role: UserRole.USER });
       await createOrganizationMember(agent.id, organization.id, 'MEMBER' as OrgRole);
 
-      getCurrentUser.mockResolvedValue({
+      mockAsyncFunction(getCurrentUser).mockResolvedValue({
         ...user,
         organization_members: [{ organization_id: organization.id }],
       });
@@ -417,7 +418,7 @@ describe('Leads Actions', () => {
     it('should validate lead_ids array', async () => {
       const { organization, user } = await createTestOrgWithUser();
 
-      getCurrentUser.mockResolvedValue({
+      mockAsyncFunction(getCurrentUser).mockResolvedValue({
         ...user,
         organization_members: [{ organization_id: organization.id }],
       });
@@ -445,7 +446,7 @@ describe('Leads Actions', () => {
     it('should convert lead to contact successfully', async () => {
       const { organization, user } = await createTestOrgWithUser();
 
-      getCurrentUser.mockResolvedValue({
+      mockAsyncFunction(getCurrentUser).mockResolvedValue({
         ...user,
         organization_members: [{ organization_id: organization.id }],
       });
@@ -481,7 +482,7 @@ describe('Leads Actions', () => {
     it('should throw error for non-existent lead', async () => {
       const { organization, user } = await createTestOrgWithUser();
 
-      getCurrentUser.mockResolvedValue({
+      mockAsyncFunction(getCurrentUser).mockResolvedValue({
         ...user,
         organization_members: [{ organization_id: organization.id }],
       });
@@ -497,7 +498,7 @@ describe('Leads Actions', () => {
       const { organization: org1, user: user1 } = await createTestOrgWithUser();
       const { organization: org2 } = await createTestOrgWithUser();
 
-      getCurrentUser.mockResolvedValue({
+      mockAsyncFunction(getCurrentUser).mockResolvedValue({
         ...user1,
         organization_members: [{ organization_id: org1.id }],
       });

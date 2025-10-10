@@ -34,7 +34,7 @@ export async function getOrganizationMembers(organizationId: string) {
     },
   });
 
-  return members.map((member) => ({
+  return members.map((member: { id: string; role: string; joined_at: Date; users: { id: string; name: string; email: string; avatar_url: string | null; is_active: boolean } }) => ({
     id: member.id,
     role: member.role,
     joined_at: member.joined_at,

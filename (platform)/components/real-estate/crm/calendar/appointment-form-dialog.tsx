@@ -2,7 +2,6 @@
 
 import { useState } from 'react';
 import { useForm, type SubmitHandler } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
 import { format } from 'date-fns';
 import { Plus, Loader2, Calendar as CalendarIcon } from 'lucide-react';
 import { toast } from 'sonner';
@@ -39,7 +38,6 @@ import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover
 import {
   createAppointment,
   updateAppointment,
-  createAppointmentSchema,
   type CreateAppointmentInput,
 } from '@/lib/modules/appointments';
 import { cn } from '@/lib/utils';
@@ -61,7 +59,6 @@ export function AppointmentFormDialog({
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const form = useForm({
-    resolver: zodResolver(createAppointmentSchema),
     defaultValues: appointment
       ? {
           title: appointment.title,

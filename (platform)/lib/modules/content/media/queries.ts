@@ -180,12 +180,12 @@ export const getFolderTree = cache(async () => {
   const map = new Map();
 
   // Create map of all folders
-  folders.forEach((folder) => {
+  folders.forEach((folder: { id: string; parent_id: string | null }) => {
     map.set(folder.id, { ...folder, children: [] });
   });
 
   // Build parent-child relationships
-  folders.forEach((folder) => {
+  folders.forEach((folder: { id: string; parent_id: string | null }) => {
     const node = map.get(folder.id);
     if (folder.parent_id) {
       const parent = map.get(folder.parent_id);

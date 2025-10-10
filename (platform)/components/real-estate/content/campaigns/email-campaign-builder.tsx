@@ -2,7 +2,6 @@
 
 import { useState, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
 import { RichTextEditor } from '../editor/rich-text-editor';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -13,7 +12,7 @@ import { Calendar } from '@/components/ui/calendar';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { CalendarIcon, Send, Save } from 'lucide-react';
 import { format } from 'date-fns';
-import { createEmailCampaign, EmailCampaignSchema } from '@/lib/modules/content/campaigns';
+import { createEmailCampaign } from '@/lib/modules/content/campaigns';
 import { useToast } from '@/hooks/use-toast';
 import { useRouter } from 'next/navigation';
 
@@ -30,7 +29,6 @@ export function EmailCampaignBuilder({ campaignId, organizationId }: EmailCampai
   const router = useRouter();
 
   const form = useForm({
-    resolver: zodResolver(EmailCampaignSchema),
     defaultValues: {
       subject: '',
       preheader: '',

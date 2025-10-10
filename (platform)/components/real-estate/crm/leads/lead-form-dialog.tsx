@@ -2,7 +2,6 @@
 
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
 import {
   Dialog,
   DialogContent,
@@ -30,7 +29,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { createLead, updateLead, createLeadSchema, type CreateLeadInput } from './actions';
+import { createLead, updateLead, type CreateLeadInput } from './actions';
 import { Plus } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { useRouter } from 'next/navigation';
@@ -57,7 +56,6 @@ export function LeadFormDialog({
   const router = useRouter();
 
   const form = useForm({
-    resolver: zodResolver(createLeadSchema) as any,
     defaultValues: lead
       ? {
           name: lead.name,

@@ -269,7 +269,7 @@ export async function checkout() {
 
     // Get tool prices and create purchases
     const toolPurchases = await Promise.all(
-      cart.tools.map(async (toolId) => {
+      cart.tools.map(async (toolId: string) => {
         const tool = await toolsProvider.findById(toolId);
         if (!tool) return null;
 

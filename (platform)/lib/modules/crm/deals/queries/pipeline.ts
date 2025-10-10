@@ -75,7 +75,7 @@ export async function getDealsByStage(): Promise<DealsByStageResult> {
             },
           });
 
-          const totalValue = deals.reduce((sum, deal) => sum + Number(deal.value), 0);
+          const totalValue = deals.reduce((sum: number, deal: { value: number }) => sum + Number(deal.value), 0);
 
           return {
             stage,

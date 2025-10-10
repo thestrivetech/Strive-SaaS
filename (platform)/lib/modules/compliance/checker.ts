@@ -70,7 +70,7 @@ export async function getOrganizationCompliance(): Promise<ComplianceAlert[]> {
       });
 
       const allAlerts = await Promise.all(
-        loops.map(loop => checkLoopCompliance(loop.id))
+        loops.map((loop: { id: string }) => checkLoopCompliance(loop.id))
       );
 
       return allAlerts.flat();

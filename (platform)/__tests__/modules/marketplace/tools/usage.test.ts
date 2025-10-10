@@ -12,6 +12,7 @@ import {
   ToolCategory,
   ToolTier,
 } from './setup';
+import { mockAsyncFunction } from '../../../helpers/mock-helpers';
 
 setupMarketplaceToolsTests();
 
@@ -19,7 +20,7 @@ describe('trackToolUsage', () => {
   it('should increment usage count and update last used', async () => {
     const { organization, user } = await createTestOrgWithUser();
 
-    getCurrentUser.mockResolvedValue({
+    mockAsyncFunction(getCurrentUser).mockResolvedValue({
       ...user,
       organization_members: [{ organization_id: organization.id }],
     });
@@ -56,7 +57,7 @@ describe('trackToolUsage', () => {
   it('should throw error if tool not purchased', async () => {
     const { organization, user } = await createTestOrgWithUser();
 
-    getCurrentUser.mockResolvedValue({
+    mockAsyncFunction(getCurrentUser).mockResolvedValue({
       ...user,
       organization_members: [{ organization_id: organization.id }],
     });

@@ -100,7 +100,7 @@ Example: ["Median home price increased 15% year-over-year", "School ratings abov
     // Fallback: split by newlines if JSON parsing fails
     return response.content
       .split('\n')
-      .filter(line => line.trim())
+      .filter((line: string) => line.trim())
       .slice(0, 5);
   }
 }

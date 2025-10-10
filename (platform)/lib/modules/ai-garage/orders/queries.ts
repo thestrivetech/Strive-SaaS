@@ -99,7 +99,7 @@ export async function getOrders(
       // Sorting
       const orderBy: Prisma.custom_agent_ordersOrderByWithRelationInput = {};
       if (filters?.sort_by) {
-        orderBy[filters.sort_by] = filters.sort_order || 'desc';
+        (orderBy as any)[filters.sort_by] = filters.sort_order || 'desc';
       } else {
         orderBy.created_at = 'desc';
       }

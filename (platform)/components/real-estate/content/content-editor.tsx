@@ -3,7 +3,6 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
@@ -16,8 +15,6 @@ import { RichTextEditor } from './editor/rich-text-editor';
 import { SEOPanel } from './editor/seo-panel';
 import { PublishSettings } from './editor/publish-settings';
 import {
-  ContentItemSchema,
-  type ContentItemInput,
   createContentItem,
   updateContentItem,
   publishContent,
@@ -40,7 +37,6 @@ export function ContentEditor({
   const [isPublishing, setIsPublishing] = useState(false);
 
   const form = useForm<any>({
-    resolver: zodResolver(ContentItemSchema),
     defaultValues: initialContent || {
       title: '',
       slug: '',

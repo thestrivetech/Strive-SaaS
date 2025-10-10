@@ -220,11 +220,11 @@ describe('Document Versioning & Queries', () => {
       (prisma.transaction_loops.findFirst as jest.Mock).mockResolvedValue(mockLoop);
       (prisma.documents.findMany as jest.Mock).mockResolvedValue(mockDocuments);
 
-      const documents = await getDocumentsByLoop({ loopId: '550e8400-e29b-41d4-a716-446655440000' });
+      const result = await getDocumentsByLoop({ loopId: '550e8400-e29b-41d4-a716-446655440000' });
 
-      expect(documents).toHaveLength(2);
-      expect(documents[0].category).toBe('contract');
-      expect(documents[1].category).toBe('disclosure');
+      expect(result.data).toHaveLength(2);
+      expect(result.data[0].category).toBe('contract');
+      expect(result.data[1].category).toBe('disclosure');
     });
 
     it('should filter documents by category', async () => {

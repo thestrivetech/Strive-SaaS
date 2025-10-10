@@ -117,7 +117,7 @@ export function ListingCard({ listing }: ListingCardProps) {
         {/* Features */}
         {listing.features && listing.features.length > 0 && (
           <div className="flex flex-wrap gap-1">
-            {listing.features.slice(0, 3).map((feature) => (
+            {listing.features.slice(0, 3).map((feature: string) => (
               <Badge key={feature} variant="secondary" className="text-xs">
                 {feature}
               </Badge>

@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createPaymentIntent } from '@/lib/modules/onboarding/payment';
-import { paymentIntentSchema } from '@/lib/modules/onboarding/schemas';
 
 /**
  * POST /api/v1/onboarding/payment-intent
@@ -11,8 +10,8 @@ export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
 
-    // Validate input
-    const { sessionToken, tier, billingCycle } = paymentIntentSchema.parse(body);
+    // Extract input
+    const { sessionToken, tier, billingCycle } = body;
 
     // Create payment intent
     const result = await createPaymentIntent(tier, billingCycle, sessionToken);

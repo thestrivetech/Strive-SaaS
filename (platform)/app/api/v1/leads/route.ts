@@ -1,7 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { requireAuth, getCurrentUser } from '@/lib/auth/auth-helpers';
 import { getLeads, getLeadsCount } from '@/lib/modules/crm/leads';
-import { leadFiltersSchema } from '@/lib/modules/crm/leads/schemas';
 import { canAccessCRM } from '@/lib/auth/rbac';
 
 export async function GET(req: NextRequest) {
@@ -18,14 +17,14 @@ export async function GET(req: NextRequest) {
 
     // Parse query params
     const { searchParams } = new URL(req.url);
-    const filters = leadFiltersSchema.parse({
+    const filters = {
       status: searchParams.get('status'),
       source: searchParams.get('source'),
       score: searchParams.get('score'),
       search: searchParams.get('search'),
       limit: searchParams.get('limit') ? parseInt(searchParams.get('limit')!) : 50,
       offset: searchParams.get('offset') ? parseInt(searchParams.get('offset')!) : 0,
-    });
+    };
 
     const [leads, total] = await Promise.all([
       getLeads(filters),

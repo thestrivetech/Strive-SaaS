@@ -1,11 +1,31 @@
 'use server';
 
 import { revalidatePath } from 'next/cache';
+import { z } from 'zod';
 import { prisma } from '@/lib/database/prisma';
 import { requireAuth } from '@/lib/auth/middleware';
 import { canAccessREID, canCreateReports, getREIDLimits } from '@/lib/auth/rbac';
 import { generateReport } from './generator';
 import crypto from 'crypto';
+
+// Schema for market report input
+const MarketReportSchema = z.object({
+  title: z.string().min(1).max(200),
+  description: z.string().optional(),
+  reportType: z.string(),
+  areaCodes: z.array(z.string()),
+  dateRange: z.object({
+    start: z.date(),
+    end: z.date()
+  }).optional(),
+  filters: z.any().optional(),
+  isPublic: z.boolean().optional(),
+  includeInsights: z.boolean().optional(),
+  includeAlerts: z.boolean().optional(),
+  includeForecast: z.boolean().optional(),
+});
+
+type MarketReportInput = z.infer<typeof MarketReportSchema>;
 
 /**
  * Create a new market report

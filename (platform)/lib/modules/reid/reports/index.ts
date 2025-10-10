@@ -13,3 +13,8 @@ export {
   getMarketReportById,
   getPublicReport
 } from './queries';
+
+// Generator
+export {
+  generateReport
+} from './generator';

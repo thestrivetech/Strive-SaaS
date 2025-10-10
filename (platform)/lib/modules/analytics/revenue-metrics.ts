@@ -100,7 +100,7 @@ export async function getRevenueBySource(): Promise<RevenueBySource[]> {
     // Group by source
     const sourceMap = new Map<string, { revenue: number; count: number }>();
 
-    wonDeals.forEach((deal) => {
+    wonDeals.forEach((deal: any) => {
       const source = deal.lead?.source || 'DIRECT';
       const current = sourceMap.get(source) || { revenue: 0, count: 0 };
 

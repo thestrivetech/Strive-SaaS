@@ -118,8 +118,8 @@ export async function requestAIInsights(input: AIInsightsRequest) {
   });
 
   if (insights.length !== validated.areaCodes.length) {
-    const foundCodes = insights.map(i => i.area_code);
-    const missingCodes = validated.areaCodes.filter(code => !foundCodes.includes(code));
+    const foundCodes = insights.map((i: { area_code: string }) => i.area_code);
+    const missingCodes = validated.areaCodes.filter((code: string) => !foundCodes.includes(code));
     throw new Error(`Neighborhood insights not found for area codes: ${missingCodes.join(', ')}`);
   }
 
@@ -128,7 +128,7 @@ export async function requestAIInsights(input: AIInsightsRequest) {
 
   return {
     analysis,
-    areas: insights.map(i => ({
+    areas: insights.map((i: { area_code: string; area_name: string }) => ({
       areaCode: i.area_code,
       areaName: i.area_name,
     })),
@@ -210,7 +210,7 @@ export async function requestInvestmentRecommendations(input: InvestmentRecommen
   return {
     recommendations,
     analyzedAreas: insights.length,
-    areas: insights.map(i => ({
+    areas: insights.map((i: { area_code: string; area_name: string; median_price: any; rent_yield: number; investment_grade: string }) => ({
       areaCode: i.area_code,
       areaName: i.area_name,
       medianPrice: i.median_price?.toNumber(),

@@ -9,6 +9,7 @@
 
 import { prisma } from '@/lib/database/prisma';
 import { setTenantContext, clearTenantContext } from '@/lib/database/prisma-middleware';
+import type { customers, notifications } from '@prisma/client';
 
 describe('Tenant Isolation Middleware', () => {
   const ORG_1_ID = 'org-1-test-id';
@@ -43,7 +44,7 @@ describe('Tenant Isolation Middleware', () => {
       const customers = await prisma.customers.findMany();
 
       // Verify all returned customers belong to ORG_1
-      customers.forEach((customer) => {
+      customers.forEach((customer: customers) => {
         expect(customer.organization_id).toBe(ORG_1_ID);
       });
     });
@@ -159,9 +160,9 @@ describe('Tenant Isolation Middleware', () => {
       setTenantContext({ organizationId: ORG_1_ID, userId: USER_1_ID });
 
       // User-scoped tables like notifications should filter by userId
-      const notifications = await prisma.notifications.findMany({ take: 10 });
+      const notificationsList = await prisma.notifications.findMany({ take: 10 });
 
-      notifications.forEach((notification) => {
+      notificationsList.forEach((notification: notifications) => {
         expect(notification.user_id).toBe(USER_1_ID);
       });
     });

@@ -63,7 +63,7 @@ export const getCampaignMetrics = cache(async () => {
   });
 
   const totals = campaigns.reduce(
-    (acc, campaign) => ({
+    (acc: { impressions: number; clicks: number; conversions: number; spend: number; revenue: number }, campaign: { impressions: number; clicks: number; conversions: number; spend: number; revenue: number }) => ({
       impressions: acc.impressions + campaign.impressions,
       clicks: acc.clicks + campaign.clicks,
       conversions: acc.conversions + campaign.conversions,
@@ -131,7 +131,7 @@ export const getEmailCampaignMetrics = cache(async () => {
   });
 
   const totals = emails.reduce(
-    (acc, email) => ({
+    (acc: { sent: number; delivered: number; opened: number; clicked: number; bounced: number; unsubscribed: number }, email: { sent: number; delivered: number; opened: number; clicked: number; bounced: number; unsubscribed: number }) => ({
       sent: acc.sent + email.sent,
       delivered: acc.delivered + email.delivered,
       opened: acc.opened + email.opened,
@@ -229,7 +229,7 @@ export const getTopCampaigns = cache(async (metric: 'revenue' | 'conversions' | 
   });
 
   // Calculate ROI and sort
-  const campaignsWithRoi = campaigns.map((campaign) => {
+  const campaignsWithRoi = campaigns.map((campaign: { spend: number; revenue: number; conversions: number }) => {
     const spend = Number(campaign.spend);
     const revenue = Number(campaign.revenue);
     const roi = spend > 0 ? ((revenue - spend) / spend) * 100 : 0;
@@ -241,7 +241,7 @@ export const getTopCampaigns = cache(async (metric: 'revenue' | 'conversions' | 
   });
 
   // Sort by selected metric
-  campaignsWithRoi.sort((a, b) => {
+  campaignsWithRoi.sort((a: { revenue: number; conversions: number; roi: number }, b: { revenue: number; conversions: number; roi: number }) => {
     if (metric === 'revenue') return Number(b.revenue) - Number(a.revenue);
     if (metric === 'conversions') return b.conversions - a.conversions;
     return b.roi - a.roi;

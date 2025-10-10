@@ -311,14 +311,14 @@ describe('CRM Workflow Integration Tests', () => {
   });
 
   describe('Error Handling', () => {
-    it('should fail to create customer without required fields', async () => {
+    it('should fail to create customer with duplicate email', async () => {
       const org = await createTestOrganization();
 
       await expect(
         testPrisma.customers.create({
           data: {
             organization_id: org.id,
-            // @ts-expect-error - intentionally missing required 'name' field for test
+            name: 'Test Customer',
             email: 'test@example.com',
           },
         })

@@ -1,7 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getCurrentUser } from '@/lib/auth/auth-helpers';
 import { getOrders, getOrdersCount } from '@/lib/modules/ai-garage/orders';
-import { orderFiltersSchema } from '@/lib/modules/ai-garage/orders/schemas';
 import { canAccessAIGarage } from '@/lib/auth/rbac';
 
 export async function GET(req: NextRequest) {
@@ -16,13 +15,13 @@ export async function GET(req: NextRequest) {
     }
 
     const { searchParams } = new URL(req.url);
-    const filters = orderFiltersSchema.parse({
+    const filters = {
       status: searchParams.get('status'),
       complexity: searchParams.get('complexity'),
       search: searchParams.get('search'),
       limit: searchParams.get('limit') ? parseInt(searchParams.get('limit')!) : 50,
       offset: searchParams.get('offset') ? parseInt(searchParams.get('offset')!) : 0,
-    });
+    };
 
     const [orders, total] = await Promise.all([
       getOrders(filters),

@@ -2,7 +2,6 @@
 
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
 import {
   Dialog,
   DialogContent,
@@ -30,7 +29,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { createDeal, updateDeal, createDealSchema } from './actions';
+import { createDeal, updateDeal } from './actions';
 import { Plus } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { useRouter } from 'next/navigation';
@@ -55,7 +54,6 @@ export function DealFormDialog({
   const router = useRouter();
 
   const form = useForm({
-    resolver: zodResolver(createDealSchema) as any,
     defaultValues: deal
       ? {
           title: deal.title,

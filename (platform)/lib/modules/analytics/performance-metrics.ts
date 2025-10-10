@@ -64,7 +64,7 @@ export async function getAgentPerformance(
     });
 
     const agentMetrics = await Promise.all(
-      orgMembers.map(async (member) => {
+      orgMembers.map(async (member: any) => {
         const userId = member.user_id;
 
         const [
@@ -295,7 +295,7 @@ export async function getTeamActivityStats(
       _count: { id: true },
     });
 
-    return activities.map((activity) => ({
+    return activities.map((activity: any) => ({
       type: activity.type,
       count: activity._count.id,
     }));

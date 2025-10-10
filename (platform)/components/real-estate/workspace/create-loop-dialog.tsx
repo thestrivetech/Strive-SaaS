@@ -2,7 +2,6 @@
 
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
 import {
   Dialog,
   DialogContent,
@@ -30,7 +29,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { createLoop, CreateLoopSchema, type CreateLoopInput } from '@/lib/modules/transactions/actions';
+import { createLoop, type CreateLoopInput } from '@/lib/modules/transactions/actions';
 import { Plus } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { useRouter } from 'next/navigation';
@@ -42,7 +41,6 @@ export function CreateLoopDialog() {
   const router = useRouter();
 
   const form = useForm<CreateLoopInput>({
-    resolver: zodResolver(CreateLoopSchema),
     defaultValues: {
       propertyAddress: '',
       transactionType: 'PURCHASE_AGREEMENT',

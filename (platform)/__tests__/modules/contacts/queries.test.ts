@@ -22,6 +22,7 @@ import {
   getContactsCount,
 } from '@/lib/modules/crm/contacts/queries';
 import { getCurrentUser } from '@/lib/auth/auth-helpers';
+import { mockAsyncFunction } from '@/__tests__/helpers/mock-helpers';
 
 // Mock auth helpers
 jest.mock('@/lib/auth/auth-helpers', () => ({
@@ -57,7 +58,7 @@ describe('Contacts Queries', () => {
     it('should return all contacts for an organization', async () => {
       const { organization, user } = await createTestOrgWithUser();
 
-      getCurrentUser.mockResolvedValue({
+      mockAsyncFunction(getCurrentUser).mockResolvedValue({
         ...user,
         organization_members: [{ organization_id: organization.id }],
       });
@@ -80,7 +81,7 @@ describe('Contacts Queries', () => {
     it('should filter contacts by type', async () => {
       const { organization, user } = await createTestOrgWithUser();
 
-      getCurrentUser.mockResolvedValue({
+      mockAsyncFunction(getCurrentUser).mockResolvedValue({
         ...user,
         organization_members: [{ organization_id: organization.id }],
       });
@@ -102,7 +103,7 @@ describe('Contacts Queries', () => {
     it('should filter contacts by status', async () => {
       const { organization, user } = await createTestOrgWithUser();
 
-      getCurrentUser.mockResolvedValue({
+      mockAsyncFunction(getCurrentUser).mockResolvedValue({
         ...user,
         organization_members: [{ organization_id: organization.id }],
       });
@@ -124,7 +125,7 @@ describe('Contacts Queries', () => {
     it('should search contacts by name, email, company', async () => {
       const { organization, user } = await createTestOrgWithUser();
 
-      getCurrentUser.mockResolvedValue({
+      mockAsyncFunction(getCurrentUser).mockResolvedValue({
         ...user,
         organization_members: [{ organization_id: organization.id }],
       });
@@ -146,7 +147,7 @@ describe('Contacts Queries', () => {
     it('should paginate results', async () => {
       const { organization, user } = await createTestOrgWithUser();
 
-      getCurrentUser.mockResolvedValue({
+      mockAsyncFunction(getCurrentUser).mockResolvedValue({
         ...user,
         organization_members: [{ organization_id: organization.id }],
       });
@@ -175,7 +176,7 @@ describe('Contacts Queries', () => {
     it('should sort contacts by specified field', async () => {
       const { organization, user } = await createTestOrgWithUser();
 
-      getCurrentUser.mockResolvedValue({
+      mockAsyncFunction(getCurrentUser).mockResolvedValue({
         ...user,
         organization_members: [{ organization_id: organization.id }],
       });
@@ -199,7 +200,7 @@ describe('Contacts Queries', () => {
       const { organization: org1, user: user1 } = await createTestOrgWithUser();
       const { organization: org2 } = await createTestOrgWithUser();
 
-      getCurrentUser.mockResolvedValue({
+      mockAsyncFunction(getCurrentUser).mockResolvedValue({
         ...user1,
         organization_members: [{ organization_id: org1.id }],
       });
@@ -223,7 +224,7 @@ describe('Contacts Queries', () => {
     it('should return contact by ID', async () => {
       const { organization, user } = await createTestOrgWithUser();
 
-      getCurrentUser.mockResolvedValue({
+      mockAsyncFunction(getCurrentUser).mockResolvedValue({
         ...user,
         organization_members: [{ organization_id: organization.id }],
       });
@@ -246,7 +247,7 @@ describe('Contacts Queries', () => {
     it('should return null for non-existent contact', async () => {
       const { organization, user } = await createTestOrgWithUser();
 
-      getCurrentUser.mockResolvedValue({
+      mockAsyncFunction(getCurrentUser).mockResolvedValue({
         ...user,
         organization_members: [{ organization_id: organization.id }],
       });
@@ -260,7 +261,7 @@ describe('Contacts Queries', () => {
       const { organization: org1, user: user1 } = await createTestOrgWithUser();
       const { organization: org2 } = await createTestOrgWithUser();
 
-      getCurrentUser.mockResolvedValue({
+      mockAsyncFunction(getCurrentUser).mockResolvedValue({
         ...user1,
         organization_members: [{ organization_id: org1.id }],
       });
@@ -284,7 +285,7 @@ describe('Contacts Queries', () => {
     it('should return contact with activities and deals', async () => {
       const { organization, user } = await createTestOrgWithUser();
 
-      getCurrentUser.mockResolvedValue({
+      mockAsyncFunction(getCurrentUser).mockResolvedValue({
         ...user,
         organization_members: [{ organization_id: organization.id }],
       });
@@ -327,7 +328,7 @@ describe('Contacts Queries', () => {
     it('should limit activities to 50 recent entries', async () => {
       const { organization, user } = await createTestOrgWithUser();
 
-      getCurrentUser.mockResolvedValue({
+      mockAsyncFunction(getCurrentUser).mockResolvedValue({
         ...user,
         organization_members: [{ organization_id: organization.id }],
       });
@@ -359,7 +360,7 @@ describe('Contacts Queries', () => {
     it('should return correct contact statistics', async () => {
       const { organization, user } = await createTestOrgWithUser();
 
-      getCurrentUser.mockResolvedValue({
+      mockAsyncFunction(getCurrentUser).mockResolvedValue({
         ...user,
         organization_members: [{ organization_id: organization.id }],
       });
@@ -387,7 +388,7 @@ describe('Contacts Queries', () => {
       const { organization: org1, user: user1 } = await createTestOrgWithUser();
       const { organization: org2 } = await createTestOrgWithUser();
 
-      getCurrentUser.mockResolvedValue({
+      mockAsyncFunction(getCurrentUser).mockResolvedValue({
         ...user1,
         organization_members: [{ organization_id: org1.id }],
       });
@@ -412,7 +413,7 @@ describe('Contacts Queries', () => {
     it('should return total count of contacts', async () => {
       const { organization, user } = await createTestOrgWithUser();
 
-      getCurrentUser.mockResolvedValue({
+      mockAsyncFunction(getCurrentUser).mockResolvedValue({
         ...user,
         organization_members: [{ organization_id: organization.id }],
       });
@@ -433,7 +434,7 @@ describe('Contacts Queries', () => {
     it('should return filtered count', async () => {
       const { organization, user } = await createTestOrgWithUser();
 
-      getCurrentUser.mockResolvedValue({
+      mockAsyncFunction(getCurrentUser).mockResolvedValue({
         ...user,
         organization_members: [{ organization_id: organization.id }],
       });

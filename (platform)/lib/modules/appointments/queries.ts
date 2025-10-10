@@ -309,18 +309,18 @@ export async function getAppointmentStats(
 
       const stats = {
         total: appointments.length,
-        scheduled: appointments.filter((a) => a.status === 'SCHEDULED').length,
-        confirmed: appointments.filter((a) => a.status === 'CONFIRMED').length,
-        completed: appointments.filter((a) => a.status === 'COMPLETED').length,
-        cancelled: appointments.filter((a) => a.status === 'CANCELLED').length,
-        no_show: appointments.filter((a) => a.status === 'NO_SHOW').length,
+        scheduled: appointments.filter((a: any) => a.status === 'SCHEDULED').length,
+        confirmed: appointments.filter((a: any) => a.status === 'CONFIRMED').length,
+        completed: appointments.filter((a: any) => a.status === 'COMPLETED').length,
+        cancelled: appointments.filter((a: any) => a.status === 'CANCELLED').length,
+        no_show: appointments.filter((a: any) => a.status === 'NO_SHOW').length,
         byType: {
-          meeting: appointments.filter((a) => a.type === 'MEETING').length,
-          call: appointments.filter((a) => a.type === 'CALL').length,
-          showing: appointments.filter((a) => a.type === 'SHOWING').length,
-          open_house: appointments.filter((a) => a.type === 'OPEN_HOUSE').length,
-          follow_up: appointments.filter((a) => a.type === 'FOLLOW_UP').length,
-          other: appointments.filter((a) => a.type === 'OTHER').length,
+          meeting: appointments.filter((a: any) => a.type === 'MEETING').length,
+          call: appointments.filter((a: any) => a.type === 'CALL').length,
+          showing: appointments.filter((a: any) => a.type === 'SHOWING').length,
+          open_house: appointments.filter((a: any) => a.type === 'OPEN_HOUSE').length,
+          follow_up: appointments.filter((a: any) => a.type === 'FOLLOW_UP').length,
+          other: appointments.filter((a: any) => a.type === 'OTHER').length,
         },
       };
 

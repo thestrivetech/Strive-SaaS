@@ -136,7 +136,7 @@ describe('Content Analytics', () => {
       const byType = await getContentPerformanceByType();
 
       // Should only count org1 content
-      const blogPosts = byType.find(item => item.type === ContentType.BLOG_POST);
+      const blogPosts = byType.find((item: { type: ContentType; count: number; totalViews: number }) => item.type === ContentType.BLOG_POST);
       expect(blogPosts?.count).toBe(5); // Not 8 (org1 + org2)
     });
   });
@@ -535,7 +535,7 @@ describe('Content Analytics', () => {
       const topBlogs = await getTopPerformingContent(ContentType.BLOG_POST);
 
       expect(topBlogs.length).toBeLessThanOrEqual(5);
-      topBlogs.forEach(content => {
+      topBlogs.forEach((content: { type: ContentType; view_count: number }) => {
         expect(content.type).toBe(ContentType.BLOG_POST);
       });
     });
@@ -589,8 +589,8 @@ describe('Content Analytics', () => {
 
       const byType = await getContentPerformanceByType();
 
-      const blogPost = byType.find(item => item.type === ContentType.BLOG_POST);
-      const article = byType.find(item => item.type === ContentType.ARTICLE);
+      const blogPost = byType.find((item: { type: ContentType; count: number; totalViews: number }) => item.type === ContentType.BLOG_POST);
+      const article = byType.find((item: { type: ContentType; count: number; totalViews: number }) => item.type === ContentType.ARTICLE);
 
       expect(blogPost).toBeDefined();
       expect(blogPost?.count).toBe(1);

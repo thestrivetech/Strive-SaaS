@@ -21,6 +21,9 @@ export {
   getTemplateStats,
 } from './queries';
 
+// Export types
+export type { TemplateFilters } from './queries';
+
 // Export actions
 export {
   createTemplate,

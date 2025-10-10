@@ -89,7 +89,7 @@ export async function getBlueprints(
       // Sorting
       const orderBy: Prisma.tool_blueprintsOrderByWithRelationInput = {};
       if (filters?.sort_by) {
-        orderBy[filters.sort_by] = filters.sort_order || 'desc';
+        (orderBy as any)[filters.sort_by] = filters.sort_order || 'desc';
       } else {
         // Default: sort by popularity (usage_count)
         orderBy.usage_count = 'desc';

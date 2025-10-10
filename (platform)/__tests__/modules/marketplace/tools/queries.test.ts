@@ -17,6 +17,7 @@ import {
   ToolCategory,
   ToolTier,
 } from './setup';
+import { mockAsyncFunction } from '../../../helpers/mock-helpers';
 
 setupMarketplaceToolsTests();
 
@@ -284,7 +285,7 @@ describe('getPurchasedTools', () => {
   it('should return organization purchased tools', async () => {
     const { organization, user } = await createTestOrgWithUser();
 
-    getCurrentUser.mockResolvedValue({
+    mockAsyncFunction(getCurrentUser).mockResolvedValue({
       ...user,
       organization_members: [{ organization_id: organization.id }],
     });
@@ -340,7 +341,7 @@ describe('getPurchasedTools', () => {
   it('should only return ACTIVE purchases', async () => {
     const { organization, user } = await createTestOrgWithUser();
 
-    getCurrentUser.mockResolvedValue({
+    mockAsyncFunction(getCurrentUser).mockResolvedValue({
       ...user,
       organization_members: [{ organization_id: organization.id }],
     });
@@ -385,7 +386,7 @@ describe('getPurchasedTools', () => {
     const { organization: org1, user: user1 } = await createTestOrgWithUser();
     const { organization: org2 } = await createTestOrgWithUser();
 
-    getCurrentUser.mockResolvedValue({
+    mockAsyncFunction(getCurrentUser).mockResolvedValue({
       ...user1,
       organization_members: [{ organization_id: org1.id }],
     });
@@ -420,7 +421,7 @@ describe('getToolPurchase', () => {
   it('should return purchase if exists', async () => {
     const { organization, user } = await createTestOrgWithUser();
 
-    getCurrentUser.mockResolvedValue({
+    mockAsyncFunction(getCurrentUser).mockResolvedValue({
       ...user,
       organization_members: [{ organization_id: organization.id }],
     });
@@ -456,7 +457,7 @@ describe('getToolPurchase', () => {
   it('should return null if not purchased', async () => {
     const { organization, user } = await createTestOrgWithUser();
 
-    getCurrentUser.mockResolvedValue({
+    mockAsyncFunction(getCurrentUser).mockResolvedValue({
       ...user,
       organization_members: [{ organization_id: organization.id }],
     });

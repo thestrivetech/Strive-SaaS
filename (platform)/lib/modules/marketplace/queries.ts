@@ -105,7 +105,7 @@ export const getMarketplaceTools = unstable_cache(
     // Sorting
     const orderBy: Prisma.marketplace_toolsOrderByWithRelationInput = {};
     if (filters?.sort_by) {
-      orderBy[filters.sort_by] = filters.sort_order || 'asc';
+      (orderBy as Record<string, any>)[filters.sort_by] = filters.sort_order || 'asc';
     } else {
       orderBy.purchase_count = 'desc'; // Default: most popular first
     }

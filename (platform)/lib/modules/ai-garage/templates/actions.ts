@@ -511,7 +511,7 @@ async function updateTemplateRating(templateId: string): Promise<void> {
     });
 
     const avgRating = reviews.length > 0
-      ? reviews.reduce((sum, r) => sum + r.rating, 0) / reviews.length
+      ? reviews.reduce((sum: number, r: { rating: number }) => sum + r.rating, 0) / reviews.length
       : null;
 
     await prisma.agent_templates.update({

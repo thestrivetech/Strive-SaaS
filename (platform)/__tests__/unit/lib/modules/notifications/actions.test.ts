@@ -21,7 +21,7 @@ import {
 
 // Mock getCurrentUser
 import { getCurrentUser } from '@/lib/auth/auth-helpers';
-import { getCurrentUser } from '@/lib/auth/auth-helpers';
+import { mockAsyncFunction } from '../../../../helpers/mock-helpers';
 
 jest.mock('@/lib/auth/auth-helpers', () => ({
   getCurrentUser: jest.fn(),
@@ -152,7 +152,7 @@ describe('Notification Actions', () => {
       });
 
       // Mock getCurrentUser
-      (getCurrentUser as jest.Mock).mockResolvedValueOnce({
+      mockAsyncFunction(getCurrentUser).mockResolvedValueOnce({
         ...user,
         organizationId: organization.id,
       });
@@ -184,7 +184,7 @@ describe('Notification Actions', () => {
         },
       });
 
-      getCurrentUser.mockResolvedValue({
+      mockAsyncFunction(getCurrentUser).mockResolvedValue({
         ...user,
         organizationId: organization.id,
       });
@@ -202,7 +202,7 @@ describe('Notification Actions', () => {
     });
 
     it('should reject unauthorized access', async () => {
-      getCurrentUser.mockResolvedValueOnce(null);
+      mockAsyncFunction(getCurrentUser).mockResolvedValueOnce(null);
 
       const result = await markNotificationRead({
         notificationId: 'some-id',
@@ -229,7 +229,7 @@ describe('Notification Actions', () => {
       });
 
       // Try to mark as user2
-      getCurrentUser.mockResolvedValueOnce({
+      mockAsyncFunction(getCurrentUser).mockResolvedValueOnce({
         ...otherUser,
         organizationId: organization.id,
       });
@@ -283,7 +283,7 @@ describe('Notification Actions', () => {
         ],
       });
 
-      getCurrentUser.mockResolvedValueOnce({
+      mockAsyncFunction(getCurrentUser).mockResolvedValueOnce({
         ...user,
         organizationId: organization.id,
       });
@@ -335,7 +335,7 @@ describe('Notification Actions', () => {
       });
 
       // Mark all for user1
-      getCurrentUser.mockResolvedValueOnce({
+      mockAsyncFunction(getCurrentUser).mockResolvedValueOnce({
         ...user1,
         organizationId: organization.id,
       });
@@ -387,7 +387,7 @@ describe('Notification Actions', () => {
         },
       });
 
-      getCurrentUser.mockResolvedValueOnce({
+      mockAsyncFunction(getCurrentUser).mockResolvedValueOnce({
         ...user,
         organizationId: organization.id,
       });
@@ -430,7 +430,7 @@ describe('Notification Actions', () => {
         },
       });
 
-      getCurrentUser.mockResolvedValueOnce({
+      mockAsyncFunction(getCurrentUser).mockResolvedValueOnce({
         ...user1,
         organizationId: organization.id,
       });
@@ -461,7 +461,7 @@ describe('Notification Actions', () => {
         },
       });
 
-      getCurrentUser.mockResolvedValueOnce({
+      mockAsyncFunction(getCurrentUser).mockResolvedValueOnce({
         ...user,
         organizationId: organization.id,
       });
@@ -496,7 +496,7 @@ describe('Notification Actions', () => {
         },
       });
 
-      getCurrentUser.mockResolvedValueOnce({
+      mockAsyncFunction(getCurrentUser).mockResolvedValueOnce({
         ...user2,
         organizationId: organization.id,
       });

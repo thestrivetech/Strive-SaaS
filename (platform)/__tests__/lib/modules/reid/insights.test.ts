@@ -16,6 +16,7 @@ import { prisma } from '@/lib/database/prisma';
 import { requireAuth } from '@/lib/auth/middleware';
 import { canAccessREID, canAccessFeature } from '@/lib/auth/rbac';
 import { revalidatePath } from 'next/cache';
+import { mockFunction, mockAsyncFunction } from '../../helpers/mock-helpers';
 
 // Mock Prisma
 jest.mock('@/lib/database/prisma', () => ({
@@ -34,10 +35,19 @@ jest.mock('@/lib/database/prisma', () => ({
 jest.mock('@/lib/auth/middleware', () => ({
   requireAuth: jest.fn().mockResolvedValue({
     id: 'user-123',
-    organizationId: 'org-123',
+    email: 'test@example.com',
+    name: 'Test User',
+    avatar_url: null,
+    role: 'USER',
     globalRole: 'USER',
-    organizationRole: 'MEMBER',
+    subscription_tier: 'GROWTH',
     subscriptionTier: 'GROWTH',
+    organizationId: 'org-123',
+    organizationRole: 'MEMBER',
+    is_active: true,
+    created_at: new Date(),
+    updated_at: new Date(),
+    _raw: {} as any,
   }),
 }));
 
@@ -106,7 +116,7 @@ describe('REID Insights Module', () => {
     });
 
     it('checks REID access permission', async () => {
-      canAccessREID.mockReturnValue(false);
+      mockFunction(canAccessREID).mockReturnValue(false);
 
       await expect(
         createNeighborhoodInsight({
@@ -116,11 +126,11 @@ describe('REID Insights Module', () => {
         } as any)
       ).rejects.toThrow('Unauthorized: REID access required');
 
-      canAccessREID.mockReturnValue(true);
+      mockFunction(canAccessREID).mockReturnValue(true);
     });
 
     it('checks feature tier permission', async () => {
-      canAccessFeature.mockReturnValue(false);
+      mockFunction(canAccessFeature).mockReturnValue(false);
 
       await expect(
         createNeighborhoodInsight({
@@ -130,7 +140,7 @@ describe('REID Insights Module', () => {
         } as any)
       ).rejects.toThrow('Upgrade required');
 
-      canAccessFeature.mockReturnValue(true);
+      mockFunction(canAccessFeature).mockReturnValue(true);
     });
 
     it('revalidates cache paths', async () => {
@@ -205,11 +215,11 @@ describe('REID Insights Module', () => {
 
     it('prevents updating insight from another organization', async () => {
       // User from org-123 trying to update insight from org-456
-      requireAuth.mockResolvedValue({
+      mockAsyncFunction(requireAuth).mockResolvedValue({
         id: 'user-123',
         organizationId: 'org-123',
         globalRole: 'USER',
-      });
+      } as any);
 
       prisma.neighborhood_insights.findFirst.mockResolvedValue(null);
 
@@ -256,13 +266,13 @@ describe('REID Insights Module', () => {
     });
 
     it('checks REID access permission', async () => {
-      canAccessREID.mockReturnValue(false);
+      mockFunction(canAccessREID).mockReturnValue(false);
 
       await expect(deleteNeighborhoodInsight('insight-123')).rejects.toThrow(
         'Unauthorized: REID access required'
       );
 
-      canAccessREID.mockReturnValue(true);
+      mockFunction(canAccessREID).mockReturnValue(true);
     });
   });
 
@@ -340,24 +350,24 @@ describe('REID Insights Module', () => {
     });
 
     it('checks REID access permission', async () => {
-      canAccessREID.mockReturnValue(false);
+      mockFunction(canAccessREID).mockReturnValue(false);
 
       await expect(getNeighborhoodInsights()).rejects.toThrow(
         'Unauthorized: REID access required'
       );
 
-      canAccessREID.mockReturnValue(true);
+      mockFunction(canAccessREID).mockReturnValue(true);
     });
   });
 
   describe('Multi-tenant Isolation', () => {
     it('prevents accessing insights from other organizations', async () => {
       // User from org-123
-      requireAuth.mockResolvedValue({
+      mockAsyncFunction(requireAuth).mockResolvedValue({
         id: 'user-123',
         organizationId: 'org-123',
         globalRole: 'USER',
-      });
+      } as any);
 
       // Insights from both orgs in database
       const allInsights = [
@@ -366,7 +376,7 @@ describe('REID Insights Module', () => {
       ];
 
       // Prisma should only return org-123's insights
-      prisma.neighborhood_insights.findMany.mockImplementation((args) => {
+      prisma.neighborhood_insights.findMany.mockImplementation((args: any) => {
         return allInsights.filter(
           (i) => i.organization_id === args.where.organization_id
         );

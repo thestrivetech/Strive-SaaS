@@ -43,6 +43,20 @@ type TemplateWithReviews = Prisma.agent_templatesGetPayload<{
   };
 }>;
 
+export interface TemplateFilters {
+  category?: string;
+  is_public?: boolean;
+  is_system?: boolean;
+  search?: string;
+  tags?: string[];
+  min_rating?: number;
+  min_usage_count?: number;
+  sort_by?: 'name' | 'created_at' | 'updated_at' | 'usage_count' | 'rating';
+  sort_order?: 'asc' | 'desc';
+  limit?: number;
+  offset?: number;
+}
+
 /**
  * Get templates with marketplace visibility rules
  *
@@ -402,9 +416,9 @@ export async function getTemplateStats(templateId: string) {
 
       const totalReviews = template.reviews.length;
       const avgRating = totalReviews > 0
-        ? template.reviews.reduce((sum, r) => sum + r.rating, 0) / totalReviews
+        ? template.reviews.reduce((sum: number, r: { rating: number }) => sum + r.rating, 0) / totalReviews
         : null;
-      const uniqueUsers = new Set(template.reviews.map(r => r.reviewer_id)).size;
+      const uniqueUsers = new Set(template.reviews.map((r: { reviewer_id: string }) => r.reviewer_id)).size;
 
       return {
         template_id: templateId,

@@ -28,8 +28,8 @@ export function PipelineBoard({ dealsByStage }: PipelineBoardProps) {
 
     // Find the deal being dragged
     const deal = dealsByStage
-      .flatMap((stage) => stage.deals)
-      .find((d) => d.id === active.id);
+      .flatMap((stage: { stage: DealStage; deals: any[]; totalValue: number }) => stage.deals)
+      .find((d: { id: string }) => d.id === active.id);
 
     setActiveDeal(deal);
   }
@@ -84,7 +84,7 @@ export function PipelineBoard({ dealsByStage }: PipelineBoardProps) {
     >
       <div className="flex gap-4 overflow-x-auto pb-4">
         {activeStages.map((stage) => {
-          const stageData = dealsByStage.find((s) => s.stage === stage.id);
+          const stageData = dealsByStage.find((s: { stage: DealStage; deals: any[]; totalValue: number }) => s.stage === stage.id);
           const deals = stageData?.deals || [];
           const totalValue = stageData?.totalValue || 0;
 

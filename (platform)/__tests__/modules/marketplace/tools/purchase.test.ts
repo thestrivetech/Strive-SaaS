@@ -14,6 +14,7 @@ import {
   ToolCategory,
   ToolTier,
 } from './setup';
+import { mockAsyncFunction, mockFunction } from '../../../helpers/mock-helpers';
 
 setupMarketplaceToolsTests();
 
@@ -21,7 +22,7 @@ describe('purchaseTool', () => {
   it('should purchase tool successfully', async () => {
     const { organization, user } = await createTestOrgWithUser();
 
-    getCurrentUser.mockResolvedValue({
+    mockAsyncFunction(getCurrentUser).mockResolvedValue({
       ...user,
       organization_members: [{ organization_id: organization.id }],
     });
@@ -60,7 +61,7 @@ describe('purchaseTool', () => {
   it('should prevent duplicate purchases', async () => {
     const { organization, user } = await createTestOrgWithUser();
 
-    getCurrentUser.mockResolvedValue({
+    mockAsyncFunction(getCurrentUser).mockResolvedValue({
       ...user,
       organization_members: [{ organization_id: organization.id }],
     });
@@ -94,7 +95,7 @@ describe('purchaseTool', () => {
   it('should track purchase price at time of purchase', async () => {
     const { organization, user } = await createTestOrgWithUser();
 
-    getCurrentUser.mockResolvedValue({
+    mockAsyncFunction(getCurrentUser).mockResolvedValue({
       ...user,
       organization_members: [{ organization_id: organization.id }],
     });
@@ -133,7 +134,7 @@ describe('purchaseTool', () => {
   it('should reject inactive tools', async () => {
     const { organization, user } = await createTestOrgWithUser();
 
-    getCurrentUser.mockResolvedValue({
+    mockAsyncFunction(getCurrentUser).mockResolvedValue({
       ...user,
       organization_members: [{ organization_id: organization.id }],
     });
@@ -157,12 +158,12 @@ describe('purchaseTool', () => {
   it('should enforce RBAC permissions', async () => {
     const { organization, user } = await createTestOrgWithUser();
 
-    getCurrentUser.mockResolvedValue({
+    mockAsyncFunction(getCurrentUser).mockResolvedValue({
       ...user,
       organization_members: [{ organization_id: organization.id }],
     });
 
-    canAccessMarketplace.mockReturnValue(false);
+    mockFunction(canAccessMarketplace).mockReturnValue(false);
 
     const tool = await testPrisma.marketplace_tools.create({
       data: {
@@ -179,8 +180,8 @@ describe('purchaseTool', () => {
       purchaseTool({ tool_id: tool.id, organization_id: organization.id })
     ).rejects.toThrow('Unauthorized');
 
-    canAccessMarketplace.mockReturnValue(true);
-    canPurchaseTools.mockReturnValue(false);
+    mockFunction(canAccessMarketplace).mockReturnValue(true);
+    mockFunction(canPurchaseTools).mockReturnValue(false);
 
     await expect(
       purchaseTool({ tool_id: tool.id, organization_id: organization.id })

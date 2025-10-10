@@ -30,7 +30,7 @@ export async function createTask(input: CreateTaskInput) {
 
   // Verify user has access to this organization
   const userOrgs = await getUserOrganizations(user.id);
-  const hasAccess = userOrgs.some((org) => org.organization_id === project.organization_id);
+  const hasAccess = userOrgs.some((org: { organization_id: string }) => org.organization_id === project.organization_id);
 
   if (!hasAccess) {
     throw new Error('You do not have access to this organization');
@@ -110,7 +110,7 @@ export async function updateTask(input: UpdateTaskInput) {
   // Verify user has access to this organization
   const userOrgs = await getUserOrganizations(user.id);
   const hasAccess = userOrgs.some(
-    (org) => org.organization_id === existingTask.projects.organization_id
+    (org: { organization_id: string }) => org.organization_id === existingTask.projects.organization_id
   );
 
   if (!hasAccess) {
@@ -191,7 +191,7 @@ export async function deleteTask(taskId: string) {
   // Verify user has access to this organization
   const userOrgs = await getUserOrganizations(user.id);
   const hasAccess = userOrgs.some(
-    (org) => org.organization_id === task.projects.organization_id
+    (org: { organization_id: string }) => org.organization_id === task.projects.organization_id
   );
 
   if (!hasAccess) {
@@ -250,7 +250,7 @@ export async function updateTaskStatus(taskId: string, status: TaskStatus) {
   // Verify user has access to this organization
   const userOrgs = await getUserOrganizations(user.id);
   const hasAccess = userOrgs.some(
-    (org) => org.organization_id === existingTask.projects.organization_id
+    (org: { organization_id: string }) => org.organization_id === existingTask.projects.organization_id
   );
 
   if (!hasAccess) {
@@ -311,7 +311,7 @@ export async function assignTask(taskId: string, userId: string | null) {
   // Verify user has access to this organization
   const userOrgs = await getUserOrganizations(user.id);
   const hasAccess = userOrgs.some(
-    (org) => org.organization_id === existingTask.projects.organization_id
+    (org: { organization_id: string }) => org.organization_id === existingTask.projects.organization_id
   );
 
   if (!hasAccess) {
