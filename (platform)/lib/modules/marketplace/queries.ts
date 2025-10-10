@@ -4,15 +4,12 @@ import { prisma } from '@/lib/database/prisma';
 import { withTenantContext } from '@/lib/database/utils';
 import { handleDatabaseError } from '@/lib/database/errors';
 import type { Prisma } from '@prisma/client';
-import { dataConfig } from '@/lib/data/config';
-import { toolsProvider, bundlesProvider, purchasesProvider } from '@/lib/data';
 
 /**
  * Marketplace Queries Module
  *
  * SECURITY: Tool catalog is public (no RLS), but purchases are org-isolated
  * PERFORMANCE: Cached queries for marketplace tools and bundles
- * MOCK MODE: Uses mock data providers when NEXT_PUBLIC_USE_MOCKS=true
  */
 
 type ToolWithStats = Prisma.marketplace_toolsGetPayload<{
@@ -44,21 +41,6 @@ type BundleWithTools = Prisma.tool_bundlesGetPayload<{
  */
 export const getMarketplaceTools = unstable_cache(
   async (filters?: ToolFilters): Promise<ToolWithStats[]> => {
-    // Mock data path
-    if (dataConfig.useMocks) {
-      const tools = await toolsProvider.findMany({
-        category: filters?.category,
-        tier: filters?.tier,
-        search: filters?.search,
-        price_min: filters?.price_min,
-        price_max: filters?.price_max,
-        tags: filters?.tags,
-        is_active: filters?.is_active,
-      });
-      return tools as any; // Mock tools compatible with ToolWithStats
-    }
-
-    // Real Prisma query
     try {
       const where: Prisma.marketplace_toolsWhereInput = {
         is_active: filters?.is_active ?? true,
@@ -143,13 +125,6 @@ export const getMarketplaceTools = unstable_cache(
  * @returns Tool with details or null
  */
 export const getMarketplaceToolById = cache(async (toolId: string) => {
-  // Mock data path
-  if (dataConfig.useMocks) {
-    const tool = await toolsProvider.findById(toolId);
-    return tool as any; // Mock tool compatible with return type
-  }
-
-  // Real Prisma query
   try {
     return await prisma.marketplace_tools.findUnique({
       where: { id: toolId },
@@ -185,19 +160,6 @@ export const getMarketplaceToolById = cache(async (toolId: string) => {
  * @returns List of purchased tools
  */
 export async function getPurchasedTools() {
-  // Mock data path
-  if (dataConfig.useMocks) {
-    const { requireAuth } = await import('@/lib/auth/auth-helpers');
-    const user = await requireAuth();
-    const orgId = user.organizationId || user.organization_members?.[0]?.organization_id;
-
-    if (!orgId) return [];
-
-    const purchases = await purchasesProvider.findMany(orgId);
-    return purchases as any; // Mock purchases compatible with return type
-  }
-
-  // Real Prisma query
   return withTenantContext(async () => {
     try {
       return await prisma.tool_purchases.findMany({
@@ -231,19 +193,6 @@ export async function getPurchasedTools() {
  * @returns Purchase record or null
  */
 export async function getToolPurchase(toolId: string) {
-  // Mock data path
-  if (dataConfig.useMocks) {
-    const { requireAuth } = await import('@/lib/auth/auth-helpers');
-    const user = await requireAuth();
-    const orgId = user.organizationId || user.organization_members?.[0]?.organization_id;
-
-    if (!orgId) return null;
-
-    const purchase = await purchasesProvider.findByToolId(toolId, orgId);
-    return purchase as any;
-  }
-
-  // Real Prisma query
   return withTenantContext(async () => {
     try {
       return await prisma.tool_purchases.findFirst({
@@ -273,13 +222,6 @@ export async function getToolPurchase(toolId: string) {
  */
 export const getToolBundles = unstable_cache(
   async (): Promise<BundleWithTools[]> => {
-    // Mock data path
-    if (dataConfig.useMocks) {
-      const bundles = await bundlesProvider.findMany();
-      return bundles as any; // Mock bundles compatible with BundleWithTools
-    }
-
-    // Real Prisma query
     try {
       return await prisma.tool_bundles.findMany({
         where: {
@@ -317,13 +259,6 @@ export const getToolBundles = unstable_cache(
  * @returns Bundle with tools or null
  */
 export async function getToolBundleById(bundleId: string) {
-  // Mock data path
-  if (dataConfig.useMocks) {
-    const bundle = await bundlesProvider.findById(bundleId);
-    return bundle as any;
-  }
-
-  // Real Prisma query
   try {
     return await prisma.tool_bundles.findUnique({
       where: { id: bundleId },
@@ -348,14 +283,6 @@ export async function getToolBundleById(bundleId: string) {
  * @returns List of purchased bundles
  */
 export async function getPurchasedBundles() {
-  // Mock data path
-  if (dataConfig.useMocks) {
-    // Bundle purchases not yet implemented in mock provider
-    // Return empty array for now
-    return [];
-  }
-
-  // Real Prisma query
   return withTenantContext(async () => {
     try {
       return await prisma.bundle_purchases.findMany({
@@ -396,25 +323,6 @@ export async function getPurchasedBundles() {
  * @returns Marketplace stats
  */
 export async function getMarketplaceStats() {
-  // Mock data path
-  if (dataConfig.useMocks) {
-    const { requireAuth } = await import('@/lib/auth/auth-helpers');
-    const user = await requireAuth();
-    const orgId = user.organizationId || user.organization_members?.[0]?.organization_id;
-
-    const tools = await toolsProvider.findMany();
-    const bundles = await bundlesProvider.findMany();
-    const purchases = orgId ? await purchasesProvider.findMany(orgId) : [];
-
-    return {
-      totalTools: tools.length,
-      purchasedToolsCount: purchases.length,
-      totalBundles: bundles.length,
-      purchasedBundlesCount: 0, // Not yet implemented
-    };
-  }
-
-  // Real Prisma query
   return withTenantContext(async () => {
     try {
       const [
@@ -449,30 +357,6 @@ export async function getMarketplaceStats() {
  * @returns List of purchased tools with usage stats
  */
 export async function getPurchasedToolsWithStats() {
-  // Mock data path
-  if (dataConfig.useMocks) {
-    const { requireAuth } = await import('@/lib/auth/auth-helpers');
-    const user = await requireAuth();
-    const orgId = user.organizationId || user.organization_members?.[0]?.organization_id;
-
-    if (!orgId) {
-      return { purchases: [], totalInvestment: 0, totalCount: 0 };
-    }
-
-    const purchases = await purchasesProvider.findMany(orgId);
-    const totalInvestment = purchases.reduce(
-      (sum, purchase) => sum + purchase.price_at_purchase,
-      0
-    );
-
-    return {
-      purchases: purchases as any,
-      totalInvestment,
-      totalCount: purchases.length,
-    };
-  }
-
-  // Real Prisma query
   return withTenantContext(async () => {
     try {
       const purchases = await prisma.tool_purchases.findMany({
@@ -518,19 +402,6 @@ export async function getPurchasedToolsWithStats() {
  * @returns Purchase details with tool info
  */
 export async function getToolPurchaseDetails(toolId: string) {
-  // Mock data path
-  if (dataConfig.useMocks) {
-    const { requireAuth } = await import('@/lib/auth/auth-helpers');
-    const user = await requireAuth();
-    const orgId = user.organizationId || user.organization_members?.[0]?.organization_id;
-
-    if (!orgId) return null;
-
-    const purchase = await purchasesProvider.findByToolId(toolId, orgId);
-    return purchase as any;
-  }
-
-  // Real Prisma query
   return withTenantContext(async () => {
     try {
       return await prisma.tool_purchases.findFirst({

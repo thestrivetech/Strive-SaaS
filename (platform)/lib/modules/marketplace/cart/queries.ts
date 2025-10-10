@@ -1,12 +1,9 @@
 import { prisma } from '@/lib/database/prisma';
 import { withTenantContext } from '@/lib/database/utils';
 import { handleDatabaseError } from '@/lib/database/errors';
-import { dataConfig } from '@/lib/data/config';
-import { cartProvider, toolsProvider, bundlesProvider } from '@/lib/data';
 
 /**
  * Shopping Cart Queries Module
- * MOCK MODE: Uses mock data providers when NEXT_PUBLIC_USE_MOCKS=true
  */
 
 /**
@@ -16,13 +13,6 @@ import { cartProvider, toolsProvider, bundlesProvider } from '@/lib/data';
  * @returns Shopping cart or null
  */
 export async function getShoppingCart(userId: string) {
-  // Mock data path
-  if (dataConfig.useMocks) {
-    const cart = await cartProvider.get(userId);
-    return cart as any;
-  }
-
-  // Real Prisma query
   return withTenantContext(async () => {
     try {
       return await prisma.shopping_carts.findUnique({
@@ -48,28 +38,6 @@ export const getCart = getShoppingCart;
  * @returns Cart with full item details
  */
 export async function getCartWithItems(userId: string) {
-  // Mock data path
-  if (dataConfig.useMocks) {
-    const cart = await cartProvider.get(userId);
-    if (!cart) return null;
-
-    const toolIds = cart.tools || [];
-    const bundleIds = cart.bundles || [];
-
-    const [tools, bundles] = await Promise.all([
-      Promise.all(toolIds.map(id => toolsProvider.findById(id))),
-      Promise.all(bundleIds.map(id => bundlesProvider.findById(id))),
-    ]);
-
-    return {
-      cart: cart as any,
-      tools: tools.filter(t => t !== null) as any,
-      bundles: bundles.filter(b => b !== null) as any,
-      totalPrice: cart.total_price,
-    };
-  }
-
-  // Real Prisma query
   return withTenantContext(async () => {
     try {
       const cart = await prisma.shopping_carts.findUnique({

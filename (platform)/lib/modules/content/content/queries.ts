@@ -4,7 +4,6 @@ import { prisma } from '@/lib/database/prisma';
 import { requireAuth, getCurrentUser } from '@/lib/auth/middleware';
 import { cache } from 'react';
 import { getUserOrganizationId } from '@/lib/auth/user-helpers';
-import { contentProvider } from '@/lib/data/providers/content-provider';
 
 /**
  * Content Module - Data Queries
@@ -52,11 +51,6 @@ export const getContentItems = cache(async (filters?: ContentFilters) => {
   if (!user) throw new Error('Unauthorized');
 
   const organization_id = getUserOrganizationId(user);
-  const useMocks = process.env.NEXT_PUBLIC_USE_MOCKS === 'true';
-
-  if (useMocks) {
-    return contentProvider.findMany(organization_id, filters);
-  }
 
   return withContentContext(async () => {
     const where: any = {
@@ -205,11 +199,6 @@ export const getContentStats = cache(async () => {
   if (!user) throw new Error('Unauthorized');
 
   const organization_id = getUserOrganizationId(user);
-  const useMocks = process.env.NEXT_PUBLIC_USE_MOCKS === 'true';
-
-  if (useMocks) {
-    return contentProvider.getStats(organization_id);
-  }
 
   return withContentContext(async () => {
     const [total, published, draft, scheduled] = await Promise.all([

@@ -1,8 +1,80 @@
 # Utility Scripts
 
-This directory contains utility scripts for development, maintenance, and optimization tasks.
+This directory contains utility scripts for development, maintenance, deployment, and optimization tasks.
+
+**Note:** Test files have been moved to `__tests__/` for better organization. See [Test Files](#test-files) section below.
 
 ## Scripts Overview
+
+### Deployment & CI/CD
+
+**Files:**
+- `deploy-production.sh` - Production deployment automation
+- `migrate-production.sh` - Database migration automation for production
+- `pre-deploy-check.sh` - Pre-deployment validation checks
+- `rollback.sh` - Rollback automation for failed deployments
+- `run-tests.sh` - Test runner wrapper script
+- `test-ci.sh` - CI/CD integration script
+
+**Usage:**
+```bash
+# Pre-deployment check
+./scripts/pre-deploy-check.sh
+
+# Deploy to production
+./scripts/deploy-production.sh
+
+# Rollback if needed
+./scripts/rollback.sh
+```
+
+---
+
+### Database & Migrations
+
+**Files:**
+- `init-database.js` - Initialize database schema
+- `migrate-roles-tiers.ts` - Data migration utility for roles and tiers
+- `migration-config.example.json` - Example configuration for migrations
+- `verify-database-config.ts` - Verify database configuration
+
+**Usage:**
+```bash
+# Initialize database
+node scripts/init-database.js
+
+# Migrate roles and tiers
+npx tsx scripts/migrate-roles-tiers.ts
+
+# Verify database config
+npx tsx scripts/verify-database-config.ts
+```
+
+---
+
+### Security & Auditing
+
+**Files:**
+- `security-audit.ts` - Security scanning and audit utility
+
+**Usage:**
+```bash
+npx tsx scripts/security-audit.ts
+```
+
+---
+
+### Data Generation
+
+**Files:**
+- `generate-embeddings.ts` - Generate embeddings for AI/RAG system
+
+**Usage:**
+```bash
+npx tsx scripts/generate-embeddings.ts
+```
+
+---
 
 ### 📧 Email Preview Generation
 **File:** `generate-email-previews.ts`
@@ -127,6 +199,62 @@ npx tsx scripts/directory-mapper.ts
 
 ---
 
+## Test Files
+
+**Test files have been moved to `__tests__/` for better organization:**
+
+- **Authentication Tests:** `__tests__/integration/auth/test-auth.js`
+  - Comprehensive authentication flow testing
+  - Database connection tests
+  - Supabase auth integration tests
+
+- **RLS Tests:** `__tests__/database/test-rls.ts`
+  - Row Level Security policy testing
+  - Multi-tenant isolation verification
+  - Organization-based data filtering
+
+- **Storage Tests:** `__tests__/storage/test-storage.ts`
+  - File upload/download testing
+  - Signed URL generation
+  - Bucket RLS policy verification
+
+- **Security Tests:** `__tests__/security/test-content-security-audit.ts`
+  - Content security policy auditing
+  - Security vulnerability scanning
+
+- **Realtime Tests:** `__tests__/integration/realtime/test-realtime.ts`
+  - Supabase realtime subscription testing
+  - Live update verification for tasks, customers, projects
+
+- **Notification Tests:** `__tests__/integration/notifications/test-notifications.ts`
+  - Notification CRUD operations
+  - Notification delivery testing
+
+**Running Test Scripts:**
+```bash
+# Authentication tests
+npx tsx __tests__/integration/auth/test-auth.js
+
+# RLS policy tests
+npx tsx __tests__/database/test-rls.ts
+
+# Storage tests
+npx tsx __tests__/storage/test-storage.ts
+
+# Security audit
+npx tsx __tests__/security/test-content-security-audit.ts
+
+# Realtime subscription tests
+npx tsx __tests__/integration/realtime/test-realtime.ts
+
+# Notification tests
+npx tsx __tests__/integration/notifications/test-notifications.ts
+```
+
+See `__tests__/README.md` for complete testing documentation.
+
+---
+
 ## Common Tasks
 
 ### Run All Verification Scripts
@@ -134,11 +262,14 @@ npx tsx scripts/directory-mapper.ts
 # SEO validation
 npx tsx scripts/validate-seo.ts
 
-# Directory mapping
-npx tsx scripts/directory-mapper.ts
-
 # Image optimization (requires sharp)
 npx tsx scripts/image-optimization.ts
+
+# Security audit
+npx tsx scripts/security-audit.ts
+
+# Database verification
+npx tsx scripts/verify-database-config.ts
 ```
 
 ### Install Script Dependencies
@@ -152,18 +283,29 @@ npm install sharp imagemin imagemin-avif imagemin-webp imagemin-mozjpeg --save-d
 
 ---
 
-## Migration Notes (Session 16)
+## Migration Notes
 
+### Session 16 (2025-10-01)
 **Files Moved from `/web`:**
 - ✅ `validate-seo.ts` - Working, imports fixed
 - ✅ `image-optimization.ts` - Working, paths updated
-- ✅ `directory-mapper.ts` - Working, no changes needed
 - ⚠️ `generate-email-previews.ts` - Deferred, needs refactoring
 
 **Path Updates:**
 - Old: `attached_assets` → New: `public/assets`
 - Old: `client/src/assets/optimized` → New: `public/assets/optimized`
 - Old: `../server/services/email` → New: TBD (not yet created)
+
+### Session (2025-10-10)
+**Test Files Moved to `__tests__/`:**
+- `test-auth.js` → `__tests__/integration/auth/`
+- `test-rls.ts` → `__tests__/database/`
+- `test-storage.ts` → `__tests__/storage/`
+- `test-content-security-audit.ts` → `__tests__/security/`
+- `test-realtime.ts` → `__tests__/integration/realtime/`
+- `test-notifications.ts` → `__tests__/integration/notifications/`
+
+**Benefit:** Clear separation between production utility scripts and test files.
 
 ---
 
@@ -215,5 +357,15 @@ npm install [package-name] --save-dev
 
 ---
 
-**Last Updated:** Session 16 (2025-10-01)
+## Summary
+
+**Production Scripts (18 files):**
+- 6 deployment/CI scripts (.sh)
+- 7 utility scripts (.ts/.js)
+- 3 documentation files (.md, .json)
+- 2 CI/CD integration scripts
+
+**Test Scripts:** Moved to `__tests__/` (6 files relocated)
+
+**Last Updated:** 2025-10-10
 **Next Steps:** Refactor email preview script when email system is being actively developed

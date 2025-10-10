@@ -7,7 +7,7 @@
  *   npx tsx scripts/test-content-security-audit.ts
  */
 
-import { auditContentSecurity, formatAuditReport } from '../lib/security/content-audit';
+import { auditContentSecurity, formatAuditReport } from '../../lib/security/content-audit';
 
 async function main() {
   console.log('🔒 Running ContentPilot Security Audit...\n');

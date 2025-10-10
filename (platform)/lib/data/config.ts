@@ -1,4 +1,18 @@
 /**
+ * ⚠️ DEPRECATED: Mock Data Infrastructure
+ *
+ * This directory is NO LONGER USED in production.
+ * All queries now use real Prisma database.
+ *
+ * DO NOT set NEXT_PUBLIC_USE_MOCKS=true in production!
+ *
+ * This code is kept for reference only and will be
+ * removed in v2.0 release.
+ *
+ * Date Deprecated: 2025-10-10
+ */
+
+/**
  * Data Layer Configuration
  *
  * Toggle between mock data and real database

@@ -238,6 +238,7 @@ yamldashboard_metrics:
     - response_time > 30s: "Critical"
     - queue_depth > 10: "Warning"
     - error_rate > 1%: "Investigation needed"
+    
 Implementation Checklist
 
  Configure website widget with triggers

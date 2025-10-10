@@ -11,9 +11,9 @@ import { fileURLToPath } from 'url';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
-dotenv.config({ path: resolve(__dirname, '../.env') });
+dotenv.config({ path: resolve(__dirname, '../../../.env') });
 
-import { prisma } from '../lib/database/prisma';
+import { prisma } from '../../../lib/database/prisma';
 
 async function testNotifications() {
   console.log('🧪 Testing Notification System\n');

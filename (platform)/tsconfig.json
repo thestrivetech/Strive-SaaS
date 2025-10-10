@@ -35,7 +35,7 @@
   ],
   "exclude": [
     "node_modules",
-    "update-sessions",
+    "docs/update-sessions",
     "archive",
     "../(chatbot)"
   ]

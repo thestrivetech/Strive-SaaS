@@ -4,7 +4,6 @@ import { prisma } from '@/lib/database/prisma';
 import { requireAuth, getCurrentUser } from '@/lib/auth/middleware';
 import { cache } from 'react';
 import { getUserOrganizationId } from '@/lib/auth/user-helpers';
-import { campaignsProvider } from '@/lib/data/providers/campaigns-provider';
 
 /**
  * Campaign Module - Data Queries
@@ -25,13 +24,7 @@ export const getCampaigns = cache(async (filters?: CampaignFilters) => {
   if (!user) throw new Error('Unauthorized');
 
   const organization_id = getUserOrganizationId(user);
-  const useMocks = process.env.NEXT_PUBLIC_USE_MOCKS === 'true';
 
-  if (useMocks) {
-    return campaignsProvider.findMany(organization_id, filters);
-  }
-
-  // Original Prisma code for production
   const where: any = {
     organization_id, // Multi-tenant isolation
   };
@@ -120,13 +113,7 @@ export const getCampaignMetrics = cache(async () => {
   if (!user) throw new Error('Unauthorized');
 
   const organization_id = getUserOrganizationId(user);
-  const useMocks = process.env.NEXT_PUBLIC_USE_MOCKS === 'true';
 
-  if (useMocks) {
-    return campaignsProvider.getMetrics(organization_id);
-  }
-
-  // Original Prisma code for production
   const [total, active, completed, draft] = await Promise.all([
     prisma.campaigns.count({
       where: { organization_id },

@@ -11,10 +11,10 @@ import { fileURLToPath } from 'url';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
-dotenv.config({ path: resolve(__dirname, '../.env') });
+dotenv.config({ path: resolve(__dirname, '../../../.env') });
 
 import { createClient } from '@supabase/supabase-js';
-import { prisma } from '../lib/database/prisma';
+import { prisma } from '../../../lib/database/prisma';
 
 async function testRealtime() {
   console.log('🧪 Testing Realtime Subscriptions\n');
