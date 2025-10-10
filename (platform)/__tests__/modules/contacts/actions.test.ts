@@ -100,7 +100,7 @@ describe('Contacts Actions', () => {
       expect(contact.status).toBe(ContactStatus.ACTIVE);
 
       // Verify in database
-      const dbContact = await testPrisma.contacts.findUnique({
+      const dbContact = await testPrisma.contact.findUnique({
         where: { id: contact.id },
       });
       expect(dbContact).toBeDefined();
@@ -198,7 +198,7 @@ describe('Contacts Actions', () => {
       });
 
       // Create a contact first
-      const contact = await testPrisma.contacts.create({
+      const contact = await testPrisma.contact.create({
         data: {
           name: 'Original Name',
           organization_id: organization.id,
@@ -247,7 +247,7 @@ describe('Contacts Actions', () => {
       });
 
       // Create contact in org2
-      const contact2 = await testPrisma.contacts.create({
+      const contact2 = await testPrisma.contact.create({
         data: {
           name: 'Org 2 Contact',
           organization_id: org2.id,
@@ -273,7 +273,7 @@ describe('Contacts Actions', () => {
         organization_members: [{ organization_id: organization.id }],
       });
 
-      const contact = await testPrisma.contacts.create({
+      const contact = await testPrisma.contact.create({
         data: {
           name: 'Test Contact',
           organization_id: organization.id,
@@ -285,7 +285,7 @@ describe('Contacts Actions', () => {
       expect(result.success).toBe(true);
 
       // Verify deletion
-      const deleted = await testPrisma.contacts.findUnique({
+      const deleted = await testPrisma.contact.findUnique({
         where: { id: contact.id },
       });
       expect(deleted).toBeNull();
@@ -301,7 +301,7 @@ describe('Contacts Actions', () => {
 
       mockFunction(canDeleteContacts).mockReturnValue(false);
 
-      const contact = await testPrisma.contacts.create({
+      const contact = await testPrisma.contact.create({
         data: {
           name: 'Test Contact',
           organization_id: organization.id,
@@ -323,7 +323,7 @@ describe('Contacts Actions', () => {
       });
 
       // Create contact in org2
-      const contact2 = await testPrisma.contacts.create({
+      const contact2 = await testPrisma.contact.create({
         data: {
           name: 'Org 2 Contact',
           organization_id: org2.id,
@@ -347,7 +347,7 @@ describe('Contacts Actions', () => {
       });
 
       // Create a contact
-      const contact = await testPrisma.contacts.create({
+      const contact = await testPrisma.contact.create({
         data: {
           name: 'Test Contact',
           organization_id: organization.id,
@@ -371,7 +371,7 @@ describe('Contacts Actions', () => {
       expect(activity.contact_id).toBe(contact.id);
 
       // Verify last_contact_at was updated
-      const updatedContact = await testPrisma.contacts.findUnique({
+      const updatedContact = await testPrisma.contact.findUnique({
         where: { id: contact.id },
       });
       expect(updatedContact?.last_contact_at).toBeDefined();
@@ -386,7 +386,7 @@ describe('Contacts Actions', () => {
         organization_members: [{ organization_id: organization.id }],
       });
 
-      const contact = await testPrisma.contacts.create({
+      const contact = await testPrisma.contact.create({
         data: {
           name: 'Test Contact',
           organization_id: organization.id,
@@ -412,7 +412,7 @@ describe('Contacts Actions', () => {
         organization_members: [{ organization_id: organization.id }],
       });
 
-      const contact = await testPrisma.contacts.create({
+      const contact = await testPrisma.contact.create({
         data: {
           name: 'Test Contact',
           organization_id: organization.id,
@@ -436,7 +436,7 @@ describe('Contacts Actions', () => {
         organization_members: [{ organization_id: organization.id }],
       });
 
-      const contact = await testPrisma.contacts.create({
+      const contact = await testPrisma.contact.create({
         data: {
           name: 'Test Contact',
           organization_id: organization.id,
@@ -451,7 +451,7 @@ describe('Contacts Actions', () => {
       });
 
       // Verify activity was created
-      const activities = await testPrisma.activities.findMany({
+      const activities = await testPrisma.activity.findMany({
         where: { contact_id: contact.id },
       });
 
@@ -473,13 +473,13 @@ describe('Contacts Actions', () => {
       });
 
       // Create 3 contacts
-      const contact1 = await testPrisma.contacts.create({
+      const contact1 = await testPrisma.contact.create({
         data: { name: 'Contact 1', organization_id: organization.id },
       });
-      const contact2 = await testPrisma.contacts.create({
+      const contact2 = await testPrisma.contact.create({
         data: { name: 'Contact 2', organization_id: organization.id },
       });
-      const contact3 = await testPrisma.contacts.create({
+      const contact3 = await testPrisma.contact.create({
         data: { name: 'Contact 3', organization_id: organization.id },
       });
 
@@ -492,7 +492,7 @@ describe('Contacts Actions', () => {
       expect(result.count).toBe(3);
 
       // Verify assignments
-      const assignedContacts = await testPrisma.contacts.findMany({
+      const assignedContacts = await testPrisma.contact.findMany({
         where: { assigned_to_id: agent.id },
       });
       expect(assignedContacts).toHaveLength(3);
@@ -536,7 +536,7 @@ describe('Contacts Actions', () => {
       });
 
       // Create contact in org2
-      const contact2 = await testPrisma.contacts.create({
+      const contact2 = await testPrisma.contact.create({
         data: {
           name: 'Org 2 Contact',
           organization_id: org2.id,

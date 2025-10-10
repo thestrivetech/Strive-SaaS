@@ -4,12 +4,6 @@ import { createServerClient } from '@supabase/ssr';
 export async function handlePlatformAuth(request: NextRequest): Promise<NextResponse> {
   const path = request.nextUrl.pathname;
 
-  // ⚠️ TEMPORARY: Skip auth on localhost for presentation
-  const isLocalhost = request.nextUrl.hostname === 'localhost' || request.nextUrl.hostname === '127.0.0.1';
-  if (isLocalhost && !path.startsWith('/api/')) {
-    return NextResponse.next();
-  }
-
   let response = NextResponse.next({
     request: { headers: request.headers },
   });

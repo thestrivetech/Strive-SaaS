@@ -141,7 +141,7 @@ export async function createTestCustomer(
   }> = {}
 ) {
   const timestamp = Date.now();
-  return await testPrisma.customers.create({
+  return await testPrisma.customer.create({
     data: {
       organizationId,
       name: overrides.name || `Test Customer ${timestamp}`,

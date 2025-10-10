@@ -3,13 +3,13 @@
  * Predefined user data for consistent testing
  */
 
-import { UserRole, SubscriptionTier } from '@prisma/client';
+import { OrgRole, SubscriptionTier } from '@prisma/client';
 
 export const testUsers = {
   admin: {
     email: 'admin@test.com',
     name: 'Test Admin',
-    role: UserRole.ADMIN,
+    role: OrgRole.ADMIN,
     subscriptionTier: SubscriptionTier.ENTERPRISE,
     isActive: true,
   },
@@ -17,7 +17,7 @@ export const testUsers = {
   user: {
     email: 'user@test.com',
     name: 'Test User',
-    role: UserRole.USER,
+    role: OrgRole.MEMBER,
     subscriptionTier: SubscriptionTier.STARTER,
     isActive: true,
   },
@@ -25,7 +25,7 @@ export const testUsers = {
   manager: {
     email: 'manager@test.com',
     name: 'Test Manager',
-    role: UserRole.USER,
+    role: OrgRole.MEMBER,
     subscriptionTier: SubscriptionTier.GROWTH,
     isActive: true,
   },
@@ -33,7 +33,7 @@ export const testUsers = {
   customer: {
     email: 'customer@test.com',
     name: 'Test Customer',
-    role: UserRole.USER,
+    role: OrgRole.VIEWER,
     subscriptionTier: SubscriptionTier.FREE,
     isActive: true,
   },
@@ -41,7 +41,7 @@ export const testUsers = {
   inactiveUser: {
     email: 'inactive@test.com',
     name: 'Inactive User',
-    role: UserRole.USER,
+    role: OrgRole.VIEWER,
     subscriptionTier: SubscriptionTier.FREE,
     isActive: false,
   },

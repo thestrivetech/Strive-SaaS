@@ -85,7 +85,7 @@ describe('CRM Actions', () => {
       expect(customer.tags).toEqual(['vip', 'enterprise']);
 
       // Verify customer exists in database
-      const dbCustomer = await testPrisma.customers.findUnique({
+      const dbCustomer = await testPrisma.customer.findUnique({
         where: { id: customer.id },
       });
       expect(dbCustomer).toBeDefined();
@@ -204,7 +204,7 @@ describe('CRM Actions', () => {
       expect(updated.status).toBe(CustomerStatus.ACTIVE);
 
       // Verify in database
-      const dbCustomer = await testPrisma.customers.findUnique({
+      const dbCustomer = await testPrisma.customer.findUnique({
         where: { id: customer.id },
       });
       expect(dbCustomer?.name).toBe('Updated Name');
@@ -252,7 +252,7 @@ describe('CRM Actions', () => {
       expect(result.success).toBe(true);
 
       // Verify customer is deleted
-      const dbCustomer = await testPrisma.customers.findUnique({
+      const dbCustomer = await testPrisma.customer.findUnique({
         where: { id: customer.id },
       });
       expect(dbCustomer).toBeNull();

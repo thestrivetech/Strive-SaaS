@@ -64,7 +64,7 @@ describe('Contacts Queries', () => {
       });
 
       // Create test contacts
-      await testPrisma.contacts.createMany({
+      await testPrisma.contact.createMany({
         data: [
           { name: 'Contact 1', organization_id: organization.id },
           { name: 'Contact 2', organization_id: organization.id },
@@ -86,7 +86,7 @@ describe('Contacts Queries', () => {
         organization_members: [{ organization_id: organization.id }],
       });
 
-      await testPrisma.contacts.createMany({
+      await testPrisma.contact.createMany({
         data: [
           { name: 'Prospect 1', organization_id: organization.id, type: ContactType.PROSPECT },
           { name: 'Client 1', organization_id: organization.id, type: ContactType.CLIENT },
@@ -108,7 +108,7 @@ describe('Contacts Queries', () => {
         organization_members: [{ organization_id: organization.id }],
       });
 
-      await testPrisma.contacts.createMany({
+      await testPrisma.contact.createMany({
         data: [
           { name: 'Active 1', organization_id: organization.id, status: ContactStatus.ACTIVE },
           { name: 'Active 2', organization_id: organization.id, status: ContactStatus.ACTIVE },
@@ -130,7 +130,7 @@ describe('Contacts Queries', () => {
         organization_members: [{ organization_id: organization.id }],
       });
 
-      await testPrisma.contacts.createMany({
+      await testPrisma.contact.createMany({
         data: [
           { name: 'John Smith', email: 'john@example.com', organization_id: organization.id },
           { name: 'Jane Doe', email: 'jane@acmecorp.com', company: 'Acme Corp', organization_id: organization.id },
@@ -157,7 +157,7 @@ describe('Contacts Queries', () => {
         name: `Contact ${i + 1}`,
         organization_id: organization.id,
       }));
-      await testPrisma.contacts.createMany({ data: contactsData });
+      await testPrisma.contact.createMany({ data: contactsData });
 
       // Get first page (5 items)
       const page1 = await getContacts({ limit: 5, offset: 0 });
@@ -181,7 +181,7 @@ describe('Contacts Queries', () => {
         organization_members: [{ organization_id: organization.id }],
       });
 
-      await testPrisma.contacts.createMany({
+      await testPrisma.contact.createMany({
         data: [
           { name: 'Charlie', organization_id: organization.id },
           { name: 'Alice', organization_id: organization.id },
@@ -206,10 +206,10 @@ describe('Contacts Queries', () => {
       });
 
       // Create contacts for both orgs
-      await testPrisma.contacts.create({
+      await testPrisma.contact.create({
         data: { name: 'Org 1 Contact', organization_id: org1.id },
       });
-      await testPrisma.contacts.create({
+      await testPrisma.contact.create({
         data: { name: 'Org 2 Contact', organization_id: org2.id },
       });
 
@@ -229,7 +229,7 @@ describe('Contacts Queries', () => {
         organization_members: [{ organization_id: organization.id }],
       });
 
-      const created = await testPrisma.contacts.create({
+      const created = await testPrisma.contact.create({
         data: {
           name: 'Test Contact',
           email: 'test@example.com',
@@ -267,7 +267,7 @@ describe('Contacts Queries', () => {
       });
 
       // Create contact in org2
-      const org2Contact = await testPrisma.contacts.create({
+      const org2Contact = await testPrisma.contact.create({
         data: {
           name: 'Org 2 Contact',
           organization_id: org2.id,
@@ -291,7 +291,7 @@ describe('Contacts Queries', () => {
       });
 
       // Create contact
-      const contact = await testPrisma.contacts.create({
+      const contact = await testPrisma.contact.create({
         data: {
           name: 'Test Contact',
           organization_id: organization.id,
@@ -299,7 +299,7 @@ describe('Contacts Queries', () => {
       });
 
       // Create activities
-      await testPrisma.activities.createMany({
+      await testPrisma.activity.createMany({
         data: [
           {
             type: 'CALL',
@@ -333,7 +333,7 @@ describe('Contacts Queries', () => {
         organization_members: [{ organization_id: organization.id }],
       });
 
-      const contact = await testPrisma.contacts.create({
+      const contact = await testPrisma.contact.create({
         data: {
           name: 'Test Contact',
           organization_id: organization.id,
@@ -348,7 +348,7 @@ describe('Contacts Queries', () => {
         organization_id: organization.id,
         created_by_id: user.id,
       }));
-      await testPrisma.activities.createMany({ data: activitiesData });
+      await testPrisma.activity.createMany({ data: activitiesData });
 
       const fullContact = await getContactWithFullHistory(contact.id);
 
@@ -366,7 +366,7 @@ describe('Contacts Queries', () => {
       });
 
       // Create various contacts
-      await testPrisma.contacts.createMany({
+      await testPrisma.contact.createMany({
         data: [
           { name: 'Active Prospect', organization_id: organization.id, type: ContactType.PROSPECT, status: ContactStatus.ACTIVE },
           { name: 'Client 1', organization_id: organization.id, type: ContactType.CLIENT, status: ContactStatus.ACTIVE },
@@ -394,7 +394,7 @@ describe('Contacts Queries', () => {
       });
 
       // Create contacts in both orgs
-      await testPrisma.contacts.createMany({
+      await testPrisma.contact.createMany({
         data: [
           { name: 'Org 1 Contact 1', organization_id: org1.id },
           { name: 'Org 1 Contact 2', organization_id: org1.id },
@@ -418,7 +418,7 @@ describe('Contacts Queries', () => {
         organization_members: [{ organization_id: organization.id }],
       });
 
-      await testPrisma.contacts.createMany({
+      await testPrisma.contact.createMany({
         data: [
           { name: 'Contact 1', organization_id: organization.id },
           { name: 'Contact 2', organization_id: organization.id },
@@ -439,7 +439,7 @@ describe('Contacts Queries', () => {
         organization_members: [{ organization_id: organization.id }],
       });
 
-      await testPrisma.contacts.createMany({
+      await testPrisma.contact.createMany({
         data: [
           { name: 'Client 1', organization_id: organization.id, type: ContactType.CLIENT },
           { name: 'Client 2', organization_id: organization.id, type: ContactType.CLIENT },

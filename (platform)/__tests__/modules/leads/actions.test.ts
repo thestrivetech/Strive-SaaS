@@ -104,7 +104,7 @@ describe('Leads Actions', () => {
       expect(lead.score).toBe(LeadScore.WARM);
 
       // Verify in database
-      const dbLead = await testPrisma.leads.findUnique({
+      const dbLead = await testPrisma.lead.findUnique({
         where: { id: lead.id },
       });
       expect(dbLead).toBeDefined();
@@ -202,7 +202,7 @@ describe('Leads Actions', () => {
       });
 
       // Create a lead first
-      const lead = await testPrisma.leads.create({
+      const lead = await testPrisma.lead.create({
         data: {
           name: 'Original Name',
           organization_id: organization.id,
@@ -251,7 +251,7 @@ describe('Leads Actions', () => {
         organization_members: [{ organization_id: organization.id }],
       });
 
-      const lead = await testPrisma.leads.create({
+      const lead = await testPrisma.lead.create({
         data: {
           name: 'Test Lead',
           organization_id: organization.id,
@@ -263,7 +263,7 @@ describe('Leads Actions', () => {
       expect(result.success).toBe(true);
 
       // Verify deletion
-      const deleted = await testPrisma.leads.findUnique({
+      const deleted = await testPrisma.lead.findUnique({
         where: { id: lead.id },
       });
       expect(deleted).toBeNull();
@@ -279,7 +279,7 @@ describe('Leads Actions', () => {
 
       mockFunction(canDeleteLeads).mockReturnValue(false);
 
-      const lead = await testPrisma.leads.create({
+      const lead = await testPrisma.lead.create({
         data: {
           name: 'Test Lead',
           organization_id: organization.id,
@@ -301,7 +301,7 @@ describe('Leads Actions', () => {
         organization_members: [{ organization_id: organization.id }],
       });
 
-      const lead = await testPrisma.leads.create({
+      const lead = await testPrisma.lead.create({
         data: {
           name: 'Test Lead',
           organization_id: organization.id,
@@ -328,7 +328,7 @@ describe('Leads Actions', () => {
         organization_members: [{ organization_id: organization.id }],
       });
 
-      const lead = await testPrisma.leads.create({
+      const lead = await testPrisma.lead.create({
         data: {
           name: 'Test Lead',
           organization_id: organization.id,
@@ -362,7 +362,7 @@ describe('Leads Actions', () => {
         organization_members: [{ organization_id: organization.id }],
       });
 
-      const lead = await testPrisma.leads.create({
+      const lead = await testPrisma.lead.create({
         data: {
           name: 'Test Lead',
           organization_id: organization.id,
@@ -391,13 +391,13 @@ describe('Leads Actions', () => {
       });
 
       // Create 3 leads
-      const lead1 = await testPrisma.leads.create({
+      const lead1 = await testPrisma.lead.create({
         data: { name: 'Lead 1', organization_id: organization.id },
       });
-      const lead2 = await testPrisma.leads.create({
+      const lead2 = await testPrisma.lead.create({
         data: { name: 'Lead 2', organization_id: organization.id },
       });
-      const lead3 = await testPrisma.leads.create({
+      const lead3 = await testPrisma.lead.create({
         data: { name: 'Lead 3', organization_id: organization.id },
       });
 
@@ -409,7 +409,7 @@ describe('Leads Actions', () => {
       expect(result.count).toBe(3);
 
       // Verify assignments
-      const assignedLeads = await testPrisma.leads.findMany({
+      const assignedLeads = await testPrisma.lead.findMany({
         where: { assigned_to_id: agent.id },
       });
       expect(assignedLeads).toHaveLength(3);
@@ -451,7 +451,7 @@ describe('Leads Actions', () => {
         organization_members: [{ organization_id: organization.id }],
       });
 
-      const lead = await testPrisma.leads.create({
+      const lead = await testPrisma.lead.create({
         data: {
           name: 'John Doe',
           email: 'john@example.com',
@@ -473,7 +473,7 @@ describe('Leads Actions', () => {
       expect(result.contact.status).toBe('ACTIVE');
 
       // Verify lead status updated
-      const updatedLead = await testPrisma.leads.findUnique({
+      const updatedLead = await testPrisma.lead.findUnique({
         where: { id: lead.id },
       });
       expect(updatedLead?.status).toBe(LeadStatus.CONVERTED);
@@ -504,7 +504,7 @@ describe('Leads Actions', () => {
       });
 
       // Create lead in org2
-      const lead2 = await testPrisma.leads.create({
+      const lead2 = await testPrisma.lead.create({
         data: {
           name: 'Org 2 Lead',
           organization_id: org2.id,

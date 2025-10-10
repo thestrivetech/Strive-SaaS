@@ -50,13 +50,13 @@ describe('Leads Queries', () => {
       const { organization } = await createTestOrgWithUser();
 
       // Create test leads
-      await testPrisma.leads.create({
+      await testPrisma.lead.create({
         data: { name: 'Lead 1', organization_id: organization.id },
       });
-      await testPrisma.leads.create({
+      await testPrisma.lead.create({
         data: { name: 'Lead 2', organization_id: organization.id },
       });
-      await testPrisma.leads.create({
+      await testPrisma.lead.create({
         data: { name: 'Lead 3', organization_id: organization.id },
       });
 
@@ -68,14 +68,14 @@ describe('Leads Queries', () => {
     it('should filter leads by status', async () => {
       const { organization } = await createTestOrgWithUser();
 
-      await testPrisma.leads.create({
+      await testPrisma.lead.create({
         data: {
           name: 'New Lead',
           organization_id: organization.id,
           status: LeadStatus.NEW_LEAD,
         },
       });
-      await testPrisma.leads.create({
+      await testPrisma.lead.create({
         data: {
           name: 'Qualified Lead',
           organization_id: organization.id,
@@ -105,21 +105,21 @@ describe('Leads Queries', () => {
     it('should filter leads by multiple statuses', async () => {
       const { organization } = await createTestOrgWithUser();
 
-      await testPrisma.leads.create({
+      await testPrisma.lead.create({
         data: {
           name: 'New Lead',
           organization_id: organization.id,
           status: LeadStatus.NEW_LEAD,
         },
       });
-      await testPrisma.leads.create({
+      await testPrisma.lead.create({
         data: {
           name: 'Qualified Lead',
           organization_id: organization.id,
           status: LeadStatus.QUALIFIED,
         },
       });
-      await testPrisma.leads.create({
+      await testPrisma.lead.create({
         data: {
           name: 'Converted Lead',
           organization_id: organization.id,
@@ -142,14 +142,14 @@ describe('Leads Queries', () => {
     it('should filter leads by source', async () => {
       const { organization } = await createTestOrgWithUser();
 
-      await testPrisma.leads.create({
+      await testPrisma.lead.create({
         data: {
           name: 'Website Lead',
           organization_id: organization.id,
           source: LeadSource.WEBSITE,
         },
       });
-      await testPrisma.leads.create({
+      await testPrisma.lead.create({
         data: {
           name: 'Referral Lead',
           organization_id: organization.id,
@@ -170,14 +170,14 @@ describe('Leads Queries', () => {
     it('should filter leads by score', async () => {
       const { organization } = await createTestOrgWithUser();
 
-      await testPrisma.leads.create({
+      await testPrisma.lead.create({
         data: {
           name: 'Hot Lead',
           organization_id: organization.id,
           score: LeadScore.HOT,
         },
       });
-      await testPrisma.leads.create({
+      await testPrisma.lead.create({
         data: {
           name: 'Cold Lead',
           organization_id: organization.id,
@@ -198,21 +198,21 @@ describe('Leads Queries', () => {
     it('should search leads by name, email, company, phone', async () => {
       const { organization } = await createTestOrgWithUser();
 
-      await testPrisma.leads.create({
+      await testPrisma.lead.create({
         data: {
           name: 'Alice Johnson',
           email: 'alice@example.com',
           organization_id: organization.id,
         },
       });
-      await testPrisma.leads.create({
+      await testPrisma.lead.create({
         data: {
           name: 'Bob Smith',
           company: 'Alice Corp',
           organization_id: organization.id,
         },
       });
-      await testPrisma.leads.create({
+      await testPrisma.lead.create({
         data: {
           name: 'Charlie Brown',
           phone: '+1-555-ALICE',
@@ -234,14 +234,14 @@ describe('Leads Queries', () => {
     it('should filter leads by tags', async () => {
       const { organization } = await createTestOrgWithUser();
 
-      await testPrisma.leads.create({
+      await testPrisma.lead.create({
         data: {
           name: 'VIP Lead',
           organization_id: organization.id,
           tags: ['vip', 'enterprise'],
         },
       });
-      await testPrisma.leads.create({
+      await testPrisma.lead.create({
         data: {
           name: 'Regular Lead',
           organization_id: organization.id,
@@ -263,14 +263,14 @@ describe('Leads Queries', () => {
       const { organization, user } = await createTestOrgWithUser();
       const agent = await createTestUser({ role: UserRole.USER });
 
-      await testPrisma.leads.create({
+      await testPrisma.lead.create({
         data: {
           name: 'Assigned Lead',
           organization_id: organization.id,
           assigned_to_id: agent.id,
         },
       });
-      await testPrisma.leads.create({
+      await testPrisma.lead.create({
         data: {
           name: 'Unassigned Lead',
           organization_id: organization.id,
@@ -293,14 +293,14 @@ describe('Leads Queries', () => {
       const oldDate = new Date('2023-01-01');
       const recentDate = new Date();
 
-      await testPrisma.leads.create({
+      await testPrisma.lead.create({
         data: {
           name: 'Old Lead',
           organization_id: organization.id,
           created_at: oldDate,
         },
       });
-      await testPrisma.leads.create({
+      await testPrisma.lead.create({
         data: {
           name: 'Recent Lead',
           organization_id: organization.id,
@@ -324,7 +324,7 @@ describe('Leads Queries', () => {
 
       // Create 25 leads
       for (let i = 1; i <= 25; i++) {
-        await testPrisma.leads.create({
+        await testPrisma.lead.create({
           data: {
             name: `Lead ${i}`,
             organization_id: organization.id,
@@ -344,21 +344,21 @@ describe('Leads Queries', () => {
     it('should sort leads by various fields', async () => {
       const { organization } = await createTestOrgWithUser();
 
-      await testPrisma.leads.create({
+      await testPrisma.lead.create({
         data: {
           name: 'Charlie',
           organization_id: organization.id,
           score_value: 80,
         },
       });
-      await testPrisma.leads.create({
+      await testPrisma.lead.create({
         data: {
           name: 'Alice',
           organization_id: organization.id,
           score_value: 95,
         },
       });
-      await testPrisma.leads.create({
+      await testPrisma.lead.create({
         data: {
           name: 'Bob',
           organization_id: organization.id,
@@ -380,7 +380,7 @@ describe('Leads Queries', () => {
         email: 'agent@example.com',
       });
 
-      await testPrisma.leads.create({
+      await testPrisma.lead.create({
         data: {
           name: 'Test Lead',
           organization_id: organization.id,
@@ -400,10 +400,10 @@ describe('Leads Queries', () => {
     it('should count all leads', async () => {
       const { organization } = await createTestOrgWithUser();
 
-      await testPrisma.leads.create({
+      await testPrisma.lead.create({
         data: { name: 'Lead 1', organization_id: organization.id },
       });
-      await testPrisma.leads.create({
+      await testPrisma.lead.create({
         data: { name: 'Lead 2', organization_id: organization.id },
       });
 
@@ -414,14 +414,14 @@ describe('Leads Queries', () => {
     it('should count leads with filters', async () => {
       const { organization } = await createTestOrgWithUser();
 
-      await testPrisma.leads.create({
+      await testPrisma.lead.create({
         data: {
           name: 'Hot Lead',
           organization_id: organization.id,
           score: LeadScore.HOT,
         },
       });
-      await testPrisma.leads.create({
+      await testPrisma.lead.create({
         data: {
           name: 'Cold Lead',
           organization_id: organization.id,
@@ -443,7 +443,7 @@ describe('Leads Queries', () => {
     it('should retrieve lead by ID with details', async () => {
       const { organization } = await createTestOrgWithUser();
 
-      const lead = await testPrisma.leads.create({
+      const lead = await testPrisma.lead.create({
         data: {
           name: 'John Doe',
           email: 'john@example.com',
@@ -462,7 +462,7 @@ describe('Leads Queries', () => {
     it('should include activities and deals', async () => {
       const { organization, user } = await createTestOrgWithUser();
 
-      const lead = await testPrisma.leads.create({
+      const lead = await testPrisma.lead.create({
         data: {
           name: 'Test Lead',
           organization_id: organization.id,
@@ -470,7 +470,7 @@ describe('Leads Queries', () => {
       });
 
       // Create activity
-      await testPrisma.activities.create({
+      await testPrisma.activity.create({
         data: {
           type: 'CALL',
           title: 'Initial contact',
@@ -496,7 +496,7 @@ describe('Leads Queries', () => {
     it('should calculate lead statistics', async () => {
       const { organization } = await createTestOrgWithUser();
 
-      await testPrisma.leads.create({
+      await testPrisma.lead.create({
         data: {
           name: 'New Lead',
           organization_id: organization.id,
@@ -504,7 +504,7 @@ describe('Leads Queries', () => {
           score: LeadScore.HOT,
         },
       });
-      await testPrisma.leads.create({
+      await testPrisma.lead.create({
         data: {
           name: 'Qualified Lead',
           organization_id: organization.id,
@@ -512,7 +512,7 @@ describe('Leads Queries', () => {
           score: LeadScore.WARM,
         },
       });
-      await testPrisma.leads.create({
+      await testPrisma.lead.create({
         data: {
           name: 'Cold Lead',
           organization_id: organization.id,
@@ -536,14 +536,14 @@ describe('Leads Queries', () => {
     it('should search leads by query', async () => {
       const { organization } = await createTestOrgWithUser();
 
-      await testPrisma.leads.create({
+      await testPrisma.lead.create({
         data: {
           name: 'John Doe',
           email: 'john@example.com',
           organization_id: organization.id,
         },
       });
-      await testPrisma.leads.create({
+      await testPrisma.lead.create({
         data: {
           name: 'Jane Smith',
           company: 'Acme Corp',
@@ -561,7 +561,7 @@ describe('Leads Queries', () => {
       const { organization } = await createTestOrgWithUser();
 
       for (let i = 1; i <= 20; i++) {
-        await testPrisma.leads.create({
+        await testPrisma.lead.create({
           data: {
             name: `Test Lead ${i}`,
             organization_id: organization.id,
@@ -577,7 +577,7 @@ describe('Leads Queries', () => {
     it('should be case-insensitive', async () => {
       const { organization } = await createTestOrgWithUser();
 
-      await testPrisma.leads.create({
+      await testPrisma.lead.create({
         data: {
           name: 'John Doe',
           organization_id: organization.id,
@@ -594,21 +594,21 @@ describe('Leads Queries', () => {
       const { organization, user } = await createTestOrgWithUser();
       const agent = await createTestUser({ role: UserRole.USER });
 
-      await testPrisma.leads.create({
+      await testPrisma.lead.create({
         data: {
           name: 'Lead 1',
           organization_id: organization.id,
           assigned_to_id: agent.id,
         },
       });
-      await testPrisma.leads.create({
+      await testPrisma.lead.create({
         data: {
           name: 'Lead 2',
           organization_id: organization.id,
           assigned_to_id: agent.id,
         },
       });
-      await testPrisma.leads.create({
+      await testPrisma.lead.create({
         data: {
           name: 'Lead 3',
           organization_id: organization.id,
@@ -631,13 +631,13 @@ describe('Leads Queries', () => {
       const { organization: org2 } = await createTestOrgWithUser();
 
       // Create leads in both orgs
-      await testPrisma.leads.create({
+      await testPrisma.lead.create({
         data: {
           name: 'Org 1 Lead',
           organization_id: org1.id,
         },
       });
-      await testPrisma.leads.create({
+      await testPrisma.lead.create({
         data: {
           name: 'Org 2 Lead',
           organization_id: org2.id,
@@ -652,7 +652,7 @@ describe('Leads Queries', () => {
 
       // Note: In real implementation, RLS would handle this automatically
       // For testing, we're verifying the query structure is correct
-      const leads = await testPrisma.leads.findMany({
+      const leads = await testPrisma.lead.findMany({
         where: { organization_id: org1.id },
       });
 

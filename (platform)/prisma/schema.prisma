@@ -1,14 +1,3 @@
-// ============================================================================
-// STRIVE PLATFORM SCHEMA - UI-FIRST APPROACH
-// ============================================================================
-// Created: 2025-10-10
-// Based on: Actual UI requirements from mock data analysis
-// Models: 41 (down from 83 - 52% reduction!)
-// Purpose: Production-ready schema validated by real UI pages
-//
-// See SCHEMA-MAPPING.md for complete field-to-mock-data mapping
-// ============================================================================
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -19,18 +8,1092 @@ datasource db {
   directUrl = env("DIRECT_URL")
 }
 
-// ============================================================================
-// ENUMS
-// ============================================================================
+/// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
+model activities {
+  id               String        @id
+  type             ActivityType
+  title            String        @db.VarChar(255)
+  description      String?
+  outcome          String?       @db.VarChar(500)
+  duration_minutes Int?
+  lead_id          String?
+  contact_id       String?
+  deal_id          String?
+  listing_id       String?
+  organization_id  String
+  created_by_id    String
+  created_at       DateTime?     @default(now()) @db.Timestamp(6)
+  updated_at       DateTime?     @default(now()) @db.Timestamp(6)
+  completed_at     DateTime?     @db.Timestamp(6)
+  contacts         contacts?     @relation(fields: [contact_id], references: [id], onUpdate: NoAction)
+  users            users         @relation(fields: [created_by_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  deals            deals?        @relation(fields: [deal_id], references: [id], onUpdate: NoAction)
+  leads            leads?        @relation(fields: [lead_id], references: [id], onUpdate: NoAction)
+  listings         listings?     @relation(fields: [listing_id], references: [id], onUpdate: NoAction)
+  organizations    organizations @relation(fields: [organization_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
 
-// --- Core Enums ---
+  @@index([contact_id], map: "idx_activities_contact_id")
+  @@index([created_at], map: "idx_activities_created_at")
+  @@index([created_by_id], map: "idx_activities_created_by_id")
+  @@index([deal_id], map: "idx_activities_deal_id")
+  @@index([lead_id], map: "idx_activities_lead_id")
+  @@index([organization_id, created_at(sort: Desc)], map: "idx_activities_org_created")
+  @@index([organization_id, type], map: "idx_activities_org_type")
+  @@index([organization_id], map: "idx_activities_organization_id")
+  @@index([type], map: "idx_activities_type")
+}
+
+/// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
+model activity_logs {
+  id              String        @id
+  organization_id String
+  user_id         String?
+  action          String
+  resource_type   String
+  resource_id     String?
+  old_data        Json?
+  new_data        Json?
+  ip_address      String?
+  user_agent      String?
+  created_at      DateTime      @default(now())
+  organizations   organizations @relation(fields: [organization_id], references: [id], onDelete: Cascade)
+  users           users?        @relation(fields: [user_id], references: [id])
+
+  @@index([organization_id, created_at])
+  @@index([user_id])
+  @@index([organization_id, action, created_at(sort: Desc)], map: "idx_activity_logs_org_action_created")
+}
+
+/// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
+model admin_action_logs {
+  id          String      @id
+  action      AdminAction
+  description String
+  target_type String
+  target_id   String
+  metadata    Json?
+  ip_address  String?
+  user_agent  String?
+  success     Boolean     @default(true)
+  error       String?
+  created_at  DateTime    @default(now()) @db.Timestamp(6)
+  admin_id    String
+  users       users       @relation(fields: [admin_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@index([action])
+  @@index([admin_id])
+  @@index([created_at])
+  @@index([target_type, target_id])
+}
+
+/// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
+model ai_conversations {
+  id                String        @id
+  user_id           String
+  organization_id   String
+  title             String?
+  context_type      AIContextType @default(GENERAL)
+  context_id        String?
+  ai_model          AIModel       @default(OPENAI_GPT4)
+  conversation_data Json
+  usage_tokens      Int           @default(0)
+  is_archived       Boolean       @default(false)
+  created_at        DateTime      @default(now())
+  updated_at        DateTime
+  organizations     organizations @relation(fields: [organization_id], references: [id], onDelete: Cascade)
+  users             users         @relation(fields: [user_id], references: [id], onDelete: Cascade)
+
+  @@index([created_at])
+  @@index([organization_id])
+  @@index([user_id])
+  @@index([organization_id, created_at(sort: Desc)], map: "idx_ai_conversations_org_created")
+  @@index([user_id, created_at(sort: Desc)], map: "idx_ai_conversations_user_created")
+}
+
+/// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
+model ai_tools {
+  id            String           @id
+  name          String
+  description   String?
+  toolType      ToolType
+  required_tier SubscriptionTier
+  configuration Json?
+  is_active     Boolean          @default(true)
+  created_at    DateTime         @default(now())
+  updated_at    DateTime
+}
+
+model analytics_events {
+  id            String   @id
+  source        String   @default("saas")
+  session_id    String
+  user_id       String?
+  event_type    String
+  event_name    String
+  element_id    String?
+  element_class String?
+  element_text  String?
+  url           String
+  path          String
+  x_position    Int?
+  y_position    Int?
+  scroll_depth  Int?
+  properties    Json?
+  timestamp     DateTime @default(now())
+
+  @@index([event_type])
+  @@index([session_id])
+  @@index([source])
+  @@index([timestamp])
+}
+
+model analytics_goals {
+  id               String             @id
+  name             String
+  description      String?
+  type             String
+  conditions       Json
+  value            Float?
+  is_active        Boolean            @default(true)
+  created_at       DateTime           @default(now())
+  updated_at       DateTime
+  goal_conversions goal_conversions[]
+}
+
+/// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
+model appointments {
+  id              String            @id
+  organization_id String
+  customer_id     String?
+  assigned_to     String
+  title           String
+  description     String?
+  start_time      DateTime
+  end_time        DateTime
+  status          AppointmentStatus @default(SCHEDULED)
+  location        String?
+  meeting_url     String?
+  reminders_sent  Json?
+  created_at      DateTime          @default(now())
+  updated_at      DateTime
+  lead_id         String?
+  deal_id         String?
+  listing_id      String?
+  type            AppointmentType?  @default(OTHER)
+  users           users             @relation(fields: [assigned_to], references: [id])
+  customers       customers?        @relation(fields: [customer_id], references: [id])
+  deals           deals?            @relation(fields: [deal_id], references: [id], onUpdate: NoAction)
+  leads           leads?            @relation(fields: [lead_id], references: [id], onUpdate: NoAction)
+  listings        listings?         @relation(fields: [listing_id], references: [id], onUpdate: NoAction)
+  organizations   organizations     @relation(fields: [organization_id], references: [id], onDelete: Cascade)
+
+  @@index([organization_id])
+  @@index([start_time])
+  @@index([assigned_to, start_time(sort: Desc)], map: "idx_appointments_assigned")
+  @@index([assigned_to, start_time], map: "idx_appointments_assigned_start")
+  @@index([deal_id], map: "idx_appointments_deal_id")
+  @@index([lead_id], map: "idx_appointments_lead_id")
+  @@index([listing_id], map: "idx_appointments_listing_id")
+  @@index([organization_id, start_time], map: "idx_appointments_org_start")
+  @@index([organization_id, start_time(sort: Desc)], map: "idx_appointments_org_start_time")
+  @@index([organization_id, status], map: "idx_appointments_org_status")
+  @@index([type], map: "idx_appointments_type")
+}
+
+/// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
+model attachments {
+  id              String        @id
+  organization_id String
+  entity_type     String
+  entity_id       String
+  file_name       String
+  file_size       Int
+  mime_type       String
+  file_path       String
+  uploaded_by_id  String
+  created_at      DateTime      @default(now())
+  updated_at      DateTime
+  organizations   organizations @relation(fields: [organization_id], references: [id], onDelete: Cascade)
+  users           users         @relation(fields: [uploaded_by_id], references: [id])
+
+  @@index([entity_type, entity_id])
+  @@index([organization_id])
+  @@index([entity_type, entity_id, created_at(sort: Desc)], map: "idx_attachments_entity_created")
+  @@index([organization_id, created_at(sort: Desc)], map: "idx_attachments_org_created")
+}
+
+/// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
+model contacts {
+  id                       String         @id
+  name                     String         @db.VarChar(255)
+  email                    String?        @db.VarChar(255)
+  phone                    String?        @db.VarChar(50)
+  company                  String?        @db.VarChar(255)
+  position                 String?        @db.VarChar(255)
+  type                     ContactType?   @default(PROSPECT)
+  status                   ContactStatus? @default(ACTIVE)
+  notes                    String?
+  tags                     String[]       @default([])
+  custom_fields            Json?
+  linkedin_url             String?        @db.VarChar(500)
+  twitter_url              String?        @db.VarChar(500)
+  preferred_contact_method String?        @db.VarChar(50)
+  organization_id          String
+  assigned_to_id           String?
+  created_at               DateTime?      @default(now()) @db.Timestamp(6)
+  updated_at               DateTime?      @default(now()) @db.Timestamp(6)
+  last_contact_at          DateTime?      @db.Timestamp(6)
+  activities               activities[]
+  users                    users?         @relation(fields: [assigned_to_id], references: [id], onUpdate: NoAction)
+  organizations            organizations  @relation(fields: [organization_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  deals                    deals[]
+
+  @@index([assigned_to_id], map: "idx_contacts_assigned_to_id")
+  @@index([created_at], map: "idx_contacts_created_at")
+  @@index([organization_id, created_at(sort: Desc)], map: "idx_contacts_org_created")
+  @@index([organization_id, status], map: "idx_contacts_org_status")
+  @@index([organization_id, type], map: "idx_contacts_org_type")
+  @@index([organization_id], map: "idx_contacts_organization_id")
+  @@index([status], map: "idx_contacts_status")
+  @@index([type], map: "idx_contacts_type")
+}
+
+/// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
+model content {
+  id              String        @id
+  organization_id String
+  title           String
+  slug            String
+  content_type    ContentType
+  content         String
+  excerpt         String?
+  status          ContentStatus @default(DRAFT)
+  author_id       String
+  published_at    DateTime?
+  seo_meta        Json?
+  created_at      DateTime      @default(now())
+  updated_at      DateTime
+  users           users         @relation(fields: [author_id], references: [id])
+  organizations   organizations @relation(fields: [organization_id], references: [id], onDelete: Cascade)
+
+  @@unique([organization_id, slug])
+  @@index([status])
+}
+
+/// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
+model conversations {
+  id                 String                 @id
+  organization_id    String
+  industry           String                 @default("strive")
+  session_id         String
+  user_message       String
+  assistant_response String
+  problem_detected   String?
+  solution_presented String?
+  conversation_stage String
+  outcome            String?
+  conversion_score   Float?
+  booking_completed  Boolean                @default(false)
+  response_time_ms   Int?
+  user_satisfaction  Int?
+  created_at         DateTime               @default(now())
+  updated_at         DateTime
+  embedding          Unsupported("vector")?
+  organizations      organizations          @relation(fields: [organization_id], references: [id])
+
+  @@index([created_at(sort: Desc)])
+  @@index([embedding])
+  @@index([industry])
+  @@index([organization_id])
+  @@index([session_id])
+  @@index([session_id], map: "conversations_session_idx")
+}
+
+/// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
+model customers {
+  id              String         @id
+  organization_id String
+  name            String
+  email           String?
+  phone           String?
+  company         String?
+  status          CustomerStatus @default(LEAD)
+  source          CustomerSource @default(WEBSITE)
+  tags            String[]
+  custom_fields   Json?
+  assigned_to     String?
+  created_at      DateTime       @default(now())
+  updated_at      DateTime
+  appointments    appointments[]
+  users           users?         @relation(fields: [assigned_to], references: [id])
+  organizations   organizations  @relation(fields: [organization_id], references: [id], onDelete: Cascade)
+  projects        projects[]
+
+  @@index([email])
+  @@index([organization_id])
+  @@index([status])
+  @@index([organization_id, created_at(sort: Desc)], map: "idx_customers_org_created")
+  @@index([organization_id, status], map: "idx_customers_org_status")
+}
+
+/// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
+model deals {
+  id                  String         @id
+  title               String         @db.VarChar(255)
+  description         String?
+  value               Decimal        @db.Decimal(12, 2)
+  stage               DealStage?     @default(LEAD)
+  status              DealStatus?    @default(ACTIVE)
+  probability         Int?           @default(50)
+  expected_close_date DateTime?      @db.Timestamp(6)
+  actual_close_date   DateTime?      @db.Timestamp(6)
+  lost_reason         String?        @db.VarChar(500)
+  notes               String?
+  tags                String[]       @default([])
+  custom_fields       Json?
+  lead_id             String?
+  contact_id          String?
+  listing_id          String?
+  organization_id     String
+  assigned_to_id      String?
+  created_at          DateTime?      @default(now()) @db.Timestamp(6)
+  updated_at          DateTime?      @default(now()) @db.Timestamp(6)
+  activities          activities[]
+  appointments        appointments[]
+  users               users?         @relation(fields: [assigned_to_id], references: [id], onUpdate: NoAction)
+  contacts            contacts?      @relation(fields: [contact_id], references: [id], onUpdate: NoAction)
+  leads               leads?         @relation(fields: [lead_id], references: [id], onUpdate: NoAction)
+  organizations       organizations  @relation(fields: [organization_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  listings            listings?      @relation(fields: [listing_id], references: [id], onUpdate: NoAction, map: "fk_deals_listing_id")
+
+  @@index([assigned_to_id], map: "idx_deals_assigned_to_id")
+  @@index([created_at], map: "idx_deals_created_at")
+  @@index([expected_close_date], map: "idx_deals_expected_close_date")
+  @@index([organization_id, stage], map: "idx_deals_org_stage")
+  @@index([organization_id, stage, status], map: "idx_deals_org_stage_status")
+  @@index([organization_id], map: "idx_deals_organization_id")
+  @@index([stage], map: "idx_deals_stage")
+  @@index([status], map: "idx_deals_status")
+}
+
+/// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
+model document_signatures {
+  id                 String             @id
+  status             SignatureStatus    @default(PENDING)
+  signed_at          DateTime?          @db.Timestamp(6)
+  signature_data     String?
+  ip_address         String?
+  user_agent         String?
+  auth_method        String?
+  decline_reason     String?
+  document_id        String
+  signer_id          String
+  request_id         String
+  documents          documents          @relation(fields: [document_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  signature_requests signature_requests @relation(fields: [request_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  loop_parties       loop_parties       @relation(fields: [signer_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+
+  @@index([document_id])
+  @@index([request_id])
+  @@index([signer_id])
+  @@index([status])
+}
+
+/// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
+model document_versions {
+  id             String    @id
+  version_number Int
+  storage_key    String
+  file_size      Int
+  created_at     DateTime  @default(now()) @db.Timestamp(6)
+  created_by     String
+  document_id    String
+  users          users     @relation(fields: [created_by], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  documents      documents @relation(fields: [document_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@unique([document_id, version_number])
+  @@index([document_id])
+}
+
+/// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
+model documents {
+  id                  String                @id
+  filename            String
+  original_name       String
+  mime_type           String
+  file_size           Int
+  storage_key         String                @unique
+  version             Int                   @default(1)
+  status              DocumentStatus        @default(DRAFT)
+  category            String?
+  created_at          DateTime              @default(now()) @db.Timestamp(6)
+  updated_at          DateTime              @db.Timestamp(6)
+  loop_id             String
+  uploaded_by         String
+  document_signatures document_signatures[]
+  document_versions   document_versions[]
+  transaction_loops   transaction_loops     @relation(fields: [loop_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  users               users                 @relation(fields: [uploaded_by], references: [id], onDelete: NoAction, onUpdate: NoAction)
+
+  @@index([category])
+  @@index([loop_id])
+  @@index([status])
+}
+
+/// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
+model example_conversations {
+  id                 String                 @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  industry           String                 @default("strive")
+  user_input         String
+  assistant_response String
+  problem_type       String?
+  solution_type      String?
+  outcome            String?
+  conversion_score   Float?
+  embedding          Unsupported("vector")?
+  created_at         DateTime?              @default(now()) @db.Timestamptz(6)
+  updated_at         DateTime?              @default(now()) @db.Timestamptz(6)
+
+  @@index([embedding])
+  @@index([industry])
+}
+
+/// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
+model feature_flags {
+  id              String             @id
+  name            String             @unique
+  description     String?
+  is_enabled      Boolean            @default(false)
+  rollout_percent Float              @default(0)
+  target_tiers    SubscriptionTier[] @default([])
+  target_orgs     String[]           @default([])
+  target_users    String[]           @default([])
+  conditions      Json?
+  environment     Environment        @default(PRODUCTION)
+  category        String?
+  created_at      DateTime           @default(now()) @db.Timestamp(6)
+  updated_at      DateTime           @default(now()) @db.Timestamp(6)
+  created_by      String
+  users           users              @relation(fields: [created_by], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@index([environment])
+  @@index([is_enabled])
+  @@index([name])
+}
+
+model goal_conversions {
+  id              String          @id
+  goal_id         String
+  session_id      String
+  user_id         String?
+  value           Float?
+  url             String
+  path            String
+  timestamp       DateTime        @default(now())
+  analytics_goals analytics_goals @relation(fields: [goal_id], references: [id], onDelete: Cascade)
+
+  @@index([goal_id])
+  @@index([timestamp])
+}
+
+/// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
+model leads {
+  id              String         @id
+  name            String         @db.VarChar(255)
+  email           String?        @db.VarChar(255)
+  phone           String?        @db.VarChar(50)
+  company         String?        @db.VarChar(255)
+  source          LeadSource?    @default(WEBSITE)
+  status          LeadStatus?    @default(NEW_LEAD)
+  score           LeadScore?     @default(COLD)
+  score_value     Int?           @default(0)
+  budget          Decimal?       @db.Decimal(12, 2)
+  timeline        String?        @db.VarChar(200)
+  notes           String?
+  tags            String[]       @default([])
+  custom_fields   Json?
+  organization_id String
+  assigned_to_id  String?
+  created_at      DateTime?      @default(now()) @db.Timestamp(6)
+  updated_at      DateTime?      @default(now()) @db.Timestamp(6)
+  last_contact_at DateTime?      @db.Timestamp(6)
+  activities      activities[]
+  appointments    appointments[]
+  deals           deals[]
+  users           users?         @relation(fields: [assigned_to_id], references: [id], onUpdate: NoAction)
+  organizations   organizations  @relation(fields: [organization_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@index([assigned_to_id], map: "idx_leads_assigned_to_id")
+  @@index([created_at], map: "idx_leads_created_at")
+  @@index([organization_id, created_at(sort: Desc)], map: "idx_leads_org_created")
+  @@index([organization_id, score, score_value(sort: Desc)], map: "idx_leads_org_score")
+  @@index([organization_id, status], map: "idx_leads_org_status")
+  @@index([organization_id], map: "idx_leads_organization_id")
+  @@index([score], map: "idx_leads_score")
+  @@index([source], map: "idx_leads_source")
+  @@index([status], map: "idx_leads_status")
+}
+
+/// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
+model listings {
+  id               String         @id
+  title            String         @db.VarChar(255)
+  description      String?
+  address          String         @db.VarChar(500)
+  city             String         @db.VarChar(100)
+  state            String         @db.VarChar(100)
+  zip_code         String         @db.VarChar(20)
+  country          String?        @default("USA") @db.VarChar(100)
+  property_type    PropertyType?  @default(RESIDENTIAL)
+  bedrooms         Int?
+  bathrooms        Decimal?       @db.Decimal(3, 1)
+  square_feet      Int?
+  lot_size         Decimal?       @db.Decimal(10, 2)
+  year_built       Int?
+  price            Decimal        @db.Decimal(12, 2)
+  price_per_sqft   Decimal?       @db.Decimal(10, 2)
+  status           ListingStatus? @default(ACTIVE)
+  mls_number       String?        @db.VarChar(100)
+  listing_date     DateTime?      @db.Timestamp(6)
+  expiration_date  DateTime?      @db.Timestamp(6)
+  images           String[]       @default([])
+  virtual_tour_url String?        @db.VarChar(500)
+  features         String[]       @default([])
+  notes            String?
+  tags             String[]       @default([])
+  custom_fields    Json?
+  organization_id  String
+  assigned_to_id   String?
+  created_at       DateTime?      @default(now()) @db.Timestamp(6)
+  updated_at       DateTime?      @default(now()) @db.Timestamp(6)
+  activities       activities[]
+  appointments     appointments[]
+  deals            deals[]
+  users            users?         @relation(fields: [assigned_to_id], references: [id], onUpdate: NoAction)
+  organizations    organizations  @relation(fields: [organization_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@index([assigned_to_id], map: "idx_listings_assigned_to_id")
+  @@index([city], map: "idx_listings_city")
+  @@index([created_at], map: "idx_listings_created_at")
+  @@index([city, state, zip_code], map: "idx_listings_location")
+  @@index([organization_id, status], map: "idx_listings_org_status")
+  @@index([organization_id, property_type], map: "idx_listings_org_type")
+  @@index([organization_id], map: "idx_listings_organization_id")
+  @@index([property_type], map: "idx_listings_property_type")
+  @@index([state], map: "idx_listings_state")
+  @@index([status], map: "idx_listings_status")
+}
+
+/// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
+model loop_parties {
+  id                  String                @id
+  name                String
+  email               String
+  phone               String?
+  role                PartyRole
+  permissions         Json
+  status              PartyStatus           @default(ACTIVE)
+  invited_at          DateTime              @default(now()) @db.Timestamp(6)
+  joined_at           DateTime?             @db.Timestamp(6)
+  loop_id             String
+  document_signatures document_signatures[]
+  transaction_loops   transaction_loops     @relation(fields: [loop_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  transaction_tasks   transaction_tasks[]
+
+  @@index([email])
+  @@index([loop_id])
+  @@index([role])
+}
+
+/// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
+model notifications {
+  id              String           @id
+  user_id         String
+  organization_id String
+  type            NotificationType
+  title           String
+  message         String
+  action_url      String?
+  entity_type     String?
+  entity_id       String?
+  read            Boolean          @default(false)
+  created_at      DateTime         @default(now())
+  updated_at      DateTime
+  organizations   organizations    @relation(fields: [organization_id], references: [id], onDelete: Cascade)
+  users           users            @relation(fields: [user_id], references: [id], onDelete: Cascade)
+
+  @@index([organization_id, created_at(sort: Desc)], map: "idx_notifications_org_created")
+  @@index([user_id, read, created_at(sort: Desc)], map: "idx_notifications_user_read_created")
+  @@index([created_at(sort: Desc)])
+  @@index([organization_id])
+  @@index([read])
+  @@index([user_id])
+}
+
+/// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
+model onboarding_sessions {
+  id                       String            @id
+  session_token            String            @unique
+  current_step             Int               @default(1)
+  total_steps              Int               @default(4)
+  org_name                 String?
+  org_website              String?
+  org_description          String?
+  selected_tier            SubscriptionTier?
+  billing_cycle            BillingCycle?
+  stripe_payment_intent_id String?
+  payment_status           PaymentStatus     @default(PENDING)
+  is_completed             Boolean           @default(false)
+  completed_at             DateTime?         @db.Timestamp(6)
+  expires_at               DateTime          @db.Timestamp(6)
+  created_at               DateTime          @default(now()) @db.Timestamp(6)
+  updated_at               DateTime          @default(now()) @db.Timestamp(6)
+  user_id                  String?
+  organization_id          String?
+  organizations            organizations?    @relation(fields: [organization_id], references: [id], onUpdate: NoAction)
+  users                    users?            @relation(fields: [user_id], references: [id], onUpdate: NoAction)
+
+  @@index([expires_at])
+  @@index([payment_status])
+  @@index([session_token])
+  @@index([user_id])
+}
+
+/// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
+model organization_members {
+  id              String        @id
+  user_id         String
+  organization_id String
+  role            OrgRole       @default(MEMBER)
+  permissions     Json?
+  joined_at       DateTime      @default(now())
+  created_at      DateTime      @default(now())
+  organizations   organizations @relation(fields: [organization_id], references: [id], onDelete: Cascade)
+  users           users         @relation(fields: [user_id], references: [id], onDelete: Cascade)
+
+  @@unique([user_id, organization_id])
+  @@index([user_id, organization_id], map: "idx_org_members_user")
+}
+
+/// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
+model organizations {
+  id                     String                   @id
+  name                   String
+  slug                   String                   @unique
+  description            String?
+  settings               Json?
+  subscription_status    SubscriptionStatus       @default(TRIAL)
+  billing_email          String?
+  created_at             DateTime                 @default(now())
+  updated_at             DateTime
+  activities             activities[]
+  activity_logs          activity_logs[]
+  ai_conversations       ai_conversations[]
+  appointments           appointments[]
+  attachments            attachments[]
+  contacts               contacts[]
+  content                content[]
+  conversations          conversations[]
+  customers              customers[]
+  deals                  deals[]
+  leads                  leads[]
+  listings               listings[]
+  notifications          notifications[]
+  onboarding_sessions    onboarding_sessions[]
+  organization_members   organization_members[]
+  projects               projects[]
+  subscriptions          subscriptions?
+  transaction_audit_logs transaction_audit_logs[]
+  transaction_loops      transaction_loops[]
+  usage_tracking         usage_tracking[]
+  workflows              workflows[]
+}
+
+model page_views {
+  id            String   @id
+  source        String   @default("saas")
+  session_id    String
+  user_id       String?
+  url           String
+  path          String
+  title         String?
+  referrer      String?
+  user_agent    String?
+  ip_address    String?
+  country       String?
+  city          String?
+  device        String?
+  browser       String?
+  os            String?
+  utm_source    String?
+  utm_medium    String?
+  utm_campaign  String?
+  view_duration Int?
+  timestamp     DateTime @default(now())
+
+  @@index([path])
+  @@index([session_id])
+  @@index([source])
+  @@index([timestamp])
+}
+
+/// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
+model platform_metrics {
+  id               String   @id
+  date             DateTime @unique @default(now()) @db.Timestamp(6)
+  total_users      Int      @default(0)
+  active_users     Int      @default(0)
+  new_users        Int      @default(0)
+  total_orgs       Int      @default(0)
+  active_orgs      Int      @default(0)
+  new_orgs         Int      @default(0)
+  mrr_cents        BigInt   @default(0)
+  arr_cents        BigInt   @default(0)
+  churn_rate       Float    @default(0)
+  free_count       Int      @default(0)
+  starter_count    Int      @default(0)
+  growth_count     Int      @default(0)
+  elite_count      Int      @default(0)
+  enterprise_count Int      @default(0)
+  total_storage    BigInt   @default(0)
+  api_calls        Int      @default(0)
+  created_at       DateTime @default(now()) @db.Timestamp(6)
+
+  @@index([date])
+}
+
+/// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
+model projects {
+  id                  String        @id
+  organization_id     String
+  customer_id         String?
+  name                String
+  description         String?
+  status              ProjectStatus @default(PLANNING)
+  priority            Priority      @default(MEDIUM)
+  start_date          DateTime?
+  due_date            DateTime?
+  completion_date     DateTime?
+  budget              Decimal?      @db.Decimal(10, 2)
+  progress_percentage Int           @default(0)
+  project_manager_id  String
+  created_at          DateTime      @default(now())
+  updated_at          DateTime
+  customers           customers?    @relation(fields: [customer_id], references: [id])
+  organizations       organizations @relation(fields: [organization_id], references: [id], onDelete: Cascade)
+  users               users         @relation(fields: [project_manager_id], references: [id])
+  tasks               tasks[]
+
+  @@index([organization_id, created_at(sort: Desc)], map: "idx_projects_org_created")
+  @@index([organization_id])
+  @@index([status])
+}
+
+/// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
+model signature_requests {
+  id                  String                @id
+  title               String
+  message             String?
+  status              SignatureStatus       @default(PENDING)
+  signing_order       SigningOrder          @default(PARALLEL)
+  expires_at          DateTime?             @db.Timestamp(6)
+  completed_at        DateTime?             @db.Timestamp(6)
+  created_at          DateTime              @default(now()) @db.Timestamp(6)
+  updated_at          DateTime              @db.Timestamp(6)
+  loop_id             String
+  requested_by        String
+  document_signatures document_signatures[]
+  transaction_loops   transaction_loops     @relation(fields: [loop_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  users               users                 @relation(fields: [requested_by], references: [id], onDelete: NoAction, onUpdate: NoAction)
+
+  @@index([loop_id])
+  @@index([status])
+}
+
+/// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
+model subscriptions {
+  id                     String             @id
+  organization_id        String             @unique
+  stripe_subscription_id String?            @unique
+  stripe_customer_id     String?
+  status                 SubscriptionStatus @default(TRIAL)
+  tier                   SubscriptionTier   @default(STARTER)
+  current_period_start   DateTime
+  current_period_end     DateTime
+  cancel_at_period_end   Boolean            @default(false)
+  metadata               Json?
+  created_at             DateTime           @default(now())
+  updated_at             DateTime
+  organizations          organizations      @relation(fields: [organization_id], references: [id], onDelete: Cascade)
+}
+
+/// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
+model system_alerts {
+  id              String             @id
+  title           String
+  message         String
+  level           AlertLevel         @default(INFO)
+  category        AlertCategory
+  is_global       Boolean            @default(false)
+  target_roles    UserRole[]         @default([])
+  target_tiers    SubscriptionTier[] @default([])
+  target_orgs     String[]           @default([])
+  is_dismissible  Boolean            @default(true)
+  auto_hide_after Int?
+  starts_at       DateTime           @default(now()) @db.Timestamp(6)
+  ends_at         DateTime?          @db.Timestamp(6)
+  view_count      Int                @default(0)
+  dismiss_count   Int                @default(0)
+  is_active       Boolean            @default(true)
+  is_archived     Boolean            @default(false)
+  created_at      DateTime           @default(now()) @db.Timestamp(6)
+  updated_at      DateTime           @default(now()) @db.Timestamp(6)
+  created_by      String
+  users           users              @relation(fields: [created_by], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@index([category])
+  @@index([is_active])
+  @@index([starts_at, ends_at])
+}
+
+/// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
+model tasks {
+  id                             String     @id
+  project_id                     String
+  parent_task_id                 String?
+  title                          String
+  description                    String?
+  status                         TaskStatus @default(TODO)
+  priority                       Priority   @default(MEDIUM)
+  assigned_to                    String?
+  created_by                     String
+  due_date                       DateTime?
+  estimated_hours                Decimal?   @db.Decimal(5, 2)
+  actual_hours                   Decimal?   @db.Decimal(5, 2)
+  tags                           String[]
+  position                       Int
+  created_at                     DateTime   @default(now())
+  updated_at                     DateTime
+  users_tasks_assigned_toTousers users?     @relation("tasks_assigned_toTousers", fields: [assigned_to], references: [id])
+  users_tasks_created_byTousers  users      @relation("tasks_created_byTousers", fields: [created_by], references: [id])
+  tasks                          tasks?     @relation("tasksTotasks", fields: [parent_task_id], references: [id])
+  other_tasks                    tasks[]    @relation("tasksTotasks")
+  projects                       projects   @relation(fields: [project_id], references: [id], onDelete: Cascade)
+
+  @@index([project_id, status], map: "idx_tasks_project_status")
+  @@index([assigned_to])
+  @@index([project_id])
+  @@index([status])
+}
+
+/// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
+model transaction_audit_logs {
+  id              String        @id
+  action          String
+  entity_type     String
+  entity_id       String
+  old_values      Json?
+  new_values      Json?
+  ip_address      String?
+  user_agent      String?
+  timestamp       DateTime      @default(now()) @db.Timestamp(6)
+  user_id         String
+  organization_id String
+  organizations   organizations @relation(fields: [organization_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  users           users         @relation(fields: [user_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+
+  @@index([entity_type, entity_id])
+  @@index([organization_id])
+  @@index([timestamp])
+  @@index([user_id])
+}
+
+/// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
+model transaction_loops {
+  id                 String               @id
+  property_address   String
+  transaction_type   TransactionType
+  listing_price      Decimal              @db.Decimal(12, 2)
+  status             LoopStatus           @default(DRAFT)
+  expected_closing   DateTime?            @db.Timestamp(6)
+  actual_closing     DateTime?            @db.Timestamp(6)
+  progress           Int                  @default(0)
+  created_at         DateTime             @default(now()) @db.Timestamp(6)
+  updated_at         DateTime             @db.Timestamp(6)
+  organization_id    String
+  created_by         String
+  documents          documents[]
+  loop_parties       loop_parties[]
+  signature_requests signature_requests[]
+  users              users                @relation(fields: [created_by], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  organizations      organizations        @relation(fields: [organization_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  transaction_tasks  transaction_tasks[]
+  workflows          workflows[]
+
+  @@index([created_by])
+  @@index([organization_id])
+  @@index([status])
+}
+
+/// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
+model transaction_tasks {
+  id                String            @id
+  title             String
+  description       String?
+  status            TaskStatus        @default(TODO)
+  priority          TaskPriority      @default(MEDIUM)
+  due_date          DateTime?         @db.Timestamp(6)
+  completed_at      DateTime?         @db.Timestamp(6)
+  created_at        DateTime          @default(now()) @db.Timestamp(6)
+  updated_at        DateTime          @db.Timestamp(6)
+  loop_id           String
+  assigned_to       String?
+  created_by        String
+  loop_parties      loop_parties?     @relation(fields: [assigned_to], references: [id], onUpdate: NoAction)
+  users             users             @relation(fields: [created_by], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  transaction_loops transaction_loops @relation(fields: [loop_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@index([assigned_to])
+  @@index([due_date])
+  @@index([loop_id])
+  @@index([status])
+}
+
+/// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
+model usage_tracking {
+  id              String        @id
+  organization_id String
+  user_id         String
+  resource_type   ResourceType
+  resource_name   String
+  usage_amount    Int
+  billing_period  DateTime
+  metadata        Json?
+  created_at      DateTime      @default(now())
+  organizations   organizations @relation(fields: [organization_id], references: [id], onDelete: Cascade)
+
+  @@index([organization_id, billing_period, resource_type], map: "idx_usage_tracking_org_period_resource")
+  @@index([organization_id, billing_period])
+}
+
+model user_sessions {
+  id         String    @id
+  source     String    @default("saas")
+  session_id String    @unique
+  user_id    String?
+  start_time DateTime  @default(now())
+  end_time   DateTime?
+  duration   Int?
+  page_views Int       @default(0)
+  bounced    Boolean   @default(false)
+  converted  Boolean   @default(false)
+  user_agent String?
+  ip_address String?
+  country    String?
+  city       String?
+  device     String?
+  browser    String?
+  os         String?
+  referrer   String?
+  entry_page String?
+  exit_page  String?
+
+  @@index([source])
+  @@index([start_time])
+}
+
+/// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
+model users {
+  id                             String                   @id
+  clerk_user_id                  String?                  @unique
+  email                          String                   @unique
+  name                           String?
+  avatar_url                     String?
+  role                           UserRole                 @default(EMPLOYEE)
+  subscription_tier              SubscriptionTier         @default(STARTER)
+  is_active                      Boolean                  @default(true)
+  created_at                     DateTime                 @default(now())
+  updated_at                     DateTime
+  activities                     activities[]
+  activity_logs                  activity_logs[]
+  admin_action_logs              admin_action_logs[]
+  ai_conversations               ai_conversations[]
+  appointments                   appointments[]
+  attachments                    attachments[]
+  contacts                       contacts[]
+  content                        content[]
+  customers                      customers[]
+  deals                          deals[]
+  document_versions              document_versions[]
+  documents                      documents[]
+  feature_flags                  feature_flags[]
+  leads                          leads[]
+  listings                       listings[]
+  notifications                  notifications[]
+  onboarding_sessions            onboarding_sessions[]
+  organization_members           organization_members[]
+  projects                       projects[]
+  signature_requests             signature_requests[]
+  system_alerts                  system_alerts[]
+  tasks_tasks_assigned_toTousers tasks[]                  @relation("tasks_assigned_toTousers")
+  tasks_tasks_created_byTousers  tasks[]                  @relation("tasks_created_byTousers")
+  transaction_audit_logs         transaction_audit_logs[]
+  transaction_loops              transaction_loops[]
+  transaction_tasks              transaction_tasks[]
+  workflows                      workflows[]
+}
+
+model web_vitals_metrics {
+  id              String   @id
+  source          String   @default("saas")
+  session_id      String
+  user_id         String?
+  url             String
+  path            String
+  metric_name     String
+  metric_value    Float
+  metric_rating   String
+  metric_id       String
+  user_agent      String?
+  device          String?
+  browser         String?
+  connection_type String?
+  timestamp       DateTime @default(now())
+
+  @@index([metric_name])
+  @@index([source])
+  @@index([timestamp])
+}
+
+/// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
+model workflows {
+  id                String             @id
+  name              String
+  description       String?
+  is_template       Boolean            @default(false)
+  steps             Json
+  status            WorkflowStatus     @default(ACTIVE)
+  created_at        DateTime           @default(now()) @db.Timestamp(6)
+  updated_at        DateTime           @db.Timestamp(6)
+  loop_id           String?
+  created_by        String
+  organization_id   String?
+  users             users              @relation(fields: [created_by], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  transaction_loops transaction_loops? @relation(fields: [loop_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  organizations     organizations?     @relation(fields: [organization_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@index([is_template])
+  @@index([loop_id])
+  @@index([organization_id])
+}
+
 enum SubscriptionTier {
-  FREE
-  CUSTOM
   STARTER
   GROWTH
   ELITE
   ENTERPRISE
+  FREE
+  CUSTOM
 }
 
 enum OrgRole {
@@ -40,7 +1103,6 @@ enum OrgRole {
   VIEWER
 }
 
-// --- CRM Enums ---
 enum LeadSource {
   WEBSITE
   REFERRAL
@@ -69,36 +1131,31 @@ enum LeadScore {
 }
 
 enum DealStage {
-  PROSPECTING
-  QUALIFICATION
+  LEAD
+  QUALIFIED
   PROPOSAL
   NEGOTIATION
   CLOSING
-  WON
-  LOST
+  CLOSED_WON
+  CLOSED_LOST
 }
 
-// --- Transaction Enums ---
 enum LoopStatus {
+  DRAFT
   ACTIVE
-  PENDING
+  UNDER_CONTRACT
   CLOSING
   CLOSED
   CANCELLED
-}
-
-enum DealType {
-  PURCHASE
-  SALE
-  LEASE
-  REFINANCE
+  ARCHIVED
 }
 
 enum TaskStatus {
   TODO
   IN_PROGRESS
-  COMPLETED
-  BLOCKED
+  REVIEW
+  DONE
+  CANCELLED
 }
 
 enum TaskPriority {
@@ -108,63 +1165,48 @@ enum TaskPriority {
   URGENT
 }
 
-enum DocumentCategory {
-  CONTRACT
-  DISCLOSURE
-  INSPECTION
-  APPRAISAL
-  OTHER
-}
-
 enum PartyRole {
   BUYER
   SELLER
-  AGENT
-  ATTORNEY
+  BUYER_AGENT
+  LISTING_AGENT
   LENDER
-  INSPECTOR
   TITLE_COMPANY
+  INSPECTOR
+  APPRAISER
+  ATTORNEY
+  ESCROW_OFFICER
+  OTHER
 }
 
 enum SignatureStatus {
   PENDING
+  SENT
+  VIEWED
   SIGNED
   DECLINED
   EXPIRED
 }
 
 enum PropertyType {
-  HOUSE
+  RESIDENTIAL
+  COMMERCIAL
+  LAND
+  MULTI_FAMILY
   CONDO
   TOWNHOUSE
-  LAND
-  COMMERCIAL
-  MULTI_FAMILY
+  LUXURY
 }
 
 enum ListingStatus {
   ACTIVE
   PENDING
   SOLD
-  OFF_MARKET
+  EXPIRED
+  WITHDRAWN
+  CONTINGENT
 }
 
-enum TransactionAction {
-  CREATE
-  UPDATE
-  COMPLETE
-  COMMENT
-}
-
-enum TransactionEntityType {
-  loop
-  task
-  document
-  party
-  signature
-}
-
-// --- Marketplace Enums ---
 enum ToolCategory {
   FOUNDATION
   GROWTH
@@ -180,12 +1222,6 @@ enum ToolTier {
   T3
 }
 
-enum BillingPeriod {
-  MONTHLY
-  YEARLY
-  ONE_TIME
-}
-
 enum BundleType {
   STARTER_PACK
   GROWTH_PACK
@@ -196,30 +1232,43 @@ enum BundleType {
 enum PurchaseStatus {
   ACTIVE
   CANCELLED
+  REFUNDED
   EXPIRED
-  TRIAL
 }
 
-// --- Content/CMS Enums ---
 enum ContentType {
-  BLOG_POST
   PAGE
+  BLOG_POST
+  DOCUMENTATION
+  TEMPLATE
   ARTICLE
   LANDING_PAGE
+  EMAIL_TEMPLATE
+  SOCIAL_POST
+  PRESS_RELEASE
+  NEWSLETTER
+  CASE_STUDY
+  WHITEPAPER
 }
 
 enum ContentStatus {
-  PUBLISHED
   DRAFT
-  SCHEDULED
+  PUBLISHED
   ARCHIVED
+  REVIEW
+  APPROVED
+  SCHEDULED
 }
 
 enum CampaignType {
-  EMAIL
-  SOCIAL
-  SMS
-  MULTI_CHANNEL
+  CONTENT_MARKETING
+  EMAIL_MARKETING
+  SOCIAL_MEDIA
+  PAID_ADVERTISING
+  SEO_CAMPAIGN
+  LEAD_GENERATION
+  BRAND_AWARENESS
+  PRODUCT_LAUNCH
 }
 
 enum CampaignStatus {
@@ -231,1188 +1280,391 @@ enum CampaignStatus {
   CANCELLED
 }
 
-// --- Expense & Tax Enums ---
-enum PaymentMethod {
-  CASH
-  CHECK
-  CREDIT_CARD
-  DEBIT_CARD
-  WIRE_TRANSFER
-  OTHER
-}
-
-enum TaxCategory {
-  ADVERTISING
-  VEHICLE
-  COMMISSIONS
-  INSURANCE
-  LEGAL
-  OFFICE
-  RENT
-  REPAIRS
-  SUPPLIES
-  TRAVEL
-  MEALS
-  UTILITIES
-  OTHER
-}
-
 enum ReportType {
+  MONTHLY
   QUARTERLY
-  ANNUAL
+  YEARLY
   CUSTOM
-}
-
-// --- REID/Analytics Enums ---
-enum MarketTemperature {
-  HOT
-  WARM
-  MODERATE
-  COOL
-  COLD
-}
-
-enum EducationLevel {
-  HIGH_SCHOOL
-  SOME_COLLEGE
-  BACHELORS
-  GRADUATE
+  TAX_SUMMARY
 }
 
 enum AlertType {
   PRICE_DROP
-  HOT_MARKET
+  PRICE_INCREASE
   NEW_LISTING
-  INVESTMENT_OPPORTUNITY
-  MARKET_SHIFT
+  SOLD
+  INVENTORY_CHANGE
+  MARKET_TREND
+  DEMOGRAPHIC_CHANGE
 }
 
 enum AlertSeverity {
   LOW
   MEDIUM
   HIGH
-  URGENT
-}
-
-enum SchoolType {
-  ELEMENTARY
-  MIDDLE
-  HIGH
-  PRIVATE
-  CHARTER
-}
-
-// --- AI Hub Enums ---
-enum ConversationStatus {
-  ACTIVE
-  ARCHIVED
-}
-
-enum MessageRole {
-  USER
-  ASSISTANT
-  SYSTEM
-}
-
-enum TriggerType {
-  SCHEDULE
-  EVENT
-  MANUAL
-  WEBHOOK
+  CRITICAL
 }
 
 enum ActionType {
-  EMAIL
-  SMS
+  NAVIGATION
   API_CALL
-  CREATE_TASK
-  UPDATE_RECORD
-  NOTIFICATION
+  MODAL_FORM
+  EXTERNAL_LINK
+  WORKFLOW_TRIGGER
 }
 
-enum AutomationStatus {
-  ACTIVE
-  PAUSED
-  DRAFT
-  ERROR
-}
-
-enum AIFeature {
-  CHAT
-  AUTOMATION
-  INSIGHTS
-  CONTENT_GEN
-  ANALYSIS
-}
-
-// --- Supporting Enums ---
 enum AppointmentStatus {
   SCHEDULED
   CONFIRMED
-  CANCELLED
   COMPLETED
+  CANCELLED
   NO_SHOW
 }
 
 enum ActivityType {
-  CREATE
-  UPDATE
-  DELETE
-  VIEW
-  SHARE
-  COMMENT
+  CALL
+  EMAIL
+  MEETING
+  TASK
+  NOTE
+  SHOWING
+  OPEN_HOUSE
+  FOLLOW_UP
 }
 
-// ============================================================================
-// CORE MODELS (3)
-// ============================================================================
-
-/// User model - Core authentication and profile
-/// RLS: Enabled via Supabase auth
-model User {
-  id                String   @id @default(cuid())
-  email             String   @unique
-  name              String?
-  avatar_url        String?
-  created_at        DateTime @default(now())
-  updated_at        DateTime @updatedAt
-
-  // Relations
-  organization_members OrganizationMember[]
-  contacts             Contact[]
-  leads                Lead[]               @relation("AssignedLeads")
-  customers            Customer[]
-  deals                Deal[]               @relation("AssignedDeals")
-  loops                Loop[]
-  tasks                Task[]               @relation("AssignedTasks")
-  documents            Document[]
-  content_items        ContentItem[]
-  campaigns            Campaign[]
-  expenses             Expense[]
-  receipts             Receipt[]
-  roi_simulations      ROISimulation[]
-  alerts               Alert[]
-  ai_profiles          AIProfile[]
-  conversations        Conversation[]
-  automations          Automation[]
-  ai_usage             AIUsage[]
-  appointments         Appointment[]
-  activities           Activity[]
-  widgets              Widget[]
-  transaction_activities TransactionActivity[]
-  purchases            Purchase[]
-  reviews              Review[]
-  cart                 Cart?
-  listings             Listing[]
-
-  @@index([email])
+enum AIContextType {
+  GENERAL
+  PROJECT
+  CUSTOMER
+  TASK
 }
 
-/// Organization model - Multi-tenant structure
-/// RLS: Enabled - all child models filtered by organization_id
-model Organization {
-  id                String           @id @default(cuid())
-  name              String
-  slug              String           @unique
-  subscription_tier SubscriptionTier @default(FREE)
-  created_at        DateTime         @default(now())
-  updated_at        DateTime         @updatedAt
-
-  // Relations
-  members            OrganizationMember[]
-  contacts           Contact[]
-  leads              Lead[]
-  customers          Customer[]
-  deals              Deal[]
-  loops              Loop[]
-  content_items      ContentItem[]
-  campaigns          Campaign[]
-  expenses           Expense[]
-  expense_categories ExpenseCategory[]
-  tax_estimates      TaxEstimate[]
-  tax_reports        TaxReport[]
-  roi_simulations    ROISimulation[]
-  alerts             Alert[]
-  ai_profiles        AIProfile[]
-  conversations      Conversation[]
-  automations        Automation[]
-  ai_usage           AIUsage[]
-  appointments       Appointment[]
-  activities         Activity[]
-  widgets            Widget[]
-  purchases          Purchase[]
-  reviews            Review[]
-  listings           Listing[]
-
-  @@index([slug])
-  @@index([subscription_tier])
+enum AIModel {
+  OPENAI_GPT4
+  CLAUDE_SONNET
+  GEMINI
+  GROK
+  KIMIK2
 }
 
-/// OrganizationMember model - User-Org many-to-many with role
-model OrganizationMember {
-  id              String       @id @default(cuid())
-  organization_id String
-  user_id         String
-  role            OrgRole      @default(MEMBER)
-  created_at      DateTime     @default(now())
-
-  organization Organization @relation(fields: [organization_id], references: [id], onDelete: Cascade)
-  user         User         @relation(fields: [user_id], references: [id], onDelete: Cascade)
-
-  @@unique([organization_id, user_id])
-  @@index([organization_id])
-  @@index([user_id])
+enum AdminAction {
+  USER_CREATE
+  USER_UPDATE
+  USER_SUSPEND
+  USER_DELETE
+  USER_IMPERSONATE
+  ORG_CREATE
+  ORG_UPDATE
+  ORG_SUSPEND
+  ORG_DELETE
+  SUBSCRIPTION_CREATE
+  SUBSCRIPTION_UPDATE
+  SUBSCRIPTION_CANCEL
+  FEATURE_FLAG_UPDATE
+  SYSTEM_CONFIG_UPDATE
+  DATA_EXPORT
+  BULK_ACTION
 }
 
-// ============================================================================
-// CRM MODELS (4)
-// ============================================================================
-
-/// Contact model - CRM contact management
-/// Mock: MockContact from lib/data/mocks/crm.ts
-model Contact {
-  id              String       @id @default(cuid())
-  organization_id String
-  user_id         String
-  name            String
-  email           String
-  phone           String?
-  company         String?
-  role            String?
-  tags            String[]
-  notes           String?
-  created_at      DateTime     @default(now())
-  updated_at      DateTime     @updatedAt
-
-  organization Organization @relation(fields: [organization_id], references: [id], onDelete: Cascade)
-  user         User         @relation(fields: [user_id], references: [id])
-
-  @@index([organization_id])
-  @@index([user_id])
-  @@index([email])
+enum AlertCategory {
+  SYSTEM
+  MAINTENANCE
+  FEATURE
+  SECURITY
+  BILLING
+  MARKETING
 }
 
-/// Lead model - Lead management and tracking
-/// Mock: MockLead from lib/data/mocks/crm.ts
-model Lead {
-  id              String      @id @default(cuid())
-  organization_id String
-  name            String
-  email           String
-  phone           String?
-  company         String?
-  source          LeadSource
-  status          LeadStatus
-  score           LeadScore
-  score_value     Int
-  budget          Decimal?
-  timeline        String?
-  notes           String?
-  tags            String[]
-  custom_fields   Json?
-  assigned_to_id  String?
-  last_contact_at DateTime?
-  created_at      DateTime    @default(now())
-  updated_at      DateTime    @updatedAt
-
-  organization Organization @relation(fields: [organization_id], references: [id], onDelete: Cascade)
-  assigned_to  User?        @relation("AssignedLeads", fields: [assigned_to_id], references: [id])
-  deals        Deal[]
-
-  @@index([organization_id])
-  @@index([status])
-  @@index([assigned_to_id])
-  @@index([score])
+enum AlertFrequency {
+  IMMEDIATE
+  DAILY
+  WEEKLY
+  MONTHLY
 }
 
-/// Customer model - Customer/client management
-/// Mock: MockCustomer from lib/data/mocks/crm.ts
-model Customer {
-  id              String       @id @default(cuid())
-  organization_id String
-  user_id         String
-  name            String
-  email           String
-  phone           String?
-  company         String?
-  address_street  String?
-  address_city    String?
-  address_state   String?
-  address_zip     String?
-  lifetime_value  Decimal      @default(0)
-  tags            String[]
-  created_at      DateTime     @default(now())
-  updated_at      DateTime     @updatedAt
-
-  organization Organization @relation(fields: [organization_id], references: [id], onDelete: Cascade)
-  user         User         @relation(fields: [user_id], references: [id])
-  deals        Deal[]
-
-  @@index([organization_id])
-  @@index([user_id])
-  @@index([email])
+enum AlertLevel {
+  INFO
+  WARNING
+  ERROR
+  SUCCESS
 }
 
-/// Deal model - Sales pipeline/deals
-/// Mock: Derived from analytics funnel data
-model Deal {
-  id              String      @id @default(cuid())
-  organization_id String
-  title           String
-  value           Decimal
-  stage           DealStage
-  probability     Int         @default(50)
-  expected_close  DateTime?
-  lead_id         String?
-  customer_id     String?
-  assigned_to_id  String?
-  created_at      DateTime    @default(now())
-  updated_at      DateTime    @updatedAt
-
-  organization Organization @relation(fields: [organization_id], references: [id], onDelete: Cascade)
-  lead         Lead?        @relation(fields: [lead_id], references: [id])
-  customer     Customer?    @relation(fields: [customer_id], references: [id])
-  assigned_to  User?        @relation("AssignedDeals", fields: [assigned_to_id], references: [id])
-
-  @@index([organization_id])
-  @@index([stage])
-  @@index([assigned_to_id])
+enum AppointmentType {
+  MEETING
+  CALL
+  SHOWING
+  OPEN_HOUSE
+  FOLLOW_UP
+  OTHER
 }
 
-// ============================================================================
-// TRANSACTION/WORKSPACE MODELS (7)
-// ============================================================================
-
-/// Loop model - Transaction loop (real estate transaction)
-/// Mock: MockLoop from lib/data/mocks/transactions.ts
-model Loop {
-  id               String     @id @default(cuid())
-  organization_id  String
-  created_by_id    String
-  title            String
-  property_address String
-  property_city    String
-  property_state   String
-  property_zip     String
-  status           LoopStatus
-  deal_type        DealType
-  purchase_price   Decimal
-  closing_date     DateTime?
-  created_at       DateTime   @default(now())
-  updated_at       DateTime   @updatedAt
-
-  organization Organization          @relation(fields: [organization_id], references: [id], onDelete: Cascade)
-  created_by   User                  @relation(fields: [created_by_id], references: [id])
-
-  tasks        Task[]
-  documents    Document[]
-  parties      Party[]
-  signatures   Signature[]
-  activities   TransactionActivity[]
-
-  @@index([organization_id])
-  @@index([status])
-  @@index([created_by_id])
+enum AreaType {
+  ZIP
+  SCHOOL_DISTRICT
+  NEIGHBORHOOD
+  COUNTY
+  MSA
 }
 
-/// Task model - Tasks within a transaction loop
-/// Mock: MockTask from lib/data/mocks/transactions.ts
-model Task {
-  id             String        @id @default(cuid())
-  loop_id        String
-  title          String
-  description    String?
-  status         TaskStatus
-  priority       TaskPriority
-  due_date       DateTime?
-  assigned_to_id String?
-  completed_at   DateTime?
-  created_at     DateTime      @default(now())
-  updated_at     DateTime      @updatedAt
-
-  loop        Loop  @relation(fields: [loop_id], references: [id], onDelete: Cascade)
-  assigned_to User? @relation("AssignedTasks", fields: [assigned_to_id], references: [id])
-
-  @@index([loop_id])
-  @@index([status])
-  @@index([assigned_to_id])
-  @@index([due_date])
+enum BillingCycle {
+  MONTHLY
+  YEARLY
 }
 
-/// Document model - Transaction documents
-/// Mock: MockDocument from lib/data/mocks/transactions.ts
-model Document {
-  id             String           @id @default(cuid())
-  loop_id        String
-  filename       String
-  file_url       String
-  file_size      Int
-  mime_type      String
-  category       DocumentCategory
-  uploaded_by_id String
-  uploaded_at    DateTime         @default(now())
-
-  loop        Loop        @relation(fields: [loop_id], references: [id], onDelete: Cascade)
-  uploaded_by User        @relation(fields: [uploaded_by_id], references: [id])
-  signatures  Signature[]
-
-  @@index([loop_id])
-  @@index([category])
+enum CommentStatus {
+  PENDING
+  APPROVED
+  REJECTED
+  SPAM
 }
 
-/// Party model - Transaction parties (buyers, sellers, agents, etc.)
-/// Mock: MockParty from lib/data/mocks/transactions.ts
-model Party {
-  id         String    @id @default(cuid())
-  loop_id    String
-  name       String
-  email      String
-  phone      String?
-  role       PartyRole
-  created_at DateTime  @default(now())
-
-  loop       Loop        @relation(fields: [loop_id], references: [id], onDelete: Cascade)
-  signatures Signature[]
-
-  @@index([loop_id])
-  @@index([role])
+enum ContactStatus {
+  ACTIVE
+  INACTIVE
+  DO_NOT_CONTACT
 }
 
-/// Signature model - Document signature requests
-/// Mock: MockSignature from lib/data/mocks/transactions.ts
-model Signature {
-  id             String          @id @default(cuid())
-  loop_id        String
-  document_id    String
-  party_id       String
-  status         SignatureStatus
-  requested_at   DateTime        @default(now())
-  signed_at      DateTime?
-  signature_data String?
-
-  loop     Loop     @relation(fields: [loop_id], references: [id], onDelete: Cascade)
-  document Document @relation(fields: [document_id], references: [id], onDelete: Cascade)
-  party    Party    @relation(fields: [party_id], references: [id], onDelete: Cascade)
-
-  @@index([loop_id])
-  @@index([status])
+enum ContactType {
+  PROSPECT
+  CLIENT
+  PAST_CLIENT
+  PARTNER
+  VENDOR
 }
 
-/// Listing model - Property listings
-/// Mock: MockListing from lib/data/mocks/transactions.ts
-model Listing {
-  id              String        @id @default(cuid())
-  organization_id String
-  agent_id        String
-  title           String
-  property_type   PropertyType
-  address         String
-  city            String
-  state           String
-  zip             String
-  price           Decimal
-  bedrooms        Int
-  bathrooms       Int
-  sqft            Int
-  status          ListingStatus
-  description     String
-  images          String[]
-  listed_date     DateTime
-  created_at      DateTime      @default(now())
-  updated_at      DateTime      @updatedAt
-
-  organization Organization @relation(fields: [organization_id], references: [id], onDelete: Cascade)
-  agent        User         @relation(fields: [agent_id], references: [id])
-
-  @@index([organization_id])
-  @@index([status])
-  @@index([property_type])
-  @@index([city, state])
+enum CustomerSource {
+  WEBSITE
+  REFERRAL
+  SOCIAL
+  EMAIL
+  OTHER
 }
 
-/// TransactionActivity model - Activity log for transactions
-/// Mock: MockTransactionActivity from lib/data/mocks/transactions.ts
-model TransactionActivity {
-  id          String                @id @default(cuid())
-  loop_id     String
-  user_id     String
-  action      TransactionAction
-  entity_type TransactionEntityType
-  entity_id   String
-  details     String?
-  timestamp   DateTime              @default(now())
-
-  loop Loop @relation(fields: [loop_id], references: [id], onDelete: Cascade)
-  user User @relation(fields: [user_id], references: [id])
-
-  @@index([loop_id])
-  @@index([timestamp])
+enum CustomerStatus {
+  LEAD
+  PROSPECT
+  ACTIVE
+  CHURNED
 }
 
-// ============================================================================
-// MARKETPLACE MODELS (6)
-// ============================================================================
-
-/// Tool model - Marketplace tools
-/// Mock: MockTool from lib/data/mocks/marketplace.ts
-model Tool {
-  id              String         @id @default(cuid())
-  name            String
-  slug            String         @unique
-  description     String
-  long_description String?
-  category        ToolCategory
-  tier            ToolTier
-  price           Int            // in cents
-  billing_period  BillingPeriod
-  features        String[]
-  icon_url        String?
-  tags            String[]
-  is_active       Boolean        @default(true)
-  install_count   Int            @default(0)
-  average_rating  Decimal        @default(0)
-  review_count    Int            @default(0)
-  created_at      DateTime       @default(now())
-  updated_at      DateTime       @updatedAt
-
-  purchases   Purchase[]
-  reviews     Review[]
-  bundles     BundleTools[]
-
-  @@index([category])
-  @@index([tier])
-  @@index([is_active])
+enum DashboardActivitySeverity {
+  INFO
+  SUCCESS
+  WARNING
+  ERROR
+  CRITICAL
 }
 
-/// Bundle model - Tool bundles
-/// Mock: MockBundle from lib/data/mocks/marketplace.ts
-model Bundle {
-  id                  String        @id @default(cuid())
-  name                String
-  slug                String        @unique
-  description         String
-  bundle_type         BundleType
-  price               Int           // in cents
-  discount_percentage Int
-  is_active           Boolean       @default(true)
-  created_at          DateTime      @default(now())
-  updated_at          DateTime      @updatedAt
-
-  tools     BundleTools[]
-  purchases Purchase[]
-
-  @@index([bundle_type])
-  @@index([is_active])
+enum DashboardActivityType {
+  USER_ACTION
+  SYSTEM_EVENT
+  WORKFLOW_UPDATE
+  DATA_CHANGE
+  SECURITY_EVENT
+  INTEGRATION_EVENT
 }
 
-/// BundleTools model - Many-to-many junction for bundles and tools
-model BundleTools {
-  bundle_id String
-  tool_id   String
-
-  bundle Bundle @relation(fields: [bundle_id], references: [id], onDelete: Cascade)
-  tool   Tool   @relation(fields: [tool_id], references: [id], onDelete: Cascade)
-
-  @@id([bundle_id, tool_id])
-  @@index([bundle_id])
-  @@index([tool_id])
+enum DashboardTheme {
+  LIGHT
+  DARK
+  AUTO
 }
 
-/// Purchase model - Tool/bundle purchases
-/// Mock: MockPurchase from lib/data/mocks/marketplace.ts
-model Purchase {
-  id                 String          @id @default(cuid())
-  organization_id    String
-  user_id            String
-  tool_id            String?
-  bundle_id          String?
-  price_at_purchase  Int
-  status             PurchaseStatus
-  purchased_at       DateTime        @default(now())
-  expires_at         DateTime?
-
-  organization Organization @relation(fields: [organization_id], references: [id], onDelete: Cascade)
-  user         User         @relation(fields: [user_id], references: [id])
-  tool         Tool?        @relation(fields: [tool_id], references: [id])
-  bundle       Bundle?      @relation(fields: [bundle_id], references: [id])
-
-  @@index([organization_id])
-  @@index([user_id])
-  @@index([status])
+enum DealStatus {
+  ACTIVE
+  WON
+  LOST
+  ABANDONED
 }
 
-/// Review model - Tool reviews
-/// Mock: MockReview from lib/data/mocks/marketplace.ts
-model Review {
-  id              String       @id @default(cuid())
-  tool_id         String
-  user_id         String
-  organization_id String
-  rating          Int          // 1-5
-  review_text     String?
-  created_at      DateTime     @default(now())
-
-  tool         Tool         @relation(fields: [tool_id], references: [id], onDelete: Cascade)
-  user         User         @relation(fields: [user_id], references: [id])
-  organization Organization @relation(fields: [organization_id], references: [id], onDelete: Cascade)
-
-  @@index([tool_id])
-  @@index([rating])
+enum DocumentStatus {
+  DRAFT
+  PENDING
+  REVIEWED
+  SIGNED
+  ARCHIVED
 }
 
-/// Cart model - User shopping cart
-/// Mock: MockCart from lib/data/mocks/marketplace.ts
-model Cart {
-  id          String   @id @default(cuid())
-  user_id     String   @unique
-  tools       String[] // tool IDs
-  bundles     String[] // bundle IDs
-  total_price Int
-  updated_at  DateTime @updatedAt
-
-  user User @relation(fields: [user_id], references: [id], onDelete: Cascade)
+enum EmailStatus {
+  DRAFT
+  SCHEDULED
+  SENDING
+  SENT
+  FAILED
 }
 
-// ============================================================================
-// CMS/CONTENT MODELS (3)
-// ============================================================================
-
-/// ContentItem model - Content management (blog, pages, articles)
-/// Mock: MockContentItem from lib/data/mocks/content.ts
-model ContentItem {
-  id              String        @id @default(cuid())
-  organization_id String
-  author_id       String
-  title           String
-  slug            String
-  content         String
-  excerpt         String
-  type            ContentType
-  status          ContentStatus
-  published_at    DateTime?
-  scheduled_at    DateTime?
-  view_count      Int           @default(0)
-  share_count     Int           @default(0)
-  like_count      Int           @default(0)
-  comment_count   Int           @default(0)
-  category_id     String?
-  tags            String[]
-  seo_title       String?
-  seo_description String?
-  featured_image  String?
-  created_at      DateTime      @default(now())
-  updated_at      DateTime      @updatedAt
-
-  organization Organization @relation(fields: [organization_id], references: [id], onDelete: Cascade)
-  author       User         @relation(fields: [author_id], references: [id])
-
-  @@unique([organization_id, slug])
-  @@index([organization_id])
-  @@index([status])
-  @@index([type])
+enum Environment {
+  DEVELOPMENT
+  STAGING
+  PRODUCTION
 }
 
-/// Campaign model - Marketing campaigns
-/// Mock: MockCampaign from lib/data/mocks/content.ts
-model Campaign {
-  id              String         @id @default(cuid())
-  organization_id String
-  created_by      String
-  name            String
-  description     String
-  type            CampaignType
-  status          CampaignStatus
-  start_date      DateTime?
-  end_date        DateTime?
-  target_audience String?
-  budget          Decimal?
-  created_at      DateTime       @default(now())
-  updated_at      DateTime       @updatedAt
-
-  organization    Organization    @relation(fields: [organization_id], references: [id], onDelete: Cascade)
-  creator         User            @relation(fields: [created_by], references: [id])
-  email_campaigns EmailCampaign[]
-
-  @@index([organization_id])
-  @@index([status])
-  @@index([type])
+enum ExpenseCategory {
+  COMMISSION
+  TRAVEL
+  MARKETING
+  OFFICE
+  UTILITIES
+  LEGAL
+  INSURANCE
+  REPAIRS
+  MEALS
+  EDUCATION
+  SOFTWARE
+  OTHER
 }
 
-/// EmailCampaign model - Email campaigns
-/// Mock: MockEmailCampaign from lib/data/mocks/content.ts
-model EmailCampaign {
-  id                 String   @id @default(cuid())
-  campaign_id        String
-  subject            String
-  from_name          String
-  from_email         String
-  preview_text       String
-  html_content       String
-  sent_count         Int      @default(0)
-  opened_count       Int      @default(0)
-  clicked_count      Int      @default(0)
-  bounced_count      Int      @default(0)
-  unsubscribed_count Int      @default(0)
-  created_at         DateTime @default(now())
-  updated_at         DateTime @updatedAt
-
-  campaign Campaign @relation(fields: [campaign_id], references: [id], onDelete: Cascade)
-
-  @@index([campaign_id])
+enum ExpenseStatus {
+  PENDING
+  APPROVED
+  REJECTED
+  NEEDS_REVIEW
 }
 
-// ============================================================================
-// EXPENSE & TAX MODELS (5)
-// ============================================================================
-
-/// Expense model - Expense tracking
-/// Mock: MockExpense from lib/data/mocks/expenses.ts
-model Expense {
-  id                String          @id @default(cuid())
-  organization_id   String
-  created_by_id     String
-  title             String
-  description       String?
-  amount            Int             // in cents
-  category_id       String
-  vendor            String
-  date              DateTime
-  payment_method    PaymentMethod
-  receipt_url       String?
-  is_tax_deductible Boolean         @default(false)
-  tax_category      TaxCategory?
-  notes             String?
-  created_at        DateTime        @default(now())
-  updated_at        DateTime        @updatedAt
-
-  organization Organization    @relation(fields: [organization_id], references: [id], onDelete: Cascade)
-  created_by   User            @relation(fields: [created_by_id], references: [id])
-  category     ExpenseCategory @relation(fields: [category_id], references: [id])
-  receipts     Receipt[]
-
-  @@index([organization_id])
-  @@index([category_id])
-  @@index([date])
-  @@index([is_tax_deductible])
+enum Industry {
+  REAL_ESTATE
+  HEALTHCARE
+  STRIVE
+  GENERAL
 }
 
-/// ExpenseCategory model - Expense categories
-/// Mock: MockExpenseCategory from lib/data/mocks/expenses.ts
-model ExpenseCategory {
-  id              String       @id @default(cuid())
-  organization_id String
-  name            String
-  description     String?
-  color           String
-  icon            String?
-  is_default      Boolean      @default(false)
-  is_custom       Boolean      @default(false)
-  expense_count   Int          @default(0)
-  total_amount    Int          @default(0) // in cents
-  created_at      DateTime     @default(now())
-  updated_at      DateTime     @updatedAt
-
-  organization Organization @relation(fields: [organization_id], references: [id], onDelete: Cascade)
-  expenses     Expense[]
-
-  @@index([organization_id])
+enum LayoutDensity {
+  COMPACT
+  NORMAL
+  SPACIOUS
 }
 
-/// TaxEstimate model - Quarterly tax estimates
-/// Mock: MockTaxEstimate from lib/data/mocks/expenses.ts
-model TaxEstimate {
-  id                  String       @id @default(cuid())
-  organization_id     String
-  year                Int
-  quarter             Int          // 1-4
-  total_income        Int          // in cents
-  total_expenses      Int          // in cents
-  deductible_expenses Int          // in cents
-  estimated_tax_rate  Int          // percentage
-  estimated_tax_owed  Int          // in cents
-  tax_paid            Int          // in cents
-  created_at          DateTime     @default(now())
-  updated_at          DateTime     @updatedAt
-
-  organization Organization @relation(fields: [organization_id], references: [id], onDelete: Cascade)
-
-  @@unique([organization_id, year, quarter])
-  @@index([organization_id])
-  @@index([year])
+enum MetricCategory {
+  FINANCIAL
+  OPERATIONAL
+  MARKETING
+  SALES
+  PRODUCTIVITY
+  SYSTEM
+  CUSTOM
 }
 
-/// Receipt model - Expense receipts
-/// Mock: MockReceipt from lib/data/mocks/expenses.ts
-model Receipt {
-  id             String   @id @default(cuid())
-  expense_id     String
-  file_url       String
-  file_name      String
-  file_size      Int
-  mime_type      String
-  uploaded_at    DateTime @default(now())
-  uploaded_by_id String
-
-  expense     Expense @relation(fields: [expense_id], references: [id], onDelete: Cascade)
-  uploaded_by User    @relation(fields: [uploaded_by_id], references: [id])
-
-  @@index([expense_id])
+enum NotificationType {
+  INFO
+  SUCCESS
+  WARNING
+  ERROR
 }
 
-/// TaxReport model - Tax reports (quarterly/annual)
-/// Mock: MockTaxReport from lib/data/mocks/expenses.ts
-model TaxReport {
-  id                      String       @id @default(cuid())
-  organization_id         String
-  title                   String
-  report_type             ReportType
-  year                    Int
-  quarter                 Int?
-  start_date              DateTime
-  end_date                DateTime
-  total_income            Int
-  total_expenses          Int
-  deductible_expenses     Int
-  non_deductible_expenses Int
-  net_income              Int
-  estimated_tax           Int
-  category_breakdown      Json
-  generated_at            DateTime     @default(now())
-
-  organization Organization @relation(fields: [organization_id], references: [id], onDelete: Cascade)
-
-  @@index([organization_id])
-  @@index([year])
-  @@index([report_type])
+enum PartyStatus {
+  ACTIVE
+  INACTIVE
+  REMOVED
 }
 
-// ============================================================================
-// REID/ANALYTICS MODELS (6)
-// ============================================================================
-
-/// MarketData model - Real estate market data by zip
-/// Mock: MockMarketData from lib/data/mocks/reid.ts
-model MarketData {
-  id                 String            @id @default(cuid())
-  zip_code           String
-  city               String
-  state              String
-  county             String
-  median_price       Decimal
-  price_change_1mo   Decimal
-  price_change_3mo   Decimal
-  price_change_1yr   Decimal
-  avg_days_on_market Int
-  inventory_count    Int
-  sales_volume       Decimal
-  price_per_sqft     Decimal
-  market_temperature MarketTemperature
-  demand_score       Int
-  supply_score       Int
-  investment_score   Int
-  last_updated       DateTime          @default(now())
-
-  @@unique([zip_code])
-  @@index([city, state])
-  @@index([market_temperature])
+enum PaymentStatus {
+  PENDING
+  PROCESSING
+  SUCCEEDED
+  FAILED
+  CANCELLED
+  REQUIRES_ACTION
 }
 
-/// Demographics model - Demographic data by zip
-/// Mock: MockDemographics from lib/data/mocks/reid.ts
-model Demographics {
-  id                  String         @id @default(cuid())
-  zip_code            String         @unique
-  city                String
-  state               String
-  population          Int
-  median_age          Int
-  median_income       Decimal
-  unemployment_rate   Decimal
-  education_level     EducationLevel
-  homeownership_rate  Decimal
-  avg_household_size  Decimal
-  growth_rate_1yr     Decimal
-  growth_rate_5yr     Decimal
-
-  @@index([city, state])
+enum PostStatus {
+  DRAFT
+  SCHEDULED
+  PUBLISHED
+  FAILED
 }
 
-/// ROISimulation model - Investment ROI simulations
-/// Mock: MockROISimulation from lib/data/mocks/reid.ts
-model ROISimulation {
-  id                  String       @id @default(cuid())
-  user_id             String
-  organization_id     String
-  property_price      Decimal
-  down_payment        Decimal
-  loan_amount         Decimal
-  interest_rate       Decimal
-  loan_term           Int          // years
-  monthly_payment     Decimal
-  property_tax        Decimal
-  insurance           Decimal
-  hoa_fees            Decimal
-  maintenance         Decimal
-  monthly_expenses    Decimal
-  rental_income       Decimal
-  monthly_cash_flow   Decimal
-  annual_cash_flow    Decimal
-  cash_on_cash_return Decimal
-  cap_rate            Decimal
-  total_roi_5yr       Decimal
-  total_roi_10yr      Decimal
-  appreciation_rate   Decimal
-  equity_5yr          Decimal
-  equity_10yr         Decimal
-  created_at          DateTime     @default(now())
-
-  user         User         @relation(fields: [user_id], references: [id])
-  organization Organization @relation(fields: [organization_id], references: [id], onDelete: Cascade)
-
-  @@index([user_id])
-  @@index([organization_id])
+enum Priority {
+  LOW
+  MEDIUM
+  HIGH
+  CRITICAL
 }
 
-/// Alert model - Real estate market alerts
-/// Mock: MockAlert from lib/data/mocks/reid.ts
-model Alert {
-  id              String        @id @default(cuid())
-  user_id         String
-  organization_id String
-  title           String
-  description     String
-  alert_type      AlertType
-  severity        AlertSeverity
-  zip_code        String
-  city            String
-  state           String
-  metadata        Json
-  is_read         Boolean       @default(false)
-  is_dismissed    Boolean       @default(false)
-  created_at      DateTime      @default(now())
-  expires_at      DateTime?
-
-  user         User         @relation(fields: [user_id], references: [id])
-  organization Organization @relation(fields: [organization_id], references: [id], onDelete: Cascade)
-
-  @@index([user_id])
-  @@index([organization_id])
-  @@index([alert_type])
-  @@index([is_read])
+enum ProjectStatus {
+  PLANNING
+  ACTIVE
+  ON_HOLD
+  COMPLETED
+  CANCELLED
 }
 
-/// School model - School data (ratings, test scores)
-/// Mock: MockSchool from lib/data/mocks/reid.ts
-model School {
-  id             String     @id @default(cuid())
-  name           String
-  type           SchoolType
-  address        String
-  city           String
-  state          String
-  zip_code       String
-  rating         Int        // 1-10
-  test_scores    Int        // 0-100
-  student_count  Int
-  teacher_ratio  Int
-  distance_miles Decimal
-  grade_levels   String
-  district       String
-
-  @@index([zip_code])
-  @@index([type])
-  @@index([rating])
+enum ReidReportType {
+  NEIGHBORHOOD_ANALYSIS
+  MARKET_OVERVIEW
+  COMPARATIVE_STUDY
+  INVESTMENT_ANALYSIS
+  DEMOGRAPHIC_REPORT
+  CUSTOM
 }
 
-/// AIProfile model - AI-powered property analysis
-/// Mock: MockAIProfile from lib/data/mocks/reid.ts
-model AIProfile {
-  id                  String   @id @default(cuid())
-  organization_id     String
-  user_id             String
-  property_address    String
-  profile_name        String
-  analysis_date       DateTime @default(now())
-  ai_score            Int
-  score_breakdown     Json     // {location, financials, appreciation, cash_flow, risk}
-  insights            String[]
-  market_comparison   Json     // {average_roi, average_cash_flow, appreciation_rate}
-  recommendation      String   // 'strong-buy' | 'buy' | 'hold' | 'pass'
-  estimated_roi       Decimal
-  estimated_cash_flow Decimal
-  status              String   @default("active")
-  zip_code            String
-  city                String
-  state               String
-
-  organization Organization @relation(fields: [organization_id], references: [id], onDelete: Cascade)
-  user         User         @relation(fields: [user_id], references: [id])
-
-  @@index([organization_id])
-  @@index([user_id])
-  @@index([status])
+enum ResourceType {
+  AI_TOKENS
+  API_CALLS
+  STORAGE
+  SEATS
 }
 
-// ============================================================================
-// AI HUB MODELS (4)
-// ============================================================================
-
-/// Conversation model - AI chat conversations
-/// Mock: MockConversation from lib/data/mocks/ai-hub.ts
-model Conversation {
-  id              String             @id @default(cuid())
-  organization_id String
-  user_id         String
-  title           String
-  summary         String?
-  status          ConversationStatus @default(ACTIVE)
-  message_count   Int                @default(0)
-  started_at      DateTime           @default(now())
-  last_message_at DateTime           @updatedAt
-  created_at      DateTime           @default(now())
-
-  organization Organization @relation(fields: [organization_id], references: [id], onDelete: Cascade)
-  user         User         @relation(fields: [user_id], references: [id])
-  messages     Message[]
-
-  @@index([organization_id])
-  @@index([user_id])
-  @@index([status])
+enum SigningOrder {
+  SEQUENTIAL
+  PARALLEL
 }
 
-/// Message model - Chat messages
-/// Mock: MockMessage from lib/data/mocks/ai-hub.ts
-model Message {
-  id              String      @id @default(cuid())
-  conversation_id String
-  role            MessageRole
-  content         String
-  tokens_used     Int?
-  timestamp       DateTime    @default(now())
-
-  conversation Conversation @relation(fields: [conversation_id], references: [id], onDelete: Cascade)
-
-  @@index([conversation_id])
-  @@index([timestamp])
+enum SocialPlatform {
+  FACEBOOK
+  TWITTER
+  INSTAGRAM
+  LINKEDIN
+  YOUTUBE
+  TIKTOK
+  PINTEREST
 }
 
-/// Automation model - Workflow automations
-/// Mock: MockAutomation from lib/data/mocks/ai-hub.ts
-model Automation {
-  id              String           @id @default(cuid())
-  organization_id String
-  created_by_id   String
-  name            String
-  description     String
-  trigger_type    TriggerType
-  trigger_config  Json
-  action_type     ActionType
-  action_config   Json
-  status          AutomationStatus
-  last_run_at     DateTime?
-  next_run_at     DateTime?
-  run_count       Int              @default(0)
-  success_count   Int              @default(0)
-  error_count     Int              @default(0)
-  created_at      DateTime         @default(now())
-  updated_at      DateTime         @updatedAt
-
-  organization Organization @relation(fields: [organization_id], references: [id], onDelete: Cascade)
-  created_by   User         @relation(fields: [created_by_id], references: [id])
-
-  @@index([organization_id])
-  @@index([status])
+enum SubscriptionStatus {
+  ACTIVE
+  INACTIVE
+  TRIAL
+  PAST_DUE
+  CANCELLED
 }
 
-/// AIUsage model - AI feature usage tracking
-/// Mock: MockAIUsage from lib/data/mocks/ai-hub.ts
-model AIUsage {
-  id              String       @id @default(cuid())
-  organization_id String
-  user_id         String
-  feature         AIFeature
-  action          String
-  tokens_used     Int
-  cost_cents      Int
-  timestamp       DateTime     @default(now())
-  metadata        Json?
-
-  organization Organization @relation(fields: [organization_id], references: [id], onDelete: Cascade)
-  user         User         @relation(fields: [user_id], references: [id])
-
-  @@index([organization_id])
-  @@index([user_id])
-  @@index([feature])
-  @@index([timestamp])
+enum ToolType {
+  CHATBOT
+  ANALYSIS
+  AUTOMATION
+  INTEGRATION
 }
 
-// ============================================================================
-// SUPPORTING MODELS (3)
-// ============================================================================
-
-/// Appointment model - Calendar appointments
-/// Mock: From appointments provider
-model Appointment {
-  id              String            @id @default(cuid())
-  organization_id String
-  user_id         String
-  title           String
-  description     String?
-  start_time      DateTime
-  end_time        DateTime
-  location        String?
-  attendees       String[]
-  status          AppointmentStatus @default(SCHEDULED)
-  created_at      DateTime          @default(now())
-  updated_at      DateTime          @updatedAt
-
-  organization Organization @relation(fields: [organization_id], references: [id], onDelete: Cascade)
-  user         User         @relation(fields: [user_id], references: [id])
-
-  @@index([organization_id])
-  @@index([user_id])
-  @@index([start_time])
+enum TransactionType {
+  PURCHASE_AGREEMENT
+  LISTING_AGREEMENT
+  LEASE_AGREEMENT
+  COMMERCIAL_PURCHASE
+  COMMERCIAL_LEASE
 }
 
-/// Activity model - General activity log
-/// Mock: From activities provider
-model Activity {
-  id              String       @id @default(cuid())
-  organization_id String
-  user_id         String
-  type            ActivityType
-  title           String
-  description     String?
-  entity_type     String?
-  entity_id       String?
-  metadata        Json?
-  created_at      DateTime     @default(now())
-
-  organization Organization @relation(fields: [organization_id], references: [id], onDelete: Cascade)
-  user         User         @relation(fields: [user_id], references: [id])
-
-  @@index([organization_id])
-  @@index([user_id])
-  @@index([created_at])
+/// This enum is commented in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+enum UserRole {
+  SUPER_ADMIN
+  ADMIN
+  MODERATOR
+  EMPLOYEE
 }
 
-/// Widget model - Dashboard widgets
-/// Mock: From dashboard provider
-model Widget {
-  id              String   @id @default(cuid())
-  organization_id String
-  user_id         String
-  type            String
-  title           String
-  config          Json
-  position        Json     // {x, y, w, h}
-  is_visible      Boolean  @default(true)
-  created_at      DateTime @default(now())
-  updated_at      DateTime @updatedAt
+enum WidgetType {
+  KPI_CARD
+  CHART
+  TABLE
+  ACTIVITY_FEED
+  QUICK_ACTIONS
+  MODULE_SHORTCUTS
+  PROGRESS_TRACKER
+  NOTIFICATION_PANEL
+  CALENDAR
+  WEATHER
+}
 
-  organization Organization @relation(fields: [organization_id], references: [id], onDelete: Cascade)
-  user         User         @relation(fields: [user_id], references: [id])
-
-  @@index([organization_id])
-  @@index([user_id])
+enum WorkflowStatus {
+  ACTIVE
+  COMPLETED
+  CANCELLED
 }

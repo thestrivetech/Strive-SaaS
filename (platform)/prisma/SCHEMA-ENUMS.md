@@ -1,25 +1,24 @@
 # Prisma Schema - Enums Documentation
 
-**Generated:** 2025-10-10T20:18:20.048Z
+**Generated:** 2025-10-10T20:40:33.752Z
 **Source:** `(platform)/prisma/schema.prisma`
 
 > 🏷️ **Purpose:** Complete enum values reference
 > - Use this when you need to know: "What are the valid values for X enum?"
 > - For quick lookup, see: `SCHEMA-QUICK-REF.md`
 
-**Total Enums:** 42
+**Total Enums:** 69
 
 ---
 
 ## ActionType
 
 ```typescript
-EMAIL
-SMS
+NAVIGATION
 API_CALL
-CREATE_TASK
-UPDATE_RECORD
-NOTIFICATION
+MODAL_FORM
+EXTERNAL_LINK
+WORKFLOW_TRIGGER
 ```
 
 ---
@@ -27,24 +26,95 @@ NOTIFICATION
 ## ActivityType
 
 ```typescript
-CREATE
-UPDATE
-DELETE
-VIEW
-SHARE
-COMMENT
+CALL
+EMAIL
+MEETING
+TASK
+NOTE
+SHOWING
+OPEN_HOUSE
+FOLLOW_UP
 ```
 
 ---
 
-## AIFeature
+## AdminAction
 
 ```typescript
-CHAT
-AUTOMATION
-INSIGHTS
-CONTENT_GEN
-ANALYSIS
+USER_CREATE
+USER_UPDATE
+USER_SUSPEND
+USER_DELETE
+USER_IMPERSONATE
+ORG_CREATE
+ORG_UPDATE
+ORG_SUSPEND
+ORG_DELETE
+SUBSCRIPTION_CREATE
+SUBSCRIPTION_UPDATE
+SUBSCRIPTION_CANCEL
+FEATURE_FLAG_UPDATE
+SYSTEM_CONFIG_UPDATE
+DATA_EXPORT
+BULK_ACTION
+```
+
+---
+
+## AIContextType
+
+```typescript
+GENERAL
+PROJECT
+CUSTOMER
+TASK
+```
+
+---
+
+## AIModel
+
+```typescript
+OPENAI_GPT4
+CLAUDE_SONNET
+GEMINI
+GROK
+KIMIK2
+```
+
+---
+
+## AlertCategory
+
+```typescript
+SYSTEM
+MAINTENANCE
+FEATURE
+SECURITY
+BILLING
+MARKETING
+```
+
+---
+
+## AlertFrequency
+
+```typescript
+IMMEDIATE
+DAILY
+WEEKLY
+MONTHLY
+```
+
+---
+
+## AlertLevel
+
+```typescript
+INFO
+WARNING
+ERROR
+SUCCESS
 ```
 
 ---
@@ -55,7 +125,7 @@ ANALYSIS
 LOW
 MEDIUM
 HIGH
-URGENT
+CRITICAL
 ```
 
 ---
@@ -64,10 +134,12 @@ URGENT
 
 ```typescript
 PRICE_DROP
-HOT_MARKET
+PRICE_INCREASE
 NEW_LISTING
-INVESTMENT_OPPORTUNITY
-MARKET_SHIFT
+SOLD
+INVENTORY_CHANGE
+MARKET_TREND
+DEMOGRAPHIC_CHANGE
 ```
 
 ---
@@ -77,30 +149,43 @@ MARKET_SHIFT
 ```typescript
 SCHEDULED
 CONFIRMED
-CANCELLED
 COMPLETED
+CANCELLED
 NO_SHOW
 ```
 
 ---
 
-## AutomationStatus
+## AppointmentType
 
 ```typescript
-ACTIVE
-PAUSED
-DRAFT
-ERROR
+MEETING
+CALL
+SHOWING
+OPEN_HOUSE
+FOLLOW_UP
+OTHER
 ```
 
 ---
 
-## BillingPeriod
+## AreaType
+
+```typescript
+ZIP
+SCHOOL_DISTRICT
+NEIGHBORHOOD
+COUNTY
+MSA
+```
+
+---
+
+## BillingCycle
 
 ```typescript
 MONTHLY
 YEARLY
-ONE_TIME
 ```
 
 ---
@@ -132,10 +217,47 @@ CANCELLED
 ## CampaignType
 
 ```typescript
-EMAIL
-SOCIAL
-SMS
-MULTI_CHANNEL
+CONTENT_MARKETING
+EMAIL_MARKETING
+SOCIAL_MEDIA
+PAID_ADVERTISING
+SEO_CAMPAIGN
+LEAD_GENERATION
+BRAND_AWARENESS
+PRODUCT_LAUNCH
+```
+
+---
+
+## CommentStatus
+
+```typescript
+PENDING
+APPROVED
+REJECTED
+SPAM
+```
+
+---
+
+## ContactStatus
+
+```typescript
+ACTIVE
+INACTIVE
+DO_NOT_CONTACT
+```
+
+---
+
+## ContactType
+
+```typescript
+PROSPECT
+CLIENT
+PAST_CLIENT
+PARTNER
+VENDOR
 ```
 
 ---
@@ -143,10 +265,12 @@ MULTI_CHANNEL
 ## ContentStatus
 
 ```typescript
-PUBLISHED
 DRAFT
-SCHEDULED
+PUBLISHED
 ARCHIVED
+REVIEW
+APPROVED
+SCHEDULED
 ```
 
 ---
@@ -154,19 +278,76 @@ ARCHIVED
 ## ContentType
 
 ```typescript
-BLOG_POST
 PAGE
+BLOG_POST
+DOCUMENTATION
+TEMPLATE
 ARTICLE
 LANDING_PAGE
+EMAIL_TEMPLATE
+SOCIAL_POST
+PRESS_RELEASE
+NEWSLETTER
+CASE_STUDY
+WHITEPAPER
 ```
 
 ---
 
-## ConversationStatus
+## CustomerSource
 
 ```typescript
+WEBSITE
+REFERRAL
+SOCIAL
+EMAIL
+OTHER
+```
+
+---
+
+## CustomerStatus
+
+```typescript
+LEAD
+PROSPECT
 ACTIVE
-ARCHIVED
+CHURNED
+```
+
+---
+
+## DashboardActivitySeverity
+
+```typescript
+INFO
+SUCCESS
+WARNING
+ERROR
+CRITICAL
+```
+
+---
+
+## DashboardActivityType
+
+```typescript
+USER_ACTION
+SYSTEM_EVENT
+WORKFLOW_UPDATE
+DATA_CHANGE
+SECURITY_EVENT
+INTEGRATION_EVENT
+```
+
+---
+
+## DashboardTheme
+
+```typescript
+LIGHT
+DARK
+AUTO
 ```
 
 ---
@@ -174,47 +355,109 @@ ARCHIVED
 ## DealStage
 
 ```typescript
-PROSPECTING
-QUALIFICATION
+LEAD
+QUALIFIED
 PROPOSAL
 NEGOTIATION
 CLOSING
+CLOSED_WON
+CLOSED_LOST
+```
+
+---
+
+## DealStatus
+
+```typescript
+ACTIVE
 WON
 LOST
+ABANDONED
 ```
 
 ---
 
-## DealType
+## DocumentStatus
 
 ```typescript
-PURCHASE
-SALE
-LEASE
-REFINANCE
+DRAFT
+PENDING
+REVIEWED
+SIGNED
+ARCHIVED
 ```
 
 ---
 
-## DocumentCategory
+## EmailStatus
 
 ```typescript
-CONTRACT
-DISCLOSURE
-INSPECTION
-APPRAISAL
+DRAFT
+SCHEDULED
+SENDING
+SENT
+FAILED
+```
+
+---
+
+## Environment
+
+```typescript
+DEVELOPMENT
+STAGING
+PRODUCTION
+```
+
+---
+
+## ExpenseCategory
+
+```typescript
+COMMISSION
+TRAVEL
+MARKETING
+OFFICE
+UTILITIES
+LEGAL
+INSURANCE
+REPAIRS
+MEALS
+EDUCATION
+SOFTWARE
 OTHER
 ```
 
 ---
 
-## EducationLevel
+## ExpenseStatus
 
 ```typescript
-HIGH_SCHOOL
-SOME_COLLEGE
-BACHELORS
-GRADUATE
+PENDING
+APPROVED
+REJECTED
+NEEDS_REVIEW
+```
+
+---
+
+## Industry
+
+```typescript
+REAL_ESTATE
+HEALTHCARE
+STRIVE
+GENERAL
+```
+
+---
+
+## LayoutDensity
+
+```typescript
+COMPACT
+NORMAL
+SPACIOUS
 ```
 
 ---
@@ -264,7 +507,9 @@ LOST
 ACTIVE
 PENDING
 SOLD
-OFF_MARKET
+EXPIRED
+WITHDRAWN
+CONTINGENT
 ```
 
 ---
@@ -272,33 +517,38 @@ OFF_MARKET
 ## LoopStatus
 
 ```typescript
+DRAFT
 ACTIVE
-PENDING
+UNDER_CONTRACT
 CLOSING
 CLOSED
 CANCELLED
+ARCHIVED
 ```
 
 ---
 
-## MarketTemperature
+## MetricCategory
 
 ```typescript
-HOT
-WARM
-MODERATE
-COOL
-COLD
-```
-
----
-
-## MessageRole
-
-```typescript
-USER
-ASSISTANT
+FINANCIAL
+OPERATIONAL
+MARKETING
+SALES
+PRODUCTIVITY
 SYSTEM
+CUSTOM
+```
+
+---
+
+## NotificationType
+
+```typescript
+INFO
+SUCCESS
+WARNING
+ERROR
 ```
 
 ---
@@ -319,24 +569,72 @@ VIEWER
 ```typescript
 BUYER
 SELLER
-AGENT
-ATTORNEY
+BUYER_AGENT
+LISTING_AGENT
 LENDER
-INSPECTOR
 TITLE_COMPANY
+INSPECTOR
+APPRAISER
+ATTORNEY
+ESCROW_OFFICER
+OTHER
 ```
 
 ---
 
-## PaymentMethod
+## PartyStatus
 
 ```typescript
-CASH
-CHECK
-CREDIT_CARD
-DEBIT_CARD
-WIRE_TRANSFER
-OTHER
+ACTIVE
+INACTIVE
+REMOVED
+```
+
+---
+
+## PaymentStatus
+
+```typescript
+PENDING
+PROCESSING
+SUCCEEDED
+FAILED
+CANCELLED
+REQUIRES_ACTION
+```
+
+---
+
+## PostStatus
+
+```typescript
+DRAFT
+SCHEDULED
+PUBLISHED
+FAILED
+```
+
+---
+
+## Priority
+
+```typescript
+LOW
+MEDIUM
+HIGH
+CRITICAL
+```
+
+---
+
+## ProjectStatus
+
+```typescript
+PLANNING
+ACTIVE
+ON_HOLD
+COMPLETED
+CANCELLED
 ```
 
 ---
@@ -344,12 +642,13 @@ OTHER
 ## PropertyType
 
 ```typescript
-HOUSE
+RESIDENTIAL
+COMMERCIAL
+LAND
+MULTI_FAMILY
 CONDO
 TOWNHOUSE
-LAND
-COMMERCIAL
-MULTI_FAMILY
+LUXURY
 ```
 
 ---
@@ -359,8 +658,21 @@ MULTI_FAMILY
 ```typescript
 ACTIVE
 CANCELLED
+REFUNDED
 EXPIRED
-TRIAL
+```
+
+---
+
+## ReidReportType
+
+```typescript
+NEIGHBORHOOD_ANALYSIS
+MARKET_OVERVIEW
+COMPARATIVE_STUDY
+INVESTMENT_ANALYSIS
+DEMOGRAPHIC_REPORT
+CUSTOM
 ```
 
 ---
@@ -368,21 +680,22 @@ TRIAL
 ## ReportType
 
 ```typescript
+MONTHLY
 QUARTERLY
-ANNUAL
+YEARLY
 CUSTOM
+TAX_SUMMARY
 ```
 
 ---
 
-## SchoolType
+## ResourceType
 
 ```typescript
-ELEMENTARY
-MIDDLE
-HIGH
-PRIVATE
-CHARTER
+AI_TOKENS
+API_CALLS
+STORAGE
+SEATS
 ```
 
 ---
@@ -391,6 +704,8 @@ CHARTER
 
 ```typescript
 PENDING
+SENT
+VIEWED
 SIGNED
 DECLINED
 EXPIRED
@@ -398,15 +713,50 @@ EXPIRED
 
 ---
 
+## SigningOrder
+
+```typescript
+SEQUENTIAL
+PARALLEL
+```
+
+---
+
+## SocialPlatform
+
+```typescript
+FACEBOOK
+TWITTER
+INSTAGRAM
+LINKEDIN
+YOUTUBE
+TIKTOK
+PINTEREST
+```
+
+---
+
+## SubscriptionStatus
+
+```typescript
+ACTIVE
+INACTIVE
+TRIAL
+PAST_DUE
+CANCELLED
+```
+
+---
+
 ## SubscriptionTier
 
 ```typescript
-FREE
-CUSTOM
 STARTER
 GROWTH
 ELITE
 ENTERPRISE
+FREE
+CUSTOM
 ```
 
 ---
@@ -427,28 +777,9 @@ URGENT
 ```typescript
 TODO
 IN_PROGRESS
-COMPLETED
-BLOCKED
-```
-
----
-
-## TaxCategory
-
-```typescript
-ADVERTISING
-VEHICLE
-COMMISSIONS
-INSURANCE
-LEGAL
-OFFICE
-RENT
-REPAIRS
-SUPPLIES
-TRAVEL
-MEALS
-UTILITIES
-OTHER
+REVIEW
+DONE
+CANCELLED
 ```
 
 ---
@@ -476,36 +807,63 @@ T3
 
 ---
 
-## TransactionAction
+## ToolType
 
 ```typescript
-CREATE
-UPDATE
-COMPLETE
-COMMENT
+CHATBOT
+ANALYSIS
+AUTOMATION
+INTEGRATION
 ```
 
 ---
 
-## TransactionEntityType
+## TransactionType
 
 ```typescript
-loop
-task
-document
-party
-signature
+PURCHASE_AGREEMENT
+LISTING_AGREEMENT
+LEASE_AGREEMENT
+COMMERCIAL_PURCHASE
+COMMERCIAL_LEASE
 ```
 
 ---
 
-## TriggerType
+## UserRole
 
 ```typescript
-SCHEDULE
-EVENT
-MANUAL
-WEBHOOK
+SUPER_ADMIN
+ADMIN
+MODERATOR
+EMPLOYEE
+```
+
+---
+
+## WidgetType
+
+```typescript
+KPI_CARD
+CHART
+TABLE
+ACTIVITY_FEED
+QUICK_ACTIONS
+MODULE_SHORTCUTS
+PROGRESS_TRACKER
+NOTIFICATION_PANEL
+CALENDAR
+WEATHER
+```
+
+---
+
+## WorkflowStatus
+
+```typescript
+ACTIVE
+COMPLETED
+CANCELLED
 ```
 
 ---

@@ -60,7 +60,7 @@ describe('CRM Workflow Integration Tests', () => {
       expect(customer.organization_id).toBe(org.id);
 
       // Step 2: View customer (retrieve from database)
-      const foundCustomer = await testPrisma.customers.findUnique({
+      const foundCustomer = await testPrisma.customer.findUnique({
         where: { id: customer.id },
       });
 
@@ -69,7 +69,7 @@ describe('CRM Workflow Integration Tests', () => {
       expect(foundCustomer?.organization_id).toBe(org.id);
 
       // Step 3: Edit customer
-      const updatedCustomer = await testPrisma.customers.update({
+      const updatedCustomer = await testPrisma.customer.update({
         where: { id: customer.id },
         data: {
           name: 'John Doe Sr.',
@@ -82,11 +82,11 @@ describe('CRM Workflow Integration Tests', () => {
       expect(updatedCustomer.email).toBe('john@example.com'); // Unchanged
 
       // Step 4: Delete customer
-      await testPrisma.customers.delete({
+      await testPrisma.customer.delete({
         where: { id: customer.id },
       });
 
-      const deletedCustomer = await testPrisma.customers.findUnique({
+      const deletedCustomer = await testPrisma.customer.findUnique({
         where: { id: customer.id },
       });
 
@@ -101,7 +101,7 @@ describe('CRM Workflow Integration Tests', () => {
       await createTestCustomer(org.id, { name: 'Customer 2' });
       await createTestCustomer(org.id, { name: 'Customer 3' });
 
-      const customers = await testPrisma.customers.findMany({
+      const customers = await testPrisma.customer.findMany({
         where: { organization_id: org.id },
         orderBy: { created_at: 'desc' },
       });
@@ -118,7 +118,7 @@ describe('CRM Workflow Integration Tests', () => {
       await createTestCustomer(org.id, { name: 'Charlie Brown', email: 'charlie@example.com' });
 
       // Search by name
-      const searchResults = await testPrisma.customers.findMany({
+      const searchResults = await testPrisma.customer.findMany({
         where: {
           organization_id: org.id,
           OR: [
@@ -144,7 +144,7 @@ describe('CRM Workflow Integration Tests', () => {
       const customer2 = await createTestCustomer(org2.id, { name: 'Org 2 Customer' });
 
       // Verify Org 1 only sees its customers
-      const org1Customers = await testPrisma.customers.findMany({
+      const org1Customers = await testPrisma.customer.findMany({
         where: { organization_id: org1.id },
       });
 
@@ -153,7 +153,7 @@ describe('CRM Workflow Integration Tests', () => {
       expect(org1Customers[0].name).toBe('Org 1 Customer');
 
       // Verify Org 2 only sees its customers
-      const org2Customers = await testPrisma.customers.findMany({
+      const org2Customers = await testPrisma.customer.findMany({
         where: { organization_id: org2.id },
       });
 
@@ -169,7 +169,7 @@ describe('CRM Workflow Integration Tests', () => {
       const customer1 = await createTestCustomer(org1.id, { name: 'Private Customer' });
 
       // Attempt to access Org 1 customer from Org 2 context
-      const accessAttempt = await testPrisma.customers.findFirst({
+      const accessAttempt = await testPrisma.customer.findFirst({
         where: {
           id: customer1.id,
           organization_id: org2.id, // Wrong organization!
@@ -193,11 +193,11 @@ describe('CRM Workflow Integration Tests', () => {
       }
 
       // Query with organization filter
-      const org1Count = await testPrisma.customers.count({
+      const org1Count = await testPrisma.customer.count({
         where: { organization_id: org1.id },
       });
 
-      const org2Count = await testPrisma.customers.count({
+      const org2Count = await testPrisma.customer.count({
         where: { organization_id: org2.id },
       });
 
@@ -225,7 +225,7 @@ describe('CRM Workflow Integration Tests', () => {
 
       const customer = await createTestCustomer(org.id, { name: 'Original Name' });
 
-      const updated = await testPrisma.customers.update({
+      const updated = await testPrisma.customer.update({
         where: { id: customer.id },
         data: { name: 'Updated Name' },
       });
@@ -240,7 +240,7 @@ describe('CRM Workflow Integration Tests', () => {
 
       await createTestCustomer(org.id, { name: 'Viewable Customer' });
 
-      const customers = await testPrisma.customers.findMany({
+      const customers = await testPrisma.customer.findMany({
         where: { organization_id: org.id },
       });
 
@@ -262,13 +262,13 @@ describe('CRM Workflow Integration Tests', () => {
       });
 
       // Update with assigned user
-      await testPrisma.customers.update({
+      await testPrisma.customer.update({
         where: { id: createdCustomer.id },
         data: { assigned_to: user.id },
       });
 
       // Query with relation
-      const customer = await testPrisma.customers.findUnique({
+      const customer = await testPrisma.customer.findUnique({
         where: { id: createdCustomer.id },
         include: {
           users: true,  // Relation name
@@ -301,7 +301,7 @@ describe('CRM Workflow Integration Tests', () => {
       // Wait a tiny bit to ensure timestamp difference
       await new Promise(resolve => setTimeout(resolve, 10));
 
-      const updated = await testPrisma.customers.update({
+      const updated = await testPrisma.customer.update({
         where: { id: customer.id },
         data: { name: 'Updated' },
       });
@@ -315,7 +315,7 @@ describe('CRM Workflow Integration Tests', () => {
       const org = await createTestOrganization();
 
       await expect(
-        testPrisma.customers.create({
+        testPrisma.customer.create({
           data: {
             organization_id: org.id,
             name: 'Test Customer',
@@ -327,7 +327,7 @@ describe('CRM Workflow Integration Tests', () => {
 
     it('should fail to update non-existent customer', async () => {
       await expect(
-        testPrisma.customers.update({
+        testPrisma.customer.update({
           where: { id: 'non-existent-id' },
           data: { name: 'Updated' },
         })
@@ -336,7 +336,7 @@ describe('CRM Workflow Integration Tests', () => {
 
     it('should fail to delete non-existent customer', async () => {
       await expect(
-        testPrisma.customers.delete({
+        testPrisma.customer.delete({
           where: { id: 'non-existent-id' },
         })
       ).rejects.toThrow();
@@ -358,7 +358,7 @@ describe('CRM Workflow Integration Tests', () => {
         await createTestCustomer(org.id, customerData);
       }
 
-      const customers = await testPrisma.customers.findMany({
+      const customers = await testPrisma.customer.findMany({
         where: { organization_id: org.id },
       });
 
@@ -374,11 +374,11 @@ describe('CRM Workflow Integration Tests', () => {
       await createTestCustomer(org.id, { name: 'Customer 3' });
 
       // Bulk delete all customers for this organization
-      await testPrisma.customers.deleteMany({
+      await testPrisma.customer.deleteMany({
         where: { organization_id: org.id },
       });
 
-      const remainingCustomers = await testPrisma.customers.findMany({
+      const remainingCustomers = await testPrisma.customer.findMany({
         where: { organization_id: org.id },
       });
 

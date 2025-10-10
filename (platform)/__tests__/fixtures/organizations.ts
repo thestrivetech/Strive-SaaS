@@ -3,14 +3,14 @@
  * Predefined organization data for consistent testing
  */
 
-import { SubscriptionStatus } from '@prisma/client';
+import { SubscriptionTier } from '@prisma/client';
 
 export const testOrganizations = {
   activeTrial: {
     name: 'Acme Corporation',
     slug: 'acme-corp',
     description: 'Test organization on trial',
-    subscriptionStatus: SubscriptionStatus.TRIAL,
+    subscriptionTier: SubscriptionTier.STARTER,
     billingEmail: 'billing@acme.test',
   },
 
@@ -18,7 +18,7 @@ export const testOrganizations = {
     name: 'Tech Innovations Inc',
     slug: 'tech-innovations',
     description: 'Test organization with active subscription',
-    subscriptionStatus: SubscriptionStatus.ACTIVE,
+    subscriptionTier: SubscriptionTier.GROWTH,
     billingEmail: 'billing@techinnovations.test',
   },
 
@@ -26,7 +26,7 @@ export const testOrganizations = {
     name: 'Sunset LLC',
     slug: 'sunset-llc',
     description: 'Test organization with canceled subscription',
-    subscriptionStatus: SubscriptionStatus.CANCELLED,
+    subscriptionTier: SubscriptionTier.FREE,
     billingEmail: 'billing@sunset.test',
   },
 
@@ -34,7 +34,7 @@ export const testOrganizations = {
     name: 'Late Payers Co',
     slug: 'late-payers',
     description: 'Test organization with past due subscription',
-    subscriptionStatus: SubscriptionStatus.PAST_DUE,
+    subscriptionTier: SubscriptionTier.STARTER,
     billingEmail: 'billing@latepayers.test',
   },
 
@@ -42,7 +42,7 @@ export const testOrganizations = {
     name: 'Small Startup',
     slug: 'small-startup',
     description: 'A small startup organization',
-    subscriptionStatus: SubscriptionStatus.TRIAL,
+    subscriptionTier: SubscriptionTier.STARTER,
     billingEmail: 'billing@smallstartup.test',
   },
 
@@ -50,7 +50,7 @@ export const testOrganizations = {
     name: 'Enterprise Corp',
     slug: 'enterprise-corp',
     description: 'Large enterprise organization',
-    subscriptionStatus: SubscriptionStatus.ACTIVE,
+    subscriptionTier: SubscriptionTier.ENTERPRISE,
     billingEmail: 'billing@enterprise.test',
   },
 };

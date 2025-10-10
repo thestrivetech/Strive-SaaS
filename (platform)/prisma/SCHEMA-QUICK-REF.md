@@ -1,6 +1,6 @@
 # Prisma Schema - Quick Reference
 
-**Generated:** 2025-10-10T20:18:20.037Z
+**Generated:** 2025-10-10T20:40:33.745Z
 **Source:** `(platform)/prisma/schema.prisma`
 
 > 🎯 **Purpose:** Lightning-fast schema reference to avoid expensive MCP calls
@@ -12,62 +12,91 @@
 
 ## 📊 Statistics
 
-- **Models:** 41
-- **Enums:** 42
-- **Total:** 83 types
+- **Models:** 42
+- **Enums:** 69
+- **Total:** 111 types
 
 ---
 
-## 📋 Models (41)
+## 📋 Models (42)
 
-### Other (41)
+### Core (4)
 ```
-Activity
-AIProfile
-AIUsage
-Alert
-Appointment
-Automation
-Bundle
-BundleTools
-Campaign
-Cart
-Contact
-ContentItem
-Conversation
-Customer
-Deal
-Demographics
-Document
-EmailCampaign
-Expense
-ExpenseCategory
-Lead
-Listing
-Loop
-MarketData
-Message
-Organization
-OrganizationMember
-Party
-Purchase
-Receipt
-Review
-ROISimulation
-School
-Signature
-Task
-TaxEstimate
-TaxReport
-Tool
-TransactionActivity
-User
-Widget
+organization_members
+organizations
+subscriptions
+users
+```
+
+### CRM (4)
+```
+contacts
+customers
+deals
+leads
+```
+
+### Transactions (9)
+```
+document_signatures
+document_versions
+documents
+listings
+loop_parties
+signature_requests
+transaction_audit_logs
+transaction_loops
+transaction_tasks
+```
+
+### Content & CMS (1)
+```
+content
+```
+
+### AI (4)
+```
+ai_conversations
+ai_tools
+conversations
+example_conversations
+```
+
+### Analytics (6)
+```
+analytics_events
+analytics_goals
+goal_conversions
+page_views
+platform_metrics
+web_vitals_metrics
+```
+
+### Admin (4)
+```
+admin_action_logs
+feature_flags
+onboarding_sessions
+system_alerts
+```
+
+### Other (10)
+```
+activities
+activity_logs
+appointments
+attachments
+notifications
+projects
+tasks
+usage_tracking
+user_sessions
+workflows
 ```
 
 ---
 
-## 🏷️ Enums (42)
+## 🏷️ Enums (69)
 
 ```
 SubscriptionTier
@@ -77,41 +106,68 @@ LeadStatus
 LeadScore
 DealStage
 LoopStatus
-DealType
 TaskStatus
 TaskPriority
-DocumentCategory
 PartyRole
 SignatureStatus
 PropertyType
 ListingStatus
-TransactionAction
-TransactionEntityType
 ToolCategory
 ToolTier
-BillingPeriod
 BundleType
 PurchaseStatus
 ContentType
 ContentStatus
 CampaignType
 CampaignStatus
-PaymentMethod
-TaxCategory
 ReportType
-MarketTemperature
-EducationLevel
 AlertType
 AlertSeverity
-SchoolType
-ConversationStatus
-MessageRole
-TriggerType
 ActionType
-AutomationStatus
-AIFeature
 AppointmentStatus
 ActivityType
+AIContextType
+AIModel
+AdminAction
+AlertCategory
+AlertFrequency
+AlertLevel
+AppointmentType
+AreaType
+BillingCycle
+CommentStatus
+ContactStatus
+ContactType
+CustomerSource
+CustomerStatus
+DashboardActivitySeverity
+DashboardActivityType
+DashboardTheme
+DealStatus
+DocumentStatus
+EmailStatus
+Environment
+ExpenseCategory
+ExpenseStatus
+Industry
+LayoutDensity
+MetricCategory
+NotificationType
+PartyStatus
+PaymentStatus
+PostStatus
+Priority
+ProjectStatus
+ReidReportType
+ResourceType
+SigningOrder
+SocialPlatform
+SubscriptionStatus
+ToolType
+TransactionType
+UserRole
+WidgetType
+WorkflowStatus
 ```
 
 ---

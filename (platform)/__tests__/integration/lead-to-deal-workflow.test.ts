@@ -120,7 +120,7 @@ describe('Lead-to-Deal Workflow Integration', () => {
 
     // === STEP 2: Add Activities to Lead ===
     // Create call activity
-    await testPrisma.activities.create({
+    await testPrisma.activity.create({
       data: {
         type: 'CALL',
         title: 'Initial discovery call',
@@ -133,7 +133,7 @@ describe('Lead-to-Deal Workflow Integration', () => {
     });
 
     // Create meeting activity
-    await testPrisma.activities.create({
+    await testPrisma.activity.create({
       data: {
         type: 'MEETING',
         title: 'Product demo',
@@ -146,7 +146,7 @@ describe('Lead-to-Deal Workflow Integration', () => {
     });
 
     // Create email activity
-    await testPrisma.activities.create({
+    await testPrisma.activity.create({
       data: {
         type: 'EMAIL',
         title: 'Follow-up email',
@@ -193,7 +193,7 @@ describe('Lead-to-Deal Workflow Integration', () => {
     expect(contact.organization_id).toBe(organization.id);
 
     // Verify lead status updated to CONVERTED
-    const convertedLead = await testPrisma.leads.findUnique({
+    const convertedLead = await testPrisma.lead.findUnique({
       where: { id: lead.id },
     });
     expect(convertedLead?.status).toBe(LeadStatus.CONVERTED);
@@ -247,7 +247,7 @@ describe('Lead-to-Deal Workflow Integration', () => {
     expect(currentDeal.probability).toBe(90);
 
     // === STEP 7: Close Deal as WON ===
-    const wonDeal = await testPrisma.deals.update({
+    const wonDeal = await testPrisma.deal.update({
       where: { id: currentDeal.id },
       data: {
         status: 'WON',
@@ -272,7 +272,7 @@ describe('Lead-to-Deal Workflow Integration', () => {
     expect(finalDeal?.contact_id).toBe(contact.id);
 
     // Verify contact exists
-    const finalContact = await testPrisma.contacts.findUnique({
+    const finalContact = await testPrisma.contact.findUnique({
       where: { id: contact.id },
     });
 
@@ -280,7 +280,7 @@ describe('Lead-to-Deal Workflow Integration', () => {
     expect(finalContact?.name).toBe('Jane Smith');
 
     // Verify lead still exists (converted)
-    const finalLead = await testPrisma.leads.findUnique({
+    const finalLead = await testPrisma.lead.findUnique({
       where: { id: lead.id },
     });
 
@@ -359,11 +359,11 @@ describe('Lead-to-Deal Workflow Integration', () => {
     const { contact: contact2 } = await convertLead(lead2.id);
 
     // === Verification: Each org only sees its own data ===
-    const org1Leads = await testPrisma.leads.findMany({
+    const org1Leads = await testPrisma.lead.findMany({
       where: { organization_id: org1.id },
     });
 
-    const org2Leads = await testPrisma.leads.findMany({
+    const org2Leads = await testPrisma.lead.findMany({
       where: { organization_id: org2.id },
     });
 
@@ -372,11 +372,11 @@ describe('Lead-to-Deal Workflow Integration', () => {
     expect(org1Leads[0].id).toBe(lead1.id);
     expect(org2Leads[0].id).toBe(lead2.id);
 
-    const org1Contacts = await testPrisma.contacts.findMany({
+    const org1Contacts = await testPrisma.contact.findMany({
       where: { organization_id: org1.id },
     });
 
-    const org2Contacts = await testPrisma.contacts.findMany({
+    const org2Contacts = await testPrisma.contact.findMany({
       where: { organization_id: org2.id },
     });
 
@@ -434,7 +434,7 @@ describe('Lead-to-Deal Workflow Integration', () => {
     });
 
     // Mark as LOST
-    const lostDeal = await testPrisma.deals.update({
+    const lostDeal = await testPrisma.deal.update({
       where: { id: deal.id },
       data: {
         status: 'LOST',

@@ -9,7 +9,7 @@
 
 import { prisma } from '@/lib/database/prisma';
 import { setTenantContext, clearTenantContext } from '@/lib/database/prisma-middleware';
-import type { customers, notifications } from '@prisma/client';
+import type { Customer, Notification } from '@prisma/client';
 
 describe('Tenant Isolation Middleware', () => {
   const ORG_1_ID = 'org-1-test-id';
@@ -30,7 +30,7 @@ describe('Tenant Isolation Middleware', () => {
     it('should require tenant context for multi-tenant tables', async () => {
       // Attempt to query without setting context
       await expect(
-        prisma.customers.findMany()
+        prisma.customer.findMany()
       ).rejects.toThrow('Tenant context required');
     });
 
@@ -41,10 +41,10 @@ describe('Tenant Isolation Middleware', () => {
       // This is a conceptual test showing the expected behavior
 
       // Query will automatically filter by ORG_1_ID
-      const customers = await prisma.customers.findMany();
+      const customers = await prisma.customer.findMany();
 
       // Verify all returned customers belong to ORG_1
-      customers.forEach((customer: customers) => {
+      customers.forEach((customer: Customer) => {
         expect(customer.organization_id).toBe(ORG_1_ID);
       });
     });
@@ -53,7 +53,7 @@ describe('Tenant Isolation Middleware', () => {
       setTenantContext({ organizationId: ORG_1_ID, userId: USER_1_ID });
 
       // Attempt to query customer from ORG_2
-      const customerFromOrg2 = await prisma.customers.findFirst({
+      const customerFromOrg2 = await prisma.customer.findFirst({
         where: { id: 'customer-from-org-2' },
       });
 
@@ -71,7 +71,7 @@ describe('Tenant Isolation Middleware', () => {
       // Note: This is conceptual - in real test you'd cleanup after
 
       /*
-      const customer = await prisma.customers.create({
+      const customer = await prisma.customer.create({
         data: {
           name: 'Test Customer',
           email: 'test@test.com',
@@ -87,7 +87,7 @@ describe('Tenant Isolation Middleware', () => {
     it('should prevent creating records without context', async () => {
       // No context set
       await expect(
-        prisma.customers.create({
+        prisma.customer.create({
           data: {
             id: `cust-${Date.now()}`,
             name: 'Test Customer',
@@ -108,7 +108,7 @@ describe('Tenant Isolation Middleware', () => {
       // Middleware ensures where clause filters by ORG_1
 
       /*
-      const result = await prisma.customers.updateMany({
+      const result = await prisma.customer.updateMany({
         where: { id: 'customer-from-org-2' },
         data: { name: 'Hacked Name' },
       });
@@ -125,7 +125,7 @@ describe('Tenant Isolation Middleware', () => {
 
       // Attempting to delete a record from ORG_2 should fail
       /*
-      const result = await prisma.customers.deleteMany({
+      const result = await prisma.customer.deleteMany({
         where: { id: 'customer-from-org-2' },
       });
 
@@ -140,7 +140,7 @@ describe('Tenant Isolation Middleware', () => {
       // Set context for ORG_1
       setTenantContext({ organizationId: ORG_1_ID, userId: USER_1_ID });
 
-      let customers = await prisma.customers.findMany({ take: 1 });
+      let customers = await prisma.customer.findMany({ take: 1 });
       if (customers.length > 0) {
         expect(customers[0].organization_id).toBe(ORG_1_ID);
       }
@@ -148,7 +148,7 @@ describe('Tenant Isolation Middleware', () => {
       // Switch to ORG_2
       setTenantContext({ organizationId: ORG_2_ID, userId: USER_2_ID });
 
-      customers = await prisma.customers.findMany({ take: 1 });
+      customers = await prisma.customer.findMany({ take: 1 });
       if (customers.length > 0) {
         expect(customers[0].organization_id).toBe(ORG_2_ID);
       }
@@ -160,9 +160,9 @@ describe('Tenant Isolation Middleware', () => {
       setTenantContext({ organizationId: ORG_1_ID, userId: USER_1_ID });
 
       // User-scoped tables like notifications should filter by userId
-      const notificationsList = await prisma.notifications.findMany({ take: 10 });
+      const notificationsList = await prisma.notification.findMany({ take: 10 });
 
-      notificationsList.forEach((notification: notifications) => {
+      notificationsList.forEach((notification: Notification) => {
         expect(notification.user_id).toBe(USER_1_ID);
       });
     });
@@ -172,7 +172,7 @@ describe('Tenant Isolation Middleware', () => {
     it('should not require context for non-tenant tables', async () => {
       // Non-tenant tables (like analytics_events) don't require context
       // This should NOT throw an error
-      const events = await prisma.analytics_events.findMany({ take: 1 });
+      const events = await prisma.analyticsEvent.findMany({ take: 1 });
 
       expect(Array.isArray(events)).toBe(true);
     });
@@ -192,7 +192,7 @@ describe('Tenant Isolation - Real World Scenarios', () => {
       setTenantContext({ organizationId: ORG_1, userId: 'attacker-user' });
 
       // Attacker tries to access victim org by passing their ID
-      const victimCustomers = await prisma.customers.findMany({
+      const victimCustomers = await prisma.customer.findMany({
         where: {
           organization_id: ORG_2, // Attacker trying to access ORG_2
         },
@@ -209,7 +209,7 @@ describe('Tenant Isolation - Real World Scenarios', () => {
       setTenantContext({ organizationId: ORG_1, userId: 'attacker-user' });
 
       // Attacker tries to delete all customers (malicious)
-      const result = await prisma.customers.deleteMany({
+      const result = await prisma.customer.deleteMany({
         where: {}, // Empty where = delete all
       });
 
@@ -225,7 +225,7 @@ describe('Tenant Isolation - Real World Scenarios', () => {
 
       const start = Date.now();
 
-      await prisma.customers.findMany({ take: 100 });
+      await prisma.customer.findMany({ take: 100 });
 
       const duration = Date.now() - start;
 

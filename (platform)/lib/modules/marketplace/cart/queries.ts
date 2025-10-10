@@ -37,6 +37,11 @@ export async function getShoppingCart(userId: string) {
 }
 
 /**
+ * Alias for getShoppingCart (for consistency)
+ */
+export const getCart = getShoppingCart;
+
+/**
  * Get cart with populated items (tools and bundles)
  *
  * @param userId - User ID
