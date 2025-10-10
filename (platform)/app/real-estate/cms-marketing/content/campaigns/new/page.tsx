@@ -47,6 +47,9 @@ export default function NewCampaignPage() {
       type: 'CONTENT_MARKETING',
       status: 'DRAFT',
       timezone: 'UTC',
+      budget: undefined as number | undefined,
+      goalType: '',
+      goalValue: undefined as number | undefined,
     },
   });
 

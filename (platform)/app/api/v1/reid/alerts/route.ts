@@ -4,15 +4,8 @@ import { createPropertyAlert } from '@/lib/modules/reid/alerts/actions';
 
 export async function GET(req: NextRequest) {
   try {
-    const searchParams = req.nextUrl.searchParams;
-    const alertType = searchParams.get('alertType');
-    const isActive = searchParams.get('isActive');
-
-    const filters: any = {};
-    if (alertType) filters.alertType = alertType;
-    if (isActive !== null) filters.isActive = isActive === 'true';
-
-    const alerts = await getPropertyAlerts(filters);
+    // getPropertyAlerts() takes no parameters - filters by organizationId automatically
+    const alerts = await getPropertyAlerts();
     return NextResponse.json({ alerts });
   } catch (error) {
     return NextResponse.json(

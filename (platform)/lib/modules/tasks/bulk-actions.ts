@@ -292,7 +292,7 @@ export async function bulkDeleteTasks(input: unknown) {
         new_data: {
           count: validated.taskIds.length,
           taskIds: validated.taskIds,
-          taskTitles: tasks.map((t) => t.title),
+          taskTitles: tasks.map((t: { id: string; title: string }) => t.title),
         } as Prisma.JsonObject,
       },
     });

@@ -73,7 +73,7 @@ export async function GET(req: NextRequest) {
       offset: searchParams.get('offset')
         ? parseInt(searchParams.get('offset')!, 10)
         : 0,
-      sort_by: (searchParams.get('sort_by') as any) || 'usage_count',
+      sort_by: (searchParams.get('sort_by') as 'created_at' | 'updated_at' | 'usage_count' | 'rating' | 'name' | null) || 'usage_count',
       sort_order: (searchParams.get('sort_order') as 'asc' | 'desc') || 'desc',
     };
 
@@ -84,8 +84,10 @@ export async function GET(req: NextRequest) {
     ]);
 
     // Calculate pagination metadata
-    const totalPages = Math.ceil(total / filters.limit);
-    const currentPage = Math.floor(filters.offset / filters.limit) + 1;
+    const limit = filters.limit || 50;
+    const offset = filters.offset || 0;
+    const totalPages = Math.ceil(total / limit);
+    const currentPage = Math.floor(offset / limit) + 1;
 
     return NextResponse.json({
       success: true,
@@ -94,12 +96,12 @@ export async function GET(req: NextRequest) {
         total,
         pagination: {
           page: currentPage,
-          limit: filters.limit,
-          offset: filters.offset,
+          limit,
+          offset,
           total,
           totalPages,
-          hasNext: filters.offset + filters.limit < total,
-          hasPrevious: filters.offset > 0,
+          hasNext: offset + limit < total,
+          hasPrevious: offset > 0,
         },
       },
     });

@@ -1,24 +1,25 @@
 # Prisma Schema - Enums Documentation
 
-**Generated:** 2025-10-06T18:08:39.953Z
-**Source:** `shared/prisma/schema.prisma`
+**Generated:** 2025-10-10T20:18:20.048Z
+**Source:** `(platform)/prisma/schema.prisma`
 
 > 🏷️ **Purpose:** Complete enum values reference
 > - Use this when you need to know: "What are the valid values for X enum?"
 > - For quick lookup, see: `SCHEMA-QUICK-REF.md`
 
-**Total Enums:** 76
+**Total Enums:** 42
 
 ---
 
 ## ActionType
 
 ```typescript
-NAVIGATION
+EMAIL
+SMS
 API_CALL
-MODAL_FORM
-EXTERNAL_LINK
-WORKFLOW_TRIGGER
+CREATE_TASK
+UPDATE_RECORD
+NOTIFICATION
 ```
 
 ---
@@ -26,121 +27,24 @@ WORKFLOW_TRIGGER
 ## ActivityType
 
 ```typescript
-CALL
-EMAIL
-MEETING
-TASK
-NOTE
-SHOWING
-OPEN_HOUSE
-FOLLOW_UP
+CREATE
+UPDATE
+DELETE
+VIEW
+SHARE
+COMMENT
 ```
 
 ---
 
-## AdminAction
+## AIFeature
 
 ```typescript
-USER_CREATE
-USER_UPDATE
-USER_SUSPEND
-USER_DELETE
-USER_IMPERSONATE
-ORG_CREATE
-ORG_UPDATE
-ORG_SUSPEND
-ORG_DELETE
-SUBSCRIPTION_CREATE
-SUBSCRIPTION_UPDATE
-SUBSCRIPTION_CANCEL
-FEATURE_FLAG_UPDATE
-SYSTEM_CONFIG_UPDATE
-DATA_EXPORT
-BULK_ACTION
-```
-
----
-
-## AgentCategory
-
-```typescript
-SALES
-SUPPORT
+CHAT
+AUTOMATION
+INSIGHTS
+CONTENT_GEN
 ANALYSIS
-CONTENT
-AUTOMATION
-RESEARCH
-```
-
----
-
-## AIContextType
-
-```typescript
-GENERAL
-PROJECT
-CUSTOMER
-TASK
-```
-
----
-
-## AIModel
-
-```typescript
-OPENAI_GPT4
-CLAUDE_SONNET
-GEMINI
-GROK
-KIMIK2
-```
-
----
-
-## AIToolCategory
-
-```typescript
-AUTOMATION
-ANALYTICS
-INTEGRATION
-UI
-API
-WORKFLOW
-```
-
----
-
-## AlertCategory
-
-```typescript
-SYSTEM
-MAINTENANCE
-FEATURE
-SECURITY
-BILLING
-MARKETING
-```
-
----
-
-## AlertFrequency
-
-```typescript
-IMMEDIATE
-DAILY
-WEEKLY
-MONTHLY
-```
-
----
-
-## AlertLevel
-
-```typescript
-INFO
-WARNING
-ERROR
-SUCCESS
 ```
 
 ---
@@ -151,7 +55,7 @@ SUCCESS
 LOW
 MEDIUM
 HIGH
-CRITICAL
+URGENT
 ```
 
 ---
@@ -160,12 +64,10 @@ CRITICAL
 
 ```typescript
 PRICE_DROP
-PRICE_INCREASE
+HOT_MARKET
 NEW_LISTING
-SOLD
-INVENTORY_CHANGE
-MARKET_TREND
-DEMOGRAPHIC_CHANGE
+INVESTMENT_OPPORTUNITY
+MARKET_SHIFT
 ```
 
 ---
@@ -175,43 +77,30 @@ DEMOGRAPHIC_CHANGE
 ```typescript
 SCHEDULED
 CONFIRMED
-COMPLETED
 CANCELLED
+COMPLETED
 NO_SHOW
 ```
 
 ---
 
-## AppointmentType
+## AutomationStatus
 
 ```typescript
-MEETING
-CALL
-SHOWING
-OPEN_HOUSE
-FOLLOW_UP
-OTHER
+ACTIVE
+PAUSED
+DRAFT
+ERROR
 ```
 
 ---
 
-## AreaType
-
-```typescript
-ZIP
-SCHOOL_DISTRICT
-NEIGHBORHOOD
-COUNTY
-MSA
-```
-
----
-
-## BillingCycle
+## BillingPeriod
 
 ```typescript
 MONTHLY
 YEARLY
+ONE_TIME
 ```
 
 ---
@@ -243,58 +132,10 @@ CANCELLED
 ## CampaignType
 
 ```typescript
-CONTENT_MARKETING
-EMAIL_MARKETING
-SOCIAL_MEDIA
-PAID_ADVERTISING
-SEO_CAMPAIGN
-LEAD_GENERATION
-BRAND_AWARENESS
-PRODUCT_LAUNCH
-```
-
----
-
-## CommentStatus
-
-```typescript
-PENDING
-APPROVED
-REJECTED
-SPAM
-```
-
----
-
-## ComplexityLevel
-
-```typescript
-SIMPLE
-MODERATE
-COMPLEX
-ENTERPRISE
-```
-
----
-
-## ContactStatus
-
-```typescript
-ACTIVE
-INACTIVE
-DO_NOT_CONTACT
-```
-
----
-
-## ContactType
-
-```typescript
-PROSPECT
-CLIENT
-PAST_CLIENT
-PARTNER
-VENDOR
+EMAIL
+SOCIAL
+SMS
+MULTI_CHANNEL
 ```
 
 ---
@@ -302,12 +143,10 @@ VENDOR
 ## ContentStatus
 
 ```typescript
-DRAFT
-REVIEW
-APPROVED
 PUBLISHED
-ARCHIVED
+DRAFT
 SCHEDULED
+ARCHIVED
 ```
 
 ---
@@ -315,76 +154,19 @@ SCHEDULED
 ## ContentType
 
 ```typescript
-PAGE
 BLOG_POST
-DOCUMENTATION
-TEMPLATE
+PAGE
 ARTICLE
 LANDING_PAGE
-EMAIL_TEMPLATE
-SOCIAL_POST
-PRESS_RELEASE
-NEWSLETTER
-CASE_STUDY
-WHITEPAPER
 ```
 
 ---
 
-## CustomerSource
+## ConversationStatus
 
 ```typescript
-WEBSITE
-REFERRAL
-SOCIAL
-EMAIL
-OTHER
-```
-
----
-
-## CustomerStatus
-
-```typescript
-LEAD
-PROSPECT
 ACTIVE
-CHURNED
-```
-
----
-
-## DashboardActivitySeverity
-
-```typescript
-INFO
-SUCCESS
-WARNING
-ERROR
-CRITICAL
-```
-
----
-
-## DashboardActivityType
-
-```typescript
-USER_ACTION
-SYSTEM_EVENT
-WORKFLOW_UPDATE
-DATA_CHANGE
-SECURITY_EVENT
-INTEGRATION_EVENT
-```
-
----
-
-## DashboardTheme
-
-```typescript
-LIGHT
-DARK
-AUTO
+ARCHIVED
 ```
 
 ---
@@ -392,109 +174,47 @@ AUTO
 ## DealStage
 
 ```typescript
-LEAD
-QUALIFIED
+PROSPECTING
+QUALIFICATION
 PROPOSAL
 NEGOTIATION
 CLOSING
-CLOSED_WON
-CLOSED_LOST
-```
-
----
-
-## DealStatus
-
-```typescript
-ACTIVE
 WON
 LOST
-ABANDONED
 ```
 
 ---
 
-## DocumentStatus
+## DealType
 
 ```typescript
-DRAFT
-PENDING
-REVIEWED
-SIGNED
-ARCHIVED
+PURCHASE
+SALE
+LEASE
+REFINANCE
 ```
 
 ---
 
-## EmailStatus
+## DocumentCategory
 
 ```typescript
-DRAFT
-SCHEDULED
-SENDING
-SENT
-FAILED
-```
-
----
-
-## Environment
-
-```typescript
-DEVELOPMENT
-STAGING
-PRODUCTION
-```
-
----
-
-## ExpenseCategory
-
-```typescript
-COMMISSION
-TRAVEL
-MARKETING
-OFFICE
-UTILITIES
-LEGAL
-INSURANCE
-REPAIRS
-MEALS
-EDUCATION
-SOFTWARE
+CONTRACT
+DISCLOSURE
+INSPECTION
+APPRAISAL
 OTHER
 ```
 
 ---
 
-## ExpenseStatus
+## EducationLevel
 
 ```typescript
-PENDING
-APPROVED
-REJECTED
-NEEDS_REVIEW
-```
-
----
-
-## Industry
-
-```typescript
-REAL_ESTATE
-HEALTHCARE
-STRIVE
-GENERAL
-```
-
----
-
-## LayoutDensity
-
-```typescript
-COMPACT
-NORMAL
-SPACIOUS
+HIGH_SCHOOL
+SOME_COLLEGE
+BACHELORS
+GRADUATE
 ```
 
 ---
@@ -544,20 +264,7 @@ LOST
 ACTIVE
 PENDING
 SOLD
-EXPIRED
-WITHDRAWN
-CONTINGENT
-```
-
----
-
-## LogLevel
-
-```typescript
-DEBUG
-INFO
-WARN
-ERROR
+OFF_MARKET
 ```
 
 ---
@@ -565,66 +272,33 @@ ERROR
 ## LoopStatus
 
 ```typescript
-DRAFT
 ACTIVE
-UNDER_CONTRACT
+PENDING
 CLOSING
 CLOSED
 CANCELLED
-ARCHIVED
 ```
 
 ---
 
-## MetricCategory
+## MarketTemperature
 
 ```typescript
-FINANCIAL
-OPERATIONAL
-MARKETING
-SALES
-PRODUCTIVITY
+HOT
+WARM
+MODERATE
+COOL
+COLD
+```
+
+---
+
+## MessageRole
+
+```typescript
+USER
+ASSISTANT
 SYSTEM
-CUSTOM
-```
-
----
-
-## NotificationType
-
-```typescript
-INFO
-SUCCESS
-WARNING
-ERROR
-```
-
----
-
-## OrderPriority
-
-```typescript
-LOW
-NORMAL
-HIGH
-URGENT
-```
-
----
-
-## OrderStatus
-
-```typescript
-DRAFT
-SUBMITTED
-IN_REVIEW
-APPROVED
-IN_PROGRESS
-TESTING
-COMPLETED
-DELIVERED
-CANCELLED
-REJECTED
 ```
 
 ---
@@ -645,72 +319,24 @@ VIEWER
 ```typescript
 BUYER
 SELLER
-BUYER_AGENT
-LISTING_AGENT
-LENDER
-TITLE_COMPANY
-INSPECTOR
-APPRAISER
+AGENT
 ATTORNEY
-ESCROW_OFFICER
+LENDER
+INSPECTOR
+TITLE_COMPANY
+```
+
+---
+
+## PaymentMethod
+
+```typescript
+CASH
+CHECK
+CREDIT_CARD
+DEBIT_CARD
+WIRE_TRANSFER
 OTHER
-```
-
----
-
-## PartyStatus
-
-```typescript
-ACTIVE
-INACTIVE
-REMOVED
-```
-
----
-
-## PaymentStatus
-
-```typescript
-PENDING
-PROCESSING
-SUCCEEDED
-FAILED
-CANCELLED
-REQUIRES_ACTION
-```
-
----
-
-## PostStatus
-
-```typescript
-DRAFT
-SCHEDULED
-PUBLISHED
-FAILED
-```
-
----
-
-## Priority
-
-```typescript
-LOW
-MEDIUM
-HIGH
-CRITICAL
-```
-
----
-
-## ProjectStatus
-
-```typescript
-PLANNING
-ACTIVE
-ON_HOLD
-COMPLETED
-CANCELLED
 ```
 
 ---
@@ -718,13 +344,12 @@ CANCELLED
 ## PropertyType
 
 ```typescript
-RESIDENTIAL
-COMMERCIAL
-LAND
-MULTI_FAMILY
+HOUSE
 CONDO
 TOWNHOUSE
-LUXURY
+LAND
+COMMERCIAL
+MULTI_FAMILY
 ```
 
 ---
@@ -734,21 +359,8 @@ LUXURY
 ```typescript
 ACTIVE
 CANCELLED
-REFUNDED
 EXPIRED
-```
-
----
-
-## ReidReportType
-
-```typescript
-NEIGHBORHOOD_ANALYSIS
-MARKET_OVERVIEW
-COMPARATIVE_STUDY
-INVESTMENT_ANALYSIS
-DEMOGRAPHIC_REPORT
-CUSTOM
+TRIAL
 ```
 
 ---
@@ -756,34 +368,21 @@ CUSTOM
 ## ReportType
 
 ```typescript
-MONTHLY
 QUARTERLY
-YEARLY
+ANNUAL
 CUSTOM
-TAX_SUMMARY
 ```
 
 ---
 
-## ResourceType
+## SchoolType
 
 ```typescript
-AI_TOKENS
-API_CALLS
-STORAGE
-SEATS
-```
-
----
-
-## ShowcaseCategory
-
-```typescript
-AI_AGENT
-AUTOMATION_TOOL
-INTEGRATION
-WORKFLOW
-CUSTOM_SOLUTION
+ELEMENTARY
+MIDDLE
+HIGH
+PRIVATE
+CHARTER
 ```
 
 ---
@@ -792,46 +391,9 @@ CUSTOM_SOLUTION
 
 ```typescript
 PENDING
-SENT
-VIEWED
 SIGNED
 DECLINED
 EXPIRED
-```
-
----
-
-## SigningOrder
-
-```typescript
-SEQUENTIAL
-PARALLEL
-```
-
----
-
-## SocialPlatform
-
-```typescript
-FACEBOOK
-TWITTER
-INSTAGRAM
-LINKEDIN
-YOUTUBE
-TIKTOK
-PINTEREST
-```
-
----
-
-## SubscriptionStatus
-
-```typescript
-ACTIVE
-INACTIVE
-TRIAL
-PAST_DUE
-CANCELLED
 ```
 
 ---
@@ -865,9 +427,28 @@ URGENT
 ```typescript
 TODO
 IN_PROGRESS
-REVIEW
-DONE
-CANCELLED
+COMPLETED
+BLOCKED
+```
+
+---
+
+## TaxCategory
+
+```typescript
+ADVERTISING
+VEHICLE
+COMMISSIONS
+INSURANCE
+LEGAL
+OFFICE
+RENT
+REPAIRS
+SUPPLIES
+TRAVEL
+MEALS
+UTILITIES
+OTHER
 ```
 
 ---
@@ -895,63 +476,36 @@ T3
 
 ---
 
-## ToolType
+## TransactionAction
 
 ```typescript
-CHATBOT
-ANALYSIS
-AUTOMATION
-INTEGRATION
+CREATE
+UPDATE
+COMPLETE
+COMMENT
 ```
 
 ---
 
-## TransactionType
+## TransactionEntityType
 
 ```typescript
-PURCHASE_AGREEMENT
-LISTING_AGREEMENT
-LEASE_AGREEMENT
-COMMERCIAL_PURCHASE
-COMMERCIAL_LEASE
+loop
+task
+document
+party
+signature
 ```
 
 ---
 
-## UserRole
+## TriggerType
 
 ```typescript
-SUPER_ADMIN
-ADMIN
-MODERATOR
-USER
-```
-
----
-
-## WidgetType
-
-```typescript
-KPI_CARD
-CHART
-TABLE
-ACTIVITY_FEED
-QUICK_ACTIONS
-MODULE_SHORTCUTS
-PROGRESS_TRACKER
-NOTIFICATION_PANEL
-CALENDAR
-WEATHER
-```
-
----
-
-## WorkflowStatus
-
-```typescript
-ACTIVE
-COMPLETED
-CANCELLED
+SCHEDULE
+EVENT
+MANUAL
+WEBHOOK
 ```
 
 ---

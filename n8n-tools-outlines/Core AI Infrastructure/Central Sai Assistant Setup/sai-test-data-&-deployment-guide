@@ -1,0 +1,580 @@
+// ==========================================
+// SAI UNIVERSAL ASSISTANT - TEST DATA & DEPLOYMENT GUIDE
+// ==========================================
+
+// 1. TEST DATA SCENARIOS
+// ==========================================
+
+const testData = {
+  // Test 1: Valid property search request
+  valid_property_search: {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      "X-Organization-ID": "123e4567-e89b-12d3-a456-426614174001",
+      "X-API-Key": "sk-strivetech-test-key-123",
+      "X-Request-ID": "test-req-001"
+    },
+    body: {
+      "user_id": "123e4567-e89b-12d3-a456-426614174000",
+      "organization_id": "123e4567-e89b-12d3-a456-426614174001",
+      "message": "Show me 3 bedroom homes under $500,000 in Austin, TX",
+      "conversation_id": null,
+      "context": {
+        "module": "marketplace",
+        "entity_type": "property"
+      },
+      "preferences": {
+        "model": "auto",
+        "response_style": "professional",
+        "max_tokens": 2000,
+        "stream": false
+      }
+    }
+  },
+
+  // Test 2: Lead management query with conversation history
+  valid_lead_management: {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      "X-Organization-ID": "123e4567-e89b-12d3-a456-426614174001",
+      "X-API-Key": "sk-strivetech-test-key-123"
+    },
+    body: {
+      "user_id": "123e4567-e89b-12d3-a456-426614174000",
+      "organization_id": "123e4567-e89b-12d3-a456-426614174001",
+      "message": "Add a follow-up task for John Smith who inquired about the downtown condo",
+      "conversation_id": "conv_123e4567-e89b-12d3-a456-426614174001_123e4567-e89b-12d3-a456-426614174000_1704902400000",
+      "context": {
+        "module": "crm",
+        "entity_type": "lead",
+        "entity_id": "lead_456"
+      },
+      "preferences": {
+        "model": "gpt-3.5-turbo",
+        "response_style": "casual"
+      }
+    }
+  },
+
+  // Test 3: Complex market analysis request
+  valid_market_analysis: {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      "X-Organization-ID": "123e4567-e89b-12d3-a456-426614174002",
+      "X-API-Key": "sk-strivetech-pro-key-456"
+    },
+    body: {
+      "user_id": "223e4567-e89b-12d3-a456-426614174000",
+      "organization_id": "123e4567-e89b-12d3-a456-426614174002",
+      "message": "Generate a comprehensive CMA report for 123 Main St, including comparable sales from the last 6 months, market trends, and pricing recommendations",
+      "conversation_id": null,
+      "context": {
+        "module": "analytics",
+        "entity_type": "property",
+        "entity_id": "prop_789"
+      },
+      "preferences": {
+        "model": "gpt-4",
+        "response_style": "technical",
+        "max_tokens": 4000
+      }
+    }
+  },
+
+  // Test 4: Invalid - Missing organization_id
+  invalid_missing_org: {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      "X-API-Key": "sk-strivetech-test-key-123"
+    },
+    body: {
+      "user_id": "123e4567-e89b-12d3-a456-426614174000",
+      "message": "Show me properties"
+    }
+  },
+
+  // Test 5: Invalid - User not in organization
+  invalid_wrong_org: {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      "X-Organization-ID": "999e4567-e89b-12d3-a456-426614174999",
+      "X-API-Key": "sk-strivetech-test-key-123"
+    },
+    body: {
+      "user_id": "123e4567-e89b-12d3-a456-426614174000",
+      "organization_id": "999e4567-e89b-12d3-a456-426614174999",
+      "message": "Show me leads"
+    }
+  },
+
+  // Test 6: Rate limit test (send 101 times rapidly)
+  rate_limit_test: {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      "X-Organization-ID": "123e4567-e89b-12d3-a456-426614174001",
+      "X-API-Key": "sk-strivetech-test-key-123"
+    },
+    body: {
+      "user_id": "123e4567-e89b-12d3-a456-426614174000",
+      "organization_id": "123e4567-e89b-12d3-a456-426614174001",
+      "message": "Test message for rate limiting"
+    }
+  },
+
+  // Test 7: Edge case - Very long message
+  edge_case_long_message: {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      "X-Organization-ID": "123e4567-e89b-12d3-a456-426614174001",
+      "X-API-Key": "sk-strivetech-test-key-123"
+    },
+    body: {
+      "user_id": "123e4567-e89b-12d3-a456-426614174000",
+      "organization_id": "123e4567-e89b-12d3-a456-426614174001",
+      "message": "Lorem ipsum...".repeat(1000), // 10,000+ characters
+      "conversation_id": null
+    }
+  },
+
+  // Test 8: Stream response test
+  stream_response_test: {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      "X-Organization-ID": "123e4567-e89b-12d3-a456-426614174001",
+      "X-API-Key": "sk-strivetech-test-key-123"
+    },
+    body: {
+      "user_id": "123e4567-e89b-12d3-a456-426614174000",
+      "organization_id": "123e4567-e89b-12d3-a456-426614174001",
+      "message": "Explain the home buying process step by step",
+      "preferences": {
+        "stream": true,
+        "max_tokens": 3000
+      }
+    }
+  }
+};
+
+// 2. SQL SETUP SCRIPTS
+// ==========================================
+
+const databaseSetup = `
+-- Organizations table
+CREATE TABLE IF NOT EXISTS organizations (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  name VARCHAR(255) NOT NULL,
+  tier VARCHAR(50) CHECK (tier IN ('free', 'pro', 'enterprise')) DEFAULT 'free',
+  settings JSONB DEFAULT '{}',
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+  updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
+-- Users table
+CREATE TABLE IF NOT EXISTS users (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  email VARCHAR(255) UNIQUE NOT NULL,
+  full_name VARCHAR(255),
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+  updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
+-- User-Organization relationship
+CREATE TABLE IF NOT EXISTS user_organizations (
+  user_id UUID REFERENCES users(id) ON DELETE CASCADE,
+  organization_id UUID REFERENCES organizations(id) ON DELETE CASCADE,
+  role VARCHAR(50) NOT NULL CHECK (role IN ('owner', 'admin', 'member', 'viewer')),
+  permissions JSONB DEFAULT '{}',
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+  PRIMARY KEY (user_id, organization_id)
+);
+
+-- AI Conversations table
+CREATE TABLE IF NOT EXISTS ai_conversations (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  organization_id UUID REFERENCES organizations(id) ON DELETE CASCADE,
+  user_id UUID REFERENCES users(id) ON DELETE CASCADE,
+  conversation_id VARCHAR(255) UNIQUE NOT NULL,
+  messages JSONB DEFAULT '[]',
+  metadata JSONB DEFAULT '{}',
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+  updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
+-- Workflow executions table
+CREATE TABLE IF NOT EXISTS workflow_executions (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  workflow_name VARCHAR(255) NOT NULL,
+  organization_id UUID REFERENCES organizations(id) ON DELETE CASCADE,
+  execution_id VARCHAR(255),
+  status VARCHAR(50),
+  duration_ms INTEGER,
+  input_data JSONB,
+  output_data JSONB,
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
+-- Workflow errors table
+CREATE TABLE IF NOT EXISTS workflow_errors (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  workflow_name VARCHAR(255) NOT NULL,
+  execution_id VARCHAR(255),
+  organization_id UUID,
+  error_type VARCHAR(100),
+  error_message TEXT,
+  error_stack TEXT,
+  input_data JSONB,
+  timestamp TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
+-- Create indexes for performance
+CREATE INDEX idx_ai_conversations_org_id ON ai_conversations(organization_id);
+CREATE INDEX idx_ai_conversations_user_id ON ai_conversations(user_id);
+CREATE INDEX idx_ai_conversations_conv_id ON ai_conversations(conversation_id);
+CREATE INDEX idx_workflow_executions_org_id ON workflow_executions(organization_id);
+CREATE INDEX idx_workflow_errors_org_id ON workflow_errors(organization_id);
+CREATE INDEX idx_user_organizations_org_id ON user_organizations(organization_id);
+CREATE INDEX idx_user_organizations_user_id ON user_organizations(user_id);
+
+-- Enable Row Level Security
+ALTER TABLE organizations ENABLE ROW LEVEL SECURITY;
+ALTER TABLE users ENABLE ROW LEVEL SECURITY;
+ALTER TABLE user_organizations ENABLE ROW LEVEL SECURITY;
+ALTER TABLE ai_conversations ENABLE ROW LEVEL SECURITY;
+ALTER TABLE workflow_executions ENABLE ROW LEVEL SECURITY;
+ALTER TABLE workflow_errors ENABLE ROW LEVEL SECURITY;
+
+-- Insert test data
+INSERT INTO organizations (id, name, tier) VALUES
+  ('123e4567-e89b-12d3-a456-426614174001', 'Test Org Free', 'free'),
+  ('123e4567-e89b-12d3-a456-426614174002', 'Test Org Pro', 'pro'),
+  ('123e4567-e89b-12d3-a456-426614174003', 'Test Org Enterprise', 'enterprise');
+
+INSERT INTO users (id, email, full_name) VALUES
+  ('123e4567-e89b-12d3-a456-426614174000', 'test@strivetech.io', 'Test User'),
+  ('223e4567-e89b-12d3-a456-426614174000', 'pro@strivetech.io', 'Pro User');
+
+INSERT INTO user_organizations (user_id, organization_id, role) VALUES
+  ('123e4567-e89b-12d3-a456-426614174000', '123e4567-e89b-12d3-a456-426614174001', 'admin'),
+  ('223e4567-e89b-12d3-a456-426614174000', '123e4567-e89b-12d3-a456-426614174002', 'owner');
+`;
+
+// 3. QDRANT COLLECTION SETUP
+// ==========================================
+
+const qdrantSetup = {
+  collection_name: "strivetech_knowledge_base",
+  config: {
+    vectors: {
+      size: 1536, // OpenAI embedding dimension
+      distance: "Cosine"
+    },
+    payload_schema: {
+      title: { type: "keyword" },
+      content: { type: "text" },
+      module: { type: "keyword" },
+      entity_type: { type: "keyword" },
+      organization_id: { type: "keyword" },
+      created_at: { type: "datetime" },
+      relevance_score: { type: "float" }
+    }
+  },
+  
+  // Sample documents to index
+  sample_documents: [
+    {
+      title: "Property Search Guide",
+      content: "To search for properties, use filters like price range, bedrooms, bathrooms, location, and property type. Advanced filters include year built, lot size, HOA fees, and school districts.",
+      module: "marketplace",
+      entity_type: "property"
+    },
+    {
+      title: "Lead Management Best Practices",
+      content: "Effective lead management involves prompt response times, regular follow-ups, lead scoring, and nurturing campaigns. Use the CRM to track all interactions and set automated reminders.",
+      module: "crm",
+      entity_type: "lead"
+    },
+    {
+      title: "CMA Report Generation",
+      content: "Comparative Market Analysis (CMA) reports include recent comparable sales, active listings, market trends, and pricing recommendations based on property features and location.",
+      module: "analytics",
+      entity_type: "property"
+    },
+    {
+      title: "Transaction Management",
+      content: "Track transactions through stages: offer, negotiation, contract, inspection, appraisal, closing. Set milestones and deadlines for each stage to ensure smooth closings.",
+      module: "workspace",
+      entity_type: "transaction"
+    },
+    {
+      title: "Expense Tracking Guide",
+      content: "Track business expenses including mileage, marketing costs, professional fees, office supplies, and technology subscriptions. Categorize for tax deductions.",
+      module: "expense",
+      entity_type: "expense"
+    }
+  ]
+};
+
+// 4. DEPLOYMENT CHECKLIST
+// ==========================================
+
+const deploymentChecklist = {
+  prerequisites: [
+    {
+      task: "Configure Supabase Database",
+      steps: [
+        "Create Supabase project",
+        "Run database setup SQL scripts",
+        "Configure RLS policies",
+        "Get connection string for n8n"
+      ],
+      status: "pending"
+    },
+    {
+      task: "Setup Redis Cache",
+      steps: [
+        "Deploy Redis instance (Redis Cloud or self-hosted)",
+        "Configure connection credentials",
+        "Set memory limits and eviction policies",
+        "Test connection from n8n"
+      ],
+      status: "pending"
+    },
+    {
+      task: "Configure Qdrant Vector Database",
+      steps: [
+        "Deploy Qdrant instance",
+        "Create collection with configuration",
+        "Index sample documents",
+        "Configure API key"
+      ],
+      status: "pending"
+    },
+    {
+      task: "Setup API Credentials in n8n",
+      steps: [
+        "Add OpenAI API credentials",
+        "Add Anthropic API credentials",
+        "Add Supabase credentials (Postgres)",
+        "Add Redis credentials",
+        "Add Qdrant credentials"
+      ],
+      status: "pending"
+    }
+  ],
+  
+  deployment_steps: [
+    {
+      step: 1,
+      action: "Import Workflow",
+      details: "Copy the workflow JSON and import via n8n UI (Workflows > Import from File/URL)"
+    },
+    {
+      step: 2,
+      action: "Configure Credentials",
+      details: "Update each node with the correct credential references"
+    },
+    {
+      step: 3,
+      action: "Test Webhook Endpoint",
+      details: "Get the production webhook URL and test with valid request"
+    },
+    {
+      step: 4,
+      action: "Run Integration Tests",
+      details: "Execute all test scenarios and verify responses"
+    },
+    {
+      step: 5,
+      action: "Configure Monitoring",
+      details: "Setup alerts for errors, response times, and rate limits"
+    },
+    {
+      step: 6,
+      action: "Activate Workflow",
+      details: "Enable the workflow for production use"
+    }
+  ],
+  
+  monitoring_setup: {
+    metrics: [
+      "Response time (P95 < 2s)",
+      "Error rate (< 1%)",
+      "Token usage per organization",
+      "Cache hit rate",
+      "Model fallback frequency"
+    ],
+    alerts: [
+      {
+        condition: "Error rate > 5%",
+        action: "Send Slack notification",
+        severity: "high"
+      },
+      {
+        condition: "Response time P95 > 3s",
+        action: "Send email to DevOps",
+        severity: "medium"
+      },
+      {
+        condition: "Token usage > 80% budget",
+        action: "Notify finance team",
+        severity: "low"
+      }
+    ]
+  }
+};
+
+// 5. PERFORMANCE TESTING SCRIPT
+// ==========================================
+
+async function performanceTest(webhookUrl, apiKey) {
+  const results = {
+    totalRequests: 0,
+    successfulRequests: 0,
+    failedRequests: 0,
+    avgResponseTime: 0,
+    p95ResponseTime: 0,
+    p99ResponseTime: 0,
+    responseTimes: []
+  };
+  
+  // Test concurrent requests
+  const concurrentTests = 10;
+  const iterations = 10;
+  
+  for (let i = 0; i < iterations; i++) {
+    const promises = [];
+    
+    for (let j = 0; j < concurrentTests; j++) {
+      const startTime = Date.now();
+      
+      const promise = fetch(webhookUrl, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-Organization-ID': '123e4567-e89b-12d3-a456-426614174001',
+          'X-API-Key': apiKey
+        },
+        body: JSON.stringify({
+          user_id: '123e4567-e89b-12d3-a456-426614174000',
+          organization_id: '123e4567-e89b-12d3-a456-426614174001',
+          message: `Performance test query ${i}-${j}: Show me properties`,
+          preferences: {
+            model: 'gpt-3.5-turbo',
+            max_tokens: 500
+          }
+        })
+      }).then(response => {
+        const responseTime = Date.now() - startTime;
+        results.responseTimes.push(responseTime);
+        
+        if (response.ok) {
+          results.successfulRequests++;
+        } else {
+          results.failedRequests++;
+        }
+        
+        return response.json();
+      }).catch(error => {
+        results.failedRequests++;
+        console.error('Request failed:', error);
+      });
+      
+      promises.push(promise);
+    }
+    
+    await Promise.all(promises);
+    results.totalRequests += concurrentTests;
+    
+    // Add delay between iterations to avoid overwhelming the system
+    await new Promise(resolve => setTimeout(resolve, 1000));
+  }
+  
+  // Calculate statistics
+  results.responseTimes.sort((a, b) => a - b);
+  results.avgResponseTime = results.responseTimes.reduce((a, b) => a + b, 0) / results.responseTimes.length;
+  results.p95ResponseTime = results.responseTimes[Math.floor(results.responseTimes.length * 0.95)];
+  results.p99ResponseTime = results.responseTimes[Math.floor(results.responseTimes.length * 0.99)];
+  
+  return results;
+}
+
+// 6. TROUBLESHOOTING GUIDE
+// ==========================================
+
+const troubleshootingGuide = {
+  common_issues: [
+    {
+      issue: "Webhook returns 429 Rate Limit",
+      causes: [
+        "Organization exceeding 100 requests/minute",
+        "Redis not properly configured"
+      ],
+      solutions: [
+        "Check Redis connection",
+        "Verify rate limit key format",
+        "Increase rate limit for organization tier",
+        "Implement request queuing"
+      ]
+    },
+    {
+      issue: "Model fallback triggered frequently",
+      causes: [
+        "Primary model API errors",
+        "Token limits exceeded",
+        "API key issues"
+      ],
+      solutions: [
+        "Check OpenAI/Anthropic API status",
+        "Verify API key permissions",
+        "Monitor token usage",
+        "Implement better error handling"
+      ]
+    },
+    {
+      issue: "Slow response times (>3s)",
+      causes: [
+        "Large RAG retrieval results",
+        "Database query performance",
+        "Model response generation"
+      ],
+      solutions: [
+        "Optimize Qdrant similarity threshold",
+        "Add database indexes",
+        "Implement response streaming",
+        "Use caching more aggressively"
+      ]
+    },
+    {
+      issue: "Organization isolation failures",
+      causes: [
+        "Missing organization_id validation",
+        "Incorrect RLS policies",
+        "Query missing org filter"
+      ],
+      solutions: [
+        "Review all SQL queries for org_id filter",
+        "Test with multiple organizations",
+        "Audit RLS policies",
+        "Add integration tests for isolation"
+      ]
+    }
+  ]
+};
+
+// Export for use in testing
+module.exports = {
+  testData,
+  databaseSetup,
+  qdrantSetup,
+  deploymentChecklist,
+  performanceTest,
+  troubleshootingGuide
+};

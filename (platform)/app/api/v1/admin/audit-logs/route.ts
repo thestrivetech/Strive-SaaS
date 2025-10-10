@@ -33,10 +33,10 @@ export async function GET(req: NextRequest) {
     const logs = await getAdminActionLogs(filters);
 
     return NextResponse.json({ logs });
-  } catch (error: any) {
+  } catch (error) {
     console.error('Get audit logs error:', error);
     return NextResponse.json(
-      { error: 'Failed to fetch audit logs' },
+      { error: error instanceof Error ? error.message : 'Failed to fetch audit logs' },
       { status: 500 }
     );
   }

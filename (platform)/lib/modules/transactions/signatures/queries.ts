@@ -179,7 +179,12 @@ export async function getSignatureRequestsByLoop(
 
   // Calculate signature stats for each request
   const requestsWithStats = await Promise.all(
-    requests.map(async (request) => {
+    requests.map(async (request: {
+      id: string;
+      loop: { id: string; property_address: string; transaction_type: string };
+      requester: { id: string; name: string; email: string };
+      _count: { signatures: number };
+    }) => {
       const signatureStats = await prisma.document_signatures.groupBy({
         by: ['status'],
         where: {
@@ -189,7 +194,7 @@ export async function getSignatureRequestsByLoop(
       });
 
       const stats: Record<string, number> = {};
-      signatureStats.forEach((stat) => {
+      signatureStats.forEach((stat: { status: string; _count: number }) => {
         stats[stat.status] = stat._count;
       });
 
@@ -405,12 +410,12 @@ export async function getSignatureStats(loopId: string) {
     EXPIRED: 0,
   };
 
-  requestStats.forEach((stat) => {
+  requestStats.forEach((stat: { status: string; _count: number }) => {
     stats[stat.status as SignatureStatus] = stat._count;
   });
 
   // Total requests
-  const totalRequests = requestStats.reduce((sum, stat) => sum + stat._count, 0);
+  const totalRequests = requestStats.reduce((sum: number, stat: { status: string; _count: number }) => sum + stat._count, 0);
 
   // Total individual signatures
   const totalSignatures = await prisma.document_signatures.count({

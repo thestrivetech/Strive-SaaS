@@ -65,10 +65,10 @@ export async function GET(
     }
 
     return NextResponse.json({ organization });
-  } catch (error: any) {
+  } catch (error) {
     console.error('Get organization error:', error);
     return NextResponse.json(
-      { error: 'Failed to fetch organization' },
+      { error: error instanceof Error ? error.message : 'Failed to fetch organization' },
       { status: 500 }
     );
   }
@@ -110,8 +110,8 @@ export async function PATCH(
       success: true,
       organization,
     });
-  } catch (error: any) {
-    if (error.name === 'ZodError') {
+  } catch (error) {
+    if (error instanceof z.ZodError) {
       return NextResponse.json(
         { error: 'Invalid request data', details: error.errors },
         { status: 400 }
@@ -120,7 +120,7 @@ export async function PATCH(
 
     console.error('Update organization error:', error);
     return NextResponse.json(
-      { error: error.message || 'Failed to update organization' },
+      { error: error instanceof Error ? error.message : 'Failed to update organization' },
       { status: 500 }
     );
   }
@@ -172,10 +172,10 @@ export async function DELETE(
       success: true,
       message: 'Organization deleted successfully',
     });
-  } catch (error: any) {
+  } catch (error) {
     console.error('Delete organization error:', error);
     return NextResponse.json(
-      { error: error.message || 'Failed to delete organization' },
+      { error: error instanceof Error ? error.message : 'Failed to delete organization' },
       { status: 500 }
     );
   }

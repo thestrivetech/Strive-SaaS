@@ -30,13 +30,13 @@ export async function POST(req: NextRequest) {
       clientSecret: result.clientSecret,
       paymentIntentId: result.paymentIntentId,
     });
-  } catch (error: any) {
+  } catch (error) {
     console.error('Payment intent creation error:', error);
 
     return NextResponse.json(
       {
         success: false,
-        error: error.message || 'Failed to create payment intent',
+        error: error instanceof Error ? error.message : 'Failed to create payment intent',
       },
       { status: 400 }
     );

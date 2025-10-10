@@ -314,7 +314,7 @@ export async function getDocumentStats(loopId: string) {
     },
   };
 
-  documents.forEach(doc => {
+  documents.forEach((doc: { category: string | null; status: string }) => {
     if (doc.category) {
       stats.byCategory[doc.category as keyof typeof stats.byCategory]++;
     }

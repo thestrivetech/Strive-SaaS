@@ -33,7 +33,7 @@ export async function createWorkflowTemplate(input: CreateWorkflowTemplateInput)
   const organizationId = getUserOrganizationId(user);
 
   // Verify step IDs are unique
-  const stepIds = validated.steps.map(s => s.id);
+  const stepIds = validated.steps.map((s: { id: string }) => s.id);
   const uniqueIds = new Set(stepIds);
   if (stepIds.length !== uniqueIds.size) {
     throw new Error('Step IDs must be unique');
@@ -173,7 +173,7 @@ export async function applyWorkflowToLoop(input: ApplyWorkflowInput) {
     // Auto-assign to party if role specified
     let assignedTo: string | null = null;
     if (step.autoAssignRole) {
-      const party = loop.parties.find(p => p.role === step.autoAssignRole);
+      const party = loop.parties.find((p: { role: string; id: string }) => p.role === step.autoAssignRole);
       if (party) {
         assignedTo = party.id;
       }
@@ -286,7 +286,7 @@ export async function updateWorkflowTemplate(
 
   // If updating steps, validate them
   if (validated.steps) {
-    const stepIds = validated.steps.map(s => s.id);
+    const stepIds = validated.steps.map((s: { id: string }) => s.id);
     const uniqueIds = new Set(stepIds);
     if (stepIds.length !== uniqueIds.size) {
       throw new Error('Step IDs must be unique');

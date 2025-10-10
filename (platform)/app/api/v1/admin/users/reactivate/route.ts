@@ -33,8 +33,8 @@ export async function POST(req: NextRequest) {
         is_active: reactivatedUser.is_active,
       },
     });
-  } catch (error: any) {
-    if (error.name === 'ZodError') {
+  } catch (error) {
+    if (error instanceof z.ZodError) {
       return NextResponse.json(
         { error: 'Invalid request data', details: error.errors },
         { status: 400 }
@@ -43,7 +43,7 @@ export async function POST(req: NextRequest) {
 
     console.error('Reactivate user error:', error);
     return NextResponse.json(
-      { error: error.message || 'Failed to reactivate user' },
+      { error: error instanceof Error ? error.message : 'Failed to reactivate user' },
       { status: 500 }
     );
   }

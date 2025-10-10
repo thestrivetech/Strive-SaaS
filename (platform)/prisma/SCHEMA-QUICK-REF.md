@@ -1,7 +1,7 @@
 # Prisma Schema - Quick Reference
 
-**Generated:** 2025-10-06T18:08:39.931Z
-**Source:** `shared/prisma/schema.prisma`
+**Generated:** 2025-10-10T20:18:20.037Z
+**Source:** `(platform)/prisma/schema.prisma`
 
 > 🎯 **Purpose:** Lightning-fast schema reference to avoid expensive MCP calls
 > - Use this for: "What tables exist?", "What enums are available?"
@@ -12,218 +12,106 @@
 
 ## 📊 Statistics
 
-- **Models:** 83
-- **Enums:** 76
-- **Total:** 159 types
+- **Models:** 41
+- **Enums:** 42
+- **Total:** 83 types
 
 ---
 
-## 📋 Models (83)
+## 📋 Models (41)
 
-### Core (4)
+### Other (41)
 ```
-organization_members
-organizations
-subscriptions
-users
-```
-
-### CRM (4)
-```
-contacts
-customers
-deals
-leads
-```
-
-### Transactions (9)
-```
-document_signatures
-document_versions
-documents
-listings
-loop_parties
-signature_requests
-transaction_audit_logs
-transaction_loops
-transaction_tasks
-```
-
-### Content & CMS (12)
-```
-campaign_content
-campaigns
-content_categories
-content_comments
-content_items
-content_revisions
-content_tags
-email_campaigns
-legacy_content
-media_assets
-media_folders
-social_media_posts
-```
-
-### AI (4)
-```
-ai_conversations
-ai_tools
-conversations
-example_conversations
-```
-
-### Analytics (7)
-```
-analytics_events
-analytics_goals
-dashboard_metrics
-goal_conversions
-page_views
-platform_metrics
-web_vitals_metrics
-```
-
-### Marketplace (9)
-```
-bundle_purchases
-bundle_tools
-marketplace_tools
-organization_tool_configs
-shopping_carts
-tool_blueprints
-tool_bundles
-tool_purchases
-tool_reviews
-```
-
-### Admin (4)
-```
-admin_action_logs
-feature_flags
-onboarding_sessions
-system_alerts
-```
-
-### Dashboard (4)
-```
-activity_feeds
-dashboard_widgets
-quick_actions
-user_dashboards
-```
-
-### Other (26)
-```
-activities
-activity_logs
-agent_templates
-alert_triggers
-appointments
-attachments
-build_logs
-custom_agent_orders
-expense_categories
-expense_reports
-expenses
-market_reports
-neighborhood_insights
-notifications
-order_milestones
-project_showcases
-projects
-property_alerts
-receipts
-tasks
-tax_estimates
-template_reviews
-usage_tracking
-user_preferences
-user_sessions
-workflows
+Activity
+AIProfile
+AIUsage
+Alert
+Appointment
+Automation
+Bundle
+BundleTools
+Campaign
+Cart
+Contact
+ContentItem
+Conversation
+Customer
+Deal
+Demographics
+Document
+EmailCampaign
+Expense
+ExpenseCategory
+Lead
+Listing
+Loop
+MarketData
+Message
+Organization
+OrganizationMember
+Party
+Purchase
+Receipt
+Review
+ROISimulation
+School
+Signature
+Task
+TaxEstimate
+TaxReport
+Tool
+TransactionActivity
+User
+Widget
 ```
 
 ---
 
-## 🏷️ Enums (76)
+## 🏷️ Enums (42)
 
 ```
-AIContextType
-AIModel
-AppointmentStatus
-AppointmentType
-ContentStatus
-ContentType
-CustomerSource
-CustomerStatus
-NotificationType
-OrgRole
-Priority
-ProjectStatus
-ResourceType
-SubscriptionStatus
 SubscriptionTier
-TaskStatus
-ToolType
-UserRole
-Industry
+OrgRole
 LeadSource
 LeadStatus
 LeadScore
-ContactType
-ContactStatus
 DealStage
-DealStatus
+LoopStatus
+DealType
+TaskStatus
+TaskPriority
+DocumentCategory
+PartyRole
+SignatureStatus
 PropertyType
 ListingStatus
-ActivityType
-TransactionType
-LoopStatus
-DocumentStatus
-SignatureStatus
-SigningOrder
-PartyRole
-PartyStatus
-TaskPriority
-WorkflowStatus
-ExpenseCategory
-ExpenseStatus
-ReportType
-AdminAction
-PaymentStatus
-BillingCycle
-Environment
-AlertLevel
-AlertCategory
-CampaignType
-CampaignStatus
-EmailStatus
-PostStatus
-CommentStatus
-SocialPlatform
+TransactionAction
+TransactionEntityType
 ToolCategory
 ToolTier
+BillingPeriod
 BundleType
 PurchaseStatus
-AreaType
+ContentType
+ContentStatus
+CampaignType
+CampaignStatus
+PaymentMethod
+TaxCategory
+ReportType
+MarketTemperature
+EducationLevel
 AlertType
-AlertFrequency
 AlertSeverity
-ReidReportType
-WidgetType
-DashboardTheme
-LayoutDensity
-DashboardActivityType
-DashboardActivitySeverity
+SchoolType
+ConversationStatus
+MessageRole
+TriggerType
 ActionType
-MetricCategory
-ComplexityLevel
-OrderStatus
-OrderPriority
-AgentCategory
-AIToolCategory
-LogLevel
-ShowcaseCategory
+AutomationStatus
+AIFeature
+AppointmentStatus
+ActivityType
 ```
 
 ---

@@ -48,18 +48,25 @@ export async function GET() {
 
     // Calculate total for percentage calculations
     const totalAmount = categoryBreakdown.reduce(
-      (sum: number, cat: any) => sum + Number(cat._sum.amount || 0),
+      (sum, cat) => sum + Number(cat._sum.amount || 0),
       0
     );
 
     const totalCount = categoryBreakdown.reduce(
-      (sum: number, cat: any) => sum + cat._count,
+      (sum, cat) => sum + cat._count,
       0
     );
 
     // Transform data for client
-    const categories = categoryBreakdown
-      .map((cat: any) => {
+    interface CategoryData {
+      category: string;
+      amount: number;
+      count: number;
+      percentage: number;
+    }
+
+    const categories: CategoryData[] = categoryBreakdown
+      .map((cat) => {
         const amount = Number(cat._sum.amount || 0);
         const percentage = totalAmount > 0 ? (amount / totalAmount) * 100 : 0;
 
@@ -70,7 +77,7 @@ export async function GET() {
           percentage: Math.round(percentage * 10) / 10, // Round to 1 decimal
         };
       })
-      .sort((a: any, b: any) => b.amount - a.amount); // Sort by amount descending
+      .sort((a, b) => b.amount - a.amount); // Sort by amount descending
 
     return NextResponse.json({
       categories,

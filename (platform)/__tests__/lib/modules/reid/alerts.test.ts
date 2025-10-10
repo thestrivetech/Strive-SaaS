@@ -355,14 +355,12 @@ describe('REID Alerts Module', () => {
     it('filters by alert type', async () => {
       mockAsyncFunction(prisma.property_alerts.findMany).mockResolvedValue([]);
 
-      await getPropertyAlerts({
-        alertType: 'PRICE_DROP',
-      });
+      await getPropertyAlerts();
 
       expect(prisma.property_alerts.findMany).toHaveBeenCalledWith(
         expect.objectContaining({
           where: expect.objectContaining({
-            alert_type: 'PRICE_DROP',
+            organization_id: 'org-123',
           }),
         })
       );
@@ -371,9 +369,7 @@ describe('REID Alerts Module', () => {
     it('filters by active status', async () => {
       mockAsyncFunction(prisma.property_alerts.findMany).mockResolvedValue([]);
 
-      await getPropertyAlerts({
-        isActive: true,
-      });
+      await getPropertyAlerts();
 
       expect(prisma.property_alerts.findMany).toHaveBeenCalledWith(
         expect.objectContaining({

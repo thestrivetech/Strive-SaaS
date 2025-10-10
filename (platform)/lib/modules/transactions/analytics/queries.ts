@@ -156,7 +156,7 @@ export async function getTransactionAnalytics(
       // Calculate average closing time in days
       let avgClosingDays = 0;
       if (closedLoopsWithDates.length > 0) {
-        const totalDays = closedLoopsWithDates.reduce((sum, loop) => {
+        const totalDays = closedLoopsWithDates.reduce((sum: number, loop: { created_at: Date; actual_closing: Date | null }) => {
           if (loop.actual_closing) {
             const diff = loop.actual_closing.getTime() - loop.created_at.getTime();
             return sum + diff / (1000 * 60 * 60 * 24); // Convert ms to days
@@ -209,7 +209,7 @@ export async function getLoopVelocity(
       });
 
       // Group by month (YYYY-MM format)
-      const byMonth = loops.reduce((acc, loop) => {
+      const byMonth = loops.reduce((acc: Record<string, number>, loop: { created_at: Date; status: string }) => {
         const month = loop.created_at.toISOString().slice(0, 7);
         if (!acc[month]) {
           acc[month] = 0;
@@ -244,7 +244,7 @@ export async function getAnalyticsByType(): Promise<{ type: string; count: numbe
         _count: true,
       });
 
-      return result.map(item => ({
+      return result.map((item: { transaction_type: string; _count: number }) => ({
         type: item.transaction_type,
         count: item._count,
       }));
@@ -267,7 +267,7 @@ export async function getAnalyticsByStatus(): Promise<{ status: string; count: n
         _count: true,
       });
 
-      return result.map(item => ({
+      return result.map((item: { status: string; _count: number }) => ({
         status: item.status,
         count: item._count,
       }));

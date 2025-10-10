@@ -69,8 +69,8 @@ export const getAgentPerformanceById = dataConfig.useMocks
   : async (agentId: string, timeRange: any) => (await import('./performance-metrics')).getAgentPerformanceById(agentId, timeRange);
 
 export const getTeamActivityStats = dataConfig.useMocks
-  ? async () => []
-  : async () => (await import('./performance-metrics')).getTeamActivityStats();
+  ? async (timeRange: any) => []
+  : async (timeRange: any) => (await import('./performance-metrics')).getTeamActivityStats(timeRange);
 
 export type {
   AgentMetrics,

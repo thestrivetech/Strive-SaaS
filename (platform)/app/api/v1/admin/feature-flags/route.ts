@@ -16,8 +16,11 @@ export async function GET(req: NextRequest) {
 
     const flags = await getAllFeatureFlags();
     return NextResponse.json(flags);
-  } catch (error: any) {
-    return NextResponse.json({ error: error.message }, { status: 500 });
+  } catch (error) {
+    return NextResponse.json(
+      { error: error instanceof Error ? error.message : 'Failed to fetch feature flags' },
+      { status: 500 }
+    );
   }
 }
 
@@ -31,8 +34,11 @@ export async function POST(req: NextRequest) {
     const body = await req.json();
     const flag = await createFeatureFlag(body);
     return NextResponse.json(flag);
-  } catch (error: any) {
-    return NextResponse.json({ error: error.message }, { status: 500 });
+  } catch (error) {
+    return NextResponse.json(
+      { error: error instanceof Error ? error.message : 'Failed to create feature flag' },
+      { status: 500 }
+    );
   }
 }
 
@@ -46,7 +52,10 @@ export async function PATCH(req: NextRequest) {
     const body = await req.json();
     const flag = await updateFeatureFlag(body);
     return NextResponse.json(flag);
-  } catch (error: any) {
-    return NextResponse.json({ error: error.message }, { status: 500 });
+  } catch (error) {
+    return NextResponse.json(
+      { error: error instanceof Error ? error.message : 'Failed to update feature flag' },
+      { status: 500 }
+    );
   }
 }

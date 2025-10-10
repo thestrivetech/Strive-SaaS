@@ -1,0 +1,742 @@
+{
+  "name": "sai-universal-assistant-v1",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "api/ai/sai/chat",
+        "responseMode": "responseNode",
+        "options": {
+          "responseHeaders": {
+            "entries": [
+              {
+                "name": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "name": "X-Request-ID",
+                "value": "={{ $json.requestId }}"
+              }
+            ]
+          }
+        }
+      },
+      "id": "webhook_entry",
+      "name": "Webhook Entry",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [250, 300]
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "jsCode": "// Request Validation & Deduplication\nconst startTime = Date.now();\nconst items = $input.all();\n\nif (!items || items.length === 0) {\n  return [\n    {\n      json: {\n        error: 'No request data received',\n        code: 400\n      }\n    }\n  ];\n}\n\nconst requestData = items[0].json;\nconst headers = requestData.headers || {};\n\n// Extract and validate required fields\nconst {\n  user_id,\n  organization_id,\n  message,\n  conversation_id,\n  context = {},\n  preferences = {}\n} = requestData.body || {};\n\nconst apiKey = headers['x-api-key'];\nconst orgIdHeader = headers['x-organization-id'];\nconst requestId = headers['x-request-id'] || `req_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;\n\n// Validation errors collection\nconst errors = [];\n\nif (!organization_id && !orgIdHeader) {\n  errors.push('organization_id is required');\n}\n\nif (!user_id) {\n  errors.push('user_id is required');\n}\n\nif (!message || typeof message !== 'string' || message.trim().length === 0) {\n  errors.push('message is required and must be a non-empty string');\n}\n\nif (!apiKey) {\n  errors.push('X-API-Key header is required');\n}\n\n// Validate message length\nif (message && message.length > 10000) {\n  errors.push('message exceeds maximum length of 10,000 characters');\n}\n\nif (errors.length > 0) {\n  return [\n    {\n      json: {\n        error: 'Validation failed',\n        details: errors,\n        code: 400,\n        requestId: requestId\n      }\n    }\n  ];\n}\n\n// Sanitize inputs\nconst sanitizedMessage = message.replace(/<script[^>]*>.*?<\\/script>/gi, '').trim();\n\n// Prepare validated data for next nodes\nreturn [\n  {\n    json: {\n      requestId: requestId,\n      organizationId: organization_id || orgIdHeader,\n      userId: user_id,\n      message: sanitizedMessage,\n      conversationId: conversation_id || null,\n      context: {\n        module: context.module || 'general',\n        entityType: context.entity_type || null,\n        entityId: context.entity_id || null\n      },\n      preferences: {\n        model: preferences.model || 'auto',\n        responseStyle: preferences.response_style || 'professional',\n        maxTokens: Math.min(preferences.max_tokens || 2000, 4000),\n        stream: preferences.stream || false\n      },\n      metadata: {\n        startTime: startTime,\n        apiKey: apiKey,\n        userAgent: headers['user-agent'] || 'unknown',\n        ipAddress: headers['x-forwarded-for'] || headers['x-real-ip'] || 'unknown'\n      }\n    }\n  }\n];"
+      },
+      "id": "validate_request",
+      "name": "Validate Request",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [450, 300]
+    },
+    {
+      "parameters": {
+        "operation": "get",
+        "key": "={{ 'rate_limit:' + $json.organizationId + ':' + Math.floor(Date.now() / 60000) }}"
+      },
+      "id": "check_rate_limit",
+      "name": "Check Rate Limit",
+      "type": "n8n-nodes-base.redis",
+      "typeVersion": 1,
+      "position": [650, 300],
+      "credentials": {
+        "redis": {
+          "id": "redis_credentials",
+          "name": "Redis"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "jsCode": "// Rate Limiting Logic\nconst items = $input.all();\nconst requestData = items[0].json;\nconst currentCount = items[1]?.json?.value ? parseInt(items[1].json.value) : 0;\n\nconst rateLimit = 100; // 100 requests per minute per organization\n\nif (currentCount >= rateLimit) {\n  return [\n    {\n      json: {\n        error: 'Rate limit exceeded',\n        code: 429,\n        retryAfter: 60 - (Date.now() / 1000) % 60,\n        requestId: requestData.requestId\n      }\n    }\n  ];\n}\n\n// Pass through if under rate limit\nreturn [requestData];"
+      },
+      "id": "rate_limit_check",
+      "name": "Rate Limit Check",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [850, 300]
+    },
+    {
+      "parameters": {
+        "operation": "incr",
+        "key": "={{ 'rate_limit:' + $json.organizationId + ':' + Math.floor(Date.now() / 60000) }}",
+        "expire": true,
+        "ttl": 60
+      },
+      "id": "increment_rate_limit",
+      "name": "Increment Rate Limit",
+      "type": "n8n-nodes-base.redis",
+      "typeVersion": 1,
+      "position": [1050, 300],
+      "credentials": {
+        "redis": {
+          "id": "redis_credentials",
+          "name": "Redis"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT \n  uo.role,\n  uo.permissions,\n  o.tier,\n  o.settings\nFROM user_organizations uo\nJOIN organizations o ON o.id = uo.organization_id\nWHERE uo.user_id = $1\n  AND uo.organization_id = $2\nLIMIT 1;",
+        "options": {
+          "queryParams": "={{ [$json.userId, $json.organizationId] }}"
+        }
+      },
+      "id": "verify_user_org_access",
+      "name": "Verify User Org Access",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.5,
+      "position": [1250, 300],
+      "credentials": {
+        "postgres": {
+          "id": "supabase_credentials",
+          "name": "Supabase DB"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": false
+          },
+          "conditions": [
+            {
+              "leftValue": "={{ $json.length }}",
+              "rightValue": 0,
+              "operator": {
+                "type": "number",
+                "operation": "equals"
+              }
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "check_user_access",
+      "name": "Check User Access",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [1450, 300]
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "jsCode": "// Access Denied Response\nreturn [\n  {\n    json: {\n      error: 'Unauthorized: User does not belong to this organization',\n      code: 403,\n      requestId: $('validate_request').item.json.requestId\n    }\n  }\n];"
+      },
+      "id": "access_denied",
+      "name": "Access Denied",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1650, 200]
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT \n  id,\n  messages,\n  metadata,\n  created_at,\n  updated_at\nFROM ai_conversations\nWHERE organization_id = $1\n  AND (id = $2 OR ($2 IS NULL AND user_id = $3))\nORDER BY updated_at DESC\nLIMIT 1;",
+        "options": {
+          "queryParams": "={{ [\n  $('validate_request').item.json.organizationId,\n  $('validate_request').item.json.conversationId,\n  $('validate_request').item.json.userId\n] }}"
+        }
+      },
+      "id": "load_conversation",
+      "name": "Load Conversation",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.5,
+      "position": [1650, 400],
+      "credentials": {
+        "postgres": {
+          "id": "supabase_credentials",
+          "name": "Supabase DB"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "jsCode": "// Intent Classification\nconst message = $('validate_request').item.json.message;\nconst context = $('validate_request').item.json.context;\nconst conversationHistory = $json[0]?.messages || [];\n\n// Define intent patterns\nconst intentPatterns = [\n  {\n    primary: 'property_search',\n    keywords: ['home', 'house', 'property', 'listing', 'mls', 'bedroom', 'bath', 'price', 'location', 'search'],\n    patterns: [/show me .* (homes?|houses?|properties)/i, /\\d+ (bed|bath)/i, /under \\$\\d+/i]\n  },\n  {\n    primary: 'lead_management',\n    keywords: ['lead', 'contact', 'client', 'prospect', 'follow up', 'nurture', 'qualify'],\n    patterns: [/new lead/i, /follow up/i, /contact (info|details)/i]\n  },\n  {\n    primary: 'transaction_tracking',\n    keywords: ['transaction', 'deal', 'closing', 'escrow', 'contract', 'offer', 'negotiation'],\n    patterns: [/track (deal|transaction)/i, /closing date/i, /offer status/i]\n  },\n  {\n    primary: 'market_analysis',\n    keywords: ['cma', 'market', 'analysis', 'trends', 'comps', 'valuation', 'pricing'],\n    patterns: [/market (analysis|trends)/i, /property value/i, /comparable sales/i]\n  },\n  {\n    primary: 'expense_tracking',\n    keywords: ['expense', 'cost', 'budget', 'receipt', 'mileage', 'deduction'],\n    patterns: [/track expense/i, /add receipt/i, /mileage log/i]\n  },\n  {\n    primary: 'general_inquiry',\n    keywords: ['help', 'how', 'what', 'when', 'why', 'explain', 'tell'],\n    patterns: [/^(help|how|what|when|why)/i]\n  }\n];\n\n// Calculate intent scores\nconst messageLower = message.toLowerCase();\nconst intentScores = intentPatterns.map(intent => {\n  let score = 0;\n  \n  // Check keywords\n  intent.keywords.forEach(keyword => {\n    if (messageLower.includes(keyword)) {\n      score += 2;\n    }\n  });\n  \n  // Check patterns\n  intent.patterns.forEach(pattern => {\n    if (pattern.test(message)) {\n      score += 3;\n    }\n  });\n  \n  // Consider context module\n  if (context.module && intent.primary.includes(context.module)) {\n    score += 5;\n  }\n  \n  return {\n    intent: intent.primary,\n    score: score\n  };\n});\n\n// Sort by score and get top intents\nintentScores.sort((a, b) => b.score - a.score);\nconst primaryIntent = intentScores[0];\nconst secondaryIntents = intentScores.slice(1, 3).filter(i => i.score > 0).map(i => i.intent);\n\n// Calculate confidence\nconst totalScore = intentScores.reduce((sum, i) => sum + i.score, 0);\nconst confidence = totalScore > 0 ? primaryIntent.score / totalScore : 0;\n\n// Determine query complexity for model selection\nconst wordCount = message.split(' ').length;\nconst hasMultipleQuestions = (message.match(/\\?/g) || []).length > 1;\nconst requiresAnalysis = /analyze|compare|explain|calculate/i.test(message);\nconst hasHistoricalContext = conversationHistory.length > 5;\n\nlet complexityScore = 5; // Default medium complexity\nif (wordCount > 50 || requiresAnalysis || hasHistoricalContext) {\n  complexityScore = 8;\n} else if (wordCount < 10 && !hasMultipleQuestions) {\n  complexityScore = 3;\n}\n\nreturn [\n  {\n    json: {\n      ...($('validate_request').item.json),\n      intent: {\n        primary: primaryIntent.intent,\n        secondary: secondaryIntents,\n        confidence: Math.round(confidence * 100) / 100,\n        raw_scores: intentScores.slice(0, 3)\n      },\n      complexity: {\n        score: complexityScore,\n        factors: {\n          wordCount,\n          hasMultipleQuestions,\n          requiresAnalysis,\n          hasHistoricalContext\n        }\n      },\n      conversation: {\n        id: $json[0]?.id || null,\n        history: conversationHistory\n      }\n    }\n  }\n];"
+      },
+      "id": "classify_intent",
+      "name": "Classify Intent",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1850, 400]
+    },
+    {
+      "parameters": {
+        "mode": "load",
+        "qdrantCollection": {
+          "mode": "list",
+          "value": "strivetech_knowledge_base"
+        },
+        "prompt": "={{ $json.message }}",
+        "topK": 5,
+        "options": {
+          "scoreThreshold": 0.7
+        }
+      },
+      "id": "rag_retrieval",
+      "name": "RAG Retrieval",
+      "type": "@n8n/n8n-nodes-langchain.vectorStoreQdrant",
+      "typeVersion": 1,
+      "position": [2050, 400],
+      "credentials": {
+        "qdrantApi": {
+          "id": "qdrant_credentials",
+          "name": "Qdrant"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "jsCode": "// Model Selection & Orchestration\nconst requestData = $('classify_intent').item.json;\nconst orgTier = $('verify_user_org_access').item.json[0].tier;\nconst preferences = requestData.preferences;\nconst complexityScore = requestData.complexity.score;\nconst ragContext = $json || [];\n\n// Model configuration based on tier and complexity\nconst modelConfig = {\n  free: {\n    primary: 'gpt-3.5-turbo',\n    fallback: ['gpt-3.5-turbo-16k'],\n    maxTokens: 1000\n  },\n  pro: {\n    primary: complexityScore > 6 ? 'gpt-4' : 'gpt-3.5-turbo',\n    fallback: ['claude-3-sonnet', 'gpt-3.5-turbo'],\n    maxTokens: 2000\n  },\n  enterprise: {\n    primary: preferences.model === 'auto' \n      ? (complexityScore > 7 ? 'gpt-4' : 'claude-3-sonnet')\n      : preferences.model,\n    fallback: ['gpt-4', 'claude-3-opus', 'gpt-3.5-turbo'],\n    maxTokens: 4000\n  }\n};\n\nconst config = modelConfig[orgTier] || modelConfig.free;\n\n// Build context from RAG results\nconst contextText = ragContext\n  .filter(item => item.score > 0.7)\n  .map(item => `[Source: ${item.metadata?.title || 'Knowledge Base'}]\\n${item.content}`)\n  .join('\\n\\n');\n\n// Build conversation history context\nconst conversationContext = requestData.conversation.history\n  .slice(-10) // Last 10 messages\n  .map(msg => `${msg.role}: ${msg.content}`)\n  .join('\\n');\n\n// System prompt based on intent and context\nconst systemPrompts = {\n  property_search: `You are Sai, an expert real estate AI assistant specializing in property searches and MLS listings. You have access to comprehensive property databases and can help find the perfect properties based on specific criteria.`,\n  lead_management: `You are Sai, an expert real estate AI assistant specializing in lead management and CRM operations. You help agents efficiently manage, qualify, and nurture their leads.`,\n  transaction_tracking: `You are Sai, an expert real estate AI assistant specializing in transaction management. You help track deals, contracts, and closing processes.`,\n  market_analysis: `You are Sai, an expert real estate AI assistant specializing in market analysis and CMAs. You provide data-driven insights on property values and market trends.`,\n  expense_tracking: `You are Sai, an expert real estate AI assistant specializing in expense management and tax deductions. You help agents track business expenses efficiently.`,\n  general_inquiry: `You are Sai, a comprehensive real estate AI assistant for Strive Tech. You can help with all aspects of real estate operations, from property searches to transaction management.`\n};\n\nconst systemPrompt = systemPrompts[requestData.intent.primary] || systemPrompts.general_inquiry;\n\n// Build the complete prompt\nconst fullPrompt = `${systemPrompt}\n\n${contextText ? `Relevant Context:\\n${contextText}\\n\\n` : ''}\n${conversationContext ? `Conversation History:\\n${conversationContext}\\n\\n` : ''}\nResponse Style: ${requestData.preferences.responseStyle}\nOrganization Tier: ${orgTier}\n\nUser Query: ${requestData.message}\n\nProvide a helpful, accurate response. If you're referencing any specific data or sources, cite them appropriately.`;\n\nreturn [\n  {\n    json: {\n      ...requestData,\n      modelConfig: {\n        model: config.primary,\n        fallbackModels: config.fallback,\n        maxTokens: Math.min(config.maxTokens, preferences.maxTokens),\n        temperature: 0.7,\n        stream: preferences.stream\n      },\n      prompt: fullPrompt,\n      ragContext: contextText,\n      systemPrompt: systemPrompt\n    }\n  }\n];"
+      },
+      "id": "model_orchestration",
+      "name": "Model Orchestration",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [2250, 400]
+    },
+    {
+      "parameters": {
+        "resource": "chat",
+        "operation": "create",
+        "modelId": "={{ $json.modelConfig.model }}",
+        "messages": {
+          "values": [
+            {
+              "role": "system",
+              "content": "={{ $json.systemPrompt }}"
+            },
+            {
+              "role": "user", 
+              "content": "={{ $json.prompt }}"
+            }
+          ]
+        },
+        "options": {
+          "maxTokens": "={{ $json.modelConfig.maxTokens }}",
+          "temperature": "={{ $json.modelConfig.temperature }}"
+        },
+        "simplifyOutput": true
+      },
+      "id": "generate_response",
+      "name": "Generate Response",
+      "type": "n8n-nodes-base.openAi",
+      "typeVersion": 1.3,
+      "position": [2450, 400],
+      "credentials": {
+        "openAiApi": {
+          "id": "openai_credentials",
+          "name": "OpenAI"
+        }
+      },
+      "continueOnFail": true
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": false
+          },
+          "conditions": [
+            {
+              "leftValue": "={{ $json.error }}",
+              "rightValue": "",
+              "operator": {
+                "type": "object",
+                "operation": "notEmpty"
+              }
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "check_primary_model",
+      "name": "Check Primary Model",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [2650, 400]
+    },
+    {
+      "parameters": {
+        "model": "={{ $('model_orchestration').item.json.modelConfig.fallbackModels[0] }}",
+        "messages": {
+          "values": [
+            {
+              "role": "user",
+              "content": "={{ $('model_orchestration').item.json.prompt }}"
+            }
+          ]
+        },
+        "options": {
+          "maxTokensToSample": "={{ $('model_orchestration').item.json.modelConfig.maxTokens }}",
+          "temperature": 0.7
+        }
+      },
+      "id": "fallback_model",
+      "name": "Fallback Model",
+      "type": "@n8n/n8n-nodes-langchain.anthropic",
+      "typeVersion": 1.2,
+      "position": [2850, 500],
+      "credentials": {
+        "anthropicApi": {
+          "id": "anthropic_credentials",
+          "name": "Anthropic"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "jsCode": "// Process and Format Response\nconst requestData = $('model_orchestration').item.json;\nconst aiResponse = $json.message?.content || $json.text || $json.output || '';\nconst endTime = Date.now();\nconst startTime = requestData.metadata.startTime;\n\n// Generate conversation ID if new\nconst conversationId = requestData.conversation.id || \n  `conv_${requestData.organizationId}_${requestData.userId}_${Date.now()}`;\n\n// Calculate token usage (approximate)\nconst promptTokens = Math.ceil(requestData.prompt.length / 4);\nconst responseTokens = Math.ceil(aiResponse.length / 4);\nconst totalTokens = promptTokens + responseTokens;\n\n// Estimate cost (based on model)\nconst costPerToken = {\n  'gpt-4': 0.00003,\n  'gpt-3.5-turbo': 0.000002,\n  'claude-3-sonnet': 0.00001,\n  'claude-3-opus': 0.00003\n};\nconst modelUsed = $('check_primary_model').item.json.error \n  ? requestData.modelConfig.fallbackModels[0] \n  : requestData.modelConfig.model;\nconst estimatedCost = totalTokens * (costPerToken[modelUsed] || 0.000002);\n\n// Extract suggested actions based on intent\nconst suggestedActions = [];\n\nif (requestData.intent.primary === 'property_search') {\n  suggestedActions.push(\n    {\n      type: 'deep_link',\n      label: 'View All Listings',\n      action: '/properties'\n    },\n    {\n      type: 'quick_reply',\n      label: 'Refine Search',\n      action: 'Show me more filters'\n    }\n  );\n} else if (requestData.intent.primary === 'lead_management') {\n  suggestedActions.push(\n    {\n      type: 'deep_link',\n      label: 'Open CRM',\n      action: '/crm/leads'\n    },\n    {\n      type: 'quick_reply',\n      label: 'Add New Lead',\n      action: 'How do I add a new lead?'\n    }\n  );\n}\n\n// Format sources from RAG\nconst sources = requestData.ragContext ? \n  requestData.ragContext.split('[Source:').slice(1).map(source => {\n    const titleMatch = source.match(/^([^\\]]+)\\]/);\n    return {\n      type: 'knowledge_base',\n      title: titleMatch ? titleMatch[1].trim() : 'Knowledge Base',\n      relevance: 0.85\n    };\n  }) : [];\n\n// Build response object\nconst response = {\n  conversation_id: conversationId,\n  message_id: `msg_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,\n  response: aiResponse,\n  confidence_score: requestData.intent.confidence,\n  intent: requestData.intent,\n  suggested_actions: suggestedActions,\n  sources: sources,\n  usage: {\n    tokens: totalTokens,\n    cost: Math.round(estimatedCost * 1000) / 1000,\n    model: modelUsed,\n    latency_ms: endTime - startTime\n  },\n  metadata: {\n    request_id: requestData.requestId,\n    organization_id: requestData.organizationId,\n    user_id: requestData.userId,\n    timestamp: new Date().toISOString()\n  }\n};\n\nreturn [{ json: response }];"
+      },
+      "id": "format_response",
+      "name": "Format Response",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [3050, 400]
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "INSERT INTO ai_conversations \n  (id, organization_id, user_id, conversation_id, messages, metadata, created_at, updated_at)\nVALUES \n  ($1, $2, $3, $1, $4, $5, NOW(), NOW())\nON CONFLICT (id) DO UPDATE SET\n  messages = ai_conversations.messages || $4,\n  metadata = $5,\n  updated_at = NOW()\nRETURNING id;",
+        "options": {
+          "queryParams": "={{ [\n  $json.conversation_id,\n  $json.metadata.organization_id,\n  $json.metadata.user_id,\n  JSON.stringify([\n    { role: 'user', content: $('validate_request').item.json.message },\n    { role: 'assistant', content: $json.response }\n  ]),\n  JSON.stringify($json.metadata)\n] }}"
+        }
+      },
+      "id": "save_conversation",
+      "name": "Save Conversation",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.5,
+      "position": [3250, 400],
+      "credentials": {
+        "postgres": {
+          "id": "supabase_credentials",
+          "name": "Supabase DB"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "set",
+        "key": "={{ 'response_cache:' + $json.metadata.organization_id + ':' + $('validate_request').item.json.message.slice(0, 50) }}",
+        "value": "={{ JSON.stringify($json) }}",
+        "expire": true,
+        "ttl": 300
+      },
+      "id": "cache_response",
+      "name": "Cache Response",
+      "type": "n8n-nodes-base.redis",
+      "typeVersion": 1,
+      "position": [3450, 400],
+      "credentials": {
+        "redis": {
+          "id": "redis_credentials",
+          "name": "Redis"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "INSERT INTO workflow_executions \n  (workflow_name, organization_id, execution_id, status, duration_ms, input_data, output_data, created_at)\nVALUES \n  ($1, $2, $3, $4, $5, $6, $7, NOW());",
+        "options": {
+          "queryParams": "={{ [\n  'sai-universal-assistant-v1',\n  $json.metadata.organization_id,\n  $execution.id,\n  'success',\n  $json.usage.latency_ms,\n  JSON.stringify({ message: $('validate_request').item.json.message }),\n  JSON.stringify({ response_length: $json.response.length })\n] }}"
+        }
+      },
+      "id": "log_execution",
+      "name": "Log Execution",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.5,
+      "position": [3650, 400],
+      "credentials": {
+        "postgres": {
+          "id": "supabase_credentials",
+          "name": "Supabase DB"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "respondWith": "allIncomingItems",
+        "options": {
+          "responseCode": 200,
+          "responseHeaders": {
+            "entries": [
+              {
+                "name": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "name": "X-Request-ID",
+                "value": "={{ $json.metadata.request_id }}"
+              },
+              {
+                "name": "X-Model-Used",
+                "value": "={{ $json.usage.model }}"
+              }
+            ]
+          }
+        }
+      },
+      "id": "respond_success",
+      "name": "Respond Success",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [3850, 400]
+    },
+    {
+      "parameters": {
+        "triggerOnError": true
+      },
+      "id": "error_trigger",
+      "name": "Error Trigger",
+      "type": "n8n-nodes-base.errorTrigger",
+      "typeVersion": 1,
+      "position": [250, 700]
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "jsCode": "// Comprehensive Error Handling\nconst error = $input.all()[0].error;\nconst workflow = $workflow;\nconst execution = $execution;\n\n// Categorize error\nlet errorCategory = 'unknown';\nlet errorCode = 500;\nlet userMessage = 'An unexpected error occurred';\nlet shouldRetry = false;\n\nif (error.message) {\n  if (error.message.includes('rate limit')) {\n    errorCategory = 'rate_limit';\n    errorCode = 429;\n    userMessage = 'Too many requests. Please try again later.';\n    shouldRetry = true;\n  } else if (error.message.includes('timeout')) {\n    errorCategory = 'timeout';\n    errorCode = 504;\n    userMessage = 'Request timed out. Please try again.';\n    shouldRetry = true;\n  } else if (error.message.includes('unauthorized') || error.message.includes('forbidden')) {\n    errorCategory = 'auth';\n    errorCode = 403;\n    userMessage = 'Access denied. Please check your permissions.';\n  } else if (error.message.includes('validation')) {\n    errorCategory = 'validation';\n    errorCode = 400;\n    userMessage = error.message;\n  } else if (error.message.includes('not found')) {\n    errorCategory = 'not_found';\n    errorCode = 404;\n    userMessage = 'Resource not found.';\n  }\n}\n\n// Get request data if available\nconst requestData = $('validate_request').item?.json || {};\n\n// Build error response\nconst errorResponse = {\n  error: {\n    message: userMessage,\n    category: errorCategory,\n    code: errorCode,\n    request_id: requestData.requestId || 'unknown',\n    timestamp: new Date().toISOString(),\n    retry: shouldRetry,\n    details: process.env.NODE_ENV === 'development' ? {\n      original_error: error.message,\n      stack: error.stack,\n      workflow: workflow.name,\n      execution: execution.id\n    } : undefined\n  }\n};\n\nreturn [{ json: errorResponse }];"
+      },
+      "id": "handle_error",
+      "name": "Handle Error",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [450, 700]
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "INSERT INTO workflow_errors \n  (workflow_name, execution_id, organization_id, error_type, error_message, error_stack, input_data, timestamp)\nVALUES \n  ($1, $2, $3, $4, $5, $6, $7, NOW());",
+        "options": {
+          "queryParams": "={{ [\n  'sai-universal-assistant-v1',\n  $execution.id,\n  $('validate_request').item?.json?.organizationId || 'unknown',\n  $json.error.category,\n  $json.error.message,\n  JSON.stringify($json.error.details),\n  JSON.stringify($('validate_request').item?.json || {})\n] }}"
+        },
+        "continueOnFail": true
+      },
+      "id": "log_error",
+      "name": "Log Error",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.5,
+      "position": [650, 700],
+      "credentials": {
+        "postgres": {
+          "id": "supabase_credentials",
+          "name": "Supabase DB"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "respondWith": "allIncomingItems",
+        "options": {
+          "responseCode": "={{ $json.error.code }}",
+          "responseHeaders": {
+            "entries": [
+              {
+                "name": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "name": "X-Request-ID",
+                "value": "={{ $json.error.request_id }}"
+              },
+              {
+                "name": "Retry-After",
+                "value": "={{ $json.error.code === 429 ? '60' : '' }}"
+              }
+            ]
+          }
+        }
+      },
+      "id": "respond_error",
+      "name": "Respond Error",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [850, 700]
+    }
+  ],
+  "connections": {
+    "webhook_entry": {
+      "main": [
+        [
+          {
+            "node": "validate_request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "validate_request": {
+      "main": [
+        [
+          {
+            "node": "check_rate_limit",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "check_rate_limit": {
+      "main": [
+        [
+          {
+            "node": "rate_limit_check",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "rate_limit_check": {
+      "main": [
+        [
+          {
+            "node": "increment_rate_limit",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "increment_rate_limit": {
+      "main": [
+        [
+          {
+            "node": "verify_user_org_access",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "verify_user_org_access": {
+      "main": [
+        [
+          {
+            "node": "check_user_access",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "check_user_access": {
+      "main": [
+        [
+          {
+            "node": "access_denied",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "load_conversation",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "access_denied": {
+      "main": [
+        [
+          {
+            "node": "respond_error",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "load_conversation": {
+      "main": [
+        [
+          {
+            "node": "classify_intent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "classify_intent": {
+      "main": [
+        [
+          {
+            "node": "rag_retrieval",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "rag_retrieval": {
+      "main": [
+        [
+          {
+            "node": "model_orchestration",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "model_orchestration": {
+      "main": [
+        [
+          {
+            "node": "generate_response",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "generate_response": {
+      "main": [
+        [
+          {
+            "node": "check_primary_model",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "check_primary_model": {
+      "main": [
+        [
+          {
+            "node": "fallback_model",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "format_response",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "fallback_model": {
+      "main": [
+        [
+          {
+            "node": "format_response",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "format_response": {
+      "main": [
+        [
+          {
+            "node": "save_conversation",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "save_conversation": {
+      "main": [
+        [
+          {
+            "node": "cache_response",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "cache_response": {
+      "main": [
+        [
+          {
+            "node": "log_execution",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "log_execution": {
+      "main": [
+        [
+          {
+            "node": "respond_success",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "error_trigger": {
+      "main": [
+        [
+          {
+            "node": "handle_error",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "handle_error": {
+      "main": [
+        [
+          {
+            "node": "log_error",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "log_error": {
+      "main": [
+        [
+          {
+            "node": "respond_error",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "saveDataSuccessExecution": "all",
+    "saveDataErrorExecution": "all",
+    "saveExecutionProgress": true,
+    "saveManualExecutions": true,
+    "executionTimeout": 30
+  },
+  "staticData": null,
+  "tags": [],
+  "updatedAt": "2025-01-10T12:00:00.000Z",
+  "versionId": "v1.0.0"
+}

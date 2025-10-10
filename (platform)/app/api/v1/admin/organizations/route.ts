@@ -20,8 +20,11 @@ export async function GET(req: NextRequest) {
     const data = await getAllOrganizations(filters);
 
     return NextResponse.json(data);
-  } catch (error: any) {
+  } catch (error) {
     console.error('Admin organizations API error:', error);
-    return NextResponse.json({ error: error.message }, { status: 500 });
+    return NextResponse.json(
+      { error: error instanceof Error ? error.message : 'Failed to fetch organizations' },
+      { status: 500 }
+    );
   }
 }

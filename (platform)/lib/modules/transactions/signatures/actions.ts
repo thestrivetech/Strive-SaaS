@@ -176,7 +176,11 @@ export async function createSignatureRequest(input: CreateSignatureRequestInput)
   // Send email notifications to signers
   const { publicConfig } = await import('@/lib/config/public');
   const appUrl = publicConfig.appUrl;
-  const emailPromises = createdSignatures.map(async (signature) => {
+  const emailPromises = createdSignatures.map(async (signature: {
+    id: string;
+    signer: { email: string; name: string };
+    document: { original_name: string };
+  }) => {
     try {
       await sendSignatureRequestEmail({
         to: signature.signer.email,
@@ -354,7 +358,7 @@ export async function signDocument(input: SignDocumentInput) {
     },
   });
 
-  const allSigned = allSignatures.every((sig) => sig.status === 'SIGNED');
+  const allSigned = allSignatures.every((sig: { id: string; status: string }) => sig.status === 'SIGNED');
 
   if (allSigned) {
     // Update request status to SIGNED (completed)

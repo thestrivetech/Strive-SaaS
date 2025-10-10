@@ -81,7 +81,7 @@ async function testNotifications() {
     });
 
     console.log(`✅ Found ${unread.length} unread notification(s)`);
-    unread.forEach((n, i) => {
+    unread.forEach((n: { title: string; type: string }, i: number) => {
       console.log(`   ${i + 1}. ${n.title} (${n.type})`);
     });
 

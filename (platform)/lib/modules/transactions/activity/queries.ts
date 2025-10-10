@@ -262,7 +262,7 @@ async function getDocumentIdsByLoop(loopId: string): Promise<string[]> {
     },
     select: { id: true },
   });
-  return documents.map(d => d.id);
+  return documents.map((d: { id: string }) => d.id);
 }
 
 /**
@@ -278,7 +278,7 @@ async function getPartyIdsByLoop(loopId: string): Promise<string[]> {
     },
     select: { id: true },
   });
-  return parties.map(p => p.id);
+  return parties.map((p: { id: string }) => p.id);
 }
 
 /**
@@ -294,7 +294,7 @@ async function getTaskIdsByLoop(loopId: string): Promise<string[]> {
     },
     select: { id: true },
   });
-  return tasks.map(t => t.id);
+  return tasks.map((t: { id: string }) => t.id);
 }
 
 /**
@@ -310,5 +310,5 @@ async function getSignatureIdsByLoop(loopId: string): Promise<string[]> {
     },
     select: { id: true },
   });
-  return signatures.map(s => s.id);
+  return signatures.map((s: { id: string }) => s.id);
 }

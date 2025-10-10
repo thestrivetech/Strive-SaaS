@@ -36,8 +36,8 @@ export const getAppointmentsByEntity = dataConfig.useMocks
   : async (entityType: string, entityId: string) => (await import('./queries')).getAppointmentsByEntity(entityType, entityId);
 
 export const getAppointmentStats = dataConfig.useMocks
-  ? async () => ({ total: 0, upcoming: 0, completed: 0, cancelled: 0 })
-  : async () => (await import('./queries')).getAppointmentStats();
+  ? async (userId: string, startDate: Date, endDate: Date) => ({ total: 0, scheduled: 0, confirmed: 0, completed: 0, cancelled: 0, no_show: 0, byType: { meeting: 0, call: 0, showing: 0, open_house: 0, follow_up: 0, other: 0 } })
+  : async (userId: string, startDate: Date, endDate: Date) => (await import('./queries')).getAppointmentStats(userId, startDate, endDate);
 
 // Calendar helpers
 export {

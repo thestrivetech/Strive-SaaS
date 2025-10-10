@@ -21,8 +21,11 @@ export async function GET(req: NextRequest) {
     const data = await getAllUsers(filters);
 
     return NextResponse.json(data);
-  } catch (error: any) {
+  } catch (error) {
     console.error('Admin users API error:', error);
-    return NextResponse.json({ error: error.message }, { status: 500 });
+    return NextResponse.json(
+      { error: error instanceof Error ? error.message : 'Failed to fetch users' },
+      { status: 500 }
+    );
   }
 }

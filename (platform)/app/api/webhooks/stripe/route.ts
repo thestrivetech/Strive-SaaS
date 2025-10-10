@@ -25,8 +25,9 @@ export async function POST(req: NextRequest) {
     let event: Stripe.Event;
     try {
       event = stripe.webhooks.constructEvent(body, signature, webhookSecret);
-    } catch (err: any) {
-      console.error('Webhook signature verification failed:', err.message);
+    } catch (err) {
+      const errorMessage = err instanceof Error ? err.message : 'Unknown error';
+      console.error('Webhook signature verification failed:', errorMessage);
       return NextResponse.json(
         { error: 'Invalid signature' },
         { status: 400 }
@@ -67,8 +68,9 @@ export async function POST(req: NextRequest) {
     }
 
     return NextResponse.json({ received: true });
-  } catch (error: any) {
-    console.error('Webhook processing error:', error);
+  } catch (error) {
+    const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+    console.error('Webhook processing error:', errorMessage);
     return NextResponse.json(
       { error: 'Webhook processing failed' },
       { status: 500 }
@@ -94,8 +96,9 @@ async function handlePaymentSuccess(paymentIntent: Stripe.PaymentIntent) {
       });
 
       console.log(`Payment succeeded for session: ${sessionToken}`);
-    } catch (error: any) {
-      console.error('Failed to update onboarding session:', error);
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+      console.error('Failed to update onboarding session:', errorMessage);
     }
   } else {
     console.log(`Payment succeeded: ${paymentIntent.id}`);
@@ -118,8 +121,9 @@ async function handlePaymentFailed(paymentIntent: Stripe.PaymentIntent) {
       });
 
       console.log(`Payment failed for session: ${sessionToken}`);
-    } catch (error: any) {
-      console.error('Failed to update onboarding session:', error);
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+      console.error('Failed to update onboarding session:', errorMessage);
     }
   } else {
     console.log(`Payment failed: ${paymentIntent.id}`);
@@ -148,11 +152,16 @@ async function handleSubscriptionUpdate(subscription: Stripe.Subscription) {
     }
 
     // Determine subscription tier from metadata
-    const tier = (subscription.metadata.tier || 'STARTER') as any;
+    type SubscriptionTier = 'FREE' | 'CUSTOM' | 'STARTER' | 'GROWTH' | 'ELITE' | 'ENTERPRISE';
+    const tier = (subscription.metadata.tier || 'STARTER') as SubscriptionTier;
 
-    // Extract period dates - access directly from subscription object
-    const periodStart = (subscription as any).current_period_start as number;
-    const periodEnd = (subscription as any).current_period_end as number;
+    // Extract period dates - access via object indexing for type safety
+    type SubscriptionWithPeriod = Stripe.Subscription & {
+      current_period_start: number;
+      current_period_end: number;
+    };
+    const periodStart = (subscription as SubscriptionWithPeriod).current_period_start;
+    const periodEnd = (subscription as SubscriptionWithPeriod).current_period_end;
 
     // Upsert subscription
     await prisma.subscriptions.upsert({
@@ -173,8 +182,9 @@ async function handleSubscriptionUpdate(subscription: Stripe.Subscription) {
     });
 
     console.log(`Subscription updated for organization: ${org.name}`);
-  } catch (error: any) {
-    console.error('Failed to update subscription:', error);
+  } catch (error) {
+    const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+    console.error('Failed to update subscription:', errorMessage);
   }
 }
 
@@ -207,7 +217,8 @@ async function handleSubscriptionCancelled(subscription: Stripe.Subscription) {
     });
 
     console.log(`Subscription cancelled for organization: ${org.name}`);
-  } catch (error: any) {
-    console.error('Failed to cancel subscription:', error);
+  } catch (error) {
+    const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+    console.error('Failed to cancel subscription:', errorMessage);
   }
 }

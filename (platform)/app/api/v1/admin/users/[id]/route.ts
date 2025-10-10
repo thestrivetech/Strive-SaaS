@@ -62,10 +62,10 @@ export async function DELETE(
       success: true,
       message: 'User deleted successfully',
     });
-  } catch (error: any) {
+  } catch (error) {
     console.error('Delete user error:', error);
     return NextResponse.json(
-      { error: error.message || 'Failed to delete user' },
+      { error: error instanceof Error ? error.message : 'Failed to delete user' },
       { status: 500 }
     );
   }

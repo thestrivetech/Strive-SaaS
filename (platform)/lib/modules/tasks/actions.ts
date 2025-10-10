@@ -2,8 +2,19 @@
 
 import { prisma } from '@/lib/database/prisma';
 import { createServerSupabaseClientWithAuth } from '@/lib/supabase-server';
+import { revalidatePath } from 'next/cache';
+import type { TaskStatus } from '@prisma/client';
+
 type CreateTaskInput = any;
 type UpdateTaskInput = any;
+
+// Helper to get user organizations
+async function getUserOrganizations(userId: string) {
+  return await prisma.organization_members.findMany({
+    where: { user_id: userId },
+    select: { organization_id: true },
+  });
+}
 
 /**
  * Create a new task

@@ -2,6 +2,9 @@
 
 **Claude's Session Memory | v2.0 | Platform Project Standards - Multi-Industry Architecture**
 
+**Note for user** -> You'll trigger the next phase by saying:
+"UI is complete, ready to create the real schema"
+
 ## 🚨 CRITICAL: PRODUCTION DEPLOYMENT BLOCKERS
 
 > **⚠️ THESE MUST BE FIXED BEFORE PRODUCTION DEPLOYMENT**

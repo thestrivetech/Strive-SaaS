@@ -61,7 +61,7 @@ export async function calculateLoopProgress(loopId: string) {
   // Calculate task completion percentage
   const totalTasks = loop.transaction_tasks.length;
   const completedTasks = loop.transaction_tasks.filter(
-    t => t.status === 'DONE'
+    (t: { status: string }) => t.status === 'DONE'
   ).length;
   const taskProgress = totalTasks > 0 ? (completedTasks / totalTasks) * 100 : 0;
 
@@ -79,7 +79,7 @@ export async function calculateLoopProgress(loopId: string) {
   for (const request of loop.signatures) {
     totalSignatures += request.signatures.length;
     completedSignatures += request.signatures.filter(
-      s => s.status === 'SIGNED'
+      (s: { status: string }) => s.status === 'SIGNED'
     ).length;
   }
 

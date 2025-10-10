@@ -15,8 +15,11 @@ export async function GET(req: NextRequest) {
 
     const alerts = await getActiveSystemAlerts();
     return NextResponse.json(alerts);
-  } catch (error: any) {
-    return NextResponse.json({ error: error.message }, { status: 500 });
+  } catch (error) {
+    return NextResponse.json(
+      { error: error instanceof Error ? error.message : 'Failed to fetch alerts' },
+      { status: 500 }
+    );
   }
 }
 
@@ -30,7 +33,10 @@ export async function POST(req: NextRequest) {
     const body = await req.json();
     const alert = await createSystemAlert(body);
     return NextResponse.json(alert);
-  } catch (error: any) {
-    return NextResponse.json({ error: error.message }, { status: 500 });
+  } catch (error) {
+    return NextResponse.json(
+      { error: error instanceof Error ? error.message : 'Failed to create alert' },
+      { status: 500 }
+    );
   }
 }

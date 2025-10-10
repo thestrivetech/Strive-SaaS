@@ -65,8 +65,8 @@ async function testRLS() {
     console.log(`✅ Organization 2 has ${org2Customers.length} customer(s)`);
 
     // Verify no overlap
-    const org1CustomerIds = new Set(org1Customers.map(c => c.id));
-    const overlap = org2Customers.filter(c => org1CustomerIds.has(c.id));
+    const org1CustomerIds = new Set(org1Customers.map((c: { id: string }) => c.id));
+    const overlap = org2Customers.filter((c: { id: string }) => org1CustomerIds.has(c.id));
 
     if (overlap.length === 0) {
       console.log('✅ No customer overlap between organizations (isolation confirmed)');
@@ -93,8 +93,8 @@ async function testRLS() {
     console.log(`✅ Organization 1 has ${org1Projects.length} project(s)`);
     console.log(`✅ Organization 2 has ${org2Projects.length} project(s)`);
 
-    const org1ProjectIds = new Set(org1Projects.map(p => p.id));
-    const projectOverlap = org2Projects.filter(p => org1ProjectIds.has(p.id));
+    const org1ProjectIds = new Set(org1Projects.map((p: { id: string }) => p.id));
+    const projectOverlap = org2Projects.filter((p: { id: string }) => org1ProjectIds.has(p.id));
 
     if (projectOverlap.length === 0) {
       console.log('✅ No project overlap between organizations (isolation confirmed)');
@@ -110,7 +110,7 @@ async function testRLS() {
       const org1Tasks = await prisma.tasks.findMany({
         where: {
           project_id: {
-            in: org1Projects.map(p => p.id)
+            in: org1Projects.map((p: { id: string }) => p.id)
           }
         }
       });
@@ -118,7 +118,7 @@ async function testRLS() {
       const org2Tasks = await prisma.tasks.findMany({
         where: {
           project_id: {
-            in: org2Projects.map(p => p.id)
+            in: org2Projects.map((p: { id: string }) => p.id)
           }
         }
       });
@@ -126,8 +126,8 @@ async function testRLS() {
       console.log(`✅ Organization 1 projects have ${org1Tasks.length} task(s)`);
       console.log(`✅ Organization 2 projects have ${org2Tasks.length} task(s)`);
 
-      const org1TaskIds = new Set(org1Tasks.map(t => t.id));
-      const taskOverlap = org2Tasks.filter(t => org1TaskIds.has(t.id));
+      const org1TaskIds = new Set(org1Tasks.map((t: { id: string }) => t.id));
+      const taskOverlap = org2Tasks.filter((t: { id: string }) => org1TaskIds.has(t.id));
 
       if (taskOverlap.length === 0) {
         console.log('✅ No task overlap between organizations (isolation confirmed)');
@@ -156,8 +156,8 @@ async function testRLS() {
       console.log(`✅ User 1 (${user1.email}) has ${user1.notifications.length} notification(s)`);
       console.log(`✅ User 2 (${user2.email}) has ${user2.notifications.length} notification(s)`);
 
-      const user1NotifIds = new Set(user1.notifications.map(n => n.id));
-      const notifOverlap = user2.notifications.filter(n => user1NotifIds.has(n.id));
+      const user1NotifIds = new Set(user1.notifications.map((n: { id: string }) => n.id));
+      const notifOverlap = user2.notifications.filter((n: { id: string }) => user1NotifIds.has(n.id));
 
       if (notifOverlap.length === 0) {
         console.log('✅ No notification overlap between users (isolation confirmed)');
@@ -188,8 +188,8 @@ async function testRLS() {
       console.log(`✅ User 1 has ${user1Convos.length} AI conversation(s)`);
       console.log(`✅ User 2 has ${user2Convos.length} AI conversation(s)`);
 
-      const user1ConvoIds = new Set(user1Convos.map(c => c.id));
-      const convoOverlap = user2Convos.filter(c => user1ConvoIds.has(c.id));
+      const user1ConvoIds = new Set(user1Convos.map((c: { id: string }) => c.id));
+      const convoOverlap = user2Convos.filter((c: { id: string }) => user1ConvoIds.has(c.id));
 
       if (convoOverlap.length === 0) {
         console.log('✅ No AI conversation overlap between users (isolation confirmed)');

@@ -35,8 +35,8 @@ export async function POST(req: NextRequest) {
         is_active: result.is_active,
       },
     });
-  } catch (error: any) {
-    if (error.name === 'ZodError') {
+  } catch (error) {
+    if (error instanceof z.ZodError) {
       return NextResponse.json(
         { error: 'Invalid request data', details: error.errors },
         { status: 400 }
@@ -45,7 +45,7 @@ export async function POST(req: NextRequest) {
 
     console.error('Suspend user API error:', error);
     return NextResponse.json(
-      { error: error.message || 'Failed to suspend user' },
+      { error: error instanceof Error ? error.message : 'Failed to suspend user' },
       { status: 500 }
     );
   }
