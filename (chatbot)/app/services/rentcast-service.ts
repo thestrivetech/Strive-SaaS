@@ -175,16 +175,18 @@ export class RentCastService {
       // ========================================
       if (property.price > params.maxPrice) continue; // Hard filter - over budget
 
+      // Filter out properties that are WAY under budget (likely wrong data or missing features)
+      const minPrice = params.maxPrice * 0.4; // At least 40% of budget
+      if (property.price < minPrice) continue; // Too cheap - suspicious
+
       const priceDiff = params.maxPrice - property.price;
       const pricePercentUnderBudget = (priceDiff / params.maxPrice) * 100;
 
       // Sweet spot: 5-15% under budget gets maximum points
       if (pricePercentUnderBudget >= 5 && pricePercentUnderBudget <= 15) {
         score += 35; // Perfect price range
-        matchReasons.push(`Perfect price - $${priceDiff.toLocaleString()} under budget`);
-      } else if (pricePercentUnderBudget > 15) {
-        score += 25; // Way under budget (might be missing features)
-        matchReasons.push(`Great value - well under budget`);
+      } else if (pricePercentUnderBudget > 15 && pricePercentUnderBudget <= 40) {
+        score += 25; // Good value but not suspiciously cheap
       } else if (pricePercentUnderBudget >= 0) {
         score += 20; // At or slightly under budget
       }
@@ -198,10 +200,10 @@ export class RentCastService {
         score += 25; // Exact match
       } else if (property.bedrooms === params.minBedrooms + 1) {
         score += 30; // One extra bedroom (bonus!)
-        matchReasons.push(`${property.bedrooms} bedrooms (bonus room)`);
+        matchReasons.push(`Extra bedroom - perfect for office or guest room`);
       } else if (property.bedrooms > params.minBedrooms + 1) {
         score += 20; // Too many bedrooms might mean higher maintenance
-        matchReasons.push(`${property.bedrooms} bedrooms (spacious)`);
+        matchReasons.push(`Spacious ${property.bedrooms}-bedroom layout with room to grow`);
       }
 
       // ========================================
@@ -212,7 +214,8 @@ export class RentCastService {
           score += 15;
           if (property.bathrooms > params.minBathrooms) {
             score += 5;
-            matchReasons.push(`${property.bathrooms} bathrooms`);
+            const bathCount = property.bathrooms % 1 === 0 ? property.bathrooms : property.bathrooms.toFixed(1);
+            matchReasons.push(`${bathCount} bathrooms - no morning rush`);
           }
         }
       } else {
@@ -282,10 +285,10 @@ export class RentCastService {
       // ========================================
       if (property.daysOnMarket <= 3) {
         score += 15;
-        matchReasons.push('🔥 Just listed!');
+        matchReasons.push('Fresh on the market - be the first to see it');
       } else if (property.daysOnMarket <= 7) {
         score += 10;
-        matchReasons.push('Recently listed');
+        matchReasons.push('New listing - schedule a showing soon');
       } else if (property.daysOnMarket <= 30) {
         score += 5;
       } else if (property.daysOnMarket > 90) {
@@ -300,14 +303,15 @@ export class RentCastService {
 
         if (age <= 5) {
           score += 10;
-          matchReasons.push('Brand new construction');
+          matchReasons.push('Brand new construction with modern finishes');
         } else if (age <= 15) {
           score += 7;
-          matchReasons.push('Modern build');
+          matchReasons.push(`Modern ${property.yearBuilt} build - move-in ready`);
         } else if (age <= 30) {
           score += 3;
-        } else if (age > 50) {
+        } else if (age >= 50) {
           score -= 3; // Older homes might need work
+          matchReasons.push(`Classic ${property.yearBuilt} home with character & charm`);
         }
       }
 
@@ -323,13 +327,13 @@ export class RentCastService {
 
         if (avgRating >= 9) {
           score += 15;
-          matchReasons.push('⭐ Exceptional schools nearby');
+          matchReasons.push(`Award-winning schools (${avgRating.toFixed(1)}/10) in district`);
         } else if (avgRating >= 8) {
           score += 12;
-          matchReasons.push('Top-rated schools');
+          matchReasons.push(`Highly-rated schools nearby (${avgRating.toFixed(1)}/10)`);
         } else if (avgRating >= 7) {
           score += 8;
-          matchReasons.push('Great schools');
+          matchReasons.push(`Quality schools in the area (${avgRating.toFixed(1)}/10)`);
         } else if (avgRating >= 6) {
           score += 4;
         }
@@ -346,10 +350,10 @@ export class RentCastService {
 
         if (pricePerSqft < marketAvg * 0.75) {
           score += 10;
-          matchReasons.push('Excellent value per sqft');
+          matchReasons.push(`Exceptional value - ${property.sqft.toLocaleString()} sq ft of space`);
         } else if (pricePerSqft < marketAvg * 0.9) {
           score += 7;
-          matchReasons.push('Good value');
+          matchReasons.push(`Great price for ${property.sqft.toLocaleString()} sq ft`);
         } else if (pricePerSqft > marketAvg * 1.2) {
           score -= 5; // Overpriced per sqft
         }
@@ -360,7 +364,44 @@ export class RentCastService {
       // ========================================
       if (property.lotSize && property.lotSize > 10000) {
         score += 5;
-        matchReasons.push('Large lot');
+        const acres = (property.lotSize / 43560).toFixed(2);
+        matchReasons.push(`Spacious ${acres}-acre lot - room for everything`);
+      }
+
+      // ========================================
+      // 12. ENSURE MINIMUM DESCRIPTIVE REASONS
+      // ========================================
+      // Always show at least 2-3 compelling reasons about the home
+      if (matchReasons.length < 2) {
+        // Add property type highlight
+        const typeDesc = property.propertyType?.replace(/-/g, ' ') || 'home';
+        matchReasons.push(`Well-maintained ${typeDesc} in ${property.city}`);
+
+        // Add square footage if available
+        if (property.sqft && matchReasons.length < 3) {
+          matchReasons.push(`${property.sqft.toLocaleString()} sq ft of comfortable living space`);
+        }
+
+        // Only mention lot size if it's actually impressive (1+ acres)
+        if (property.lotSize && matchReasons.length < 3) {
+          const acres = property.lotSize / 43560;
+          if (acres >= 1.0) {
+            matchReasons.push(`Generous ${acres.toFixed(2)}-acre lot`);
+          }
+        }
+
+        // Add year built if modern and not already mentioned
+        if (property.yearBuilt && matchReasons.length < 3) {
+          const age = new Date().getFullYear() - property.yearBuilt;
+          if (age <= 30) {
+            matchReasons.push(`Built in ${property.yearBuilt}`);
+          }
+        }
+
+        // Add location highlight if still need more
+        if (matchReasons.length < 2) {
+          matchReasons.push(`Prime ${property.city} location`);
+        }
       }
 
       // Calculate match percentage (0-100%)

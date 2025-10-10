@@ -566,7 +566,7 @@ const PropertyCard = ({ match, onScheduleShowing = ()=>{}, onSaveFavorite, onVie
     const [isFavorited, setIsFavorited] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useState"])(false);
     const { property, matchReasons, matchScore } = match;
     // Calculate match percentage (0-100%)
-    const maxScore = 200; // From enhanced matching algorithm
+    const maxScore = 100; // Price(30) + Location(20) + Size(15) + Features(25) + Schools(10)
     const matchPercentage = Math.min(Math.round(matchScore / maxScore * 100), 100);
     const handleNextImage = ()=>{
         setCurrentImageIndex((prev)=>prev === property.images.length - 1 ? 0 : prev + 1);

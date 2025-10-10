@@ -1,0 +1,96 @@
+{
+  "collections": [
+    {
+      "name": "property_descriptions",
+      "description": "Vector embeddings for property descriptions, features, and characteristics",
+      "vector_config": {
+        "size": 1536,
+        "distance": "Cosine"
+      },
+      "optimizers_config": {
+        "indexing_threshold": 20000
+      },
+      "payload_schema": {
+        "property_id": "keyword",
+        "address": "text",
+        "city": "keyword",
+        "state": "keyword",
+        "zip": "keyword",
+        "property_type": "keyword",
+        "bedrooms": "integer",
+        "bathrooms": "float",
+        "sqft_living": "integer",
+        "year_built": "integer",
+        "assessed_value": "float",
+        "description": "text",
+        "features": "keyword[]",
+        "last_updated": "datetime"
+      }
+    },
+    {
+      "name": "neighborhood_narratives",
+      "description": "Vector embeddings for neighborhood descriptions, market insights, and regional analysis",
+      "vector_config": {
+        "size": 1536,
+        "distance": "Cosine"
+      },
+      "optimizers_config": {
+        "indexing_threshold": 10000
+      },
+      "payload_schema": {
+        "geography_id": "keyword",
+        "geography_type": "keyword",
+        "geography_name": "keyword",
+        "narrative_type": "keyword",
+        "narrative": "text",
+        "demographics_summary": "text",
+        "market_summary": "text",
+        "schools_summary": "text",
+        "crime_summary": "text",
+        "pois_summary": "text",
+        "last_updated": "datetime"
+      }
+    },
+    {
+      "name": "market_insights",
+      "description": "Vector embeddings for market analysis, trends, and investment insights",
+      "vector_config": {
+        "size": 1536,
+        "distance": "Cosine"
+      },
+      "optimizers_config": {
+        "indexing_threshold": 10000
+      },
+      "payload_schema": {
+        "geography_id": "keyword",
+        "insight_type": "keyword",
+        "time_period": "keyword",
+        "insight_text": "text",
+        "metrics": "text",
+        "trend_direction": "keyword",
+        "confidence_score": "float",
+        "last_updated": "datetime"
+      }
+    },
+    {
+      "name": "property_comparisons",
+      "description": "Vector embeddings for property comparison analysis and recommendations",
+      "vector_config": {
+        "size": 1536,
+        "distance": "Cosine"
+      },
+      "optimizers_config": {
+        "indexing_threshold": 5000
+      },
+      "payload_schema": {
+        "comparison_id": "keyword",
+        "property_ids": "keyword[]",
+        "comparison_text": "text",
+        "comparison_factors": "keyword[]",
+        "recommendation": "text",
+        "score": "float",
+        "created_at": "datetime"
+      }
+    }
+  ]
+}

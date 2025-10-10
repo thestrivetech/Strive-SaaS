@@ -4,12 +4,11 @@ import { NextRequest, NextResponse } from 'next/server';
 import Groq from 'groq-sdk/index.mjs';
 import { z } from 'zod';
 import { loadIndustryConfig } from '@/app/industries';
-import { RAGService } from '@/app/services/rag-service';
+// import { RAGService } from '@/app/services/rag-service'; // FUTURE: For knowledge queries
 import { RentCastService, PropertySearchParams } from '@/app/services/rentcast-service';
 import { IndustryType } from '@/types/industry';
 import { ChatRequestSchema } from '@/app/schemas/chat-request';
 import { Message } from '@/types/conversation';
-import { RAGContext } from '@/types/rag';
 import {
   extractDataFromMessage,
   mergeExtractedData,
@@ -85,24 +84,16 @@ export async function POST(req: NextRequest) {
       canSearch: canSearchNow,
     };
 
-    // 🔥 RAG ENHANCEMENT: Get semantic context
-    console.log('🔍 Searching for similar conversations...');
-    const ragContext = await RAGService.buildRAGContext(
-      latestUserMessage.content,
-      industry,
-      conversationHistory
-    );
+    // 🔮 FUTURE: Intent-based RAG for knowledge queries
+    // TODO: Add intent classification to detect:
+    // - Area questions: "What's East Nashville like?"
+    // - Market questions: "Is $500k a good budget?"
+    // - Process questions: "What are closing costs?"
+    // Then use: RAGService.searchKnowledge(query, 'neighborhoods'|'market'|'process')
 
-    console.log('✅ RAG Context:', {
-      detectedProblems: ragContext.searchResults.detectedProblems,
-      confidence: ragContext.searchResults.confidence.overallConfidence,
-      suggestedApproach: ragContext.guidance.suggestedApproach,
-    });
-
-    // Build enhanced system prompt with RAG context AND extracted data
+    // Build enhanced system prompt with conversation state
     const enhancedSystemPrompt = buildEnhancedSystemPrompt(
       config.systemPrompt,
-      ragContext,
       sessionPreferences,
       extraction.extractedFields,
       canSearchNow
@@ -227,19 +218,12 @@ export async function POST(req: NextRequest) {
             }
           }
 
-          // 🔥 STORE CONVERSATION: Save for future learning
-          console.log('💾 Storing conversation for learning...');
-          await RAGService.storeConversation({
-            industry,
-            sessionId,
-            userMessage: latestUserMessage.content,
-            assistantResponse: fullResponse,
-            conversationStage: conversationHistory.stage,
-            outcome: 'in_progress',
-            bookingCompleted: false,
-            problemDetected: ragContext.searchResults.detectedProblems[0],
-            solutionPresented: ragContext.searchResults.recommendedSolutions[0],
-          });
+          // 🔮 FUTURE: Store conversations for learning
+          // TODO: Re-enable when we build knowledge bases for:
+          // - Neighborhood questions (learn which areas users ask about)
+          // - Market trends (learn common pricing/market questions)
+          // - Process guidance (learn where users get confused)
+          // await RAGService.storeConversation({...});
 
           // 💼 CRM INTEGRATION: Sync lead to platform CRM
           if (industry === 'real-estate') {
@@ -332,24 +316,20 @@ export async function POST(req: NextRequest) {
 }
 
 /**
- * Build enhanced system prompt with RAG context AND conversation state
+ * Build enhanced system prompt with conversation state
  */
 function buildEnhancedSystemPrompt(
   basePrompt: string,
-  ragContext: RAGContext,
   sessionPreferences: PropertyPreferences,
   extractedFields: string[],
   canSearch: boolean
 ): string {
-  const { searchResults, guidance } = ragContext;
-
-  let enhancement = '\n\n## 🎯 CONTEXTUAL INTELLIGENCE\n\n';
+  let enhancement = '\n\n## 🎯 CONVERSATION STATE\n\n';
 
   // Add conversation state awareness
-  enhancement += `### 📊 Current Conversation State:\n\n`;
+  enhancement += `### 📊 Information Already Collected:\n\n`;
 
   if (Object.keys(sessionPreferences).length > 0) {
-    enhancement += `**Information Already Collected:**\n`;
     if (sessionPreferences.location) enhancement += `- 📍 Location: ${sessionPreferences.location}\n`;
     if (sessionPreferences.maxPrice) enhancement += `- 💰 Budget: $${sessionPreferences.maxPrice.toLocaleString()}\n`;
     if (sessionPreferences.minBedrooms) enhancement += `- 🛏️ Bedrooms: ${sessionPreferences.minBedrooms}+\n`;
@@ -359,6 +339,8 @@ function buildEnhancedSystemPrompt(
       enhancement += `- ✨ Must-have features: ${sessionPreferences.mustHaveFeatures.join(', ')}\n`;
     }
     enhancement += '\n';
+  } else {
+    enhancement += `(None yet - first message)\n\n`;
   }
 
   if (extractedFields.length > 0) {
@@ -367,32 +349,23 @@ function buildEnhancedSystemPrompt(
 
   // Search readiness
   if (canSearch) {
-    enhancement += `🚀 **READY TO SEARCH!** You have location + budget. You can trigger a property search NOW by outputting the <property_search> format!\n\n`;
+    enhancement += `### 🚀 READY TO SEARCH!\n`;
+    enhancement += `You have location + budget. Trigger a property search NOW by outputting the <property_search> format!\n\n`;
   } else {
     const missing: string[] = [];
     if (!sessionPreferences.location) missing.push('location');
     if (!sessionPreferences.maxPrice) missing.push('budget');
     if (missing.length > 0) {
-      enhancement += `❌ **Cannot search yet.** Missing: ${missing.join(', ')}\n`;
+      enhancement += `### ❌ Cannot Search Yet\n`;
+      enhancement += `Missing: ${missing.join(', ')}\n`;
       enhancement += `Ask for these naturally in your next response!\n\n`;
     }
   }
 
-  // RAG-Enhanced Guidance
-  if (searchResults.detectedProblems.length > 0) {
-    enhancement += `### 💡 Similar Conversations:\n`;
-    searchResults.detectedProblems.forEach((problem: string) => {
-      enhancement += `- ${problem}\n`;
-    });
-    enhancement += '\n';
-  }
-
-  if (guidance.suggestedApproach) {
-    enhancement += `### 🎯 Recommended Approach:\n${guidance.suggestedApproach}\n\n`;
-  }
-
-  enhancement += `**REMEMBER:** Don't ask for information you already have! Reference it naturally instead.\n`;
-  enhancement += `**REMEMBER:** If you can search now, do it! Don't keep asking unnecessary questions.\n`;
+  enhancement += `### 📋 IMPORTANT REMINDERS:\n`;
+  enhancement += `- **DON'T** ask for information you already have! Reference it naturally instead.\n`;
+  enhancement += `- **DO** trigger search immediately when you have location + budget.\n`;
+  enhancement += `- **DON'T** keep asking unnecessary questions when you can search.\n`;
 
   return basePrompt + enhancement;
 }

@@ -60,7 +60,7 @@ const PropertyCard: React.FC<PropertyCardProps> = ({
   const { property, matchReasons, matchScore } = match;
 
   // Calculate match percentage (0-100%)
-  const maxScore = 200; // From enhanced matching algorithm
+  const maxScore = 100; // Price(30) + Location(20) + Size(15) + Features(25) + Schools(10)
   const matchPercentage = Math.min(Math.round((matchScore / maxScore) * 100), 100);
 
   const handleNextImage = () => {

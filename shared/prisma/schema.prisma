@@ -226,6 +226,8 @@ model customers {
 model leads {
   id              String        @id @default(cuid())
   name            String
+  first_name      String?
+  last_name       String?
   email           String?
   phone           String?
   company         String?
@@ -254,6 +256,8 @@ model leads {
   @@index([source])
   @@index([score])
   @@index([created_at])
+  @@index([first_name])
+  @@index([last_name])
   @@map("leads")
 }
 

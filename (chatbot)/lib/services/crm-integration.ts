@@ -2,7 +2,7 @@
 import 'server-only';
 
 import { PrismaClient } from '@prisma/client';
-import { PropertyPreferences, ContactInfo } from '@/lib/ai/data-extraction';
+import { PropertyPreferences, ContactInfo, splitName } from '@/lib/ai/data-extraction';
 
 const prisma = new PrismaClient();
 
@@ -91,6 +91,13 @@ export async function syncLeadToCRM(params: {
   } = params;
 
   try {
+    // Split name into first/last
+    const { firstName, lastName, fullName } = contactInfo ? splitName(contactInfo) : {
+      firstName: undefined,
+      lastName: undefined,
+      fullName: 'Chatbot Lead'
+    };
+
     // Check if lead already exists for this session
     const existingLead = await prisma.leads.findFirst({
       where: {
@@ -103,7 +110,7 @@ export async function syncLeadToCRM(params: {
     });
 
     // Calculate lead score
-    const hasContactInfo = !!(contactInfo?.email || contactInfo?.phone || contactInfo?.name);
+    const hasContactInfo = !!(contactInfo?.email || contactInfo?.phone || firstName);
     const hasCompleteCriteria = !!(propertyPreferences?.location && propertyPreferences?.maxPrice);
     const { score, scoreValue } = calculateLeadScore(
       messageCount,
@@ -116,9 +123,11 @@ export async function syncLeadToCRM(params: {
     // Determine status
     const status = determineLeadStatus(hasCompleteCriteria, hasSearched, false);
 
-    // Build custom fields JSON
+    // Build custom fields JSON with detailed property preferences
     const customFields = {
       chatbot_session_id: sessionId,
+
+      // Property preferences (detailed)
       property_preferences: propertyPreferences ? {
         location: propertyPreferences.location,
         maxPrice: propertyPreferences.maxPrice,
@@ -131,8 +140,17 @@ export async function syncLeadToCRM(params: {
         isFirstTimeBuyer: propertyPreferences.isFirstTimeBuyer,
         currentSituation: propertyPreferences.currentSituation,
       } : undefined,
+
+      // Individual feature flags for easy querying
+      has_pool: propertyPreferences?.mustHaveFeatures?.includes('pool') || false,
+      has_backyard: propertyPreferences?.mustHaveFeatures?.includes('backyard') || false,
+      has_garage: propertyPreferences?.mustHaveFeatures?.includes('garage') || false,
+
+      // Search history
       last_property_search: hasSearched ? new Date().toISOString() : undefined,
       viewed_properties: viewedProperties,
+
+      // Engagement metrics
       chatbot_engagement: {
         message_count: messageCount,
         last_message: lastMessage,
@@ -140,27 +158,50 @@ export async function syncLeadToCRM(params: {
       },
     };
 
+    // Build detailed notes string
+    const notesLines: string[] = [];
+    if (propertyPreferences?.location) notesLines.push(`📍 Location: ${propertyPreferences.location}`);
+    if (propertyPreferences?.maxPrice) notesLines.push(`💰 Budget: $${propertyPreferences.maxPrice.toLocaleString()}`);
+    if (propertyPreferences?.minBedrooms) notesLines.push(`🛏️ Bedrooms: ${propertyPreferences.minBedrooms}+`);
+    if (propertyPreferences?.minBathrooms) notesLines.push(`🛁 Bathrooms: ${propertyPreferences.minBathrooms}+`);
+    if (propertyPreferences?.mustHaveFeatures && propertyPreferences.mustHaveFeatures.length > 0) {
+      notesLines.push(`✨ Must-haves: ${propertyPreferences.mustHaveFeatures.join(', ')}`);
+    }
+    notesLines.push(`\nLast message: "${lastMessage.slice(0, 200)}"`);
+    const notes = notesLines.join('\n');
+
     if (existingLead) {
       // Update existing lead
       const updatedLead = await prisma.leads.update({
         where: { id: existingLead.id },
         data: {
-          name: contactInfo?.name || existingLead.name,
+          // Update names (keep existing if not provided)
+          first_name: firstName || existingLead.first_name,
+          last_name: lastName || existingLead.last_name,
+          name: fullName || existingLead.name,
+
+          // Update contact info (keep existing if not provided)
           email: contactInfo?.email || existingLead.email,
           phone: contactInfo?.phone || existingLead.phone,
+
+          // Update property preferences
           budget: propertyPreferences?.maxPrice ? propertyPreferences.maxPrice.toString() : existingLead.budget,
           timeline: propertyPreferences?.timeline || existingLead.timeline,
+
+          // Update scoring
           score: score,
           score_value: scoreValue,
           status: status as any,
-          notes: `Last message: "${lastMessage.slice(0, 200)}"`,
+
+          // Update notes and metadata
+          notes,
           custom_fields: customFields as any,
           last_contact_at: new Date(),
           updated_at: new Date(),
         },
       });
 
-      console.log(`✅ Updated lead ${updatedLead.id} (score: ${score}, status: ${status})`);
+      console.log(`✅ Updated lead ${updatedLead.id} (${firstName || 'Unknown'} ${lastName || ''}, score: ${score}, status: ${status})`);
 
       return { leadId: updatedLead.id, isNew: false };
     } else {
@@ -168,23 +209,35 @@ export async function syncLeadToCRM(params: {
       const newLead = await prisma.leads.create({
         data: {
           organization_id: organizationId,
-          name: contactInfo?.name || 'Chatbot Lead',
+
+          // Names
+          first_name: firstName,
+          last_name: lastName,
+          name: fullName,
+
+          // Contact info
           email: contactInfo?.email || undefined,
           phone: contactInfo?.phone || undefined,
+
+          // Lead metadata
           source: 'CHATBOT',
           status: status as any,
           score: score,
           score_value: scoreValue,
+
+          // Property preferences
           budget: propertyPreferences?.maxPrice ? propertyPreferences.maxPrice.toString() : undefined,
           timeline: propertyPreferences?.timeline,
-          notes: `First message: "${lastMessage.slice(0, 200)}"`,
+
+          // Notes and tags
+          notes,
           tags: ['chatbot', 'real-estate'],
           custom_fields: customFields as any,
           last_contact_at: new Date(),
         },
       });
 
-      console.log(`✅ Created new lead ${newLead.id} (score: ${score}, status: ${status})`);
+      console.log(`✅ Created new lead ${newLead.id} (${firstName || 'Unknown'} ${lastName || ''}, score: ${score}, status: ${status})`);
 
       return { leadId: newLead.id, isNew: true };
     }

@@ -30,7 +30,9 @@ export type PropertyPreferences = z.infer<typeof PropertyPreferencesSchema>;
  * Contact information that can be extracted
  */
 export const ContactInfoSchema = z.object({
-  name: z.string().optional().describe('Full name'),
+  firstName: z.string().optional().describe('First name only'),
+  lastName: z.string().optional().describe('Last name only'),
+  fullName: z.string().optional().describe('Full name if provided together'),
   email: z.string().email().optional().describe('Email address'),
   phone: z.string().optional().describe('Phone number'),
 });
@@ -178,9 +180,17 @@ Do NOT make assumptions beyond what's stated.`,
             parameters: {
               type: 'object',
               properties: {
-                name: {
+                firstName: {
                   type: 'string',
-                  description: 'Full name',
+                  description: 'First name only (e.g., "Billy" from "I\'m Billy Bob")',
+                },
+                lastName: {
+                  type: 'string',
+                  description: 'Last name only (e.g., "Bob" from "I\'m Billy Bob")',
+                },
+                fullName: {
+                  type: 'string',
+                  description: 'Full name if provided as a single unit',
                 },
                 email: {
                   type: 'string',
@@ -368,4 +378,45 @@ export function formatPreferences(preferences: PropertyPreferences): string {
   }
 
   return parts.join(' | ');
+}
+
+/**
+ * Split name into first/last components
+ * Handles various name formats intelligently
+ */
+export function splitName(contactInfo: ContactInfo): {
+  firstName?: string;
+  lastName?: string;
+  fullName: string
+} {
+  // If firstName and lastName provided separately, use them
+  if (contactInfo.firstName || contactInfo.lastName) {
+    return {
+      firstName: contactInfo.firstName,
+      lastName: contactInfo.lastName,
+      fullName: [contactInfo.firstName, contactInfo.lastName].filter(Boolean).join(' ') || 'Unknown',
+    };
+  }
+
+  // If fullName provided, try to split it
+  if (contactInfo.fullName) {
+    const parts = contactInfo.fullName.trim().split(/\s+/);
+    if (parts.length === 1) {
+      // Only one name provided
+      return { firstName: parts[0], lastName: undefined, fullName: parts[0] };
+    } else if (parts.length === 2) {
+      // First and last name
+      return { firstName: parts[0], lastName: parts[1], fullName: contactInfo.fullName };
+    } else {
+      // More than 2 parts: first is firstName, rest is lastName
+      return {
+        firstName: parts[0],
+        lastName: parts.slice(1).join(' '),
+        fullName: contactInfo.fullName,
+      };
+    }
+  }
+
+  // No name provided
+  return { firstName: undefined, lastName: undefined, fullName: 'Unknown' };
 }
