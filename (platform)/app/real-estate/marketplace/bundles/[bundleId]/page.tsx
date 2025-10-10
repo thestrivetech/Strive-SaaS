@@ -66,7 +66,7 @@ export default async function BundleDetailPage({ params }: BundleDetailPageProps
     notFound();
   }
 
-  const isPurchased = purchases.some((p) => p.bundle_id === bundle.id);
+  const isPurchased = purchases.some((p: any) => p.bundle_id === bundle.id);
   const toolsList = bundle.tools || [];
 
   // Calculate savings
@@ -78,7 +78,7 @@ export default async function BundleDetailPage({ params }: BundleDetailPageProps
     : 0;
 
   // Calculate total value (sum of individual tool prices)
-  const totalValue = toolsList.reduce((sum, item) => sum + item.tool.price, 0);
+  const totalValue = toolsList.reduce((sum: number, item: any) => sum + item.tool.price, 0);
 
   return (
     <div className="container mx-auto py-8 px-4 max-w-7xl">
@@ -140,7 +140,7 @@ export default async function BundleDetailPage({ params }: BundleDetailPageProps
             </CardHeader>
             <CardContent>
               <div className="space-y-4">
-                {toolsList.map((bundleTool, index) => (
+                {toolsList.map((bundleTool: any, index: number) => (
                   <div key={bundleTool.tool.id}>
                     {index > 0 && <Separator className="my-4" />}
                     <div className="flex items-start justify-between gap-4">

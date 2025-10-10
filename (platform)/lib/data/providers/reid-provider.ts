@@ -39,7 +39,7 @@ let mockMarketDataStore: MockMarketData[] = [];
 let mockDemographicsStore: MockDemographics[] = [];
 let mockAlertsStore: MockAlert[] = [];
 let mockAIProfilesStore: MockAIProfile[] = [];
-let mockReportsStore: MockREIDReport[] = [];
+const mockReportsStore: MockREIDReport[] = [];
 
 /**
  * Initialize mock data stores
@@ -518,11 +518,11 @@ export const alertsProvider = {
       }
 
       if (filters?.is_read !== undefined) {
-        alerts = alerts.filter((a) => a.is_read === filters.is_read);
+        alerts = alerts.filter((a) => a.is_read === filters.is_read!);
       }
 
       if (filters?.is_dismissed !== undefined) {
-        alerts = alerts.filter((a) => a.is_dismissed === filters.is_dismissed);
+        alerts = alerts.filter((a) => a.is_dismissed === filters.is_dismissed!);
       }
 
       return alerts.sort((a, b) => b.created_at.getTime() - a.created_at.getTime());
@@ -650,7 +650,7 @@ export const aiProfilesProvider = {
       }
 
       if (filters?.min_score !== undefined) {
-        profiles = profiles.filter((p) => p.ai_score >= filters.min_score);
+        profiles = profiles.filter((p) => p.ai_score >= filters.min_score!);
       }
 
       if (filters?.recommendation) {

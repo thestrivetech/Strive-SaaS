@@ -97,7 +97,7 @@ export async function getOrganizationIndustries(
 
   // Load configs for enabled industries
   const industriesWithConfigs = await Promise.all(
-    enabledModules.map(async (module) => {
+    enabledModules.map(async (module: { industry: any; settings: any; enabled_at: Date | null }) => {
       try {
         const config = await getIndustryConfig(module.industry as Industry);
         return {

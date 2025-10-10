@@ -20,15 +20,17 @@ export async function getOverviewKPIs() {
       },
       pipeline: {
         totalValue: 2450000,
-        activeDeals: 18,
-        averageDealSize: 136111,
+        activeDealCount: 18,
+        avgDealValue: 136111,
       },
       revenue: {
         thisMonth: 485000,
         lastMonth: 420000,
         change: 15.5,
+        wonDeals: 5,
       },
       conversionRate: 24.5,
+      activitiesLast30Days: 142,
     };
   }
 
@@ -68,10 +70,13 @@ export async function getAgentPerformance(timeRange: { start: Date; end: Date })
           avatar_url: null,
         },
         metrics: {
+          leads: 45,
+          contacts: 38,
           dealsWon: 12,
+          dealsLost: 5,
           revenue: 485000,
           winRate: 28.5,
-          averageDealSize: 40417,
+          activities: 142,
         },
       },
       {
@@ -82,10 +87,13 @@ export async function getAgentPerformance(timeRange: { start: Date; end: Date })
           avatar_url: null,
         },
         metrics: {
+          leads: 38,
+          contacts: 32,
           dealsWon: 10,
+          dealsLost: 6,
           revenue: 420000,
           winRate: 25.2,
-          averageDealSize: 42000,
+          activities: 128,
         },
       },
       {
@@ -96,10 +104,13 @@ export async function getAgentPerformance(timeRange: { start: Date; end: Date })
           avatar_url: null,
         },
         metrics: {
+          leads: 32,
+          contacts: 28,
           dealsWon: 8,
+          dealsLost: 7,
           revenue: 365000,
           winRate: 22.1,
-          averageDealSize: 45625,
+          activities: 115,
         },
       },
       {
@@ -110,10 +121,13 @@ export async function getAgentPerformance(timeRange: { start: Date; end: Date })
           avatar_url: null,
         },
         metrics: {
+          leads: 28,
+          contacts: 24,
           dealsWon: 7,
+          dealsLost: 8,
           revenue: 315000,
           winRate: 19.8,
-          averageDealSize: 45000,
+          activities: 98,
         },
       },
     ];

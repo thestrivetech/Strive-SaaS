@@ -8,13 +8,13 @@
  */
 
 import sharp from 'sharp';
-// @ts-ignore - No type definitions available
+// @ts-expect-error - No type definitions available
 import imagemin from 'imagemin';
-// @ts-ignore - No type definitions available
+// @ts-expect-error - No type definitions available
 import imageminAvif from 'imagemin-avif';
-// @ts-ignore - No type definitions available
+// @ts-expect-error - No type definitions available
 import imageminWebP from 'imagemin-webp';
-// @ts-ignore - No type definitions available
+// @ts-expect-error - No type definitions available
 import imageminMozjpeg from 'imagemin-mozjpeg';
 import fs from 'fs/promises';
 import path from 'path';

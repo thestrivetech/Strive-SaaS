@@ -16,7 +16,7 @@ export const getRecentActivities = dataConfig.useMocks
 
 export const getActivitiesByEntity = dataConfig.useMocks
   ? async () => []
-  : async (entityType: string, entityId: string, limit?: number) => (await import('./queries')).getActivitiesByEntity(entityType, entityId, limit);
+  : async (entityType: string, entityId: string) => (await import('./queries')).getActivitiesByEntity(entityType as any, entityId);
 
 export type { GetRecentActivitiesOptions } from './queries';
 

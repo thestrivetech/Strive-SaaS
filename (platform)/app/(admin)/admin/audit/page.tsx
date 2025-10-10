@@ -110,7 +110,7 @@ export default function AdminAuditLogsPage() {
     {
       header: 'Resource',
       accessor: 'resource_type',
-      cell: (value: string, row: MockAuditLog) => (
+      cell: (value: string) => (
         <div className="flex items-center gap-2">
           <FileText className="h-4 w-4 text-muted-foreground" />
           <span className="text-sm">{value}</span>

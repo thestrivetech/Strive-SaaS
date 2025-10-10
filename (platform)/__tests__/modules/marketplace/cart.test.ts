@@ -19,6 +19,7 @@ import {
   clearCart,
   checkout,
 } from '@/lib/modules/marketplace/cart/actions';
+import { getCurrentUser } from '@/lib/auth/auth-helpers';
 
 // Mock auth helpers
 jest.mock('@/lib/auth/auth-helpers', () => ({
@@ -54,7 +55,6 @@ describe('Shopping Cart Module', () => {
     it('should create cart and add tool', async () => {
       const { organization, user } = await createTestOrgWithUser();
 
-      const { getCurrentUser } = require('@/lib/auth/auth-helpers');
       getCurrentUser.mockResolvedValue({
         ...user,
         organization_members: [{ organization_id: organization.id }],
@@ -93,7 +93,6 @@ describe('Shopping Cart Module', () => {
     it('should add bundle to existing cart', async () => {
       const { organization, user } = await createTestOrgWithUser();
 
-      const { getCurrentUser } = require('@/lib/auth/auth-helpers');
       getCurrentUser.mockResolvedValue({
         ...user,
         organization_members: [{ organization_id: organization.id }],
@@ -147,7 +146,6 @@ describe('Shopping Cart Module', () => {
     it('should calculate correct total price', async () => {
       const { organization, user } = await createTestOrgWithUser();
 
-      const { getCurrentUser } = require('@/lib/auth/auth-helpers');
       getCurrentUser.mockResolvedValue({
         ...user,
         organization_members: [{ organization_id: organization.id }],
@@ -184,7 +182,6 @@ describe('Shopping Cart Module', () => {
     it('should not add duplicate items', async () => {
       const { organization, user } = await createTestOrgWithUser();
 
-      const { getCurrentUser } = require('@/lib/auth/auth-helpers');
       getCurrentUser.mockResolvedValue({
         ...user,
         organization_members: [{ organization_id: organization.id }],
@@ -211,7 +208,6 @@ describe('Shopping Cart Module', () => {
     it('should validate input schema', async () => {
       const { organization, user } = await createTestOrgWithUser();
 
-      const { getCurrentUser } = require('@/lib/auth/auth-helpers');
       getCurrentUser.mockResolvedValue({
         ...user,
         organization_members: [{ organization_id: organization.id }],
@@ -230,7 +226,6 @@ describe('Shopping Cart Module', () => {
     it('should remove tool from cart', async () => {
       const { organization, user } = await createTestOrgWithUser();
 
-      const { getCurrentUser } = require('@/lib/auth/auth-helpers');
       getCurrentUser.mockResolvedValue({
         ...user,
         organization_members: [{ organization_id: organization.id }],
@@ -281,7 +276,6 @@ describe('Shopping Cart Module', () => {
     it('should remove bundle from cart', async () => {
       const { organization, user } = await createTestOrgWithUser();
 
-      const { getCurrentUser } = require('@/lib/auth/auth-helpers');
       getCurrentUser.mockResolvedValue({
         ...user,
         organization_members: [{ organization_id: organization.id }],
@@ -321,7 +315,6 @@ describe('Shopping Cart Module', () => {
     it('should recalculate total price after removal', async () => {
       const { organization, user } = await createTestOrgWithUser();
 
-      const { getCurrentUser } = require('@/lib/auth/auth-helpers');
       getCurrentUser.mockResolvedValue({
         ...user,
         organization_members: [{ organization_id: organization.id }],
@@ -370,7 +363,6 @@ describe('Shopping Cart Module', () => {
     it('should throw error if cart not found', async () => {
       const { organization, user } = await createTestOrgWithUser();
 
-      const { getCurrentUser } = require('@/lib/auth/auth-helpers');
       getCurrentUser.mockResolvedValue({
         ...user,
         organization_members: [{ organization_id: organization.id }],
@@ -389,7 +381,6 @@ describe('Shopping Cart Module', () => {
     it('should clear all items from cart', async () => {
       const { organization, user } = await createTestOrgWithUser();
 
-      const { getCurrentUser } = require('@/lib/auth/auth-helpers');
       getCurrentUser.mockResolvedValue({
         ...user,
         organization_members: [{ organization_id: organization.id }],
@@ -440,7 +431,6 @@ describe('Shopping Cart Module', () => {
     it('should purchase all items in cart', async () => {
       const { organization, user } = await createTestOrgWithUser();
 
-      const { getCurrentUser } = require('@/lib/auth/auth-helpers');
       getCurrentUser.mockResolvedValue({
         ...user,
         organization_members: [{ organization_id: organization.id }],
@@ -493,7 +483,6 @@ describe('Shopping Cart Module', () => {
     it('should clear cart after checkout', async () => {
       const { organization, user } = await createTestOrgWithUser();
 
-      const { getCurrentUser } = require('@/lib/auth/auth-helpers');
       getCurrentUser.mockResolvedValue({
         ...user,
         organization_members: [{ organization_id: organization.id }],
@@ -534,7 +523,6 @@ describe('Shopping Cart Module', () => {
     it('should throw error if cart is empty', async () => {
       const { organization, user } = await createTestOrgWithUser();
 
-      const { getCurrentUser } = require('@/lib/auth/auth-helpers');
       getCurrentUser.mockResolvedValue({
         ...user,
         organization_members: [{ organization_id: organization.id }],
@@ -556,7 +544,6 @@ describe('Shopping Cart Module', () => {
     it('should purchase bundles and create individual tool purchases', async () => {
       const { organization, user } = await createTestOrgWithUser();
 
-      const { getCurrentUser } = require('@/lib/auth/auth-helpers');
       getCurrentUser.mockResolvedValue({
         ...user,
         organization_members: [{ organization_id: organization.id }],
@@ -630,7 +617,6 @@ describe('Shopping Cart Module', () => {
     it('should not duplicate if tool already purchased separately', async () => {
       const { organization, user } = await createTestOrgWithUser();
 
-      const { getCurrentUser } = require('@/lib/auth/auth-helpers');
       getCurrentUser.mockResolvedValue({
         ...user,
         organization_members: [{ organization_id: organization.id }],
@@ -683,8 +669,6 @@ describe('Shopping Cart Module', () => {
     it('should isolate carts by user', async () => {
       const { organization, user: user1 } = await createTestOrgWithUser();
       const user2 = await createTestOrgWithUser();
-
-      const { getCurrentUser } = require('@/lib/auth/auth-helpers');
 
       const tool = await testPrisma.marketplace_tools.create({
         data: {

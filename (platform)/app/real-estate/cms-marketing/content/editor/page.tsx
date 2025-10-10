@@ -15,7 +15,7 @@ export default async function NewContentPage() {
         <Card>
           <CardContent className="p-6 text-center">
             <p className="text-muted-foreground">
-              You don't have permission to create content.
+              You don&apos;t have permission to create content.
             </p>
             <p className="text-sm text-muted-foreground mt-2">
               Please contact your administrator to request access.

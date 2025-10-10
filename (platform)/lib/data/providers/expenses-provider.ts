@@ -31,7 +31,7 @@ let mockExpensesStore: MockExpense[] = [];
 let mockCategoriesStore: MockExpenseCategory[] = [];
 let mockTaxEstimatesStore: MockTaxEstimate[] = [];
 let mockReceiptsStore: MockReceipt[] = [];
-let mockReportsStore: MockTaxReport[] = [];
+const mockReportsStore: MockTaxReport[] = [];
 
 /**
  * Initialize mock data stores

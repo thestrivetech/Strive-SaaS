@@ -25,6 +25,8 @@ import {
   bulkAssignContacts,
 } from '@/lib/modules/crm/contacts/actions';
 import type { OrgRole } from '@prisma/client';
+import { getCurrentUser } from '@/lib/auth/auth-helpers';
+import { canAccessCRM, canManageContacts, canDeleteContacts } from '@/lib/auth/rbac';
 
 // Mock auth helpers
 jest.mock('@/lib/auth/auth-helpers', () => ({
@@ -67,7 +69,6 @@ describe('Contacts Actions', () => {
     it('should create a contact successfully', async () => {
       const { organization, user } = await createTestOrgWithUser();
 
-      const { getCurrentUser } = require('@/lib/auth/auth-helpers');
       getCurrentUser.mockResolvedValue({
         ...user,
         organization_members: [{ organization_id: organization.id }],
@@ -108,7 +109,6 @@ describe('Contacts Actions', () => {
     it('should validate required fields', async () => {
       const { organization, user } = await createTestOrgWithUser();
 
-      const { getCurrentUser } = require('@/lib/auth/auth-helpers');
       getCurrentUser.mockResolvedValue({
         ...user,
         organization_members: [{ organization_id: organization.id }],
@@ -125,7 +125,6 @@ describe('Contacts Actions', () => {
     it('should validate email format if provided', async () => {
       const { organization, user } = await createTestOrgWithUser();
 
-      const { getCurrentUser } = require('@/lib/auth/auth-helpers');
       getCurrentUser.mockResolvedValue({
         ...user,
         organization_members: [{ organization_id: organization.id }],
@@ -143,13 +142,11 @@ describe('Contacts Actions', () => {
     it('should enforce RBAC permissions', async () => {
       const { organization, user } = await createTestOrgWithUser();
 
-      const { getCurrentUser } = require('@/lib/auth/auth-helpers');
       getCurrentUser.mockResolvedValue({
         ...user,
         organization_members: [{ organization_id: organization.id }],
       });
 
-      const { canAccessCRM, canManageContacts } = require('@/lib/auth/rbac');
       canAccessCRM.mockReturnValue(false);
 
       const contactData = {
@@ -173,7 +170,6 @@ describe('Contacts Actions', () => {
     it('should auto-assign organizationId from current user', async () => {
       const { organization, user } = await createTestOrgWithUser();
 
-      const { getCurrentUser } = require('@/lib/auth/auth-helpers');
       getCurrentUser.mockResolvedValue({
         ...user,
         organization_members: [{ organization_id: organization.id }],
@@ -195,7 +191,6 @@ describe('Contacts Actions', () => {
     it('should update contact successfully', async () => {
       const { organization, user } = await createTestOrgWithUser();
 
-      const { getCurrentUser } = require('@/lib/auth/auth-helpers');
       getCurrentUser.mockResolvedValue({
         ...user,
         organization_members: [{ organization_id: organization.id }],
@@ -228,7 +223,6 @@ describe('Contacts Actions', () => {
     it('should throw error for non-existent contact', async () => {
       const { organization, user } = await createTestOrgWithUser();
 
-      const { getCurrentUser } = require('@/lib/auth/auth-helpers');
       getCurrentUser.mockResolvedValue({
         ...user,
         organization_members: [{ organization_id: organization.id }],
@@ -246,7 +240,6 @@ describe('Contacts Actions', () => {
       const { organization: org1, user: user1 } = await createTestOrgWithUser();
       const { organization: org2 } = await createTestOrgWithUser();
 
-      const { getCurrentUser } = require('@/lib/auth/auth-helpers');
       getCurrentUser.mockResolvedValue({
         ...user1,
         organization_members: [{ organization_id: org1.id }],
@@ -274,7 +267,6 @@ describe('Contacts Actions', () => {
     it('should delete contact successfully', async () => {
       const { organization, user } = await createTestOrgWithUser();
 
-      const { getCurrentUser } = require('@/lib/auth/auth-helpers');
       getCurrentUser.mockResolvedValue({
         ...user,
         organization_members: [{ organization_id: organization.id }],
@@ -301,13 +293,11 @@ describe('Contacts Actions', () => {
     it('should enforce delete permissions', async () => {
       const { organization, user } = await createTestOrgWithUser();
 
-      const { getCurrentUser } = require('@/lib/auth/auth-helpers');
       getCurrentUser.mockResolvedValue({
         ...user,
         organization_members: [{ organization_id: organization.id }],
       });
 
-      const { canDeleteContacts } = require('@/lib/auth/rbac');
       canDeleteContacts.mockReturnValue(false);
 
       const contact = await testPrisma.contacts.create({
@@ -326,7 +316,6 @@ describe('Contacts Actions', () => {
       const { organization: org1, user: user1 } = await createTestOrgWithUser();
       const { organization: org2 } = await createTestOrgWithUser();
 
-      const { getCurrentUser } = require('@/lib/auth/auth-helpers');
       getCurrentUser.mockResolvedValue({
         ...user1,
         organization_members: [{ organization_id: org1.id }],
@@ -351,7 +340,6 @@ describe('Contacts Actions', () => {
     it('should log communication and update last_contact_at', async () => {
       const { organization, user } = await createTestOrgWithUser();
 
-      const { getCurrentUser } = require('@/lib/auth/auth-helpers');
       getCurrentUser.mockResolvedValue({
         ...user,
         organization_members: [{ organization_id: organization.id }],
@@ -392,7 +380,6 @@ describe('Contacts Actions', () => {
     it('should validate communication input', async () => {
       const { organization, user } = await createTestOrgWithUser();
 
-      const { getCurrentUser } = require('@/lib/auth/auth-helpers');
       getCurrentUser.mockResolvedValue({
         ...user,
         organization_members: [{ organization_id: organization.id }],
@@ -419,7 +406,6 @@ describe('Contacts Actions', () => {
     it('should update contact status successfully', async () => {
       const { organization, user } = await createTestOrgWithUser();
 
-      const { getCurrentUser } = require('@/lib/auth/auth-helpers');
       getCurrentUser.mockResolvedValue({
         ...user,
         organization_members: [{ organization_id: organization.id }],
@@ -444,7 +430,6 @@ describe('Contacts Actions', () => {
     it('should create activity when notes provided', async () => {
       const { organization, user } = await createTestOrgWithUser();
 
-      const { getCurrentUser } = require('@/lib/auth/auth-helpers');
       getCurrentUser.mockResolvedValue({
         ...user,
         organization_members: [{ organization_id: organization.id }],
@@ -481,7 +466,6 @@ describe('Contacts Actions', () => {
       const agent = await createTestUser({ role: UserRole.USER });
       await createOrganizationMember(agent.id, organization.id, 'MEMBER' as OrgRole);
 
-      const { getCurrentUser } = require('@/lib/auth/auth-helpers');
       getCurrentUser.mockResolvedValue({
         ...user,
         organization_members: [{ organization_id: organization.id }],
@@ -516,7 +500,6 @@ describe('Contacts Actions', () => {
     it('should validate contact_ids array', async () => {
       const { organization, user } = await createTestOrgWithUser();
 
-      const { getCurrentUser } = require('@/lib/auth/auth-helpers');
       getCurrentUser.mockResolvedValue({
         ...user,
         organization_members: [{ organization_id: organization.id }],
@@ -546,7 +529,6 @@ describe('Contacts Actions', () => {
       const { organization: org1, user: user1 } = await createTestOrgWithUser();
       const { organization: org2 } = await createTestOrgWithUser();
 
-      const { getCurrentUser } = require('@/lib/auth/auth-helpers');
       getCurrentUser.mockResolvedValue({
         ...user1,
         organization_members: [{ organization_id: org1.id }],

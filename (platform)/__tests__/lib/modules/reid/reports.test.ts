@@ -11,6 +11,11 @@ import {
   deleteMarketReport,
 } from '@/lib/modules/reid/reports/actions';
 import { getMarketReports } from '@/lib/modules/reid/reports/queries';
+import { prisma } from '@/lib/database/prisma';
+import { requireAuth } from '@/lib/auth/middleware';
+import { canAccessREID } from '@/lib/auth/rbac';
+import { revalidatePath } from 'next/cache';
+import { generateMarketAnalysis } from '@/lib/modules/reid/reports/generator';
 
 // Mock Prisma
 jest.mock('@/lib/database/prisma', () => ({
@@ -62,7 +67,6 @@ describe('REID Reports Module', () => {
 
   describe('createMarketReport', () => {
     it('creates report with proper organization isolation', async () => {
-      const { prisma } = require('@/lib/database/prisma');
       const mockReport = {
         id: 'report-123',
         title: 'Q1 2024 Market Report',
@@ -106,7 +110,6 @@ describe('REID Reports Module', () => {
     });
 
     it('checks REID access permission', async () => {
-      const { canAccessREID } = require('@/lib/auth/rbac');
       canAccessREID.mockReturnValue(false);
 
       await expect(
@@ -121,9 +124,6 @@ describe('REID Reports Module', () => {
     });
 
     it('generates report data using insights', async () => {
-      const { prisma } = require('@/lib/database/prisma');
-      const { generateMarketAnalysis } = require('@/lib/modules/reid/reports/generator');
-
       prisma.market_reports.create.mockResolvedValue({
         id: 'report-123',
         title: 'Test Report',
@@ -141,9 +141,6 @@ describe('REID Reports Module', () => {
     });
 
     it('revalidates cache paths', async () => {
-      const { prisma } = require('@/lib/database/prisma');
-      const { revalidatePath } = require('next/cache');
-
       prisma.market_reports.create.mockResolvedValue({
         id: 'report-123',
         title: 'Test Report',
@@ -162,7 +159,6 @@ describe('REID Reports Module', () => {
 
   describe('deleteMarketReport', () => {
     it('deletes report successfully', async () => {
-      const { prisma } = require('@/lib/database/prisma');
       const mockReport = {
         id: 'report-123',
         organization_id: 'org-123',
@@ -179,7 +175,6 @@ describe('REID Reports Module', () => {
     });
 
     it('verifies organization ownership before delete', async () => {
-      const { prisma } = require('@/lib/database/prisma');
       prisma.market_reports.findFirst.mockResolvedValue(null);
 
       await expect(deleteMarketReport('report-123')).rejects.toThrow('Report not found');
@@ -195,9 +190,6 @@ describe('REID Reports Module', () => {
     });
 
     it('prevents deleting report from another organization', async () => {
-      const { prisma } = require('@/lib/database/prisma');
-      const { requireAuth } = require('@/lib/auth/middleware');
-
       // User from org-123 trying to delete report from org-456
       requireAuth.mockResolvedValue({
         id: 'user-123',
@@ -213,7 +205,6 @@ describe('REID Reports Module', () => {
 
   describe('getMarketReports', () => {
     it('filters by organization ID', async () => {
-      const { prisma } = require('@/lib/database/prisma');
       const mockReports = [
         { id: 'report-1', title: 'Report 1', organization_id: 'org-123' },
         { id: 'report-2', title: 'Report 2', organization_id: 'org-123' },
@@ -234,7 +225,6 @@ describe('REID Reports Module', () => {
     });
 
     it('filters by report type', async () => {
-      const { prisma } = require('@/lib/database/prisma');
       prisma.market_reports.findMany.mockResolvedValue([]);
 
       await getMarketReports({
@@ -251,7 +241,6 @@ describe('REID Reports Module', () => {
     });
 
     it('filters by date range', async () => {
-      const { prisma } = require('@/lib/database/prisma');
       const startDate = new Date('2024-01-01');
       const endDate = new Date('2024-03-31');
 
@@ -275,7 +264,6 @@ describe('REID Reports Module', () => {
     });
 
     it('checks REID access permission', async () => {
-      const { canAccessREID } = require('@/lib/auth/rbac');
       canAccessREID.mockReturnValue(false);
 
       await expect(getMarketReports()).rejects.toThrow(
@@ -288,9 +276,6 @@ describe('REID Reports Module', () => {
 
   describe('Multi-tenant Isolation', () => {
     it('prevents accessing reports from other organizations', async () => {
-      const { prisma } = require('@/lib/database/prisma');
-      const { requireAuth } = require('@/lib/auth/middleware');
-
       // User from org-123
       requireAuth.mockResolvedValue({
         id: 'user-123',

@@ -115,7 +115,7 @@ async function HeroSectionWrapper({
   user,
   organizationId,
 }: {
-  user: { id: string; name?: string | null; organization_members: Array<{ organization_id: string }> };
+  user: Awaited<ReturnType<typeof getCurrentUser>>;
   organizationId: string;
 }) {
   // Fetch real expense summary from provider
@@ -143,6 +143,11 @@ async function HeroSectionWrapper({
       icon: 'tasks' as const,
     },
   ];
+
+  // TypeScript guard: user is guaranteed non-null due to redirect above
+  if (!user) {
+    return null;
+  }
 
   return (
     <ModuleHeroSection

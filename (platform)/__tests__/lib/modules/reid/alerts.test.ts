@@ -14,6 +14,10 @@ import {
   acknowledgeAlertTrigger,
 } from '@/lib/modules/reid/alerts/actions';
 import { getPropertyAlerts } from '@/lib/modules/reid/alerts/queries';
+import { prisma } from '@/lib/database/prisma';
+import { requireAuth } from '@/lib/auth/middleware';
+import { canAccessREID } from '@/lib/auth/rbac';
+import { revalidatePath } from 'next/cache';
 
 // Mock Prisma
 jest.mock('@/lib/database/prisma', () => ({
@@ -61,7 +65,6 @@ describe('REID Alerts Module', () => {
 
   describe('createPropertyAlert', () => {
     it('creates alert with proper organization isolation', async () => {
-      const { prisma } = require('@/lib/database/prisma');
       const mockAlert = {
         id: 'alert-123',
         name: 'Price Drop Alert',
@@ -108,7 +111,6 @@ describe('REID Alerts Module', () => {
     });
 
     it('checks REID access permission', async () => {
-      const { canAccessREID } = require('@/lib/auth/rbac');
       canAccessREID.mockReturnValue(false);
 
       await expect(
@@ -125,9 +127,6 @@ describe('REID Alerts Module', () => {
     });
 
     it('revalidates cache paths', async () => {
-      const { prisma } = require('@/lib/database/prisma');
-      const { revalidatePath } = require('next/cache');
-
       prisma.property_alerts.create.mockResolvedValue({
         id: 'alert-123',
         name: 'Test Alert',
@@ -148,7 +147,6 @@ describe('REID Alerts Module', () => {
 
   describe('updatePropertyAlert', () => {
     it('updates alert successfully', async () => {
-      const { prisma } = require('@/lib/database/prisma');
       const mockExisting = {
         id: 'alert-123',
         name: 'Original Name',
@@ -173,7 +171,6 @@ describe('REID Alerts Module', () => {
     });
 
     it('verifies organization ownership before update', async () => {
-      const { prisma } = require('@/lib/database/prisma');
       prisma.property_alerts.findFirst.mockResolvedValue(null);
 
       await expect(
@@ -193,9 +190,6 @@ describe('REID Alerts Module', () => {
     });
 
     it('prevents updating alert from another organization', async () => {
-      const { prisma } = require('@/lib/database/prisma');
-      const { requireAuth } = require('@/lib/auth/middleware');
-
       // User from org-123 trying to update alert from org-456
       requireAuth.mockResolvedValue({
         id: 'user-123',
@@ -215,7 +209,6 @@ describe('REID Alerts Module', () => {
 
   describe('deletePropertyAlert', () => {
     it('deletes alert successfully', async () => {
-      const { prisma } = require('@/lib/database/prisma');
       const mockAlert = {
         id: 'alert-123',
         organization_id: 'org-123',
@@ -232,14 +225,12 @@ describe('REID Alerts Module', () => {
     });
 
     it('verifies organization ownership before delete', async () => {
-      const { prisma } = require('@/lib/database/prisma');
       prisma.property_alerts.findFirst.mockResolvedValue(null);
 
       await expect(deletePropertyAlert('alert-123')).rejects.toThrow('Alert not found');
     });
 
     it('prevents deleting alert from another organization', async () => {
-      const { prisma } = require('@/lib/database/prisma');
       prisma.property_alerts.findFirst.mockResolvedValue(null);
 
       await expect(deletePropertyAlert('alert-456')).rejects.toThrow('Alert not found');
@@ -248,7 +239,6 @@ describe('REID Alerts Module', () => {
 
   describe('createAlertTrigger', () => {
     it('creates trigger and updates alert', async () => {
-      const { prisma } = require('@/lib/database/prisma');
       const mockTrigger = {
         id: 'trigger-123',
         alert_id: 'alert-123',
@@ -299,7 +289,6 @@ describe('REID Alerts Module', () => {
 
   describe('acknowledgeAlertTrigger', () => {
     it('acknowledges trigger successfully', async () => {
-      const { prisma } = require('@/lib/database/prisma');
       const mockUpdated = {
         id: 'trigger-123',
         acknowledged: true,
@@ -328,7 +317,6 @@ describe('REID Alerts Module', () => {
 
   describe('getPropertyAlerts', () => {
     it('filters by organization ID', async () => {
-      const { prisma } = require('@/lib/database/prisma');
       const mockAlerts = [
         { id: 'alert-1', name: 'Alert 1', organization_id: 'org-123' },
         { id: 'alert-2', name: 'Alert 2', organization_id: 'org-123' },
@@ -349,7 +337,6 @@ describe('REID Alerts Module', () => {
     });
 
     it('filters by alert type', async () => {
-      const { prisma } = require('@/lib/database/prisma');
       prisma.property_alerts.findMany.mockResolvedValue([]);
 
       await getPropertyAlerts({
@@ -366,7 +353,6 @@ describe('REID Alerts Module', () => {
     });
 
     it('filters by active status', async () => {
-      const { prisma } = require('@/lib/database/prisma');
       prisma.property_alerts.findMany.mockResolvedValue([]);
 
       await getPropertyAlerts({
@@ -383,7 +369,6 @@ describe('REID Alerts Module', () => {
     });
 
     it('checks REID access permission', async () => {
-      const { canAccessREID } = require('@/lib/auth/rbac');
       canAccessREID.mockReturnValue(false);
 
       await expect(getPropertyAlerts()).rejects.toThrow(
@@ -396,9 +381,6 @@ describe('REID Alerts Module', () => {
 
   describe('Multi-tenant Isolation', () => {
     it('prevents accessing alerts from other organizations', async () => {
-      const { prisma } = require('@/lib/database/prisma');
-      const { requireAuth } = require('@/lib/auth/middleware');
-
       // User from org-123
       requireAuth.mockResolvedValue({
         id: 'user-123',

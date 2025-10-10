@@ -4,6 +4,7 @@
  * Generate mock data for CRM module (contacts, leads, customers)
  */
 
+import { Prisma } from '@prisma/client';
 import {
   generateId,
   randomFromArray,
@@ -38,14 +39,20 @@ export type MockLead = {
   name: string;
   email: string;
   phone: string | null;
-  source: string;
-  status: 'NEW_LEAD' | 'CONTACTED' | 'QUALIFIED' | 'LOST';
+  company: string | null;
+  source: 'WEBSITE' | 'REFERRAL' | 'GOOGLE_ADS' | 'SOCIAL_MEDIA' | 'COLD_CALL' | 'EMAIL_CAMPAIGN' | 'EVENT' | 'PARTNER' | 'OTHER';
+  status: 'NEW_LEAD' | 'IN_CONTACT' | 'QUALIFIED' | 'UNQUALIFIED' | 'CONVERTED' | 'LOST';
   score: 'HOT' | 'WARM' | 'COLD';
-  value: number | null;
+  score_value: number;
+  budget: Prisma.Decimal | null;
+  timeline: string | null;
   notes: string | null;
+  tags: string[];
+  custom_fields: Prisma.JsonValue;
   assigned_to_id: string | null;
   created_at: Date;
   updated_at: Date;
+  last_contact_at: Date | null;
   organization_id: string;
 };
 
@@ -68,8 +75,8 @@ export type MockCustomer = {
   organization_id: string;
 };
 
-const LEAD_SOURCES = ['Website', 'Referral', 'Social Media', 'Cold Call', 'Trade Show', 'Partner'];
-const LEAD_STATUSES: MockLead['status'][] = ['NEW_LEAD', 'CONTACTED', 'QUALIFIED', 'LOST'];
+const LEAD_SOURCES: MockLead['source'][] = ['WEBSITE', 'REFERRAL', 'GOOGLE_ADS', 'SOCIAL_MEDIA', 'COLD_CALL', 'EMAIL_CAMPAIGN', 'EVENT', 'PARTNER', 'OTHER'];
+const LEAD_STATUSES: MockLead['status'][] = ['NEW_LEAD', 'IN_CONTACT', 'QUALIFIED', 'UNQUALIFIED', 'CONVERTED', 'LOST'];
 const LEAD_SCORES: MockLead['score'][] = ['HOT', 'WARM', 'COLD'];
 const CONTACT_ROLES = ['CEO', 'CTO', 'Manager', 'Director', 'VP Sales', 'Coordinator'];
 const TAGS = ['VIP', 'Hot Lead', 'Follow Up', 'Dormant', 'High Value', 'Repeat Customer'];
@@ -97,20 +104,28 @@ export function generateMockContact(orgId: string, overrides?: Partial<MockConta
 export function generateMockLead(orgId: string, overrides?: Partial<MockLead>): MockLead {
   const name = randomName();
   const createdAt = randomPastDate(90);
+  const score = randomFromArray(LEAD_SCORES);
+  const scoreValue = score === 'HOT' ? randomInt(80, 100) : score === 'WARM' ? randomInt(50, 79) : randomInt(0, 49);
 
   return {
     id: generateId(),
     name,
     email: randomEmail(name),
     phone: randomBoolean() ? randomPhone() : null,
+    company: randomBoolean() ? randomFromArray(COMPANY_NAMES) : null,
     source: randomFromArray(LEAD_SOURCES),
     status: randomFromArray(LEAD_STATUSES),
-    score: randomFromArray(LEAD_SCORES),
-    value: randomBoolean() ? randomCurrency(5000, 500000) : null,
+    score,
+    score_value: scoreValue,
+    budget: randomBoolean() ? new Prisma.Decimal(randomCurrency(5000, 500000)) : null,
+    timeline: randomBoolean() ? randomFromArray(['1-3 months', '3-6 months', '6-12 months', '12+ months']) : null,
     notes: randomBoolean() ? 'Sample lead notes' : null,
+    tags: Array.from({ length: randomInt(0, 3) }, () => randomFromArray(TAGS)),
+    custom_fields: randomBoolean() ? { industry: 'Real Estate', priority: randomFromArray(['High', 'Medium', 'Low']) } : null,
     assigned_to_id: randomBoolean() ? 'demo-user' : null,
     created_at: createdAt,
     updated_at: createdAt,
+    last_contact_at: randomBoolean() ? randomPastDate(30) : null,
     organization_id: orgId,
     ...overrides,
   };

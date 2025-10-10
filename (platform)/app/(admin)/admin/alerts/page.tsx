@@ -12,8 +12,21 @@ import {
   DialogTitle,
   DialogTrigger,
 } from '@/components/ui/dialog';
-import { Bell, Plus, AlertCircle, Info, AlertTriangle, CheckCircle } from 'lucide-react';
+import { Plus, AlertCircle, Info, AlertTriangle, CheckCircle } from 'lucide-react';
 import { SystemAlertForm } from '@/components/features/admin/system-alert-form';
+
+interface SystemAlert {
+  id: string;
+  title: string;
+  message: string;
+  level: 'INFO' | 'WARNING' | 'ERROR' | 'SUCCESS';
+  category: string;
+  isActive: boolean;
+  isGlobal: boolean;
+  startsAt: string;
+  endsAt?: string;
+  viewCount: number;
+}
 
 const ALERT_ICONS = {
   INFO: Info,
@@ -34,7 +47,7 @@ export default function SystemAlertsPage() {
   const [isCreateOpen, setIsCreateOpen] = useState(false);
 
   // Fetch alerts
-  const { data: alerts, isLoading } = useQuery({
+  const { data: alerts, isLoading } = useQuery<SystemAlert[]>({
     queryKey: ['system-alerts'],
     queryFn: async () => {
       const response = await fetch('/api/v1/admin/alerts');
@@ -79,9 +92,9 @@ export default function SystemAlertsPage() {
         {isLoading ? (
           <p>Loading...</p>
         ) : (
-          alerts?.map((alert: any) => {
-            const Icon = ALERT_ICONS[alert.level as keyof typeof ALERT_ICONS];
-            const iconColor = ALERT_COLORS[alert.level as keyof typeof ALERT_COLORS];
+          alerts?.map((alert) => {
+            const Icon = ALERT_ICONS[alert.level];
+            const iconColor = ALERT_COLORS[alert.level];
 
             return (
               <Card key={alert.id} className="hover-elevate">

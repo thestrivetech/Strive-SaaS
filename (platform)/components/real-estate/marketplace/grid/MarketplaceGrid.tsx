@@ -31,7 +31,7 @@ export async function MarketplaceGrid({ searchParams }: MarketplaceGridProps) {
     getPurchasedTools().catch(() => []), // Ignore errors if not authenticated
   ]);
 
-  const purchasedToolIds = new Set(purchases.map((p) => p.tool_id));
+  const purchasedToolIds = new Set(purchases.map((p: { tool_id: string }) => p.tool_id));
 
   if (tools.length === 0) {
     return (

@@ -16,10 +16,12 @@ export async function POST(request: NextRequest) {
           get(name: string) {
             return request.cookies.get(name)?.value;
           },
-          set(_name: string, _value: string, _options: unknown) {
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          set(_name: string, _value: string, _options: any) {
             // We'll set cookies in the response
           },
-          remove(_name: string, _options: unknown) {
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          remove(_name: string, _options: any) {
             // We'll remove cookies in the response
           },
         },

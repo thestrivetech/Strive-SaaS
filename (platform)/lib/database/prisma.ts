@@ -209,7 +209,6 @@ export async function checkPrismaConnection(): Promise<boolean> {
  * Useful for monitoring and debugging
  */
 export function getConnectionPoolStatus() {
-  // @ts-expect-error - Accessing internal Prisma metrics
   const pool = prisma._engine?.connectionPool;
 
   return {

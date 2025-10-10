@@ -119,9 +119,9 @@ export default async function ExpenseAnalyticsPage() {
 async function HeroSectionWrapper({
   user,
 }: {
-  user: { id: string; name?: string | null; organization_members: Array<{ organization_id: string }> };
+  user: Awaited<ReturnType<typeof getCurrentUser>>;
 }) {
-  const organizationId = user.organization_members[0]?.organization_id || '';
+  const organizationId = user?.organization_members[0]?.organization_id || '';
 
   // Fetch real data from providers
   const summary = await expensesProvider.getSummary(organizationId);
@@ -171,6 +171,11 @@ async function HeroSectionWrapper({
       icon: 'tasks' as const,
     },
   ];
+
+  // TypeScript guard: user is guaranteed non-null due to redirect above
+  if (!user) {
+    return null;
+  }
 
   return (
     <ModuleHeroSection

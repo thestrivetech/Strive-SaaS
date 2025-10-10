@@ -12,6 +12,10 @@ import {
   deleteNeighborhoodInsight,
 } from '@/lib/modules/reid/insights/actions';
 import { getNeighborhoodInsights } from '@/lib/modules/reid/insights/queries';
+import { prisma } from '@/lib/database/prisma';
+import { requireAuth } from '@/lib/auth/middleware';
+import { canAccessREID, canAccessFeature } from '@/lib/auth/rbac';
+import { revalidatePath } from 'next/cache';
 
 // Mock Prisma
 jest.mock('@/lib/database/prisma', () => ({
@@ -55,7 +59,6 @@ describe('REID Insights Module', () => {
 
   describe('createNeighborhoodInsight', () => {
     it('creates insight for current organization only', async () => {
-      const { prisma } = require('@/lib/database/prisma');
       const mockInsight = {
         id: 'insight-123',
         area_code: '94110',
@@ -103,7 +106,6 @@ describe('REID Insights Module', () => {
     });
 
     it('checks REID access permission', async () => {
-      const { canAccessREID } = require('@/lib/auth/rbac');
       canAccessREID.mockReturnValue(false);
 
       await expect(
@@ -118,7 +120,6 @@ describe('REID Insights Module', () => {
     });
 
     it('checks feature tier permission', async () => {
-      const { canAccessFeature } = require('@/lib/auth/rbac');
       canAccessFeature.mockReturnValue(false);
 
       await expect(
@@ -133,9 +134,6 @@ describe('REID Insights Module', () => {
     });
 
     it('revalidates cache paths', async () => {
-      const { prisma } = require('@/lib/database/prisma');
-      const { revalidatePath } = require('next/cache');
-
       prisma.neighborhood_insights.create.mockResolvedValue({
         id: 'insight-123',
         area_code: '94110',
@@ -155,7 +153,6 @@ describe('REID Insights Module', () => {
 
   describe('updateNeighborhoodInsight', () => {
     it('updates insight successfully', async () => {
-      const { prisma } = require('@/lib/database/prisma');
       const mockExisting = {
         id: 'insight-123',
         area_code: '94110',
@@ -188,7 +185,6 @@ describe('REID Insights Module', () => {
     });
 
     it('verifies organization ownership before update', async () => {
-      const { prisma } = require('@/lib/database/prisma');
       prisma.neighborhood_insights.findFirst.mockResolvedValue(null);
 
       await expect(
@@ -208,9 +204,6 @@ describe('REID Insights Module', () => {
     });
 
     it('prevents updating insight from another organization', async () => {
-      const { prisma } = require('@/lib/database/prisma');
-      const { requireAuth } = require('@/lib/auth/middleware');
-
       // User from org-123 trying to update insight from org-456
       requireAuth.mockResolvedValue({
         id: 'user-123',
@@ -230,7 +223,6 @@ describe('REID Insights Module', () => {
 
   describe('deleteNeighborhoodInsight', () => {
     it('deletes insight successfully', async () => {
-      const { prisma } = require('@/lib/database/prisma');
       const mockInsight = {
         id: 'insight-123',
         organization_id: 'org-123',
@@ -247,7 +239,6 @@ describe('REID Insights Module', () => {
     });
 
     it('verifies organization ownership before delete', async () => {
-      const { prisma } = require('@/lib/database/prisma');
       prisma.neighborhood_insights.findFirst.mockResolvedValue(null);
 
       await expect(deleteNeighborhoodInsight('insight-123')).rejects.toThrow(
@@ -265,7 +256,6 @@ describe('REID Insights Module', () => {
     });
 
     it('checks REID access permission', async () => {
-      const { canAccessREID } = require('@/lib/auth/rbac');
       canAccessREID.mockReturnValue(false);
 
       await expect(deleteNeighborhoodInsight('insight-123')).rejects.toThrow(
@@ -278,7 +268,6 @@ describe('REID Insights Module', () => {
 
   describe('getNeighborhoodInsights', () => {
     it('filters by organization ID', async () => {
-      const { prisma } = require('@/lib/database/prisma');
       const mockInsights = [
         { id: 'insight-1', area_code: '94110', organization_id: 'org-123' },
         { id: 'insight-2', area_code: '94103', organization_id: 'org-123' },
@@ -299,7 +288,6 @@ describe('REID Insights Module', () => {
     });
 
     it('applies area codes filter correctly', async () => {
-      const { prisma } = require('@/lib/database/prisma');
       prisma.neighborhood_insights.findMany.mockResolvedValue([]);
 
       await getNeighborhoodInsights({
@@ -316,7 +304,6 @@ describe('REID Insights Module', () => {
     });
 
     it('applies price range filters correctly', async () => {
-      const { prisma } = require('@/lib/database/prisma');
       prisma.neighborhood_insights.findMany.mockResolvedValue([]);
 
       await getNeighborhoodInsights({
@@ -337,7 +324,6 @@ describe('REID Insights Module', () => {
     });
 
     it('applies area type filter correctly', async () => {
-      const { prisma } = require('@/lib/database/prisma');
       prisma.neighborhood_insights.findMany.mockResolvedValue([]);
 
       await getNeighborhoodInsights({
@@ -354,7 +340,6 @@ describe('REID Insights Module', () => {
     });
 
     it('checks REID access permission', async () => {
-      const { canAccessREID } = require('@/lib/auth/rbac');
       canAccessREID.mockReturnValue(false);
 
       await expect(getNeighborhoodInsights()).rejects.toThrow(
@@ -367,9 +352,6 @@ describe('REID Insights Module', () => {
 
   describe('Multi-tenant Isolation', () => {
     it('prevents accessing insights from other organizations', async () => {
-      const { prisma } = require('@/lib/database/prisma');
-      const { requireAuth } = require('@/lib/auth/middleware');
-
       // User from org-123
       requireAuth.mockResolvedValue({
         id: 'user-123',

@@ -5,6 +5,7 @@
 
 import { GET } from '@/app/api/v1/reid/insights/route';
 import { NextRequest } from 'next/server';
+import { getNeighborhoodInsights } from '@/lib/modules/reid/insights';
 
 // Mock the insights queries
 jest.mock('@/lib/modules/reid/insights', () => ({
@@ -33,7 +34,6 @@ describe('REID Insights API', () => {
 
   describe('GET /api/v1/reid/insights', () => {
     it('returns insights for authenticated user', async () => {
-      const { getNeighborhoodInsights } = require('@/lib/modules/reid/insights');
       const mockInsights = [
         { id: 'insight-1', area_code: '94110', area_name: 'Mission District' },
         { id: 'insight-2', area_code: '94103', area_name: 'SOMA' },
@@ -52,7 +52,6 @@ describe('REID Insights API', () => {
     });
 
     it('applies filters from query params', async () => {
-      const { getNeighborhoodInsights } = require('@/lib/modules/reid/insights');
       getNeighborhoodInsights.mockResolvedValue([]);
 
       const request = new NextRequest(
@@ -71,7 +70,6 @@ describe('REID Insights API', () => {
     });
 
     it('applies area type filter from query params', async () => {
-      const { getNeighborhoodInsights } = require('@/lib/modules/reid/insights');
       getNeighborhoodInsights.mockResolvedValue([]);
 
       const request = new NextRequest(
@@ -112,7 +110,6 @@ describe('REID Insights API', () => {
     });
 
     it('returns empty array when no insights found', async () => {
-      const { getNeighborhoodInsights } = require('@/lib/modules/reid/insights');
       getNeighborhoodInsights.mockResolvedValue([]);
 
       const request = new NextRequest('http://localhost:3000/api/v1/reid/insights');
@@ -124,7 +121,6 @@ describe('REID Insights API', () => {
     });
 
     it('handles query errors gracefully', async () => {
-      const { getNeighborhoodInsights } = require('@/lib/modules/reid/insights');
       getNeighborhoodInsights.mockRejectedValue(new Error('Database error'));
 
       const request = new NextRequest('http://localhost:3000/api/v1/reid/insights');
@@ -136,7 +132,6 @@ describe('REID Insights API', () => {
     });
 
     it('checks REID access permission', async () => {
-      const { getNeighborhoodInsights } = require('@/lib/modules/reid/insights');
       getNeighborhoodInsights.mockRejectedValue(
         new Error('Unauthorized: REID access required')
       );
@@ -150,7 +145,6 @@ describe('REID Insights API', () => {
     });
 
     it('parses comma-separated area codes correctly', async () => {
-      const { getNeighborhoodInsights } = require('@/lib/modules/reid/insights');
       getNeighborhoodInsights.mockResolvedValue([]);
 
       const request = new NextRequest(
@@ -167,7 +161,6 @@ describe('REID Insights API', () => {
     });
 
     it('handles single area code without comma', async () => {
-      const { getNeighborhoodInsights } = require('@/lib/modules/reid/insights');
       getNeighborhoodInsights.mockResolvedValue([]);
 
       const request = new NextRequest(
@@ -184,7 +177,6 @@ describe('REID Insights API', () => {
     });
 
     it('filters by organization ID automatically', async () => {
-      const { getNeighborhoodInsights } = require('@/lib/modules/reid/insights');
       const mockInsights = [
         { id: 'insight-1', organization_id: 'org-123' },
       ];

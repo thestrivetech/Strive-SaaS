@@ -10,11 +10,13 @@ import { redirect } from 'next/navigation';
 export default async function OrganizationPage() {
   const user = await getCurrentUser();
 
-  if (!user || !user.organization_id) {
+  const organizationId = user?.organization_members[0]?.organization_id;
+
+  if (!user || !organizationId) {
     redirect('/settings');
   }
 
-  const organization = await getOrganization(user.organization_id);
+  const organization = await getOrganization(organizationId);
 
   if (!organization) {
     return (

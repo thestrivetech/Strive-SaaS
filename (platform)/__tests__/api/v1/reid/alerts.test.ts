@@ -5,6 +5,7 @@
 
 import { GET, POST } from '@/app/api/v1/reid/alerts/route';
 import { NextRequest } from 'next/server';
+import { getPropertyAlerts, createPropertyAlert } from '@/lib/modules/reid/alerts';
 
 // Mock the alerts module
 jest.mock('@/lib/modules/reid/alerts', () => ({
@@ -34,7 +35,6 @@ describe('REID Alerts API', () => {
 
   describe('GET /api/v1/reid/alerts', () => {
     it('returns alerts for authenticated user', async () => {
-      const { getPropertyAlerts } = require('@/lib/modules/reid/alerts');
       const mockAlerts = [
         { id: 'alert-1', name: 'Price Drop Alert', alert_type: 'PRICE_DROP' },
         { id: 'alert-2', name: 'New Listing Alert', alert_type: 'NEW_LISTING' },
@@ -52,7 +52,6 @@ describe('REID Alerts API', () => {
     });
 
     it('filters alerts by type', async () => {
-      const { getPropertyAlerts } = require('@/lib/modules/reid/alerts');
       getPropertyAlerts.mockResolvedValue([]);
 
       const request = new NextRequest(
@@ -69,7 +68,6 @@ describe('REID Alerts API', () => {
     });
 
     it('filters alerts by active status', async () => {
-      const { getPropertyAlerts } = require('@/lib/modules/reid/alerts');
       getPropertyAlerts.mockResolvedValue([]);
 
       const request = new NextRequest(
@@ -86,7 +84,6 @@ describe('REID Alerts API', () => {
     });
 
     it('handles query errors gracefully', async () => {
-      const { getPropertyAlerts } = require('@/lib/modules/reid/alerts');
       getPropertyAlerts.mockRejectedValue(new Error('Database error'));
 
       const request = new NextRequest('http://localhost:3000/api/v1/reid/alerts');
@@ -98,7 +95,6 @@ describe('REID Alerts API', () => {
     });
 
     it('checks REID access permission', async () => {
-      const { getPropertyAlerts } = require('@/lib/modules/reid/alerts');
       getPropertyAlerts.mockRejectedValue(
         new Error('Unauthorized: REID access required')
       );
@@ -114,7 +110,6 @@ describe('REID Alerts API', () => {
 
   describe('POST /api/v1/reid/alerts', () => {
     it('creates alert successfully', async () => {
-      const { createPropertyAlert } = require('@/lib/modules/reid/alerts');
       const mockAlert = {
         id: 'alert-123',
         name: 'Test Alert',
@@ -167,7 +162,6 @@ describe('REID Alerts API', () => {
     });
 
     it('handles creation errors', async () => {
-      const { createPropertyAlert } = require('@/lib/modules/reid/alerts');
       createPropertyAlert.mockRejectedValue(new Error('Creation failed'));
 
       const requestBody = {
@@ -189,7 +183,6 @@ describe('REID Alerts API', () => {
     });
 
     it('enforces organization isolation on creation', async () => {
-      const { createPropertyAlert } = require('@/lib/modules/reid/alerts');
       const mockAlert = {
         id: 'alert-123',
         organization_id: 'org-123',
@@ -217,7 +210,6 @@ describe('REID Alerts API', () => {
     });
 
     it('checks REID access permission on creation', async () => {
-      const { createPropertyAlert } = require('@/lib/modules/reid/alerts');
       createPropertyAlert.mockRejectedValue(
         new Error('Unauthorized: REID access required')
       );

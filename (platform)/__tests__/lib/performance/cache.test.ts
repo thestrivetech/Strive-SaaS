@@ -6,6 +6,7 @@ import {
   CACHE_CONFIG,
   QUERY_CONFIG,
 } from '@/lib/performance/cache';
+import { queryDefaults } from '@/lib/performance/cache';
 
 describe('Performance - Caching', () => {
   describe('Cache Key Generators', () => {
@@ -156,32 +157,26 @@ describe('Performance - Caching', () => {
 
   describe('Query Defaults', () => {
     it('should have reasonable default staleTime', () => {
-      const { queryDefaults } = require('@/lib/performance/cache');
       expect(queryDefaults.queries.staleTime).toBe(60 * 1000); // 1 minute
     });
 
     it('should have reasonable default gcTime', () => {
-      const { queryDefaults } = require('@/lib/performance/cache');
       expect(queryDefaults.queries.gcTime).toBe(5 * 60 * 1000); // 5 minutes
     });
 
     it('should disable refetchOnWindowFocus by default', () => {
-      const { queryDefaults } = require('@/lib/performance/cache');
       expect(queryDefaults.queries.refetchOnWindowFocus).toBe(false);
     });
 
     it('should enable refetchOnReconnect', () => {
-      const { queryDefaults } = require('@/lib/performance/cache');
       expect(queryDefaults.queries.refetchOnReconnect).toBe(true);
     });
 
     it('should retry failed queries once', () => {
-      const { queryDefaults } = require('@/lib/performance/cache');
       expect(queryDefaults.queries.retry).toBe(1);
     });
 
     it('should not retry failed mutations by default', () => {
-      const { queryDefaults } = require('@/lib/performance/cache');
       expect(queryDefaults.mutations.retry).toBe(0);
     });
   });

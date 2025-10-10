@@ -7,6 +7,7 @@
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { CategoryManager } from '@/components/real-estate/expense-tax/settings/CategoryManager';
+import { toast } from 'sonner';
 
 // Mock child components
 jest.mock('@/components/real-estate/expense-tax/settings/CategoryList', () => ({
@@ -145,7 +146,6 @@ describe('CategoryManager Component', () => {
 
     it('adds new category successfully', async () => {
       const user = userEvent.setup();
-      const { toast } = require('sonner');
 
       render(<CategoryManager organizationId={mockOrgId} />);
 
@@ -237,7 +237,6 @@ describe('CategoryManager Component', () => {
 
     it('updates category successfully', async () => {
       const user = userEvent.setup();
-      const { toast } = require('sonner');
 
       render(<CategoryManager organizationId={mockOrgId} />);
 
@@ -275,7 +274,6 @@ describe('CategoryManager Component', () => {
   describe('Delete Category Flow', () => {
     it('deletes custom category successfully', async () => {
       const user = userEvent.setup();
-      const { toast } = require('sonner');
 
       render(<CategoryManager organizationId={mockOrgId} />);
 
@@ -307,7 +305,6 @@ describe('CategoryManager Component', () => {
   describe('Reorder Categories Flow', () => {
     it('calls reorder handler', async () => {
       const user = userEvent.setup();
-      const { toast } = require('sonner');
 
       render(<CategoryManager organizationId={mockOrgId} />);
 
@@ -401,7 +398,6 @@ describe('CategoryManager Component', () => {
       jest.advanceTimersByTime(500);
 
       await waitFor(() => {
-        const { toast } = require('sonner');
         expect(toast.success).toHaveBeenCalled();
       });
 

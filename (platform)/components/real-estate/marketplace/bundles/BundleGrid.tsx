@@ -13,7 +13,7 @@ export async function BundleGrid({ cartBundleIds = [] }: BundleGridProps) {
     getPurchasedBundles().catch(() => []), // Ignore errors if not authenticated
   ]);
 
-  const purchasedBundleIds = new Set(purchases.map((p) => p.bundle_id));
+  const purchasedBundleIds = new Set(purchases.map((p: { bundle_id: string }) => p.bundle_id));
   const cartBundleIdsSet = new Set(cartBundleIds);
 
   // Sort: Popular first, then by discount percentage

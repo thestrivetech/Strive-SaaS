@@ -1,11 +1,14 @@
 /** @type {import('next').NextConfig} */
+/* eslint-disable @typescript-eslint/no-require-imports */
+const { BundleAnalyzerPlugin } = process.env.ANALYZE === 'true' ? require('webpack-bundle-analyzer') : {};
+ /* eslint-enable @typescript-eslint/no-require-imports */
+
 const nextConfig = {
   // Enable bundle analyzer when ANALYZE=true
   ...(process.env.ANALYZE === 'true' && {
     webpack: (config, { isServer }) => {
       if (!isServer) {
-         
-        const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer');
+
         config.plugins.push(
           new BundleAnalyzerPlugin({
             analyzerMode: 'static',

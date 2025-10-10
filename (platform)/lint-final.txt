@@ -1,0 +1,1443 @@
+
+> platform@0.1.0 lint
+> eslint
+
+
+C:\Users\zochr\Desktop\GitHub\Strive-SaaS\(platform)\__tests__\api\admin\audit-logs.test.ts
+  64:13  warning  'data' is assigned a value but never used  @typescript-eslint/no-unused-vars
+
+C:\Users\zochr\Desktop\GitHub\Strive-SaaS\(platform)\__tests__\api\v1\reid\insights.test.ts
+  106:13  warning  'data' is assigned a value but never used  @typescript-eslint/no-unused-vars
+
+C:\Users\zochr\Desktop\GitHub\Strive-SaaS\(platform)\__tests__\api\webhooks\stripe.test.ts
+  121:13  warning  'data' is assigned a value but never used  @typescript-eslint/no-unused-vars
+  177:13  warning  'data' is assigned a value but never used  @typescript-eslint/no-unused-vars
+  210:13  warning  'data' is assigned a value but never used  @typescript-eslint/no-unused-vars
+
+C:\Users\zochr\Desktop\GitHub\Strive-SaaS\(platform)\__tests__\components\admin\dashboard.test.tsx
+  1:26  warning  'fireEvent' is defined but never used  @typescript-eslint/no-unused-vars
+
+C:\Users\zochr\Desktop\GitHub\Strive-SaaS\(platform)\__tests__\components\onboarding\wizard.test.tsx
+  166:13  warning  'container' is assigned a value but never used  @typescript-eslint/no-unused-vars
+
+C:\Users\zochr\Desktop\GitHub\Strive-SaaS\(platform)\__tests__\components\real-estate\expense-tax\CategoryManager.test.tsx
+    7:26  warning  'fireEvent' is defined but never used           @typescript-eslint/no-unused-vars
+  422:13  warning  'addButton' is assigned a value but never used  @typescript-eslint/no-unused-vars
+
+C:\Users\zochr\Desktop\GitHub\Strive-SaaS\(platform)\__tests__\integration\expense-tax\expense-workflow.test.ts
+  473:13  warning  'requestedExpenseId' is assigned a value but never used  @typescript-eslint/no-unused-vars
+
+C:\Users\zochr\Desktop\GitHub\Strive-SaaS\(platform)\__tests__\lib\industries\registry.test.ts
+   9:3  warning  'getIndustryConfig' is defined but never used    @typescript-eslint/no-unused-vars
+  10:3  warning  'getIndustryInstance' is defined but never used  @typescript-eslint/no-unused-vars
+
+C:\Users\zochr\Desktop\GitHub\Strive-SaaS\(platform)\__tests__\lib\modules\content\actions.test.ts
+   9:60   warning  'createTestUser' is defined but never used            @typescript-eslint/no-unused-vars
+   9:76   warning  'createOrganizationMember' is defined but never used  @typescript-eslint/no-unused-vars
+   9:102  warning  'createTestOrganization' is defined but never used    @typescript-eslint/no-unused-vars
+  11:23   warning  'getCurrentUser' is defined but never used            @typescript-eslint/no-unused-vars
+  12:10   warning  'canAccessContent' is defined but never used          @typescript-eslint/no-unused-vars
+
+C:\Users\zochr\Desktop\GitHub\Strive-SaaS\(platform)\__tests__\lib\modules\content\analytics.test.ts
+  9:38  warning  'UserRole' is defined but never used  @typescript-eslint/no-unused-vars
+
+C:\Users\zochr\Desktop\GitHub\Strive-SaaS\(platform)\__tests__\lib\modules\content\media.test.ts
+   9:29  warning  'SubscriptionTier' is defined but never used  @typescript-eslint/no-unused-vars
+  13:10  warning  'canAccessContent' is defined but never used  @typescript-eslint/no-unused-vars
+
+C:\Users\zochr\Desktop\GitHub\Strive-SaaS\(platform)\__tests__\lib\modules\content\queries.test.ts
+  9:38  warning  'UserRole' is defined but never used  @typescript-eslint/no-unused-vars
+
+C:\Users\zochr\Desktop\GitHub\Strive-SaaS\(platform)\__tests__\modules\appointments\schemas.test.ts
+  3:3  warning  'updateAppointmentSchema' is defined but never used        @typescript-eslint/no-unused-vars
+  4:3  warning  'updateAppointmentStatusSchema' is defined but never used  @typescript-eslint/no-unused-vars
+  7:3  warning  'appointmentStatusSchema' is defined but never used        @typescript-eslint/no-unused-vars
+
+C:\Users\zochr\Desktop\GitHub\Strive-SaaS\(platform)\__tests__\modules\contacts\actions.test.ts
+  538:13  warning  'contact2' is assigned a value but never used  @typescript-eslint/no-unused-vars
+
+C:\Users\zochr\Desktop\GitHub\Strive-SaaS\(platform)\__tests__\modules\contacts\queries.test.ts
+  9:38  warning  'UserRole' is defined but never used  @typescript-eslint/no-unused-vars
+
+C:\Users\zochr\Desktop\GitHub\Strive-SaaS\(platform)\__tests__\modules\content\content.test.ts
+  1:32  warning  'beforeEach' is defined but never used          @typescript-eslint/no-unused-vars
+  1:44  warning  'jest' is defined but never used                @typescript-eslint/no-unused-vars
+  2:10  warning  'generateUniqueSlug' is defined but never used  @typescript-eslint/no-unused-vars
+
+C:\Users\zochr\Desktop\GitHub\Strive-SaaS\(platform)\__tests__\modules\dashboard\activities.test.ts
+  225:13  warning  'activities' is assigned a value but never used  @typescript-eslint/no-unused-vars
+  298:13  warning  'activities' is assigned a value but never used  @typescript-eslint/no-unused-vars
+  330:13  warning  'activities' is assigned a value but never used  @typescript-eslint/no-unused-vars
+
+C:\Users\zochr\Desktop\GitHub\Strive-SaaS\(platform)\__tests__\modules\leads\actions.test.ts
+   15:3   warning  'createTestOrganization' is defined but never used  @typescript-eslint/no-unused-vars
+  506:13  warning  'lead2' is assigned a value but never used          @typescript-eslint/no-unused-vars
+
+C:\Users\zochr\Desktop\GitHub\Strive-SaaS\(platform)\__tests__\modules\leads\queries.test.ts
+    9:55  warning  'OrgRole' is defined but never used                    @typescript-eslint/no-unused-vars
+   15:3   warning  'createTestOrganization' is defined but never used     @typescript-eslint/no-unused-vars
+   16:3   warning  'createOrganizationMember' is defined but never used   @typescript-eslint/no-unused-vars
+  263:29  warning  'user' is assigned a value but never used              @typescript-eslint/no-unused-vars
+  377:29  warning  'user' is assigned a value but never used              @typescript-eslint/no-unused-vars
+  595:1   error    File has too many lines (556). Maximum allowed is 500  max-lines
+
+C:\Users\zochr\Desktop\GitHub\Strive-SaaS\(platform)\__tests__\modules\marketplace\bundles.test.ts
+  598:1  error  File has too many lines (593). Maximum allowed is 500  max-lines
+
+C:\Users\zochr\Desktop\GitHub\Strive-SaaS\(platform)\__tests__\modules\marketplace\cart.test.ts
+  609:1   error    File has too many lines (577). Maximum allowed is 500  max-lines
+  657:13  warning  'result' is assigned a value but never used            @typescript-eslint/no-unused-vars
+
+C:\Users\zochr\Desktop\GitHub\Strive-SaaS\(platform)\__tests__\modules\marketplace\reviews.test.ts
+  510:13  warning  'review2' is assigned a value but never used  @typescript-eslint/no-unused-vars
+
+C:\Users\zochr\Desktop\GitHub\Strive-SaaS\(platform)\__tests__\modules\transactions\queries.test.ts
+  2:10  warning  'TRANSACTION_PERMISSIONS' is defined but never used  @typescript-eslint/no-unused-vars
+
+C:\Users\zochr\Desktop\GitHub\Strive-SaaS\(platform)\__tests__\modules\workflows\actions.test.ts
+  317:19  warning  '_' is assigned a value but never used  @typescript-eslint/no-unused-vars
+
+C:\Users\zochr\Desktop\GitHub\Strive-SaaS\(platform)\__tests__\unit\lib\modules\crm\actions.test.ts
+   34:34  warning  'userId' is defined but never used              @typescript-eslint/no-unused-vars
+  316:13  warning  'customer1' is assigned a value but never used  @typescript-eslint/no-unused-vars
+
+C:\Users\zochr\Desktop\GitHub\Strive-SaaS\(platform)\app\(admin)\admin\feature-flags\page.tsx
+  24:50  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  92:29  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+C:\Users\zochr\Desktop\GitHub\Strive-SaaS\(platform)\app\(admin)\admin\organizations\page.tsx
+  110:49  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+C:\Users\zochr\Desktop\GitHub\Strive-SaaS\(platform)\app\(admin)\admin\page.tsx
+  19:3  warning  'ArrowDownRight' is defined but never used  @typescript-eslint/no-unused-vars
+
+C:\Users\zochr\Desktop\GitHub\Strive-SaaS\(platform)\app\(admin)\admin\settings\page.tsx
+  40:39  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+C:\Users\zochr\Desktop\GitHub\Strive-SaaS\(platform)\app\(admin)\admin\subscriptions\page.tsx
+  17:28  warning  'CreditCard' is defined but never used    @typescript-eslint/no-unused-vars
+  92:38  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+C:\Users\zochr\Desktop\GitHub\Strive-SaaS\(platform)\app\(auth)\login\page.tsx
+  94:32  warning  '_confirmPassword' is assigned a value but never used  @typescript-eslint/no-unused-vars
+
+C:\Users\zochr\Desktop\GitHub\Strive-SaaS\(platform)\app\(auth)\onboarding\page.tsx
+  45:38  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+C:\Users\zochr\Desktop\GitHub\Strive-SaaS\(platform)\app\api\auth\signup\route.ts
+  20:15  warning  '_name' is defined but never used     @typescript-eslint/no-unused-vars
+  20:30  warning  '_value' is defined but never used    @typescript-eslint/no-unused-vars
+  20:46  warning  '_options' is defined but never used  @typescript-eslint/no-unused-vars
+  23:18  warning  '_name' is defined but never used     @typescript-eslint/no-unused-vars
+  23:33  warning  '_options' is defined but never used  @typescript-eslint/no-unused-vars
+
+C:\Users\zochr\Desktop\GitHub\Strive-SaaS\(platform)\app\api\health\route.ts
+  153:12  warning  'error' is defined but never used  @typescript-eslint/no-unused-vars
+
+C:\Users\zochr\Desktop\GitHub\Strive-SaaS\(platform)\app\api\v1\admin\alerts\route.ts
+   9:27  warning  'req' is defined but never used           @typescript-eslint/no-unused-vars
+  18:19  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  33:19  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+C:\Users\zochr\Desktop\GitHub\Strive-SaaS\(platform)\app\api\v1\admin\audit-logs\route.ts
+  36:19  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+C:\Users\zochr\Desktop\GitHub\Strive-SaaS\(platform)\app\api\v1\admin\feature-flags\route.ts
+  10:27  warning  'req' is defined but never used           @typescript-eslint/no-unused-vars
+  19:19  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  34:19  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  49:19  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+C:\Users\zochr\Desktop\GitHub\Strive-SaaS\(platform)\app\api\v1\admin\organizations\[id]\route.ts
+   68:19  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  113:19  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  175:19  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+C:\Users\zochr\Desktop\GitHub\Strive-SaaS\(platform)\app\api\v1\admin\organizations\route.ts
+  23:19  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+C:\Users\zochr\Desktop\GitHub\Strive-SaaS\(platform)\app\api\v1\admin\users\[id]\route.ts
+  65:19  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+C:\Users\zochr\Desktop\GitHub\Strive-SaaS\(platform)\app\api\v1\admin\users\reactivate\route.ts
+  36:19  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+C:\Users\zochr\Desktop\GitHub\Strive-SaaS\(platform)\app\api\v1\admin\users\route.ts
+  24:19  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+C:\Users\zochr\Desktop\GitHub\Strive-SaaS\(platform)\app\api\v1\admin\users\suspend\route.ts
+  38:19  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+C:\Users\zochr\Desktop\GitHub\Strive-SaaS\(platform)\app\api\v1\ai-garage\templates\route.ts
+   76:48  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  127:28  warning  'req' is defined but never used           @typescript-eslint/no-unused-vars
+
+C:\Users\zochr\Desktop\GitHub\Strive-SaaS\(platform)\app\api\v1\dashboard\actions\route.ts
+  12:27  warning  'req' is defined but never used  @typescript-eslint/no-unused-vars
+
+C:\Users\zochr\Desktop\GitHub\Strive-SaaS\(platform)\app\api\v1\dashboard\metrics\calculate\route.ts
+  12:28  warning  'req' is defined but never used  @typescript-eslint/no-unused-vars
+
+C:\Users\zochr\Desktop\GitHub\Strive-SaaS\(platform)\app\api\v1\dashboard\metrics\route.ts
+  14:27  warning  'req' is defined but never used  @typescript-eslint/no-unused-vars
+
+C:\Users\zochr\Desktop\GitHub\Strive-SaaS\(platform)\app\api\v1\dashboard\widgets\route.ts
+  14:27  warning  'req' is defined but never used  @typescript-eslint/no-unused-vars
+
+C:\Users\zochr\Desktop\GitHub\Strive-SaaS\(platform)\app\api\v1\expenses\categories\route.ts
+  51:26  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  56:26  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  62:18  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  73:17  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  73:25  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+C:\Users\zochr\Desktop\GitHub\Strive-SaaS\(platform)\app\api\v1\expenses\reports\route.ts
+  6:27  warning  'req' is defined but never used  @typescript-eslint/no-unused-vars
+
+C:\Users\zochr\Desktop\GitHub\Strive-SaaS\(platform)\app\api\v1\expenses\route.ts
+  26:20  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+C:\Users\zochr\Desktop\GitHub\Strive-SaaS\(platform)\app\api\v1\expenses\summary\route.ts
+  20:27  warning  'request' is defined but never used  @typescript-eslint/no-unused-vars
+
+C:\Users\zochr\Desktop\GitHub\Strive-SaaS\(platform)\app\api\v1\onboarding\payment-intent\route.ts
+  34:19  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+C:\Users\zochr\Desktop\GitHub\Strive-SaaS\(platform)\app\api\v1\onboarding\session\route.ts
+   57:19  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  101:19  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+C:\Users\zochr\Desktop\GitHub\Strive-SaaS\(platform)\app\api\v1\reid\alerts\route.ts
+  4:27  warning  'req' is defined but never used  @typescript-eslint/no-unused-vars
+
+C:\Users\zochr\Desktop\GitHub\Strive-SaaS\(platform)\app\api\v1\reid\alerts\triggers\route.ts
+  4:27  warning  'req' is defined but never used  @typescript-eslint/no-unused-vars
+
+C:\Users\zochr\Desktop\GitHub\Strive-SaaS\(platform)\app\api\webhooks\stripe\route.ts
+   28:19  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+   70:19  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+   97:21  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  121:21  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  151:63  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  154:42  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  155:40  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  176:19  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  210:19  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+C:\Users\zochr\Desktop\GitHub\Strive-SaaS\(platform)\app\real-estate\cms-marketing\analytics\page.tsx
+   15:10  warning  'Card' is defined but never used          @typescript-eslint/no-unused-vars
+   52:52  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+   99:19  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  100:20  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  101:17  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+C:\Users\zochr\Desktop\GitHub\Strive-SaaS\(platform)\app\real-estate\cms-marketing\cms-dashboard\loading.tsx
+  2:16  warning  'CardContent' is defined but never used  @typescript-eslint/no-unused-vars
+
+C:\Users\zochr\Desktop\GitHub\Strive-SaaS\(platform)\app\real-estate\cms-marketing\content\campaigns\new\page.tsx
+   55:33  warning  Unexpected any. Specify a different type       @typescript-eslint/no-explicit-any
+   61:13  warning  'campaign' is assigned a value but never used  @typescript-eslint/no-unused-vars
+  132:72  warning  Unexpected any. Specify a different type       @typescript-eslint/no-explicit-any
+
+C:\Users\zochr\Desktop\GitHub\Strive-SaaS\(platform)\app\real-estate\cms-marketing\content\campaigns\page.tsx
+    6:10  warning  'CampaignStats' is defined but never used  @typescript-eslint/no-unused-vars
+   24:9   warning  'user' is assigned a value but never used  @typescript-eslint/no-unused-vars
+  143:48  warning  Unexpected any. Specify a different type   @typescript-eslint/no-explicit-any
+
+C:\Users\zochr\Desktop\GitHub\Strive-SaaS\(platform)\app\real-estate\cms-marketing\content\page.tsx
+  95:30  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  96:26  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+C:\Users\zochr\Desktop\GitHub\Strive-SaaS\(platform)\app\real-estate\crm\contacts\[id]\page.tsx
+  15:45  warning  'Briefcase' is defined but never used  @typescript-eslint/no-unused-vars
+  15:56  warning  'Calendar' is defined but never used   @typescript-eslint/no-unused-vars
+
+C:\Users\zochr\Desktop\GitHub\Strive-SaaS\(platform)\app\real-estate\crm\contacts\page.tsx
+  48:26  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  49:30  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+C:\Users\zochr\Desktop\GitHub\Strive-SaaS\(platform)\app\real-estate\crm\crm-dashboard\page.tsx
+  101:37  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  153:55  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  211:71  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  223:78  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+C:\Users\zochr\Desktop\GitHub\Strive-SaaS\(platform)\app\real-estate\crm\deals\[id]\page.tsx
+  12:31  warning  'DollarSign' is defined but never used  @typescript-eslint/no-unused-vars
+
+C:\Users\zochr\Desktop\GitHub\Strive-SaaS\(platform)\app\real-estate\crm\leads\[id]\page.tsx
+   78:29  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+   79:68  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+   85:35  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+   89:50  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  129:27  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  132:37  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+C:\Users\zochr\Desktop\GitHub\Strive-SaaS\(platform)\app\real-estate\crm\leads\page.tsx
+   5:20  warning  'getLeadsCount' is defined but never used  @typescript-eslint/no-unused-vars
+  12:10  warning  'Button' is defined but never used         @typescript-eslint/no-unused-vars
+  50:30  warning  Unexpected any. Specify a different type   @typescript-eslint/no-explicit-any
+  51:30  warning  Unexpected any. Specify a different type   @typescript-eslint/no-explicit-any
+  52:28  warning  Unexpected any. Specify a different type   @typescript-eslint/no-explicit-any
+
+C:\Users\zochr\Desktop\GitHub\Strive-SaaS\(platform)\app\real-estate\expense-tax\analytics\page.tsx
+  129:9  warning  'categories' is assigned a value but never used  @typescript-eslint/no-unused-vars
+
+C:\Users\zochr\Desktop\GitHub\Strive-SaaS\(platform)\app\real-estate\expense-tax\reports\recent-reports-section.tsx
+  51:15  warning  'url' is assigned a value but never used  @typescript-eslint/no-unused-vars
+
+C:\Users\zochr\Desktop\GitHub\Strive-SaaS\(platform)\app\real-estate\expense-tax\settings\page.tsx
+  122:9  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+C:\Users\zochr\Desktop\GitHub\Strive-SaaS\(platform)\app\real-estate\marketplace\bundles\[bundleId]\page.tsx
+   69:42  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+   81:59  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  143:45  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+C:\Users\zochr\Desktop\GitHub\Strive-SaaS\(platform)\app\real-estate\marketplace\dashboard\page.tsx
+  243:3  warning  'userId' is defined but never used  @typescript-eslint/no-unused-vars
+
+C:\Users\zochr\Desktop\GitHub\Strive-SaaS\(platform)\app\real-estate\user-dashboard\page.tsx
+   23:3   warning  'DollarSign' is defined but never used      @typescript-eslint/no-unused-vars
+  134:78  warning  Unexpected any. Specify a different type    @typescript-eslint/no-explicit-any
+  147:33  warning  Unexpected any. Specify a different type    @typescript-eslint/no-explicit-any
+  147:75  warning  Unexpected any. Specify a different type    @typescript-eslint/no-explicit-any
+  179:38  warning  'organizationId' is defined but never used  @typescript-eslint/no-unused-vars
+  218:52  warning  Unexpected any. Specify a different type    @typescript-eslint/no-explicit-any
+  220:43  warning  Unexpected any. Specify a different type    @typescript-eslint/no-explicit-any
+  253:38  warning  'organizationId' is defined but never used  @typescript-eslint/no-unused-vars
+  279:40  warning  Unexpected any. Specify a different type    @typescript-eslint/no-explicit-any
+  312:33  warning  'organizationId' is defined but never used  @typescript-eslint/no-unused-vars
+  330:47  warning  Unexpected any. Specify a different type    @typescript-eslint/no-explicit-any
+  422:33  warning  'organizationId' is defined but never used  @typescript-eslint/no-unused-vars
+
+C:\Users\zochr\Desktop\GitHub\Strive-SaaS\(platform)\app\real-estate\workspace\[loopId]\page.tsx
+  31:12  warning  'error' is defined but never used  @typescript-eslint/no-unused-vars
+
+C:\Users\zochr\Desktop\GitHub\Strive-SaaS\(platform)\app\real-estate\workspace\analytics\page.tsx
+  11:10  warning  'getOrganizationCompliance' is defined but never used  @typescript-eslint/no-unused-vars
+  12:10  warning  'getRecentActivity' is defined but never used          @typescript-eslint/no-unused-vars
+
+C:\Users\zochr\Desktop\GitHub\Strive-SaaS\(platform)\app\real-estate\workspace\listings\[id]\page.tsx
+  19:3  warning  'MapPin' is defined but never used      @typescript-eslint/no-unused-vars
+  22:3  warning  'DollarSign' is defined but never used  @typescript-eslint/no-unused-vars
+
+C:\Users\zochr\Desktop\GitHub\Strive-SaaS\(platform)\app\real-estate\workspace\listings\page.tsx
+   54:44  warning  Unexpected any. Specify a different type    @typescript-eslint/no-explicit-any
+   55:30  warning  Unexpected any. Specify a different type    @typescript-eslint/no-explicit-any
+  186:3   warning  'organizationId' is defined but never used  @typescript-eslint/no-unused-vars
+
+C:\Users\zochr\Desktop\GitHub\Strive-SaaS\(platform)\app\real-estate\workspace\sign\[signatureId]\page.tsx
+  18:12  warning  'error' is defined but never used  @typescript-eslint/no-unused-vars
+
+C:\Users\zochr\Desktop\GitHub\Strive-SaaS\(platform)\app\real-estate\workspace\workspace-dashboard\page.tsx
+   26:60  warning  Unexpected any. Specify a different type       @typescript-eslint/no-explicit-any
+   26:72  warning  Unexpected any. Specify a different type       @typescript-eslint/no-explicit-any
+  212:10  warning  'DashboardSkeleton' is defined but never used  @typescript-eslint/no-unused-vars
+
+C:\Users\zochr\Desktop\GitHub\Strive-SaaS\(platform)\app\settings\layout.tsx
+  18:9  warning  'session' is assigned a value but never used  @typescript-eslint/no-unused-vars
+
+C:\Users\zochr\Desktop\GitHub\Strive-SaaS\(platform)\app\settings\team\page.tsx
+  84:37  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+C:\Users\zochr\Desktop\GitHub\Strive-SaaS\(platform)\app\strive\projects-future\components\create-project-dialog.tsx
+  58:51  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+C:\Users\zochr\Desktop\GitHub\Strive-SaaS\(platform)\app\strive\projects-future\components\edit-project-dialog.tsx
+  5:44  warning  'Control' is defined but never used  @typescript-eslint/no-unused-vars
+
+C:\Users\zochr\Desktop\GitHub\Strive-SaaS\(platform)\app\strive\projects-future\components\organization\create-organization-dialog.tsx
+  72:13  warning  'org' is assigned a value but never used  @typescript-eslint/no-unused-vars
+
+C:\Users\zochr\Desktop\GitHub\Strive-SaaS\(platform)\app\strive\projects-future\components\organization\organization-switcher.tsx
+  29:10  warning  'showCreateDialog' is assigned a value but never used  @typescript-eslint/no-unused-vars
+
+C:\Users\zochr\Desktop\GitHub\Strive-SaaS\(platform)\app\strive\projects-future\components\project-filters.tsx
+  26:10  warning  'ProjectStatus' is defined but never used  @typescript-eslint/no-unused-vars
+  26:25  warning  'Priority' is defined but never used       @typescript-eslint/no-unused-vars
+
+C:\Users\zochr\Desktop\GitHub\Strive-SaaS\(platform)\components\.archive\client-portal\sidebar-nav.tsx
+   8:3  warning  'FolderKanban' is defined but never used  @typescript-eslint/no-unused-vars
+  11:3  warning  'Wrench' is defined but never used        @typescript-eslint/no-unused-vars
+  12:3  warning  'Shield' is defined but never used        @typescript-eslint/no-unused-vars
+  16:3  warning  'Megaphone' is defined but never used     @typescript-eslint/no-unused-vars
+
+C:\Users\zochr\Desktop\GitHub\Strive-SaaS\(platform)\components\features\admin\data-table.tsx
+  18:18  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  35:52  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  79:54  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+C:\Users\zochr\Desktop\GitHub\Strive-SaaS\(platform)\components\features\dashboard\widgets\chart-widget.tsx
+  24:9  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+C:\Users\zochr\Desktop\GitHub\Strive-SaaS\(platform)\components\features\onboarding\onboarding-progress.tsx
+  14:3  warning  'totalSteps' is defined but never used  @typescript-eslint/no-unused-vars
+
+C:\Users\zochr\Desktop\GitHub\Strive-SaaS\(platform)\components\features\onboarding\plan-selection-form.tsx
+  72:40  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+C:\Users\zochr\Desktop\GitHub\Strive-SaaS\(platform)\components\layouts\admin-layout.tsx
+  31:45  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+C:\Users\zochr\Desktop\GitHub\Strive-SaaS\(platform)\components\layouts\dashboard-shell.tsx
+  23:12  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+C:\Users\zochr\Desktop\GitHub\Strive-SaaS\(platform)\components\layouts\employee-layout.tsx
+  27:45  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+C:\Users\zochr\Desktop\GitHub\Strive-SaaS\(platform)\components\real-estate\cms-marketing\analytics\export-button.tsx
+  35:27  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+C:\Users\zochr\Desktop\GitHub\Strive-SaaS\(platform)\components\real-estate\content\campaigns\social-post-scheduler.tsx
+  40:9   warning  'form' is assigned a value but never used  @typescript-eslint/no-unused-vars
+  65:33  warning  Unexpected any. Specify a different type   @typescript-eslint/no-explicit-any
+
+C:\Users\zochr\Desktop\GitHub\Strive-SaaS\(platform)\components\real-estate\content\content-editor.tsx
+  20:8   warning  'ContentItemInput' is defined but never used  @typescript-eslint/no-unused-vars
+  28:20  warning  Unexpected any. Specify a different type      @typescript-eslint/no-explicit-any
+  42:24  warning  Unexpected any. Specify a different type      @typescript-eslint/no-explicit-any
+
+C:\Users\zochr\Desktop\GitHub\Strive-SaaS\(platform)\components\real-estate\content\content-list-table.tsx
+  71:45  warning  'organizationId' is defined but never used  @typescript-eslint/no-unused-vars
+
+C:\Users\zochr\Desktop\GitHub\Strive-SaaS\(platform)\components\real-estate\content\dashboard\quick-actions.tsx
+  5:31  warning  'Image' is defined but never used  @typescript-eslint/no-unused-vars
+
+C:\Users\zochr\Desktop\GitHub\Strive-SaaS\(platform)\components\real-estate\content\editor\publish-settings.tsx
+   17:23  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+   54:57  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+   78:55  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  108:61  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  125:59  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+C:\Users\zochr\Desktop\GitHub\Strive-SaaS\(platform)\components\real-estate\content\editor\seo-panel.tsx
+  12:23  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+C:\Users\zochr\Desktop\GitHub\Strive-SaaS\(platform)\components\real-estate\content\media\media-card.tsx
+  44:22  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  45:20  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  46:20  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+C:\Users\zochr\Desktop\GitHub\Strive-SaaS\(platform)\components\real-estate\content\media\media-grid.tsx
+  23:27  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  24:25  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  25:25  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+C:\Users\zochr\Desktop\GitHub\Strive-SaaS\(platform)\components\real-estate\content\media\media-library.tsx
+  32:15  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  63:37  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+C:\Users\zochr\Desktop\GitHub\Strive-SaaS\(platform)\components\real-estate\content\media\media-picker-dialog.tsx
+  35:22  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  83:37  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+C:\Users\zochr\Desktop\GitHub\Strive-SaaS\(platform)\components\real-estate\content\media\media-upload-zone.tsx
+  39:50  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+C:\Users\zochr\Desktop\GitHub\Strive-SaaS\(platform)\components\real-estate\crm\calendar\appointment-card.tsx
+  3:10  warning  'format' is defined but never used    @typescript-eslint/no-unused-vars
+  4:10  warning  'Calendar' is defined but never used  @typescript-eslint/no-unused-vars
+  4:35  warning  'Phone' is defined but never used     @typescript-eslint/no-unused-vars
+
+C:\Users\zochr\Desktop\GitHub\Strive-SaaS\(platform)\components\real-estate\crm\calendar\appointment-form-dialog.tsx
+  48:17  warning  Unexpected any. Specify a different type    @typescript-eslint/no-explicit-any
+  56:3   warning  'organizationId' is defined but never used  @typescript-eslint/no-unused-vars
+
+C:\Users\zochr\Desktop\GitHub\Strive-SaaS\(platform)\components\real-estate\crm\calendar\calendar-month-view.tsx
+  3:76  warning  'isSameDay' is defined but never used  @typescript-eslint/no-unused-vars
+
+C:\Users\zochr\Desktop\GitHub\Strive-SaaS\(platform)\components\real-estate\crm\calendar\calendar-view.tsx
+  72:67  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+C:\Users\zochr\Desktop\GitHub\Strive-SaaS\(platform)\components\real-estate\crm\calendar\task-list.tsx
+  12:28  warning  'userId' is defined but never used  @typescript-eslint/no-unused-vars
+
+C:\Users\zochr\Desktop\GitHub\Strive-SaaS\(platform)\components\real-estate\crm\contacts\contact-actions-menu.tsx
+  108:52  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  113:55  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  117:57  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  121:55  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+C:\Users\zochr\Desktop\GitHub\Strive-SaaS\(platform)\components\real-estate\crm\contacts\contact-form-dialog.tsx
+  60:51  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  94:33  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+C:\Users\zochr\Desktop\GitHub\Strive-SaaS\(platform)\components\real-estate\crm\deals\deal-card.tsx
+  61:23  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  64:54  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  67:23  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  67:47  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  70:54  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+C:\Users\zochr\Desktop\GitHub\Strive-SaaS\(platform)\components\real-estate\crm\deals\deal-form-dialog.tsx
+  58:48  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  84:33  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+C:\Users\zochr\Desktop\GitHub\Strive-SaaS\(platform)\components\real-estate\crm\deals\pipeline-board.tsx
+  17:48  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+C:\Users\zochr\Desktop\GitHub\Strive-SaaS\(platform)\components\real-estate\crm\leads\lead-card.tsx
+  25:10  warning  'showEditDialog' is assigned a value but never used  @typescript-eslint/no-unused-vars
+
+C:\Users\zochr\Desktop\GitHub\Strive-SaaS\(platform)\components\real-estate\crm\leads\lead-form-dialog.tsx
+  33:57  warning  'CreateLeadInput' is defined but never used  @typescript-eslint/no-unused-vars
+  60:48  warning  Unexpected any. Specify a different type     @typescript-eslint/no-explicit-any
+  90:33  warning  Unexpected any. Specify a different type     @typescript-eslint/no-explicit-any
+
+C:\Users\zochr\Desktop\GitHub\Strive-SaaS\(platform)\components\real-estate\expense-tax\forms\AddExpenseModal.tsx
+   72:49  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+   94:36  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  139:55  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+C:\Users\zochr\Desktop\GitHub\Strive-SaaS\(platform)\components\real-estate\expense-tax\report-list.tsx
+   4:24  warning  'CardHeader' is defined but never used  @typescript-eslint/no-unused-vars
+   4:36  warning  'CardTitle' is defined but never used   @typescript-eslint/no-unused-vars
+  35:10  warning  'cn' is defined but never used          @typescript-eslint/no-unused-vars
+
+C:\Users\zochr\Desktop\GitHub\Strive-SaaS\(platform)\components\real-estate\expense-tax\settings\ExpensePreferences.tsx
+  83:31  warning  'data' is defined but never used  @typescript-eslint/no-unused-vars
+
+C:\Users\zochr\Desktop\GitHub\Strive-SaaS\(platform)\components\real-estate\expense-tax\settings\TaxConfiguration.tsx
+  76:31  warning  'data' is defined but never used  @typescript-eslint/no-unused-vars
+
+C:\Users\zochr\Desktop\GitHub\Strive-SaaS\(platform)\components\real-estate\expense-tax\share-report-dialog.tsx
+  18:10  warning  'Badge' is defined but never used  @typescript-eslint/no-unused-vars
+
+C:\Users\zochr\Desktop\GitHub\Strive-SaaS\(platform)\components\real-estate\marketplace\cart\ShoppingCartPanel.tsx
+  131:35  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  145:39  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+C:\Users\zochr\Desktop\GitHub\Strive-SaaS\(platform)\components\real-estate\marketplace\grid\MarketplaceGrid.tsx
+  15:73  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  18:69  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  24:39  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+C:\Users\zochr\Desktop\GitHub\Strive-SaaS\(platform)\components\real-estate\reid\ai-profiles\AIProfilesClient.tsx
+   11:10  warning  'Button' is defined but never used                                                                               @typescript-eslint/no-unused-vars
+   31:6   warning  React Hook useEffect has a missing dependency: 'applyFilters'. Either include it or remove the dependency array  react-hooks/exhaustive-deps
+  135:61  warning  Unexpected any. Specify a different type                                                                         @typescript-eslint/no-explicit-any
+
+C:\Users\zochr\Desktop\GitHub\Strive-SaaS\(platform)\components\real-estate\reid\alerts\AlertTriggersList.tsx
+  30:65  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  48:51  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+C:\Users\zochr\Desktop\GitHub\Strive-SaaS\(platform)\components\real-estate\reid\alerts\AlertsPanel.tsx
+  24:51  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  55:53  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  71:40  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+C:\Users\zochr\Desktop\GitHub\Strive-SaaS\(platform)\components\real-estate\reid\alerts\CreateAlertDialog.tsx
+  137:50  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+C:\Users\zochr\Desktop\GitHub\Strive-SaaS\(platform)\components\real-estate\reid\analytics\DemographicsPanel.tsx
+  20:68  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  23:71  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  26:71  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+C:\Users\zochr\Desktop\GitHub\Strive-SaaS\(platform)\components\real-estate\reid\analytics\ROISimulator.tsx
+  31:6  warning  React Hook useEffect has a missing dependency: 'calculateROI'. Either include it or remove the dependency array  react-hooks/exhaustive-deps
+
+C:\Users\zochr\Desktop\GitHub\Strive-SaaS\(platform)\components\real-estate\reid\charts\TrendsChart.tsx
+    4:97  warning  'Legend' is defined but never used        @typescript-eslint/no-unused-vars
+   24:55  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+   92:59  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  103:62  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+C:\Users\zochr\Desktop\GitHub\Strive-SaaS\(platform)\components\real-estate\reid\reports\ReportsClient.tsx
+  5:20  warning  'REIDCardHeader' is defined but never used  @typescript-eslint/no-unused-vars
+
+C:\Users\zochr\Desktop\GitHub\Strive-SaaS\(platform)\components\real-estate\reid\schools\SchoolsClient.tsx
+   34:6   warning  React Hook useEffect has a missing dependency: 'applyFilters'. Either include it or remove the dependency array  react-hooks/exhaustive-deps
+  187:47  warning  'idx' is defined but never used                                                                                  @typescript-eslint/no-unused-vars
+
+C:\Users\zochr\Desktop\GitHub\Strive-SaaS\(platform)\components\real-estate\workspace\activity-feed.tsx
+  69:26  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+C:\Users\zochr\Desktop\GitHub\Strive-SaaS\(platform)\components\real-estate\workspace\create-signature-dialog.tsx
+  15:41  warning  'loopId' is defined but never used  @typescript-eslint/no-unused-vars
+
+C:\Users\zochr\Desktop\GitHub\Strive-SaaS\(platform)\components\real-estate\workspace\document-list.tsx
+  12:10  warning  'Download' is defined but never used  @typescript-eslint/no-unused-vars
+
+C:\Users\zochr\Desktop\GitHub\Strive-SaaS\(platform)\components\real-estate\workspace\loop-overview.tsx
+  2:10  warning  'Badge' is defined but never used         @typescript-eslint/no-unused-vars
+  8:46  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+C:\Users\zochr\Desktop\GitHub\Strive-SaaS\(platform)\components\real-estate\workspace\party-list.tsx
+  60:6  warning  React Hook useEffect has a missing dependency: 'loadParties'. Either include it or remove the dependency array  react-hooks/exhaustive-deps
+
+C:\Users\zochr\Desktop\GitHub\Strive-SaaS\(platform)\components\real-estate\workspace\sign-document-form.tsx
+  11:15  warning  'X' is defined but never used                   @typescript-eslint/no-unused-vars
+  14:14  warning  Unexpected any. Specify a different type        @typescript-eslint/no-explicit-any
+  23:9   warning  'canvasRef' is assigned a value but never used  @typescript-eslint/no-unused-vars
+
+C:\Users\zochr\Desktop\GitHub\Strive-SaaS\(platform)\components\real-estate\workspace\signature-requests.tsx
+  11:10  warning  'Button' is defined but never used  @typescript-eslint/no-unused-vars
+  12:25  warning  'Plus' is defined but never used    @typescript-eslint/no-unused-vars
+
+C:\Users\zochr\Desktop\GitHub\Strive-SaaS\(platform)\components\real-estate\workspace\task-checklist.tsx
+  47:6  warning  React Hook useEffect has a missing dependency: 'loadTasks'. Either include it or remove the dependency array  react-hooks/exhaustive-deps
+
+C:\Users\zochr\Desktop\GitHub\Strive-SaaS\(platform)\components\real-estate\workspace\task-create-dialog.tsx
+  75:6  warning  React Hook useEffect has a missing dependency: 'loadParties'. Either include it or remove the dependency array  react-hooks/exhaustive-deps
+
+C:\Users\zochr\Desktop\GitHub\Strive-SaaS\(platform)\components\settings\invite-member-dialog.tsx
+  52:38  warning  'organizationId' is defined but never used  @typescript-eslint/no-unused-vars
+
+C:\Users\zochr\Desktop\GitHub\Strive-SaaS\(platform)\components\settings\security-settings-form.tsx
+  24:13  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  25:16  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+C:\Users\zochr\Desktop\GitHub\Strive-SaaS\(platform)\components\shared\dashboard\CommandBar.tsx
+  111:33  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+C:\Users\zochr\Desktop\GitHub\Strive-SaaS\(platform)\components\shared\dashboard\DashboardContent.tsx
+   5:10  warning  'HeroSection' is defined but never used     @typescript-eslint/no-unused-vars
+  31:42  warning  'organizationId' is defined but never used  @typescript-eslint/no-unused-vars
+
+C:\Users\zochr\Desktop\GitHub\Strive-SaaS\(platform)\components\shared\dashboard\DashboardErrorBoundary.tsx
+  16:15  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  34:46  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+C:\Users\zochr\Desktop\GitHub\Strive-SaaS\(platform)\components\shared\dashboard\DashboardGrid.tsx
+  55:10  warning  'isDragging' is assigned a value but never used  @typescript-eslint/no-unused-vars
+
+C:\Users\zochr\Desktop\GitHub\Strive-SaaS\(platform)\components\shared\dashboard\MobileBottomNav.tsx
+  11:9  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+C:\Users\zochr\Desktop\GitHub\Strive-SaaS\(platform)\components\shared\dashboard\Sidebar.tsx
+  46:9  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+C:\Users\zochr\Desktop\GitHub\Strive-SaaS\(platform)\components\shared\dashboard\widgets\AIInsightsWidget.tsx
+   7:10  warning  'Lightbulb' is defined but never used       @typescript-eslint/no-unused-vars
+  45:36  warning  'organizationId' is defined but never used  @typescript-eslint/no-unused-vars
+
+C:\Users\zochr\Desktop\GitHub\Strive-SaaS\(platform)\components\shared\dashboard\widgets\KPIRingsWidget.tsx
+  108:11  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  111:34  warning  'stats' is defined but never used         @typescript-eslint/no-unused-vars
+
+C:\Users\zochr\Desktop\GitHub\Strive-SaaS\(platform)\components\shared\dashboard\widgets\LiveChartsWidget.tsx
+  51:36  warning  'organizationId' is defined but never used  @typescript-eslint/no-unused-vars
+
+C:\Users\zochr\Desktop\GitHub\Strive-SaaS\(platform)\components\shared\dashboard\widgets\SmartSuggestionsWidget.tsx
+    5:68  warning  'Users' is defined but never used           @typescript-eslint/no-unused-vars
+   15:9   warning  Unexpected any. Specify a different type    @typescript-eslint/no-explicit-any
+  108:42  warning  'organizationId' is defined but never used  @typescript-eslint/no-unused-vars
+
+C:\Users\zochr\Desktop\GitHub\Strive-SaaS\(platform)\components\shared\dashboard\widgets\WorldMapWidget.tsx
+  18:34  warning  'organizationId' is defined but never used  @typescript-eslint/no-unused-vars
+
+C:\Users\zochr\Desktop\GitHub\Strive-SaaS\(platform)\components\shared\layouts\platform-layout.tsx
+  26:11  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+C:\Users\zochr\Desktop\GitHub\Strive-SaaS\(platform)\components\shared\navigation\notification-dropdown.tsx
+   3:31  warning  'useCallback' is defined but never used       @typescript-eslint/no-unused-vars
+   8:10  warning  'Separator' is defined but never used         @typescript-eslint/no-unused-vars
+  12:3   warning  'DropdownMenuItem' is defined but never used  @typescript-eslint/no-unused-vars
+  36:3   warning  'organizationId' is defined but never used    @typescript-eslint/no-unused-vars
+
+C:\Users\zochr\Desktop\GitHub\Strive-SaaS\(platform)\components\shared\navigation\sidebar-nav.tsx
+   8:3  warning  'FolderKanban' is defined but never used  @typescript-eslint/no-unused-vars
+  11:3  warning  'Wrench' is defined but never used        @typescript-eslint/no-unused-vars
+  12:3  warning  'Shield' is defined but never used        @typescript-eslint/no-unused-vars
+  16:3  warning  'Megaphone' is defined but never used     @typescript-eslint/no-unused-vars
+
+C:\Users\zochr\Desktop\GitHub\Strive-SaaS\(platform)\components\subscription\tier-gate.tsx
+  45:9  warning  'router' is assigned a value but never used  @typescript-eslint/no-unused-vars
+
+C:\Users\zochr\Desktop\GitHub\Strive-SaaS\(platform)\components\ui\analytics-error-boundary.tsx
+  58:14  warning  'e' is defined but never used  @typescript-eslint/no-unused-vars
+
+C:\Users\zochr\Desktop\GitHub\Strive-SaaS\(platform)\components\ui\bulk-selector.tsx
+  68:9  warning  'handleToggle' is assigned a value but never used  @typescript-eslint/no-unused-vars
+
+C:\Users\zochr\Desktop\GitHub\Strive-SaaS\(platform)\components\ui\calendar.tsx
+  55:51  warning  'disabled' is defined but never used  @typescript-eslint/no-unused-vars
+
+C:\Users\zochr\Desktop\GitHub\Strive-SaaS\(platform)\components\ui\file-upload.tsx
+    4:31  warning  'Loader2' is defined but never used                                                                                                                                                                                                                                                      @typescript-eslint/no-unused-vars
+  113:29  warning  'removed' is assigned a value but never used                                                                                                                                                                                                                                             @typescript-eslint/no-unused-vars
+  206:21  warning  Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` or a custom image loader to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+
+C:\Users\zochr\Desktop\GitHub\Strive-SaaS\(platform)\components\ui\floating-chat.tsx
+    4:16  warning  'CardContent' is defined but never used                                                                                                                                                                                                                                    @typescript-eslint/no-unused-vars
+   19:10  warning  'viewportHeight' is assigned a value but never used                                                                                                                                                                                                                        @typescript-eslint/no-unused-vars
+   49:48  warning  The ref value 'performanceId.current' will likely have changed by the time this effect cleanup function runs. If this ref points to a node rendered by React, copy 'performanceId.current' to a variable inside the effect, and use that variable in the cleanup function  react-hooks/exhaustive-deps
+   51:6   warning  React Hook useEffect has missing dependencies: 'handleAnalytics', 'handleChatbotClose', 'handleChatbotError', 'handleChatbotMinimize', 'handleChatbotReady', and 'preconnectToChatbot'. Either include them or remove the dependency array                                 react-hooks/exhaustive-deps
+  152:49  warning  Unexpected any. Specify a different type                                                                                                                                                                                                                                   @typescript-eslint/no-explicit-any
+  163:49  warning  Unexpected any. Specify a different type                                                                                                                                                                                                                                   @typescript-eslint/no-explicit-any
+  178:46  warning  Unexpected any. Specify a different type                                                                                                                                                                                                                                   @typescript-eslint/no-explicit-any
+  244:9   warning  'renderErrorState' is assigned a value but never used                                                                                                                                                                                                                      @typescript-eslint/no-unused-vars
+  307:9   warning  'renderLoadingState' is assigned a value but never used                                                                                                                                                                                                                    @typescript-eslint/no-unused-vars
+
+C:\Users\zochr\Desktop\GitHub\Strive-SaaS\(platform)\components\ui\hero-section.tsx
+   1:20  warning  'useEffect' is defined but never used            @typescript-eslint/no-unused-vars
+   4:8   warning  'LazyImage' is defined but never used            @typescript-eslint/no-unused-vars
+  16:3   warning  'title' is defined but never used                @typescript-eslint/no-unused-vars
+  23:10  warning  'isHovering' is assigned a value but never used  @typescript-eslint/no-unused-vars
+
+C:\Users\zochr\Desktop\GitHub\Strive-SaaS\(platform)\components\ui\lazy-image.tsx
+  87:7  warning  Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` or a custom image loader to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+
+C:\Users\zochr\Desktop\GitHub\Strive-SaaS\(platform)\components\ui\multi-select.tsx
+  4:10  warning  'Check' is defined but never used  @typescript-eslint/no-unused-vars
+
+C:\Users\zochr\Desktop\GitHub\Strive-SaaS\(platform)\components\ui\optimized-image.tsx
+  169:57  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+C:\Users\zochr\Desktop\GitHub\Strive-SaaS\(platform)\components\ui\select.tsx
+  5:10  warning  'Check' is defined but never used  @typescript-eslint/no-unused-vars
+
+C:\Users\zochr\Desktop\GitHub\Strive-SaaS\(platform)\components\ui\sub-filter-bar.tsx
+   37:27  warning  React Hook useCallback received a function whose dependencies are unknown. Pass an inline function instead  react-hooks/exhaustive-deps
+  163:39  warning  Unexpected any. Specify a different type                                                                    @typescript-eslint/no-explicit-any
+  163:49  warning  Unexpected any. Specify a different type                                                                    @typescript-eslint/no-explicit-any
+
+C:\Users\zochr\Desktop\GitHub\Strive-SaaS\(platform)\coverage\lcov-report\block-navigation.js
+  1:1  warning  Unused eslint-disable directive (no problems were reported)
+
+C:\Users\zochr\Desktop\GitHub\Strive-SaaS\(platform)\generate-directory-map.cjs
+   14:12  error    A `require()` style import is forbidden      @typescript-eslint/no-require-imports
+   15:14  error    A `require()` style import is forbidden      @typescript-eslint/no-require-imports
+  199:18  warning  'err' is defined but never used              @typescript-eslint/no-unused-vars
+  236:47  warning  'isLast' is assigned a value but never used  @typescript-eslint/no-unused-vars
+
+C:\Users\zochr\Desktop\GitHub\Strive-SaaS\(platform)\hooks\use-advanced-chat.ts
+  83:40  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+C:\Users\zochr\Desktop\GitHub\Strive-SaaS\(platform)\hooks\use-seo.ts
+  58:26  warning  'index' is defined but never used              @typescript-eslint/no-unused-vars
+  81:10  warning  'location' is assigned a value but never used  @typescript-eslint/no-unused-vars
+
+C:\Users\zochr\Desktop\GitHub\Strive-SaaS\(platform)\hooks\use-theme.ts
+  64:29  warning  'e' is defined but never used  @typescript-eslint/no-unused-vars
+
+C:\Users\zochr\Desktop\GitHub\Strive-SaaS\(platform)\hooks\use-toast.ts
+  20:7  warning  'actionTypes' is assigned a value but only used as a type  @typescript-eslint/no-unused-vars
+
+C:\Users\zochr\Desktop\GitHub\Strive-SaaS\(platform)\hooks\useCalendlyIntegration.ts
+  137:38  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+C:\Users\zochr\Desktop\GitHub\Strive-SaaS\(platform)\hooks\useDebounce.ts
+  34:58  warning  Unexpected any. Specify a different type                                                                                                                 @typescript-eslint/no-explicit-any
+  34:68  warning  Unexpected any. Specify a different type                                                                                                                 @typescript-eslint/no-explicit-any
+  49:24  warning  React Hook useEffect has a spread element in its dependency array. This means we can't statically verify whether you've passed the correct dependencies  react-hooks/exhaustive-deps
+
+C:\Users\zochr\Desktop\GitHub\Strive-SaaS\(platform)\hooks\usePrefetch.ts
+  12:50  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+C:\Users\zochr\Desktop\GitHub\Strive-SaaS\(platform)\jest.setup.ts
+    6:37  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+    7:37  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  174:29  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  186:28  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+C:\Users\zochr\Desktop\GitHub\Strive-SaaS\(platform)\lib\analytics\analytics-tracker.ts
+   78:58  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  119:39  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  127:54  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  161:16  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  215:20  warning  'os' is assigned a value but never used   @typescript-eslint/no-unused-vars
+  228:35  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+C:\Users\zochr\Desktop\GitHub\Strive-SaaS\(platform)\lib\analytics\web-vitals.ts
+   6:14  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  48:27  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  49:18  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+C:\Users\zochr\Desktop\GitHub\Strive-SaaS\(platform)\lib\auth\auth-helpers.ts
+   27:20  warning  'error' is defined but never used         @typescript-eslint/no-unused-vars
+   36:20  warning  'error' is defined but never used         @typescript-eslint/no-unused-vars
+   72:10  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  104:26  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  120:16  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  121:14  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  196:16  warning  'err' is defined but never used           @typescript-eslint/no-unused-vars
+  241:26  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  257:16  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  258:14  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+C:\Users\zochr\Desktop\GitHub\Strive-SaaS\(platform)\lib\auth\rbac.ts
+  243:32  warning  'role' is defined but never used          @typescript-eslint/no-unused-vars
+  251:33  warning  'role' is defined but never used          @typescript-eslint/no-unused-vars
+  490:41  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  500:41  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  510:41  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  579:36  warning  'user' is defined but never used          @typescript-eslint/no-unused-vars
+
+C:\Users\zochr\Desktop\GitHub\Strive-SaaS\(platform)\lib\browser-detection.ts
+  122:71  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+C:\Users\zochr\Desktop\GitHub\Strive-SaaS\(platform)\lib\chatbot-iframe-communication.ts
+   11:45  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+   17:11  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  137:43  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+C:\Users\zochr\Desktop\GitHub\Strive-SaaS\(platform)\lib\chatbot-performance-monitor.ts
+  10:13  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  25:51  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  89:20  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+C:\Users\zochr\Desktop\GitHub\Strive-SaaS\(platform)\lib\data\admin\mock-settings.ts
+  196:74  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+C:\Users\zochr\Desktop\GitHub\Strive-SaaS\(platform)\lib\data\mocks\ai-hub.ts
+   10:3   warning  'randomName' is defined but never used      @typescript-eslint/no-unused-vars
+   11:3   warning  'randomEmail' is defined but never used     @typescript-eslint/no-unused-vars
+   12:3   warning  'randomCurrency' is defined but never used  @typescript-eslint/no-unused-vars
+   57:18  warning  Unexpected any. Specify a different type    @typescript-eslint/no-explicit-any
+   80:13  warning  Unexpected any. Specify a different type    @typescript-eslint/no-explicit-any
+  111:13  warning  Unexpected any. Specify a different type    @typescript-eslint/no-explicit-any
+  444:24  warning  Unexpected any. Specify a different type    @typescript-eslint/no-explicit-any
+  461:23  warning  Unexpected any. Specify a different type    @typescript-eslint/no-explicit-any
+  567:19  warning  Unexpected any. Specify a different type    @typescript-eslint/no-explicit-any
+
+C:\Users\zochr\Desktop\GitHub\Strive-SaaS\(platform)\lib\data\mocks\content.ts
+  10:3  warning  'randomName' is defined but never used   @typescript-eslint/no-unused-vars
+  11:3  warning  'randomEmail' is defined but never used  @typescript-eslint/no-unused-vars
+
+C:\Users\zochr\Desktop\GitHub\Strive-SaaS\(platform)\lib\data\mocks\crm.ts
+  16:3  warning  'randomFutureDate' is defined but never used  @typescript-eslint/no-unused-vars
+
+C:\Users\zochr\Desktop\GitHub\Strive-SaaS\(platform)\lib\data\mocks\expenses.ts
+   10:3  warning  'randomName' is defined but never used               @typescript-eslint/no-unused-vars
+   11:3  warning  'randomCurrency' is defined but never used           @typescript-eslint/no-unused-vars
+   15:3  warning  'randomDate' is defined but never used               @typescript-eslint/no-unused-vars
+  129:7  warning  'TAX_CATEGORIES' is assigned a value but never used  @typescript-eslint/no-unused-vars
+  345:7  warning  'REPORT_TYPES' is assigned a value but never used    @typescript-eslint/no-unused-vars
+
+C:\Users\zochr\Desktop\GitHub\Strive-SaaS\(platform)\lib\data\mocks\marketplace.ts
+  10:3  warning  'randomName' is defined but never used      @typescript-eslint/no-unused-vars
+  11:3  warning  'randomEmail' is defined but never used     @typescript-eslint/no-unused-vars
+  12:3  warning  'randomCurrency' is defined but never used  @typescript-eslint/no-unused-vars
+
+C:\Users\zochr\Desktop\GitHub\Strive-SaaS\(platform)\lib\data\mocks\reid.ts
+  10:3  warning  'randomName' is defined but never used      @typescript-eslint/no-unused-vars
+  11:3  warning  'randomCurrency' is defined but never used  @typescript-eslint/no-unused-vars
+  16:3  warning  'randomDate' is defined but never used      @typescript-eslint/no-unused-vars
+  17:3  warning  'CITIES' is defined but never used          @typescript-eslint/no-unused-vars
+  18:3  warning  'STATES' is defined but never used          @typescript-eslint/no-unused-vars
+
+C:\Users\zochr\Desktop\GitHub\Strive-SaaS\(platform)\lib\data\mocks\transactions.ts
+  19:3  warning  'randomDate' is defined but never used  @typescript-eslint/no-unused-vars
+  20:3  warning  'CITIES' is defined but never used      @typescript-eslint/no-unused-vars
+  21:3  warning  'STATES' is defined but never used      @typescript-eslint/no-unused-vars
+  22:3  warning  'STREETS' is defined but never used     @typescript-eslint/no-unused-vars
+
+C:\Users\zochr\Desktop\GitHub\Strive-SaaS\(platform)\lib\data\mocks\widgets.ts
+  11:3   warning  'randomBoolean' is defined but never used  @typescript-eslint/no-unused-vars
+  12:3   warning  'randomInt' is defined but never used      @typescript-eslint/no-unused-vars
+  27:11  warning  Unexpected any. Specify a different type   @typescript-eslint/no-explicit-any
+
+C:\Users\zochr\Desktop\GitHub\Strive-SaaS\(platform)\lib\data\providers\ai-hub-provider.ts
+   16:3   warning  'generateMockInsight' is defined but never used  @typescript-eslint/no-unused-vars
+   20:3   warning  'generateMockAIUsage' is defined but never used  @typescript-eslint/no-unused-vars
+  676:46  warning  Unexpected any. Specify a different type         @typescript-eslint/no-explicit-any
+
+C:\Users\zochr\Desktop\GitHub\Strive-SaaS\(platform)\lib\data\providers\analytics-provider.ts
+  61:43  warning  'timeRange' is defined but never used  @typescript-eslint/no-unused-vars
+
+C:\Users\zochr\Desktop\GitHub\Strive-SaaS\(platform)\lib\data\providers\appointments-provider.ts
+  12:63  warning  'limit' is assigned a value but never used  @typescript-eslint/no-unused-vars
+
+C:\Users\zochr\Desktop\GitHub\Strive-SaaS\(platform)\lib\data\providers\leads-provider.ts
+  37:79  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+C:\Users\zochr\Desktop\GitHub\Strive-SaaS\(platform)\lib\data\providers\marketplace-provider.ts
+  10:3  warning  'generateMockTool' is defined but never used    @typescript-eslint/no-unused-vars
+  12:3  warning  'generateMockBundle' is defined but never used  @typescript-eslint/no-unused-vars
+
+C:\Users\zochr\Desktop\GitHub\Strive-SaaS\(platform)\lib\data\providers\reid-provider.ts
+   10:3   warning  'generateMockMarketData' is defined but never used    @typescript-eslint/no-unused-vars
+   13:3   warning  'generateMockDemographics' is defined but never used  @typescript-eslint/no-unused-vars
+   18:3   warning  'generateMockSchool' is defined but never used        @typescript-eslint/no-unused-vars
+  815:46  warning  'radius' is assigned a value but never used           @typescript-eslint/no-unused-vars
+  837:18  warning  'id' is defined but never used                        @typescript-eslint/no-unused-vars
+
+C:\Users\zochr\Desktop\GitHub\Strive-SaaS\(platform)\lib\database\prisma-extension.ts
+  53:47  warning  'operation' is defined but never used  @typescript-eslint/no-unused-vars
+  53:58  warning  'model' is defined but never used      @typescript-eslint/no-unused-vars
+
+C:\Users\zochr\Desktop\GitHub\Strive-SaaS\(platform)\lib\database\prisma-middleware.ts
+  133:74  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  136:30  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  144:34  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  172:35  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  172:59  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  177:34  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  177:57  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  182:36  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  182:61  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  188:42  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  192:24  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  200:24  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  201:29  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  214:24  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  215:34  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  220:26  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  220:52  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  220:70  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  226:24  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  227:36  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  239:42  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  242:24  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  249:24  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  250:29  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  260:32  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  282:46  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+C:\Users\zochr\Desktop\GitHub\Strive-SaaS\(platform)\lib\database\prisma.ts
+  132:30  warning  'args' is defined but never used          @typescript-eslint/no-unused-vars
+  132:36  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  158:11  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+C:\Users\zochr\Desktop\GitHub\Strive-SaaS\(platform)\lib\database\utils.ts
+  2:10  warning  'setTenantContext' is defined but never used  @typescript-eslint/no-unused-vars
+
+C:\Users\zochr\Desktop\GitHub\Strive-SaaS\(platform)\lib\export\csv.ts
+  47:37  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  47:70  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+C:\Users\zochr\Desktop\GitHub\Strive-SaaS\(platform)\lib\hooks\useChatbotViewport.ts
+  46:11  warning  'debugHeight' is assigned a value but never used      @typescript-eslint/no-unused-vars
+  48:11  warning  'infoCardsHeight' is assigned a value but never used  @typescript-eslint/no-unused-vars
+
+C:\Users\zochr\Desktop\GitHub\Strive-SaaS\(platform)\lib\industries\_core\base-industry.ts
+   36:30  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  142:20  warning  'settings' is defined but never used      @typescript-eslint/no-unused-vars
+  142:45  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  155:40  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+C:\Users\zochr\Desktop\GitHub\Strive-SaaS\(platform)\lib\industries\_core\industry-config.ts
+   54:18  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+   55:31  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  104:35  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  116:28  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+C:\Users\zochr\Desktop\GitHub\Strive-SaaS\(platform)\lib\industries\_core\industry-router.ts
+   83:91  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  106:56  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  118:30  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  134:31  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+C:\Users\zochr\Desktop\GitHub\Strive-SaaS\(platform)\lib\industries\healthcare\index.ts
+  81:40  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+C:\Users\zochr\Desktop\GitHub\Strive-SaaS\(platform)\lib\industries\healthcare\types.ts
+  207:29  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+C:\Users\zochr\Desktop\GitHub\Strive-SaaS\(platform)\lib\industries\real-estate\index.ts
+  83:40  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+C:\Users\zochr\Desktop\GitHub\Strive-SaaS\(platform)\lib\industries\registry.ts
+  105:15  warning  '_' is defined but never used  @typescript-eslint/no-unused-vars
+
+C:\Users\zochr\Desktop\GitHub\Strive-SaaS\(platform)\lib\middleware\rate-limit.ts
+  83:11  warning  'remaining' is assigned a value but never used  @typescript-eslint/no-unused-vars
+
+C:\Users\zochr\Desktop\GitHub\Strive-SaaS\(platform)\lib\modules\activities\index.ts
+  14:22  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  15:22  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+C:\Users\zochr\Desktop\GitHub\Strive-SaaS\(platform)\lib\modules\admin\actions.ts
+   63:19  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+   90:21  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  117:19  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  185:21  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+C:\Users\zochr\Desktop\GitHub\Strive-SaaS\(platform)\lib\modules\admin\audit.ts
+  13:29  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  65:16  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+C:\Users\zochr\Desktop\GitHub\Strive-SaaS\(platform)\lib\modules\admin\queries.ts
+   29:16  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+   71:16  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  108:16  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+C:\Users\zochr\Desktop\GitHub\Strive-SaaS\(platform)\lib\modules\ai-garage\blueprints\actions.ts
+  248:52  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  249:46  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  250:48  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+C:\Users\zochr\Desktop\GitHub\Strive-SaaS\(platform)\lib\modules\ai-garage\blueprints\queries.ts
+    6:15  warning  'tool_blueprints' is defined but never used  @typescript-eslint/no-unused-vars
+  223:31  warning  Unexpected any. Specify a different type     @typescript-eslint/no-explicit-any
+  339:35  warning  Unexpected any. Specify a different type     @typescript-eslint/no-explicit-any
+
+C:\Users\zochr\Desktop\GitHub\Strive-SaaS\(platform)\lib\modules\ai-garage\orders\actions.ts
+  164:25  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+C:\Users\zochr\Desktop\GitHub\Strive-SaaS\(platform)\lib\modules\ai-garage\orders\queries.ts
+  6:15  warning  'custom_agent_orders' is defined but never used  @typescript-eslint/no-unused-vars
+
+C:\Users\zochr\Desktop\GitHub\Strive-SaaS\(platform)\lib\modules\ai-garage\orders\utils.ts
+  8:17  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+C:\Users\zochr\Desktop\GitHub\Strive-SaaS\(platform)\lib\modules\ai-garage\templates\queries.ts
+    6:15  warning  'agent_templates' is defined but never used  @typescript-eslint/no-unused-vars
+  280:31  warning  Unexpected any. Specify a different type     @typescript-eslint/no-explicit-any
+
+C:\Users\zochr\Desktop\GitHub\Strive-SaaS\(platform)\lib\modules\ai-garage\templates\utils.ts
+  227:23  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  228:17  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  229:17  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  230:18  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+C:\Users\zochr\Desktop\GitHub\Strive-SaaS\(platform)\lib\modules\ai-hub\schemas.ts
+  1:10  warning  'z' is defined but never used  @typescript-eslint/no-unused-vars
+
+C:\Users\zochr\Desktop\GitHub\Strive-SaaS\(platform)\lib\modules\ai\actions.ts
+  89:40  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+C:\Users\zochr\Desktop\GitHub\Strive-SaaS\(platform)\lib\modules\analytics\index.ts
+  64:23  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  65:23  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  69:40  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+C:\Users\zochr\Desktop\GitHub\Strive-SaaS\(platform)\lib\modules\appointments\actions.ts
+   65:81  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  156:31  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+C:\Users\zochr\Desktop\GitHub\Strive-SaaS\(platform)\lib\modules\appointments\index.ts
+  24:22  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+C:\Users\zochr\Desktop\GitHub\Strive-SaaS\(platform)\lib\modules\appointments\queries.ts
+  4:15  warning  'appointments' is defined but never used  @typescript-eslint/no-unused-vars
+
+C:\Users\zochr\Desktop\GitHub\Strive-SaaS\(platform)\lib\modules\attachments\actions.ts
+  14:8  warning  'UploadAttachmentInput' is defined but never used  @typescript-eslint/no-unused-vars
+  15:8  warning  'DeleteAttachmentInput' is defined but never used  @typescript-eslint/no-unused-vars
+  16:8  warning  'GetAttachmentsInput' is defined but never used    @typescript-eslint/no-unused-vars
+
+C:\Users\zochr\Desktop\GitHub\Strive-SaaS\(platform)\lib\modules\compliance\alerts.ts
+  34:28  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+C:\Users\zochr\Desktop\GitHub\Strive-SaaS\(platform)\lib\modules\compliance\checker.ts
+    6:32  warning  'ComplianceAlertType' is defined but never used  @typescript-eslint/no-unused-vars
+    6:53  warning  'AlertSeverity' is defined but never used        @typescript-eslint/no-unused-vars
+  113:37  warning  Unexpected any. Specify a different type         @typescript-eslint/no-explicit-any
+  115:49  warning  Unexpected any. Specify a different type         @typescript-eslint/no-explicit-any
+  128:44  warning  Unexpected any. Specify a different type         @typescript-eslint/no-explicit-any
+  147:39  warning  Unexpected any. Specify a different type         @typescript-eslint/no-explicit-any
+  162:44  warning  Unexpected any. Specify a different type         @typescript-eslint/no-explicit-any
+  181:39  warning  Unexpected any. Specify a different type         @typescript-eslint/no-explicit-any
+  185:33  warning  Unexpected any. Specify a different type         @typescript-eslint/no-explicit-any
+  208:34  warning  Unexpected any. Specify a different type         @typescript-eslint/no-explicit-any
+  213:9   warning  Unexpected any. Specify a different type         @typescript-eslint/no-explicit-any
+  218:51  warning  Unexpected any. Specify a different type         @typescript-eslint/no-explicit-any
+  219:49  warning  Unexpected any. Specify a different type         @typescript-eslint/no-explicit-any
+  231:40  warning  Unexpected any. Specify a different type         @typescript-eslint/no-explicit-any
+  246:38  warning  Unexpected any. Specify a different type         @typescript-eslint/no-explicit-any
+  273:40  warning  Unexpected any. Specify a different type         @typescript-eslint/no-explicit-any
+  295:37  warning  Unexpected any. Specify a different type         @typescript-eslint/no-explicit-any
+  299:9   warning  Unexpected any. Specify a different type         @typescript-eslint/no-explicit-any
+  311:42  warning  Unexpected any. Specify a different type         @typescript-eslint/no-explicit-any
+
+C:\Users\zochr\Desktop\GitHub\Strive-SaaS\(platform)\lib\modules\content\analytics\content-analytics.ts
+  223:26  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+C:\Users\zochr\Desktop\GitHub\Strive-SaaS\(platform)\lib\modules\content\analytics\reports.ts
+  122:37  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+C:\Users\zochr\Desktop\GitHub\Strive-SaaS\(platform)\lib\modules\content\campaigns\actions.ts
+   84:31  warning  '_orgId' is assigned a value but never used  @typescript-eslint/no-unused-vars
+  151:54  warning  Unexpected any. Specify a different type     @typescript-eslint/no-explicit-any
+  239:25  warning  Unexpected any. Specify a different type     @typescript-eslint/no-explicit-any
+
+C:\Users\zochr\Desktop\GitHub\Strive-SaaS\(platform)\lib\modules\content\campaigns\queries.ts
+   36:16  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  175:16  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  208:16  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+C:\Users\zochr\Desktop\GitHub\Strive-SaaS\(platform)\lib\modules\content\content\actions.ts
+    3:23  warning  'getCurrentUser' is defined but never used         @typescript-eslint/no-unused-vars
+   17:10  warning  'getUserOrganizationId' is defined but never used  @typescript-eslint/no-unused-vars
+  101:32  warning  '_orgId' is assigned a value but never used        @typescript-eslint/no-unused-vars
+  194:21  warning  Unexpected any. Specify a different type           @typescript-eslint/no-explicit-any
+
+C:\Users\zochr\Desktop\GitHub\Strive-SaaS\(platform)\lib\modules\content\content\queries.ts
+   63:18  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  261:18  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+C:\Users\zochr\Desktop\GitHub\Strive-SaaS\(platform)\lib\modules\content\media\queries.ts
+   29:16  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  180:15  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  351:18  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  406:16  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+C:\Users\zochr\Desktop\GitHub\Strive-SaaS\(platform)\lib\modules\content\media\schemas.ts
+  103:51  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  107:51  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  111:54  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  115:50  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+C:\Users\zochr\Desktop\GitHub\Strive-SaaS\(platform)\lib\modules\crm\contacts\queries.ts
+   59:20  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  121:22  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  392:20  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+C:\Users\zochr\Desktop\GitHub\Strive-SaaS\(platform)\lib\modules\crm\core\actions.ts
+   95:50  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  214:50  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+C:\Users\zochr\Desktop\GitHub\Strive-SaaS\(platform)\lib\modules\crm\deals\pipeline.ts
+  3:21  warning  'DealStatus' is defined but never used  @typescript-eslint/no-unused-vars
+
+C:\Users\zochr\Desktop\GitHub\Strive-SaaS\(platform)\lib\modules\crm\deals\queries.ts
+  6:15  warning  'deals' is defined but never used  @typescript-eslint/no-unused-vars
+
+C:\Users\zochr\Desktop\GitHub\Strive-SaaS\(platform)\lib\modules\crm\deals\queries\pipeline.ts
+  48:31  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+C:\Users\zochr\Desktop\GitHub\Strive-SaaS\(platform)\lib\modules\crm\leads\index.ts
+  17:22  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  18:22  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  22:22  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+C:\Users\zochr\Desktop\GitHub\Strive-SaaS\(platform)\lib\modules\dashboard\activities\queries.ts
+  90:21  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+C:\Users\zochr\Desktop\GitHub\Strive-SaaS\(platform)\lib\modules\dashboard\metrics\calculator.ts
+  110:3  warning  'query' is defined but never used  @typescript-eslint/no-unused-vars
+  111:3  warning  'orgId' is defined but never used  @typescript-eslint/no-unused-vars
+  129:3  warning  'query' is defined but never used  @typescript-eslint/no-unused-vars
+  130:3  warning  'orgId' is defined but never used  @typescript-eslint/no-unused-vars
+  148:3  warning  'query' is defined but never used  @typescript-eslint/no-unused-vars
+  149:3  warning  'orgId' is defined but never used  @typescript-eslint/no-unused-vars
+  167:3  warning  'query' is defined but never used  @typescript-eslint/no-unused-vars
+  168:3  warning  'orgId' is defined but never used  @typescript-eslint/no-unused-vars
+
+C:\Users\zochr\Desktop\GitHub\Strive-SaaS\(platform)\lib\modules\dashboard\metrics\queries.ts
+  49:29  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+C:\Users\zochr\Desktop\GitHub\Strive-SaaS\(platform)\lib\modules\dashboard\widgets\queries.ts
+  48:21  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+C:\Users\zochr\Desktop\GitHub\Strive-SaaS\(platform)\lib\modules\expenses\expenses\actions.ts
+  125:23  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+C:\Users\zochr\Desktop\GitHub\Strive-SaaS\(platform)\lib\modules\expenses\expenses\queries.ts
+   28:18  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+   77:20  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  117:40  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+C:\Users\zochr\Desktop\GitHub\Strive-SaaS\(platform)\lib\modules\expenses\receipts\actions.ts
+  69:19  warning  'uploadData' is assigned a value but never used  @typescript-eslint/no-unused-vars
+
+C:\Users\zochr\Desktop\GitHub\Strive-SaaS\(platform)\lib\modules\expenses\reports\actions.ts
+  21:18  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  58:60  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  60:19  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  61:32  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  65:34  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  79:46  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+C:\Users\zochr\Desktop\GitHub\Strive-SaaS\(platform)\lib\modules\expenses\tax-estimates\queries.ts
+  14:16  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+C:\Users\zochr\Desktop\GitHub\Strive-SaaS\(platform)\lib\modules\marketplace\actions.ts
+  77:24  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+C:\Users\zochr\Desktop\GitHub\Strive-SaaS\(platform)\lib\modules\marketplace\cart\actions.ts
+   43:22  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+   47:22  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+   98:44  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+   99:46  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  143:22  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  147:22  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  185:44  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  186:46  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  226:33  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  292:28  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  305:10  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+C:\Users\zochr\Desktop\GitHub\Strive-SaaS\(platform)\lib\modules\marketplace\cart\queries.ts
+  22:20  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  60:21  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  61:47  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  62:51  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+C:\Users\zochr\Desktop\GitHub\Strive-SaaS\(platform)\lib\modules\marketplace\queries.ts
+   59:23  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  150:20  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  198:25  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  244:24  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  280:25  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  324:22  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  470:31  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  531:24  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+C:\Users\zochr\Desktop\GitHub\Strive-SaaS\(platform)\lib\modules\marketplace\reviews\actions.ts
+   81:24  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  153:35  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  226:35  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+C:\Users\zochr\Desktop\GitHub\Strive-SaaS\(platform)\lib\modules\marketplace\reviews\queries.ts
+   82:25  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  152:36  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+C:\Users\zochr\Desktop\GitHub\Strive-SaaS\(platform)\lib\modules\marketplace\schemas.ts
+  2:34  warning  'BundleType' is defined but never used      @typescript-eslint/no-unused-vars
+  2:46  warning  'PurchaseStatus' is defined but never used  @typescript-eslint/no-unused-vars
+
+C:\Users\zochr\Desktop\GitHub\Strive-SaaS\(platform)\lib\modules\notifications\queries.ts
+  60:20  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+C:\Users\zochr\Desktop\GitHub\Strive-SaaS\(platform)\lib\modules\onboarding\actions.ts
+   51:19  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+   78:19  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  110:19  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  137:19  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  159:15  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  160:23  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  180:19  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  199:19  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  228:19  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+C:\Users\zochr\Desktop\GitHub\Strive-SaaS\(platform)\lib\modules\onboarding\payment.ts
+  108:94  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+C:\Users\zochr\Desktop\GitHub\Strive-SaaS\(platform)\lib\modules\onboarding\session.ts
+  79:24  warning  Unexpected any. Specify a different type      @typescript-eslint/no-explicit-any
+  82:9   warning  'session' is assigned a value but never used  @typescript-eslint/no-unused-vars
+  84:21  warning  Unexpected any. Specify a different type      @typescript-eslint/no-explicit-any
+
+C:\Users\zochr\Desktop\GitHub\Strive-SaaS\(platform)\lib\modules\projects\actions.ts
+  33:15  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+C:\Users\zochr\Desktop\GitHub\Strive-SaaS\(platform)\lib\modules\projects\queries.ts
+   31:18  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  121:18  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+C:\Users\zochr\Desktop\GitHub\Strive-SaaS\(platform)\lib\modules\projects\schemas.ts
+  3:10  warning  'createDateSchema' is defined but never used  @typescript-eslint/no-unused-vars
+
+C:\Users\zochr\Desktop\GitHub\Strive-SaaS\(platform)\lib\modules\reid\ai\actions.ts
+  175:22  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+C:\Users\zochr\Desktop\GitHub\Strive-SaaS\(platform)\lib\modules\reid\reports\actions.ts
+  216:36  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  222:36  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+C:\Users\zochr\Desktop\GitHub\Strive-SaaS\(platform)\lib\modules\reid\reports\generator.ts
+   39:49  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+   86:43  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  123:45  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  162:47  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  204:46  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  244:41  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+C:\Users\zochr\Desktop\GitHub\Strive-SaaS\(platform)\lib\modules\settings\billing\actions.ts
+   67:11  warning  'validated' is assigned a value but never used  @typescript-eslint/no-unused-vars
+  101:11  warning  'validated' is assigned a value but never used  @typescript-eslint/no-unused-vars
+  130:11  warning  'validated' is assigned a value but never used  @typescript-eslint/no-unused-vars
+  154:11  warning  'validated' is assigned a value but never used  @typescript-eslint/no-unused-vars
+
+C:\Users\zochr\Desktop\GitHub\Strive-SaaS\(platform)\lib\modules\settings\billing\queries.ts
+   1:10  warning  'prisma' is defined but never used          @typescript-eslint/no-unused-vars
+   3:39  warning  'organizationId' is defined but never used  @typescript-eslint/no-unused-vars
+  17:41  warning  'organizationId' is defined but never used  @typescript-eslint/no-unused-vars
+  35:35  warning  'organizationId' is defined but never used  @typescript-eslint/no-unused-vars
+
+C:\Users\zochr\Desktop\GitHub\Strive-SaaS\(platform)\lib\modules\settings\profile\queries.ts
+  29:42  warning  '_userId' is defined but never used  @typescript-eslint/no-unused-vars
+  41:50  warning  '_userId' is defined but never used  @typescript-eslint/no-unused-vars
+
+C:\Users\zochr\Desktop\GitHub\Strive-SaaS\(platform)\lib\modules\settings\security\actions.ts
+   70:11  warning  'validated' is assigned a value but never used  @typescript-eslint/no-unused-vars
+  143:11  warning  'validated' is assigned a value but never used  @typescript-eslint/no-unused-vars
+
+C:\Users\zochr\Desktop\GitHub\Strive-SaaS\(platform)\lib\modules\settings\security\queries.ts
+   3:41  warning  'userId' is defined but never used  @typescript-eslint/no-unused-vars
+  36:38  warning  'userId' is defined but never used  @typescript-eslint/no-unused-vars
+  66:36  warning  'userId' is defined but never used  @typescript-eslint/no-unused-vars
+
+C:\Users\zochr\Desktop\GitHub\Strive-SaaS\(platform)\lib\modules\tasks\actions.ts
+  128:21  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+C:\Users\zochr\Desktop\GitHub\Strive-SaaS\(platform)\lib\modules\tasks\queries.ts
+  6:22  warning  'Priority' is defined but never used  @typescript-eslint/no-unused-vars
+
+C:\Users\zochr\Desktop\GitHub\Strive-SaaS\(platform)\lib\modules\tasks\schemas.ts
+  3:10  warning  'createDateSchema' is defined but never used  @typescript-eslint/no-unused-vars
+
+C:\Users\zochr\Desktop\GitHub\Strive-SaaS\(platform)\lib\modules\transactions\analytics\queries.ts
+  70:20  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+C:\Users\zochr\Desktop\GitHub\Strive-SaaS\(platform)\lib\modules\transactions\documents\actions.ts
+  11:15  warning  'UploadDocumentInput' is defined but never used  @typescript-eslint/no-unused-vars
+
+C:\Users\zochr\Desktop\GitHub\Strive-SaaS\(platform)\lib\modules\transactions\documents\queries.ts
+  63:16  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+C:\Users\zochr\Desktop\GitHub\Strive-SaaS\(platform)\lib\modules\transactions\documents\schemas.ts
+  2:10  warning  'ALLOWED_MIME_TYPES' is defined but never used  @typescript-eslint/no-unused-vars
+  2:30  warning  'MAX_FILE_SIZE' is defined but never used       @typescript-eslint/no-unused-vars
+
+C:\Users\zochr\Desktop\GitHub\Strive-SaaS\(platform)\lib\modules\transactions\listings\actions.ts
+  268:25  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+C:\Users\zochr\Desktop\GitHub\Strive-SaaS\(platform)\lib\modules\transactions\listings\queries.ts
+   60:20  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  174:22  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  462:20  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+C:\Users\zochr\Desktop\GitHub\Strive-SaaS\(platform)\lib\modules\transactions\milestones\calculator.ts
+  76:9  warning  'totalSignatureRequests' is assigned a value but never used  @typescript-eslint/no-unused-vars
+
+C:\Users\zochr\Desktop\GitHub\Strive-SaaS\(platform)\lib\modules\transactions\signatures\queries.ts
+  6:10  warning  'QuerySignatureRequestsSchema' is defined but never used  @typescript-eslint/no-unused-vars
+  7:15  warning  'QuerySignatureRequestsInput' is defined but never used   @typescript-eslint/no-unused-vars
+
+C:\Users\zochr\Desktop\GitHub\Strive-SaaS\(platform)\lib\modules\transactions\workflows\actions.ts
+   63:33  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  158:32  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  316:33  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+C:\Users\zochr\Desktop\GitHub\Strive-SaaS\(platform)\lib\modules\transactions\workflows\queries.ts
+  31:16  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+C:\Users\zochr\Desktop\GitHub\Strive-SaaS\(platform)\lib\pdf-generator.ts
+    9:3   warning  'setPDFOpacity' is defined but never used       @typescript-eslint/no-unused-vars
+   10:3   warning  'resetPDFOpacity' is defined but never used     @typescript-eslint/no-unused-vars
+  105:11  warning  'filename' is assigned a value but never used   @typescript-eslint/no-unused-vars
+  400:13  warning  'techWidth' is assigned a value but never used  @typescript-eslint/no-unused-vars
+
+C:\Users\zochr\Desktop\GitHub\Strive-SaaS\(platform)\lib\pdf\pdf-generator-legacy.ts
+  95:11  warning  'filename' is assigned a value but never used  @typescript-eslint/no-unused-vars
+
+C:\Users\zochr\Desktop\GitHub\Strive-SaaS\(platform)\lib\pdf\professional-brochure.tsx
+   18:3   warning  'Smartphone' is defined but never used                                                                                                                                                                                                                                                   @typescript-eslint/no-unused-vars
+  129:13  warning  Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` or a custom image loader to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+
+C:\Users\zochr\Desktop\GitHub\Strive-SaaS\(platform)\lib\performance\dashboard-cache.ts
+  16:10  warning  'organizationId' is defined but never used  @typescript-eslint/no-unused-vars
+  47:10  warning  'organizationId' is defined but never used  @typescript-eslint/no-unused-vars
+  62:10  warning  'organizationId' is defined but never used  @typescript-eslint/no-unused-vars
+  95:34  warning  'metricId' is defined but never used        @typescript-eslint/no-unused-vars
+
+C:\Users\zochr\Desktop\GitHub\Strive-SaaS\(platform)\lib\performance\dynamic-imports.tsx
+   44:44  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+   54:25  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+   74:47  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  178:39  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+C:\Users\zochr\Desktop\GitHub\Strive-SaaS\(platform)\lib\security\audit.ts
+  213:9  warning  'serverActionFiles' is assigned a value but never used  @typescript-eslint/no-unused-vars
+  243:9  warning  'schemaFiles' is assigned a value but never used        @typescript-eslint/no-unused-vars
+
+C:\Users\zochr\Desktop\GitHub\Strive-SaaS\(platform)\lib\services\rag-service.ts
+   62:24  warning  Unexpected any. Specify a different type         @typescript-eslint/no-explicit-any
+   63:12  warning  '_key' is defined but never used                 @typescript-eslint/no-unused-vars
+   64:9   warning  '_key' is defined but never used                 @typescript-eslint/no-unused-vars
+   64:23  warning  '_value' is defined but never used               @typescript-eslint/no-unused-vars
+   64:31  warning  Unexpected any. Specify a different type         @typescript-eslint/no-explicit-any
+   64:36  warning  '_ttl' is defined but never used                 @typescript-eslint/no-unused-vars
+  172:19  warning  Unexpected any. Specify a different type         @typescript-eslint/no-explicit-any
+  315:5   warning  'conversationHistory' is defined but never used  @typescript-eslint/no-unused-vars
+  315:26  warning  Unexpected any. Specify a different type         @typescript-eslint/no-explicit-any
+
+C:\Users\zochr\Desktop\GitHub\Strive-SaaS\(platform)\lib\storage\encryption\index.ts
+  6:7  warning  'AUTH_TAG_LENGTH' is assigned a value but never used  @typescript-eslint/no-unused-vars
+
+C:\Users\zochr\Desktop\GitHub\Strive-SaaS\(platform)\lib\storage\supabase-storage.ts
+  391:11  warning  'path' is assigned a value but never used  @typescript-eslint/no-unused-vars
+
+C:\Users\zochr\Desktop\GitHub\Strive-SaaS\(platform)\lib\storage\validation.ts
+   81:38  warning  Unexpected any. Specify a different type      @typescript-eslint/no-explicit-any
+  149:53  warning  Unexpected any. Specify a different type      @typescript-eslint/no-explicit-any
+  243:3   warning  'buffer' is defined but never used            @typescript-eslint/no-unused-vars
+  244:3   warning  'expectedMimeType' is defined but never used  @typescript-eslint/no-unused-vars
+
+C:\Users\zochr\Desktop\GitHub\Strive-SaaS\(platform)\lib\supabase\server.ts
+  48:20  warning  'error' is defined but never used  @typescript-eslint/no-unused-vars
+  56:20  warning  'error' is defined but never used  @typescript-eslint/no-unused-vars
+
+C:\Users\zochr\Desktop\GitHub\Strive-SaaS\(platform)\lib\tools\registry\helpers.ts
+  311:57  warning  'depIndustry' is defined but never used  @typescript-eslint/no-unused-vars
+
+C:\Users\zochr\Desktop\GitHub\Strive-SaaS\(platform)\lib\tools\shared\crm-basic\index.ts
+  11:30  warning  'DEFAULT_CRM_SETTINGS' is defined but never used  @typescript-eslint/no-unused-vars
+
+C:\Users\zochr\Desktop\GitHub\Strive-SaaS\(platform)\lib\utils\parent-communication.ts
+    8:25  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  277:61  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  294:36  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  337:14  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+C:\Users\zochr\Desktop\GitHub\Strive-SaaS\(platform)\next.config.mjs
+  8:42  error  A `require()` style import is forbidden  @typescript-eslint/no-require-imports
+
+C:\Users\zochr\Desktop\GitHub\Strive-SaaS\(platform)\scripts\generate-embeddings.ts
+  23:19  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  70:19  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+C:\Users\zochr\Desktop\GitHub\Strive-SaaS\(platform)\scripts\image-optimization.ts
+  11:1  error    Use "@ts-expect-error" instead of "@ts-ignore", as "@ts-ignore" will do nothing if the following line is error-free  @typescript-eslint/ban-ts-comment
+  12:8  warning  'imagemin' is defined but never used                                                                                 @typescript-eslint/no-unused-vars
+  13:1  error    Use "@ts-expect-error" instead of "@ts-ignore", as "@ts-ignore" will do nothing if the following line is error-free  @typescript-eslint/ban-ts-comment
+  14:8  warning  'imageminAvif' is defined but never used                                                                             @typescript-eslint/no-unused-vars
+  15:1  error    Use "@ts-expect-error" instead of "@ts-ignore", as "@ts-ignore" will do nothing if the following line is error-free  @typescript-eslint/ban-ts-comment
+  16:8  warning  'imageminWebP' is defined but never used                                                                             @typescript-eslint/no-unused-vars
+  17:1  error    Use "@ts-expect-error" instead of "@ts-ignore", as "@ts-ignore" will do nothing if the following line is error-free  @typescript-eslint/ban-ts-comment
+  18:8  warning  'imageminMozjpeg' is defined but never used                                                                          @typescript-eslint/no-unused-vars
+  31:7  warning  'BREAKPOINTS' is assigned a value but never used                                                                     @typescript-eslint/no-unused-vars
+  39:7  warning  'QUALITY_SETTINGS' is assigned a value but never used                                                                @typescript-eslint/no-unused-vars
+
+C:\Users\zochr\Desktop\GitHub\Strive-SaaS\(platform)\scripts\init-database.js
+  10:22  error    A `require()` style import is forbidden    @typescript-eslint/no-require-imports
+  11:12  error    A `require()` style import is forbidden    @typescript-eslint/no-require-imports
+  12:7   warning  'path' is assigned a value but never used  @typescript-eslint/no-unused-vars
+  12:14  error    A `require()` style import is forbidden    @typescript-eslint/no-require-imports
+  25:1   error    A `require()` style import is forbidden    @typescript-eslint/no-require-imports
+  80:30  error    A `require()` style import is forbidden    @typescript-eslint/no-require-imports
+
+C:\Users\zochr\Desktop\GitHub\Strive-SaaS\(platform)\scripts\migrate-roles-tiers.ts
+  156:41  warning  'match' is defined but never used  @typescript-eslint/no-unused-vars
+  161:45  warning  'match' is defined but never used  @typescript-eslint/no-unused-vars
+
+C:\Users\zochr\Desktop\GitHub\Strive-SaaS\(platform)\scripts\test-auth.js
+    8:1   error    A `require()` style import is forbidden    @typescript-eslint/no-require-imports
+    9:26  error    A `require()` style import is forbidden    @typescript-eslint/no-require-imports
+   10:26  error    A `require()` style import is forbidden    @typescript-eslint/no-require-imports
+  105:13  warning  'data' is assigned a value but never used  @typescript-eslint/no-unused-vars
+
+C:\Users\zochr\Desktop\GitHub\Strive-SaaS\(platform)\scripts\test-notifications.ts
+   64:5   warning  'notificationId' is assigned a value but never used  @typescript-eslint/no-unused-vars
+  202:19  warning  Unexpected any. Specify a different type             @typescript-eslint/no-explicit-any
+
+C:\Users\zochr\Desktop\GitHub\Strive-SaaS\(platform)\scripts\test-realtime.ts
+  203:54  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  267:19  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+C:\Users\zochr\Desktop\GitHub\Strive-SaaS\(platform)\scripts\test-rls.ts
+  241:63  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  242:58  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  279:19  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+C:\Users\zochr\Desktop\GitHub\Strive-SaaS\(platform)\scripts\test-storage.ts
+  257:32  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  299:19  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+C:\Users\zochr\Desktop\GitHub\Strive-SaaS\(platform)\scripts\validate-seo.ts
+  5:10  warning  'JSDOM' is defined but never used  @typescript-eslint/no-unused-vars
+
+C:\Users\zochr\Desktop\GitHub\Strive-SaaS\(platform)\scripts\verify-database-config.ts
+   43:19  warning  'tables' is assigned a value but never used         @typescript-eslint/no-unused-vars
+   44:36  warning  Unexpected any. Specify a different type            @typescript-eslint/no-explicit-any
+   53:30  warning  Unexpected any. Specify a different type            @typescript-eslint/no-explicit-any
+   67:49  warning  Unexpected any. Specify a different type            @typescript-eslint/no-explicit-any
+   71:19  warning  Unexpected any. Specify a different type            @typescript-eslint/no-explicit-any
+   89:32  warning  Unexpected any. Specify a different type            @typescript-eslint/no-explicit-any
+   95:44  warning  Unexpected any. Specify a different type            @typescript-eslint/no-explicit-any
+  104:19  warning  Unexpected any. Specify a different type            @typescript-eslint/no-explicit-any
+  120:19  warning  'notifications' is assigned a value but never used  @typescript-eslint/no-unused-vars
+  135:19  warning  Unexpected any. Specify a different type            @typescript-eslint/no-explicit-any
+
+C:\Users\zochr\Desktop\GitHub\Strive-SaaS\(platform)\tailwind.config.ts
+  1:1  error  Use "@ts-expect-error" instead of "@ts-ignore", as "@ts-ignore" will do nothing if the following line is error-free  @typescript-eslint/ban-ts-comment
+
+✖ 789 problems (19 errors, 770 warnings)
+  0 errors and 1 warning potentially fixable with the `--fix` option.
+

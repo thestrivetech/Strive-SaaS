@@ -223,7 +223,7 @@ export async function getTableSizes(): Promise<
       ORDER BY pg_total_relation_size(quote_ident(table_name)) DESC;
     `;
 
-    return result.map((row) => ({
+    return result.map((row: { table_name: string; total_size: string; row_count: bigint }) => ({
       table: row.table_name,
       size: row.total_size,
       rowCount: row.row_count,
@@ -299,7 +299,7 @@ export async function getSlowQueries(limit = 10): Promise<
       LIMIT ${limit};
     `;
 
-    return result.map((row) => ({
+    return result.map((row: { query: string; calls: bigint; total_time: number; mean_time: number }) => ({
       query: row.query,
       calls: row.calls,
       total_time: row.total_time,
@@ -355,7 +355,7 @@ export async function getIndexUsage(): Promise<
       ORDER BY idx_scan ASC, pg_relation_size(indexrelid) DESC;
     `;
 
-    return result.map((row) => ({
+    return result.map((row: { schemaname: string; tablename: string; indexname: string; idx_scan: bigint; pg_size_pretty: string }) => ({
       table: row.tablename,
       index: row.indexname,
       scans: row.idx_scan,

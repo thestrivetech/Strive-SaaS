@@ -20,14 +20,16 @@ import { redirect } from 'next/navigation';
 export default async function TeamPage() {
   const user = await getCurrentUser();
 
-  if (!user || !user.organization_id) {
+  const organizationId = user?.organization_members[0]?.organization_id;
+
+  if (!user || !organizationId) {
     redirect('/settings');
   }
 
   const [organization, members, stats] = await Promise.all([
-    getOrganization(user.organization_id),
-    getOrganizationMembers(user.organization_id),
-    getOrganizationStats(user.organization_id),
+    getOrganization(organizationId),
+    getOrganizationMembers(organizationId),
+    getOrganizationStats(organizationId),
   ]);
 
   if (!organization) {
@@ -81,7 +83,7 @@ export default async function TeamPage() {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {members.map((member) => (
+              {members.map((member: any) => (
                 <TableRow key={member.id}>
                   <TableCell>
                     <div className="flex items-center gap-3">

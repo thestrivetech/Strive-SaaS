@@ -78,7 +78,7 @@ export function TaskCreateDialog({ loopId, onSuccess }: TaskCreateDialogProps) {
     try {
       const data = await getPartiesByLoop({ loopId, status: 'ACTIVE' });
       setParties(
-        data.map((p) => ({
+        data.map((p: any) => ({
           id: p.id,
           name: p.name,
           role: p.role,

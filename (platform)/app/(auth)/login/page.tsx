@@ -91,7 +91,7 @@ export default function LoginPage() {
   const onSignupSubmit = async (data: SignupFormData) => {
     try {
       setIsLoading(true);
-      const { confirmPassword, ...signupData } = data;
+      const { confirmPassword: _confirmPassword, ...signupData } = data;
       const response = await fetch('/api/auth/signup', {
         method: 'POST',
         headers: {

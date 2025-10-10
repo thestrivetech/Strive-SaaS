@@ -5,13 +5,13 @@ import {
   getAgentPerformance,
   getMonthlyRevenue,
   getPipelineByStage,
+  type AgentPerformance,
 } from '@/lib/modules/analytics';
 import { KPICard } from '@/components/real-estate/crm/analytics/kpi-card';
 import { SalesFunnelChart } from '@/components/real-estate/crm/analytics/sales-funnel-chart';
 import { AgentLeaderboard } from '@/components/real-estate/crm/analytics/agent-leaderboard';
 import { RevenueChart } from '@/components/real-estate/crm/analytics/revenue-chart';
 import { PipelineValueChart } from '@/components/real-estate/crm/analytics/pipeline-value-chart';
-import { Users, DollarSign, TrendingUp, Activity } from 'lucide-react';
 import { startOfMonth, endOfMonth } from 'date-fns';
 
 /**
@@ -62,26 +62,26 @@ export default async function AnalyticsPage() {
           title="Total Leads"
           value={kpis.leads.total}
           change={kpis.leads.change}
-          icon={Users}
+          iconName="users"
         />
         <KPICard
           title="Pipeline Value"
           value={kpis.pipeline.totalValue}
           format="currency"
-          icon={DollarSign}
+          iconName="dollar-sign"
         />
         <KPICard
           title="Revenue (MTD)"
           value={kpis.revenue.thisMonth}
           change={kpis.revenue.change}
           format="currency"
-          icon={TrendingUp}
+          iconName="trending-up"
         />
         <KPICard
           title="Conversion Rate"
           value={kpis.conversionRate}
           format="percentage"
-          icon={Activity}
+          iconName="check-circle"
         />
       </div>
 
@@ -98,7 +98,7 @@ export default async function AnalyticsPage() {
 
       {/* Agent Performance */}
       <div className="grid gap-6 lg:grid-cols-2">
-        <AgentLeaderboard agents={agentPerformance.slice(0, 5)} />
+        <AgentLeaderboard agents={agentPerformance.slice(0, 5) as AgentPerformance[]} />
 
         {/* Additional Stats Card */}
         <div className="space-y-4">

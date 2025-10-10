@@ -52,3 +52,35 @@ export enum HttpStatus {
   INTERNAL_SERVER_ERROR = 500,
   SERVICE_UNAVAILABLE = 503,
 }
+
+/**
+ * Common cookie options for API routes
+ */
+export interface CookieOptions {
+  path?: string;
+  domain?: string;
+  maxAge?: number;
+  httpOnly?: boolean;
+  secure?: boolean;
+  sameSite?: 'lax' | 'strict' | 'none';
+}
+
+/**
+ * Request handler types
+ */
+export type RouteHandler = (
+  request: Request,
+  context?: { params: Record<string, string> }
+) => Promise<Response>;
+
+/**
+ * Query parameters for filtering and sorting
+ */
+export interface QueryParams {
+  page?: number;
+  limit?: number;
+  sortBy?: string;
+  sortOrder?: 'asc' | 'desc';
+  search?: string;
+  filters?: Record<string, unknown>;
+}

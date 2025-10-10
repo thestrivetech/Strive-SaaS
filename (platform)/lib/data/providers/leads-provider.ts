@@ -27,7 +27,7 @@ export async function getLeads(filters?: LeadFilters) {
         email: 'agent@demo.com',
         avatar_url: null,
       } : null,
-    }));
+    } as any));
 
     // Apply filters
     let filteredLeads = transformedLeads;
@@ -84,7 +84,7 @@ export async function getLeadById(leadId: string) {
       } : null,
       activities: [],
       deals: [],
-    };
+    } as any;
   }
 
   throw new Error('Real leads queries not implemented - enable mock mode');

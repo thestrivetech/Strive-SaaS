@@ -17,6 +17,8 @@ import { getMarketplaceTools, getPurchasedTools } from '@/lib/modules/marketplac
 import { addToCart, checkout } from '@/lib/modules/marketplace/cart/actions';
 import { purchaseTool } from '@/lib/modules/marketplace/actions';
 import { createToolReview } from '@/lib/modules/marketplace/reviews/actions';
+import { getCurrentUser, requireAuth } from '@/lib/auth/auth-helpers';
+import { hasUserPurchasedTool } from '@/lib/modules/marketplace/reviews/queries';
 
 // Mock auth helpers
 jest.mock('@/lib/auth/auth-helpers', () => ({
@@ -63,7 +65,6 @@ describe('Marketplace Purchase Flow Integration', () => {
     it('should complete full purchase flow: browse → cart → checkout → review', async () => {
       const { organization, user } = await createTestOrgWithUser();
 
-      const { getCurrentUser, requireAuth } = require('@/lib/auth/auth-helpers');
       getCurrentUser.mockResolvedValue({
         ...user,
         organization_members: [{ organization_id: organization.id }],
@@ -146,7 +147,6 @@ describe('Marketplace Purchase Flow Integration', () => {
     it('should handle bundle purchase flow with tool access', async () => {
       const { organization, user } = await createTestOrgWithUser();
 
-      const { getCurrentUser } = require('@/lib/auth/auth-helpers');
       getCurrentUser.mockResolvedValue({
         ...user,
         organization_members: [{ organization_id: organization.id }],
@@ -221,7 +221,6 @@ describe('Marketplace Purchase Flow Integration', () => {
     it('should allow direct tool purchase without cart', async () => {
       const { organization, user } = await createTestOrgWithUser();
 
-      const { getCurrentUser } = require('@/lib/auth/auth-helpers');
       getCurrentUser.mockResolvedValue({
         ...user,
         organization_members: [{ organization_id: organization.id }],
@@ -259,7 +258,6 @@ describe('Marketplace Purchase Flow Integration', () => {
     it('should prevent purchasing same tool twice', async () => {
       const { organization, user } = await createTestOrgWithUser();
 
-      const { getCurrentUser } = require('@/lib/auth/auth-helpers');
       getCurrentUser.mockResolvedValue({
         ...user,
         organization_members: [{ organization_id: organization.id }],
@@ -294,7 +292,6 @@ describe('Marketplace Purchase Flow Integration', () => {
     it('should prevent checkout with empty cart', async () => {
       const { organization, user } = await createTestOrgWithUser();
 
-      const { getCurrentUser } = require('@/lib/auth/auth-helpers');
       getCurrentUser.mockResolvedValue({
         ...user,
         organization_members: [{ organization_id: organization.id }],
@@ -317,7 +314,6 @@ describe('Marketplace Purchase Flow Integration', () => {
     it('should handle inactive tools gracefully', async () => {
       const { organization, user } = await createTestOrgWithUser();
 
-      const { getCurrentUser } = require('@/lib/auth/auth-helpers');
       getCurrentUser.mockResolvedValue({
         ...user,
         organization_members: [{ organization_id: organization.id }],
@@ -347,8 +343,6 @@ describe('Marketplace Purchase Flow Integration', () => {
     it('should isolate purchases between organizations', async () => {
       const { organization: org1, user: user1 } = await createTestOrgWithUser();
       const { organization: org2, user: user2 } = await createTestOrgWithUser();
-
-      const { getCurrentUser } = require('@/lib/auth/auth-helpers');
 
       const tool = await testPrisma.marketplace_tools.create({
         data: {
@@ -408,7 +402,6 @@ describe('Marketplace Purchase Flow Integration', () => {
     it('should maintain cart state across sessions', async () => {
       const { organization, user } = await createTestOrgWithUser();
 
-      const { getCurrentUser } = require('@/lib/auth/auth-helpers');
       getCurrentUser.mockResolvedValue({
         ...user,
         organization_members: [{ organization_id: organization.id }],
@@ -444,7 +437,6 @@ describe('Marketplace Purchase Flow Integration', () => {
     it('should handle concurrent cart modifications', async () => {
       const { organization, user } = await createTestOrgWithUser();
 
-      const { getCurrentUser } = require('@/lib/auth/auth-helpers');
       getCurrentUser.mockResolvedValue({
         ...user,
         organization_members: [{ organization_id: organization.id }],
@@ -492,7 +484,6 @@ describe('Marketplace Purchase Flow Integration', () => {
     it('should allow reviews only after purchase', async () => {
       const { organization, user } = await createTestOrgWithUser();
 
-      const { getCurrentUser, requireAuth } = require('@/lib/auth/auth-helpers');
       getCurrentUser.mockResolvedValue({
         ...user,
         organization_members: [{ organization_id: organization.id }],
@@ -501,8 +492,6 @@ describe('Marketplace Purchase Flow Integration', () => {
         id: user.id,
         organizationId: organization.id,
       });
-
-      const { hasUserPurchasedTool } = require('@/lib/modules/marketplace/reviews/queries');
 
       const tool = await testPrisma.marketplace_tools.create({
         data: {

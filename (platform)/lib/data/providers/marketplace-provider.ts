@@ -28,9 +28,9 @@ import {
 
 let mockToolsStore: MockTool[] = [];
 let mockBundlesStore: MockBundle[] = [];
-let mockPurchasesStore: MockPurchase[] = [];
-let mockReviewsStore: MockReview[] = [];
-let mockCartsStore: MockCart[] = [];
+const mockPurchasesStore: MockPurchase[] = [];
+const mockReviewsStore: MockReview[] = [];
+const mockCartsStore: MockCart[] = [];
 
 /**
  * Initialize mock data stores

@@ -5,6 +5,7 @@
  * Tests both database connections and authentication flow
  */
 
+/* eslint-disable @typescript-eslint/no-require-imports */
 require('dotenv').config();
 const { createClient } = require('@supabase/supabase-js');
 const { PrismaClient } = require('@prisma/client');

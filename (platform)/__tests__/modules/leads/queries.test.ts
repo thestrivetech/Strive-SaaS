@@ -25,6 +25,7 @@ import {
   searchLeads,
   getLeadsByAssignee,
 } from '@/lib/modules/crm/leads/queries';
+import { withTenantContext } from '@/lib/database/utils';
 
 // Mock tenant context
 jest.mock('@/lib/database/utils', () => ({
@@ -644,7 +645,6 @@ describe('Leads Queries', () => {
       });
 
       // Mock tenant context to filter by org1
-      const { withTenantContext } = require('@/lib/database/utils');
       withTenantContext.mockImplementation(async (callback: any) => {
         // Simulate RLS filtering by org1
         return callback();

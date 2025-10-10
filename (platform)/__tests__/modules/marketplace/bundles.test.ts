@@ -19,6 +19,8 @@ import {
   getPurchasedBundles,
 } from '@/lib/modules/marketplace/queries';
 import { purchaseBundle } from '@/lib/modules/marketplace/actions';
+import { getCurrentUser } from '@/lib/auth/auth-helpers';
+import { canAccessMarketplace, canPurchaseTools } from '@/lib/auth/rbac';
 
 // Mock auth helpers
 jest.mock('@/lib/auth/auth-helpers', () => ({
@@ -235,7 +237,6 @@ describe('Tool Bundles Module', () => {
     it('should purchase bundle successfully', async () => {
       const { organization, user } = await createTestOrgWithUser();
 
-      const { getCurrentUser } = require('@/lib/auth/auth-helpers');
       getCurrentUser.mockResolvedValue({
         ...user,
         organization_members: [{ organization_id: organization.id }],
@@ -306,7 +307,6 @@ describe('Tool Bundles Module', () => {
     it('should create individual tool access from bundle', async () => {
       const { organization, user } = await createTestOrgWithUser();
 
-      const { getCurrentUser } = require('@/lib/auth/auth-helpers');
       getCurrentUser.mockResolvedValue({
         ...user,
         organization_members: [{ organization_id: organization.id }],
@@ -380,7 +380,6 @@ describe('Tool Bundles Module', () => {
     it('should not duplicate tool purchase if already owned', async () => {
       const { organization, user } = await createTestOrgWithUser();
 
-      const { getCurrentUser } = require('@/lib/auth/auth-helpers');
       getCurrentUser.mockResolvedValue({
         ...user,
         organization_members: [{ organization_id: organization.id }],
@@ -454,7 +453,6 @@ describe('Tool Bundles Module', () => {
     it('should reject inactive bundles', async () => {
       const { organization, user } = await createTestOrgWithUser();
 
-      const { getCurrentUser } = require('@/lib/auth/auth-helpers');
       getCurrentUser.mockResolvedValue({
         ...user,
         organization_members: [{ organization_id: organization.id }],
@@ -483,7 +481,6 @@ describe('Tool Bundles Module', () => {
     it('should track bundle price at time of purchase', async () => {
       const { organization, user } = await createTestOrgWithUser();
 
-      const { getCurrentUser } = require('@/lib/auth/auth-helpers');
       getCurrentUser.mockResolvedValue({
         ...user,
         organization_members: [{ organization_id: organization.id }],
@@ -525,13 +522,11 @@ describe('Tool Bundles Module', () => {
     it('should enforce RBAC permissions', async () => {
       const { organization, user } = await createTestOrgWithUser();
 
-      const { getCurrentUser } = require('@/lib/auth/auth-helpers');
       getCurrentUser.mockResolvedValue({
         ...user,
         organization_members: [{ organization_id: organization.id }],
       });
 
-      const { canAccessMarketplace, canPurchaseTools } = require('@/lib/auth/rbac');
       canAccessMarketplace.mockReturnValue(false);
 
       const bundle = await testPrisma.tool_bundles.create({
@@ -570,7 +565,6 @@ describe('Tool Bundles Module', () => {
     it('should return organization purchased bundles', async () => {
       const { organization, user } = await createTestOrgWithUser();
 
-      const { getCurrentUser } = require('@/lib/auth/auth-helpers');
       getCurrentUser.mockResolvedValue({
         ...user,
         organization_members: [{ organization_id: organization.id }],
@@ -629,7 +623,6 @@ describe('Tool Bundles Module', () => {
     it('should only return ACTIVE purchases', async () => {
       const { organization, user } = await createTestOrgWithUser();
 
-      const { getCurrentUser } = require('@/lib/auth/auth-helpers');
       getCurrentUser.mockResolvedValue({
         ...user,
         organization_members: [{ organization_id: organization.id }],
@@ -676,7 +669,6 @@ describe('Tool Bundles Module', () => {
       const { organization: org1, user: user1 } = await createTestOrgWithUser();
       const { organization: org2 } = await createTestOrgWithUser();
 
-      const { getCurrentUser } = require('@/lib/auth/auth-helpers');
       getCurrentUser.mockResolvedValue({
         ...user1,
         organization_members: [{ organization_id: org1.id }],

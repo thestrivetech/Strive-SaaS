@@ -1,4 +1,4 @@
-// @ts-ignore
+// @ts-expect-error - Tailwind CSS config requires this import for proper typing
 import type { Config } from 'tailwindcss';
 
 const config: Config = {

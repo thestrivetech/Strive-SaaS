@@ -17,6 +17,7 @@ export async function POST(request: NextRequest) {
     const { email, password } = loginSchema.parse(body);
 
     // Collect cookies that Supabase will set
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const cookiesToSet: Array<{ name: string; value: string; options: any }> = [];
 
     // Create Supabase client with cookie collectors
@@ -28,9 +29,11 @@ export async function POST(request: NextRequest) {
           get(name: string) {
             return request.cookies.get(name)?.value;
           },
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
           set(name: string, value: string, options: any) {
             cookiesToSet.push({ name, value, options });
           },
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
           remove(name: string, options: any) {
             cookiesToSet.push({ name, value: '', options });
           },

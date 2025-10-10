@@ -21,6 +21,7 @@ import {
 
 // Mock getCurrentUser
 import { getCurrentUser } from '@/lib/auth/auth-helpers';
+import { getCurrentUser } from '@/lib/auth/auth-helpers';
 
 jest.mock('@/lib/auth/auth-helpers', () => ({
   getCurrentUser: jest.fn(),
@@ -183,7 +184,6 @@ describe('Notification Actions', () => {
         },
       });
 
-      const { getCurrentUser } = require('@/lib/auth/auth-helpers');
       getCurrentUser.mockResolvedValue({
         ...user,
         organizationId: organization.id,
@@ -202,7 +202,6 @@ describe('Notification Actions', () => {
     });
 
     it('should reject unauthorized access', async () => {
-      const { getCurrentUser } = require('@/lib/auth/auth-helpers');
       getCurrentUser.mockResolvedValueOnce(null);
 
       const result = await markNotificationRead({
@@ -230,7 +229,6 @@ describe('Notification Actions', () => {
       });
 
       // Try to mark as user2
-      const { getCurrentUser } = require('@/lib/auth/auth-helpers');
       getCurrentUser.mockResolvedValueOnce({
         ...otherUser,
         organizationId: organization.id,
@@ -285,7 +283,6 @@ describe('Notification Actions', () => {
         ],
       });
 
-      const { getCurrentUser } = require('@/lib/auth/auth-helpers');
       getCurrentUser.mockResolvedValueOnce({
         ...user,
         organizationId: organization.id,
@@ -338,7 +335,6 @@ describe('Notification Actions', () => {
       });
 
       // Mark all for user1
-      const { getCurrentUser } = require('@/lib/auth/auth-helpers');
       getCurrentUser.mockResolvedValueOnce({
         ...user1,
         organizationId: organization.id,
@@ -391,7 +387,6 @@ describe('Notification Actions', () => {
         },
       });
 
-      const { getCurrentUser } = require('@/lib/auth/auth-helpers');
       getCurrentUser.mockResolvedValueOnce({
         ...user,
         organizationId: organization.id,
@@ -435,7 +430,6 @@ describe('Notification Actions', () => {
         },
       });
 
-      const { getCurrentUser } = require('@/lib/auth/auth-helpers');
       getCurrentUser.mockResolvedValueOnce({
         ...user1,
         organizationId: organization.id,
@@ -467,7 +461,6 @@ describe('Notification Actions', () => {
         },
       });
 
-      const { getCurrentUser } = require('@/lib/auth/auth-helpers');
       getCurrentUser.mockResolvedValueOnce({
         ...user,
         organizationId: organization.id,
@@ -503,7 +496,6 @@ describe('Notification Actions', () => {
         },
       });
 
-      const { getCurrentUser } = require('@/lib/auth/auth-helpers');
       getCurrentUser.mockResolvedValueOnce({
         ...user2,
         organizationId: organization.id,

@@ -75,18 +75,18 @@ async function LeadDetailContent({ leadId, organizationId }: { leadId: string; o
               <div className="flex items-start justify-between">
                 <div className="space-y-1">
                   <CardTitle className="text-2xl">{lead.name}</CardTitle>
-                  {lead.company && (
-                    <p className="text-muted-foreground">{lead.company}</p>
+                  {(lead as any).company && (
+                    <p className="text-muted-foreground">{(lead as any).company}</p>
                   )}
                 </div>
                 <div className="flex items-center gap-2">
                   <LeadFormDialog
                     mode="edit"
-                    lead={lead}
+                    lead={lead as any}
                     organizationId={organizationId}
                     trigger={<Button variant="outline">Edit</Button>}
                   />
-                  <LeadActionsMenu lead={lead} />
+                  <LeadActionsMenu lead={lead as any} />
                 </div>
               </div>
             </CardHeader>
@@ -126,10 +126,10 @@ async function LeadDetailContent({ leadId, organizationId }: { leadId: string; o
                     </a>
                   </div>
                 )}
-                {lead.company && (
+                {(lead as any).company && (
                   <div className="flex items-center gap-3 text-sm">
                     <Building2 className="h-4 w-4 text-muted-foreground" />
-                    <span>{lead.company}</span>
+                    <span>{(lead as any).company}</span>
                   </div>
                 )}
               </div>
@@ -166,8 +166,8 @@ async function LeadDetailContent({ leadId, organizationId }: { leadId: string; o
             </CardHeader>
           <CardContent className="space-y-4">
             <div className="space-y-1">
-              <p className="text-sm text-muted-foreground">Lead Score Value</p>
-              <p className="font-medium">{lead.score_value}</p>
+              <p className="text-sm text-muted-foreground">Lead Score</p>
+              <p className="font-medium">{lead.score}</p>
             </div>
 
             {lead.assigned_to && (
@@ -189,34 +189,12 @@ async function LeadDetailContent({ leadId, organizationId }: { leadId: string; o
                 {format(new Date(lead.created_at), 'MMM dd, yyyy')}
               </p>
             </div>
-
-            {lead.last_contact_at && (
-              <div className="space-y-1">
-                <p className="text-sm text-muted-foreground flex items-center gap-2">
-                  <Calendar className="h-3 w-3" />
-                  Last Contact
-                </p>
-                <p className="font-medium">
-                  {format(new Date(lead.last_contact_at), 'MMM dd, yyyy')}
-                </p>
-              </div>
-            )}
-
-            <div className="space-y-1">
-              <p className="text-sm text-muted-foreground flex items-center gap-2">
-                <Calendar className="h-3 w-3" />
-                Last Updated
-              </p>
-              <p className="font-medium">
-                {format(new Date(lead.updated_at), 'MMM dd, yyyy')}
-              </p>
-            </div>
           </CardContent>
         </EnhancedCard>
         </div>
 
         {/* Tags (if implemented) */}
-        {lead.tags && lead.tags.length > 0 && (
+        {'tags' in lead && lead.tags && Array.isArray(lead.tags) && lead.tags.length > 0 && (
           <div>
             <EnhancedCard glassEffect="strong" neonBorder="green" hoverEffect={true}>
               <CardHeader>
@@ -224,7 +202,7 @@ async function LeadDetailContent({ leadId, organizationId }: { leadId: string; o
               </CardHeader>
               <CardContent>
                 <div className="flex flex-wrap gap-2">
-                  {lead.tags.map((tag, index) => (
+                  {lead.tags.map((tag: string, index: number) => (
                     <Badge key={index} variant="secondary">
                       {tag}
                     </Badge>
@@ -244,7 +222,7 @@ async function LeadDetailContent({ leadId, organizationId }: { leadId: string; o
               </CardHeader>
               <CardContent>
                 <div className="space-y-2">
-                  {lead.deals.map((deal) => (
+                  {lead.deals.map((deal: any) => (
                     <div key={deal.id} className="text-sm">
                       <Link
                         href={`/real-estate/crm/deals/${deal.id}`}
