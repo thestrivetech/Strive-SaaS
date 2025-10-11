@@ -6,7 +6,6 @@ import { ModuleHeroSection } from '@/components/shared/dashboard/ModuleHeroSecti
 import { HeroSkeleton } from '@/components/shared/dashboard/skeletons';
 import { ReportTemplatesSection } from './report-templates-section';
 import { RecentReportsSection } from './recent-reports-section';
-import { expenseTaxReportsProvider } from '@/lib/data';
 
 /**
  * Tax Reports Page
@@ -101,34 +100,28 @@ async function HeroSectionWrapper({
   user: Awaited<ReturnType<typeof getCurrentUser>>;
   organizationId: string;
 }) {
-  // Fetch recent reports to calculate stats
-  const reports = await expenseTaxReportsProvider.getRecentReports(organizationId);
+  // Placeholder data - Expense & Tax is a skeleton module (no database tables yet)
   const currentYear = new Date().getFullYear();
-
-  const totalReports = reports.length;
-  const thisYearReports = reports.filter((r) => r.year === currentYear).length;
-  const completedReports = reports.filter((r) => r.status === 'completed').length;
-  const sharedReports = reports.filter((r) => r.sharedWith.length > 0).length;
 
   const stats = [
     {
       label: 'Total Reports',
-      value: totalReports.toString(),
+      value: '0',
       icon: 'revenue' as const,
     },
     {
       label: `${currentYear} Reports`,
-      value: thisYearReports.toString(),
+      value: '0',
       icon: 'customers' as const,
     },
     {
       label: 'Completed',
-      value: completedReports.toString(),
+      value: '0',
       icon: 'projects' as const,
     },
     {
       label: 'Shared',
-      value: sharedReports.toString(),
+      value: '0',
       icon: 'tasks' as const,
     },
   ];

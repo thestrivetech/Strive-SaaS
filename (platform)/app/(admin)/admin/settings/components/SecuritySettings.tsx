@@ -4,7 +4,7 @@ import React from 'react';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
-import type { PlatformSettings } from '@/lib/data/admin/mock-settings';
+import type { PlatformSettings } from '@/lib/modules/admin';
 
 interface SecuritySettingsProps {
   settings: PlatformSettings['security'];

@@ -5,6 +5,7 @@ export {
   getPlatformMetrics,
   calculatePlatformMetrics,
   getMetricsHistory,
+  getDashboardOverview,
 } from './metrics';
 
 export {
@@ -13,6 +14,18 @@ export {
   getAllFeatureFlags,
   getActiveSystemAlerts,
 } from './queries';
+
+export {
+  getAllSubscriptions,
+  getSubscriptionStats,
+} from './subscriptions';
+
+export {
+  getPlatformSettings,
+  getSettingsCategories,
+  updatePlatformSettings,
+  type PlatformSettings,
+} from './settings';
 
 // Actions
 export {
@@ -28,6 +41,7 @@ export {
 export {
   logAdminAction,
   getAdminActionLogs,
+  getRecentAuditLogs,
 } from './audit';
 
 // Types

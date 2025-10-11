@@ -82,7 +82,7 @@ export const getContentItems = cache(async (filters?: ContentFilters) => {
     }
 
     // ✅ PERFORMANCE FIX: All relations in single query (prevents N+1)
-    return await prisma.content_items.findMany({
+    return await prisma.content.findMany({
       where,
       include: {
         author: {
@@ -122,7 +122,7 @@ export const getContentItemById = cache(async (id: string) => {
 
     const organization_id = getUserOrganizationId(user);
 
-    return await prisma.content_items.findFirst({
+    return await prisma.content.findFirst({
       where: {
         id,
         organization_id, // Ensure org isolation
@@ -169,7 +169,7 @@ export const getContentItemById = cache(async (id: string) => {
  * @returns Promise<ContentItem | null> - Published content item
  */
 export const getContentBySlug = cache(async (slug: string, org_id: string) => {
-  return await prisma.content_items.findFirst({
+  return await prisma.content.findFirst({
     where: {
       slug,
       organization_id: org_id,
@@ -202,22 +202,22 @@ export const getContentStats = cache(async () => {
 
   return withContentContext(async () => {
     const [total, published, draft, scheduled] = await Promise.all([
-      prisma.content_items.count({
+      prisma.content.count({
         where: { organization_id },
       }),
-      prisma.content_items.count({
+      prisma.content.count({
         where: {
           organization_id,
           status: 'PUBLISHED',
         },
       }),
-      prisma.content_items.count({
+      prisma.content.count({
         where: {
           organization_id,
           status: 'DRAFT',
         },
       }),
-      prisma.content_items.count({
+      prisma.content.count({
         where: {
           organization_id,
           status: 'SCHEDULED',
@@ -254,6 +254,6 @@ export const getContentCount = cache(async (filters?: ContentFilters) => {
     if (filters?.type) where.type = filters.type;
     if (filters?.category_id) where.category_id = filters.category_id;
 
-    return await prisma.content_items.count({ where });
+    return await prisma.content.count({ where });
   });
 });

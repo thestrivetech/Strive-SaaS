@@ -6,18 +6,8 @@
  * @module activities
  */
 
-// Check if mock mode is enabled
-import { dataConfig } from '@/lib/data/config';
-
-// Queries - Use mock data if enabled
-export const getRecentActivities = dataConfig.useMocks
-  ? async (options?: any) => (await import('@/lib/data/providers/activities-provider')).getRecentActivities(options)
-  : async (options?: any) => (await import('./queries')).getRecentActivities(options);
-
-export const getActivitiesByEntity = dataConfig.useMocks
-  ? async () => []
-  : async (entityType: string, entityId: string) => (await import('./queries')).getActivitiesByEntity(entityType as any, entityId);
-
+// Queries
+export { getRecentActivities, getActivitiesByEntity } from './queries';
 export type { GetRecentActivitiesOptions } from './queries';
 
 // Prisma types

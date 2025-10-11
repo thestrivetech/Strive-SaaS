@@ -4,7 +4,17 @@ import React from 'react';
 import { useRouter } from 'next/navigation';
 import { toast } from 'sonner';
 import { ReportTemplateCard } from '@/components/real-estate/expense-tax/report-template-card';
-import { expenseTaxReportsProvider } from '@/lib/data';
+
+// Type definition for report template (matches MockReportTemplate from component)
+interface ReportTemplate {
+  id: string;
+  name: string;
+  description: string;
+  category: string;
+  icon: string;
+  whatsIncluded: string[];
+  estimatedTime: string;
+}
 
 /**
  * Report Templates Section
@@ -19,15 +29,15 @@ interface ReportTemplatesSectionProps {
 
 export function ReportTemplatesSection({ organizationId }: ReportTemplatesSectionProps) {
   const router = useRouter();
-  const [templates, setTemplates] = React.useState<Awaited<ReturnType<typeof expenseTaxReportsProvider.getTemplates>>>([]);
+  const [templates, setTemplates] = React.useState<ReportTemplate[]>([]);
   const [isLoading, setIsLoading] = React.useState(true);
 
-  // Fetch templates on mount
+  // Placeholder data - Expense & Tax is a skeleton module
   React.useEffect(() => {
     const fetchTemplates = async () => {
       try {
-        const data = await expenseTaxReportsProvider.getTemplates();
-        setTemplates(data);
+        // Empty array - no templates in skeleton module
+        setTemplates([]);
       } catch (error) {
         toast.error('Failed to load report templates');
         console.error('Failed to fetch templates:', error);
@@ -40,23 +50,10 @@ export function ReportTemplatesSection({ organizationId }: ReportTemplatesSectio
   }, []);
 
   const handleGenerate = async (templateId: string, year: number) => {
-    try {
-      const report = await expenseTaxReportsProvider.generateReport(
-        { templateId, year },
-        organizationId
-      );
-
-      toast.success('Report generated successfully!', {
-        description: `${report.templateName} for ${year}`,
-      });
-
-      // Refresh the page to show new report
-      router.refresh();
-    } catch (error) {
-      toast.error('Failed to generate report');
-      console.error('Failed to generate report:', error);
-      throw error; // Re-throw to allow button to handle loading state
-    }
+    // Placeholder - no actual generation in skeleton module
+    toast.info('Report generation coming soon', {
+      description: 'This module is under development',
+    });
   };
 
   if (isLoading) {

@@ -7,7 +7,7 @@ import {
   getMilestonesForType,
   getCurrentMilestone,
   getNextMilestone,
-} from '@/lib/modules/transactions/milestones/schemas';
+} from '@/lib/modules/transactions/milestones/utils';
 import { getCurrentUser } from '@/lib/auth/auth-helpers';
 import { prisma } from '@/lib/database/prisma';
 

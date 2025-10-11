@@ -1,12 +1,8 @@
-'use client';
-
 import React from 'react';
 import { AdminSidebar } from '@/components/features/admin/admin-sidebar';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { MOCK_PLATFORM_METRICS } from '@/lib/data/admin/mock-platform-metrics';
-import { getRecentAuditLogs } from '@/lib/data/admin/mock-audit-logs';
-import { getSubscriptionStats } from '@/lib/data/admin/mock-subscriptions';
+import { getDashboardOverview, getRecentAuditLogs, getSubscriptionStats } from '@/lib/modules/admin';
 import {
   Building2,
   Users,
@@ -16,13 +12,17 @@ import {
   Database,
   Shield,
   ArrowUpRight,
-  ArrowDownRight,
 } from 'lucide-react';
 
-export default function AdminDashboardPage() {
-  const metrics = MOCK_PLATFORM_METRICS.overview;
-  const subscriptionStats = getSubscriptionStats();
-  const recentAuditLogs = getRecentAuditLogs(5);
+export default async function AdminDashboardPage() {
+  // Fetch real data from database
+  const [dashboardData, subscriptionStats, recentAuditLogs] = await Promise.all([
+    getDashboardOverview(),
+    getSubscriptionStats(),
+    getRecentAuditLogs(5),
+  ]);
+
+  const { overview, database: dbStats } = dashboardData;
 
   return (
     <div className="flex h-screen bg-background">
@@ -45,10 +45,10 @@ export default function AdminDashboardPage() {
                 <Building2 className="h-4 w-4 text-muted-foreground" />
               </CardHeader>
               <CardContent>
-                <div className="text-2xl font-bold">{metrics.totalOrganizations}</div>
+                <div className="text-2xl font-bold">{overview.totalOrganizations}</div>
                 <p className="text-xs text-muted-foreground flex items-center gap-1 mt-1">
                   <TrendingUp className="h-3 w-3 text-green-600" />
-                  <span className="text-green-600">+2 this week</span>
+                  <span className="text-green-600">Active</span>
                 </p>
               </CardContent>
             </Card>
@@ -59,10 +59,10 @@ export default function AdminDashboardPage() {
                 <Users className="h-4 w-4 text-muted-foreground" />
               </CardHeader>
               <CardContent>
-                <div className="text-2xl font-bold">{metrics.totalUsers}</div>
+                <div className="text-2xl font-bold">{overview.totalUsers}</div>
                 <p className="text-xs text-muted-foreground flex items-center gap-1 mt-1">
                   <ArrowUpRight className="h-3 w-3 text-green-600" />
-                  <span className="text-green-600">+27 this month</span>
+                  <span className="text-green-600">Platform-wide</span>
                 </p>
               </CardContent>
             </Card>
@@ -73,10 +73,10 @@ export default function AdminDashboardPage() {
                 <DollarSign className="h-4 w-4 text-muted-foreground" />
               </CardHeader>
               <CardContent>
-                <div className="text-2xl font-bold">${(metrics.monthlyRevenue / 100).toLocaleString()}</div>
+                <div className="text-2xl font-bold">${(overview.monthlyRevenue / 100).toLocaleString()}</div>
                 <p className="text-xs text-muted-foreground flex items-center gap-1 mt-1">
                   <TrendingUp className="h-3 w-3 text-green-600" />
-                  <span className="text-green-600">+7.4% from last month</span>
+                  <span className="text-green-600">MRR</span>
                 </p>
               </CardContent>
             </Card>
@@ -107,17 +107,17 @@ export default function AdminDashboardPage() {
               <CardContent className="space-y-4">
                 <div className="flex items-center justify-between">
                   <span className="text-sm font-medium">Uptime</span>
-                  <Badge variant="default">{metrics.systemHealth}%</Badge>
+                  <Badge variant="default">{overview.systemHealth}%</Badge>
                 </div>
                 <div className="flex items-center justify-between">
                   <span className="text-sm font-medium">Security Alerts</span>
-                  <Badge variant={metrics.securityAlerts > 0 ? 'destructive' : 'secondary'}>
-                    {metrics.securityAlerts}
+                  <Badge variant={overview.securityAlerts > 0 ? 'destructive' : 'secondary'}>
+                    {overview.securityAlerts}
                   </Badge>
                 </div>
                 <div className="flex items-center justify-between">
                   <span className="text-sm font-medium">Super Admins</span>
-                  <span className="text-sm text-muted-foreground">{metrics.superAdminCount}</span>
+                  <span className="text-sm text-muted-foreground">{overview.superAdminCount}</span>
                 </div>
               </CardContent>
             </Card>
@@ -132,17 +132,17 @@ export default function AdminDashboardPage() {
               <CardContent className="space-y-4">
                 <div className="flex items-center justify-between">
                   <span className="text-sm font-medium">Size</span>
-                  <span className="text-sm text-muted-foreground">{MOCK_PLATFORM_METRICS.database.size}</span>
+                  <span className="text-sm text-muted-foreground">{dbStats.size}</span>
                 </div>
                 <div className="flex items-center justify-between">
                   <span className="text-sm font-medium">Total Records</span>
                   <span className="text-sm text-muted-foreground">
-                    {MOCK_PLATFORM_METRICS.database.totalRecords.toLocaleString()}
+                    {dbStats.totalRecords.toLocaleString()}
                   </span>
                 </div>
                 <div className="flex items-center justify-between">
                   <span className="text-sm font-medium">Daily Growth</span>
-                  <Badge variant="secondary">{MOCK_PLATFORM_METRICS.database.dailyGrowth}</Badge>
+                  <Badge variant="secondary">{dbStats.dailyGrowth}</Badge>
                 </div>
               </CardContent>
             </Card>

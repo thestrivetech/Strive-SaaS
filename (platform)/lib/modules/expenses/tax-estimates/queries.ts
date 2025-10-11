@@ -26,7 +26,7 @@ export async function getTaxEstimates(year?: number, quarter?: number) {
   const taxEstimates = await prisma.tax_estimates.findMany({
     where,
     include: {
-      creator: {
+      user: {
         select: {
           id: true,
           name: true,
@@ -35,7 +35,7 @@ export async function getTaxEstimates(year?: number, quarter?: number) {
       }
     },
     orderBy: [
-      { year: 'desc' },
+      { tax_year: 'desc' },
       { quarter: 'desc' },
     ],
   });
@@ -53,7 +53,7 @@ export async function getTaxEstimateById(id: string) {
   const taxEstimate = await prisma.tax_estimates.findUnique({
     where: { id },
     include: {
-      creator: {
+      user: {
         select: {
           id: true,
           name: true,

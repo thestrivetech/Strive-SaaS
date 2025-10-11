@@ -45,7 +45,7 @@ export async function createContentItem(input: ContentItemInput) {
   const slug = await generateUniqueSlug(validated.slug, organization_id);
 
   // Create content item
-  const content = await prisma.content_items.create({
+  const content = await prisma.content.create({
     data: {
       title: validated.title,
       slug,
@@ -97,7 +97,7 @@ export async function updateContentItem(input: UpdateContentInput) {
   const organization_id = user.organizationId;
 
   // Verify ownership/access (multi-tenant check)
-  const existing = await prisma.content_items.findFirst({
+  const existing = await prisma.content.findFirst({
     where: {
       id,
       organization_id,
@@ -121,7 +121,7 @@ export async function updateContentItem(input: UpdateContentInput) {
   });
 
   // Update content (only update fields that are provided)
-  const updated = await prisma.content_items.update({
+  const updated = await prisma.content.update({
     where: { id },
     data: {
       ...(updateData.title !== undefined && { title: updateData.title }),
@@ -172,7 +172,7 @@ export async function publishContent(input: PublishContentInput) {
   const organization_id = user.organizationId;
 
   // Verify access
-  const content = await prisma.content_items.findFirst({
+  const content = await prisma.content.findFirst({
     where: {
       id: validated.id,
       organization_id,
@@ -199,7 +199,7 @@ export async function publishContent(input: PublishContentInput) {
   }
 
   // Update content
-  const published = await prisma.content_items.update({
+  const published = await prisma.content.update({
     where: { id: validated.id },
     data: updateData,
   });
@@ -227,7 +227,7 @@ export async function unpublishContent(id: string) {
   const organization_id = user.organizationId;
 
   // Verify access
-  const content = await prisma.content_items.findFirst({
+  const content = await prisma.content.findFirst({
     where: {
       id,
       organization_id,
@@ -239,7 +239,7 @@ export async function unpublishContent(id: string) {
   }
 
   // Unpublish (revert to draft)
-  const updated = await prisma.content_items.update({
+  const updated = await prisma.content.update({
     where: { id },
     data: {
       status: 'DRAFT',
@@ -270,7 +270,7 @@ export async function deleteContent(id: string) {
   const organization_id = user.organizationId;
 
   // Verify access
-  const content = await prisma.content_items.findFirst({
+  const content = await prisma.content.findFirst({
     where: {
       id,
       organization_id,
@@ -282,7 +282,7 @@ export async function deleteContent(id: string) {
   }
 
   // Delete content (cascades to revisions, comments via Prisma schema)
-  await prisma.content_items.delete({
+  await prisma.content.delete({
     where: { id },
   });
 

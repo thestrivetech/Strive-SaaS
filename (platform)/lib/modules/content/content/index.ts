@@ -45,11 +45,12 @@ export {
 // ============================================================================
 
 export type {
-  content_items,
+  content,
   content_revisions,
   content_categories,
   content_tags,
   content_comments,
+  content_tag_relations,
 } from '@prisma/client';
 
 export { ContentType, ContentStatus } from '@prisma/client';

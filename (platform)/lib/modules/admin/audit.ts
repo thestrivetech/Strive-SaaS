@@ -73,7 +73,7 @@ export async function getAdminActionLogs(filters?: {
     if (filters.endDate) where.created_at.lte = filters.endDate;
   }
 
-  return await prisma.admin_action_logs.findMany({
+  const logs = await prisma.admin_action_logs.findMany({
     where,
     include: {
       admin: {
@@ -88,6 +88,39 @@ export async function getAdminActionLogs(filters?: {
     orderBy: { created_at: 'desc' },
     take: filters?.limit || 100,
   });
+
+  // Transform to match expected format
+  return logs.map(log => ({
+    id: log.id,
+    action: log.action,
+    description: log.description,
+    details: log.description,
+    resource_type: log.target_type,
+    resource_id: log.target_id,
+    user_id: log.admin_id,
+    user_name: log.admin?.name || 'Unknown',
+    user_email: log.admin?.email || '',
+    severity: getSeverityFromAction(log.action),
+    ip_address: log.ip_address || 'Unknown',
+    user_agent: log.user_agent,
+    timestamp: log.created_at.toISOString(),
+    success: log.success,
+    error: log.error,
+    metadata: log.metadata,
+  }));
+}
+
+/**
+ * Get recent audit logs (simplified for dashboard)
+ */
+export async function getRecentAuditLogs(limit: number = 5) {
+  const user = await getCurrentUser();
+
+  if (!user || !canViewAuditLogs(user.role)) {
+    throw new Error('Unauthorized');
+  }
+
+  return await getAdminActionLogs({ limit });
 }
 
 // Helper functions (implement based on platform)
@@ -101,4 +134,35 @@ function getUserAgent(): string | null {
   // TODO: Implement UA extraction from request headers
   // This will require accessing headers from the request context
   return null;
+}
+
+/**
+ * Map admin action to severity level
+ */
+function getSeverityFromAction(action: AdminAction): string {
+  // Map actions to severity levels for audit display
+  const severityMap: Record<AdminAction, string> = {
+    CREATE_USER: 'INFO',
+    UPDATE_USER: 'INFO',
+    DELETE_USER: 'WARNING',
+    SUSPEND_USER: 'WARNING',
+    REACTIVATE_USER: 'INFO',
+    CREATE_ORG: 'INFO',
+    UPDATE_ORG: 'INFO',
+    DELETE_ORG: 'CRITICAL',
+    UPDATE_SUBSCRIPTION: 'INFO',
+    CANCEL_SUBSCRIPTION: 'WARNING',
+    CREATE_FEATURE_FLAG: 'INFO',
+    UPDATE_FEATURE_FLAG: 'WARNING',
+    DELETE_FEATURE_FLAG: 'WARNING',
+    CREATE_ALERT: 'WARNING',
+    UPDATE_ALERT: 'WARNING',
+    DELETE_ALERT: 'INFO',
+    IMPERSONATE_USER: 'CRITICAL',
+    EXPORT_DATA: 'WARNING',
+    MODIFY_PERMISSIONS: 'CRITICAL',
+    SYSTEM_CONFIG_CHANGE: 'CRITICAL',
+  };
+
+  return severityMap[action] || 'INFO';
 }

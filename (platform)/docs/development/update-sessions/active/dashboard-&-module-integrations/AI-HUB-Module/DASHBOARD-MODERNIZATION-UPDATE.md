@@ -1,26 +1,26 @@
-# AI-HUB Module - Dashboard Modernization Update
+# AI-HUB Module - Dashboard UI Design Standards
 
-**Date:** 2025-10-08
+**Date:** 2025-10-10 (Updated)
 **Applies To:** All AI-HUB session plans (sessions 1-8)
-**Status:** ✅ Dashboard UI Complete (Phase 4)
+**Status:** ⚠️ Needs Implementation
 
 ---
 
 ## 🎯 Overview
 
-The AI-HUB dashboard UI has been modernized in **Dashboard Modernization Phase 4** (October 2025). This update affects all AI-HUB session plans that reference dashboard/UI development.
+This guide provides the correct platform design patterns for implementing AI-HUB dashboards and UI components. All AI-HUB pages must follow the established platform standards.
 
-**Key Change:** The AI-HUB dashboard (`app/real-estate/ai-hub/dashboard/page.tsx`) now features a production-ready modern UI with:
-- Personalized hero section with time-based greeting
-- Glass morphism effects and neon borders
-- 3 stats cards showing AI metrics
-- 4 feature cards (AI Assistant, Smart Automation, AI Analytics, Content Generation)
-- Recent activity section
-- Quick actions section
+**Design System:**
+- Platform Components: `ModuleHeroSection`, `EnhancedCard`
+- Primary Color: Strive Orange (#FF7033)
+- Neon Accents: Cyan, Purple, Green, Orange (via `neonBorder` prop)
+- Glass Effects: Available via `glassEffect` prop (`"subtle"`, `"medium"`, `"strong"`)
+- Typography: Inter (UI), Outfit (headings), JetBrains Mono (numbers)
 
-**File:** `(platform)/app/real-estate/ai-hub/dashboard/page.tsx`
-**Line Count:** 243 lines
-**Quality:** ✅ Zero TypeScript errors, Zero ESLint warnings, Production-ready
+**File Structure:**
+- Dashboard: `app/real-estate/ai-hub/dashboard/page.tsx`
+- Components: Use shared components from `@/components/shared/dashboard/`
+- Patterns: Follow marketplace dashboard as reference implementation
 
 ---
 
@@ -91,58 +91,49 @@ The AI-HUB dashboard UI has been modernized in **Dashboard Modernization Phase 4
 
 ## 📖 Design System Reference
 
-All AI-HUB pages should follow the established design system:
+All AI-HUB pages must follow the established platform design patterns:
 
-### Required Reading
-1. **Module Dashboard Guide:** `(platform)/docs/MODULE-DASHBOARD-GUIDE.md`
-   - Complete design system documentation
-   - Component patterns and examples
-   - Quality standards and checklists
+### Required Components
 
-2. **Validation Report:** `(platform)/DASHBOARD-VALIDATION-REPORT.md`
-   - AI Hub dashboard validation results
-   - Quality metrics and standards met
+1. **ModuleHeroSection** (from `@/components/shared/dashboard/ModuleHeroSection`)
+   ```tsx
+   <ModuleHeroSection
+     user={user}
+     moduleName="AI Hub"
+     moduleDescription="Intelligent automation and AI-powered workflows"
+     stats={[
+       { label: 'Active Workflows', value: '12', icon: 'projects' as const },
+       { label: 'AI Agents', value: '8', icon: 'tasks' as const },
+     ]}
+   />
+   ```
 
-3. **Reference Implementation:** `app/real-estate/ai-hub/dashboard/page.tsx`
-   - Production-quality example
-   - Modern design patterns
-   - Mock data structure
+2. **EnhancedCard** (from `@/components/shared/dashboard/EnhancedCard`)
+   ```tsx
+   import { EnhancedCard, CardContent, CardHeader, CardTitle } from '@/components/shared/dashboard/EnhancedCard';
 
-### Design Patterns to Use
+   <EnhancedCard glassEffect="strong" neonBorder="cyan" hoverEffect={true}>
+     <CardHeader>
+       <CardTitle>Card Title</CardTitle>
+     </CardHeader>
+     <CardContent>
+       {/* Card content */}
+     </CardContent>
+   </EnhancedCard>
+   ```
 
-#### Glass Morphism Effects:
-```tsx
-// Strong blur for primary cards
-<Card className="glass-strong neon-border-cyan">
+### Design Patterns
 
-// Standard glass for secondary cards
-<Card className="glass neon-border-purple">
-```
+#### Neon Border Colors (via `neonBorder` prop):
+- **cyan:** Primary features, hero sections
+- **purple:** Stats cards, metrics
+- **green:** Activity, success states
+- **orange:** Actions, CTAs
 
-#### Neon Borders (Color Scheme):
-- **Cyan:** Primary features, hero sections
-- **Purple:** Stats cards, metrics
-- **Green:** Activity, success states
-- **Orange:** Actions, CTAs
-
-#### Personalized Greeting:
-```tsx
-const getGreeting = () => {
-  const hour = new Date().getHours();
-  if (hour < 12) return 'Good Morning';
-  if (hour < 17) return 'Good Afternoon';
-  return 'Good Evening';
-};
-
-const firstName = user.name?.split(' ')[0] || 'User';
-
-<h1 className="text-3xl sm:text-4xl font-bold mb-2">
-  <span>{getGreeting()},</span>{' '}
-  <span className="bg-gradient-to-r from-primary via-chart-2 to-chart-3 bg-clip-text text-transparent">
-    {firstName}
-  </span>
-</h1>
-```
+#### Glass Effects (via `glassEffect` prop):
+- **subtle:** Light glass effect
+- **medium:** Standard glass effect
+- **strong:** Heavy blur glass effect
 
 #### Responsive Layouts:
 ```tsx
@@ -150,7 +141,19 @@ const firstName = user.name?.split(' ')[0] || 'User';
 <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
 
 // Feature cards: 1/2/3 columns
-<div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+<div className="grid gap-6 lg:grid-cols-3">
+```
+
+#### Standard Imports:
+```tsx
+import { Metadata } from 'next';
+import { requireAuth, getCurrentUser } from '@/lib/auth/auth-helpers';
+import { redirect } from 'next/navigation';
+import { Suspense } from 'react';
+import { ModuleHeroSection } from '@/components/shared/dashboard/ModuleHeroSection';
+import { EnhancedCard, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/shared/dashboard/EnhancedCard';
+import { Button } from '@/components/ui/button';
+import Link from 'next/link';
 ```
 
 ---
@@ -302,10 +305,13 @@ When implementing any AI-HUB feature page:
 - **Mock Data Workflow:** `(platform)/MOCK-DATA-WORKFLOW.md`
 
 ### Reference Implementations
-- **AI Hub Dashboard:** `app/real-estate/ai-hub/dashboard/page.tsx` (243 lines)
-- **Expense Tax Dashboard:** `app/real-estate/expense-tax/dashboard/page.tsx` (136 lines, with real components)
-- **Marketplace Dashboard:** `app/real-estate/marketplace/dashboard/page.tsx` (509 lines, comprehensive example)
-- **CMS Marketing Dashboard:** `app/real-estate/cms-marketing/dashboard/page.tsx` (450 lines, inline components)
+- **Marketplace Dashboard:** `app/real-estate/marketplace/dashboard/page.tsx` (BEST REFERENCE)
+  - Uses ModuleHeroSection with stats
+  - Uses EnhancedCard with glassEffect and neonBorder props
+  - Implements Suspense boundaries for async content
+  - Follows responsive grid layouts
+  - Server Component with async data fetching
+- **AI Hub Dashboard:** `app/real-estate/ai-hub/dashboard/page.tsx` (TO BE IMPLEMENTED - use marketplace as template)
 
 ### Design System Files
 - **Global Styles:** `app/globals.css` (lines 221-561: glass/neon effects)

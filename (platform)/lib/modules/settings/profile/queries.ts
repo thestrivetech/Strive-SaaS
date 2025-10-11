@@ -26,9 +26,12 @@ export async function getUserProfile(userId: string) {
   });
 }
 
+/**
+ * Get user preferences
+ * TODO: Add user_preferences table or metadata field to users table
+ */
 export async function getUserPreferences(_userId: string) {
-  // For now, return mock preferences
-  // In future, these could be stored in user metadata or separate preferences table
+  // Return defaults until preferences table is created
   return {
     theme: 'system' as const,
     compactView: false,
@@ -38,9 +41,12 @@ export async function getUserPreferences(_userId: string) {
   };
 }
 
+/**
+ * Get notification preferences
+ * TODO: Add notification_preferences table or use notifications table
+ */
 export async function getNotificationPreferences(_userId: string) {
-  // For now, return mock preferences
-  // In future, store in user_preferences table
+  // Return defaults until preferences are stored in database
   return {
     emailNotifications: true,
     projectUpdates: true,

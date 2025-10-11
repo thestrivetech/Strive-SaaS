@@ -4,6 +4,12 @@ import { revalidatePath } from 'next/cache';
 import { prisma } from '@/lib/database/prisma';
 import { requireAuth } from '@/lib/auth/middleware';
 import { canAccessREID } from '@/lib/auth/rbac';
+import {
+  PropertyAlertSchema,
+  AlertTriggerSchema,
+  type PropertyAlertInput,
+  type AlertTriggerInput
+} from './schemas';
 
 export async function createPropertyAlert(input: PropertyAlertInput) {
   const user = await requireAuth();
@@ -12,24 +18,36 @@ export async function createPropertyAlert(input: PropertyAlertInput) {
     throw new Error('Unauthorized: REID access required');
   }
 
-  const validated = input;
+  const validated = PropertyAlertSchema.parse(input);
 
   const alert = await prisma.property_alerts.create({
     data: {
       name: validated.name,
       description: validated.description,
       alert_type: validated.alertType,
-      criteria: validated.criteria,
-      area_codes: validated.areaCodes,
-      radius: validated.radius,
-      latitude: validated.latitude,
-      longitude: validated.longitude,
-      email_enabled: validated.emailEnabled,
-      sms_enabled: validated.smsEnabled,
+      is_active: validated.isActive ?? true,
+
+      // Geographic Criteria
+      area_type: validated.areaType,
+      zip_codes: validated.zipCodes ?? [],
+      cities: validated.cities ?? [],
+      states: validated.states ?? [],
+
+      // Alert Conditions (JSON)
+      conditions: validated.conditions,
+
+      // Delivery Settings
       frequency: validated.frequency,
-      is_active: validated.isActive,
+      delivery_channels: validated.deliveryChannels ?? [],
+      email_addresses: validated.emailAddresses ?? [],
+      webhook_url: validated.webhookUrl,
+
+      // Priority
+      priority: validated.priority ?? 'MEDIUM',
+      tags: validated.tags ?? [],
+
       organization_id: user.organizationId,
-      created_by_id: user.id,
+      user_id: user.id,
     }
   });
 
@@ -67,12 +85,27 @@ export async function updatePropertyAlert(
       ...(validated.name && { name: validated.name }),
       ...(validated.description !== undefined && { description: validated.description }),
       ...(validated.alertType && { alert_type: validated.alertType }),
-      ...(validated.criteria && { criteria: validated.criteria }),
-      ...(validated.areaCodes && { area_codes: validated.areaCodes }),
-      ...(validated.emailEnabled !== undefined && { email_enabled: validated.emailEnabled }),
-      ...(validated.smsEnabled !== undefined && { sms_enabled: validated.smsEnabled }),
-      ...(validated.frequency && { frequency: validated.frequency }),
       ...(validated.isActive !== undefined && { is_active: validated.isActive }),
+
+      // Geographic Criteria
+      ...(validated.areaType && { area_type: validated.areaType }),
+      ...(validated.zipCodes && { zip_codes: validated.zipCodes }),
+      ...(validated.cities && { cities: validated.cities }),
+      ...(validated.states && { states: validated.states }),
+
+      // Alert Conditions (JSON)
+      ...(validated.conditions && { conditions: validated.conditions }),
+
+      // Delivery Settings
+      ...(validated.frequency && { frequency: validated.frequency }),
+      ...(validated.deliveryChannels && { delivery_channels: validated.deliveryChannels }),
+      ...(validated.emailAddresses && { email_addresses: validated.emailAddresses }),
+      ...(validated.webhookUrl !== undefined && { webhook_url: validated.webhookUrl }),
+
+      // Priority & Tags
+      ...(validated.priority && { priority: validated.priority }),
+      ...(validated.tags && { tags: validated.tags }),
+
       updated_at: new Date(),
     }
   });
@@ -109,14 +142,20 @@ export async function deletePropertyAlert(id: string) {
 }
 
 export async function createAlertTrigger(input: AlertTriggerInput) {
-  const validated = input;
+  const validated = AlertTriggerSchema.parse(input);
 
+  // alert_triggers schema only has: id, alert_id, triggered_at, trigger_data, notification_sent
   const trigger = await prisma.alert_triggers.create({
     data: {
       alert_id: validated.alertId,
-      triggered_by: validated.triggeredBy,
-      message: validated.message,
-      severity: validated.severity,
+      triggered_at: new Date(),
+      trigger_data: {
+        triggeredBy: validated.triggeredBy,
+        message: validated.message,
+        severity: validated.severity,
+        metadata: validated.metadata
+      },
+      notification_sent: false,
     }
   });
 
@@ -125,7 +164,7 @@ export async function createAlertTrigger(input: AlertTriggerInput) {
     where: { id: validated.alertId },
     data: {
       trigger_count: { increment: 1 },
-      last_triggered: new Date(),
+      last_triggered_at: new Date(),
     }
   });
 
@@ -134,16 +173,11 @@ export async function createAlertTrigger(input: AlertTriggerInput) {
   return trigger;
 }
 
-export async function acknowledgeAlertTrigger(
-  triggerId: string,
-  userId: string
-) {
+export async function markTriggerNotificationSent(triggerId: string) {
   const updated = await prisma.alert_triggers.update({
     where: { id: triggerId },
     data: {
-      acknowledged: true,
-      acknowledged_at: new Date(),
-      acknowledged_by_id: userId,
+      notification_sent: true,
     }
   });
 

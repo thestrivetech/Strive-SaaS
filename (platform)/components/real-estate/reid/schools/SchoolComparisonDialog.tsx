@@ -1,12 +1,29 @@
 'use client';
 
-import { type MockSchool } from '@/lib/data';
 import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog';
+
+// Type definition (previously from mock data)
+interface MockSchool {
+  id: string;
+  name: string;
+  district: string;
+  type: string;
+  rating: number;
+  test_scores: number;
+  student_count: number;
+  teacher_ratio: number;
+  grade_levels: string;
+  distance_miles: number;
+  address: string;
+  city: string;
+  state: string;
+  zip_code: string;
+}
 import { Badge } from '@/components/ui/badge';
 import { Star, Users, GraduationCap, BookOpen } from 'lucide-react';
 import { cn } from '@/lib/utils';

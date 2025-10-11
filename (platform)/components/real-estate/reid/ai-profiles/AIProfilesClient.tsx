@@ -1,8 +1,23 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { aiProfilesProvider, type MockAIProfile } from '@/lib/data';
 import { REIDCard, REIDCardHeader, REIDCardContent } from '../shared/REIDCard';
+
+// Type definition (previously from mock data)
+interface MockAIProfile {
+  id: string;
+  property_address: string;
+  city: string;
+  state: string;
+  recommendation: string;
+  ai_score: number;
+  estimated_roi: number;
+  estimated_cash_flow: number;
+  score_breakdown: Record<string, number>;
+  insights: string[];
+  analysis_date: Date;
+  status: string;
+}
 import { ProfileCard } from './ProfileCard';
 import { MetricCard } from '../shared/MetricCard';
 import { Brain, TrendingUp, Target } from 'lucide-react';
@@ -33,12 +48,9 @@ export function AIProfilesClient() {
   async function loadData() {
     try {
       setLoading(true);
-      const [profilesData, statsData] = await Promise.all([
-        aiProfilesProvider.findAll(),
-        aiProfilesProvider.getStats(),
-      ]);
-      setProfiles(profilesData);
-      setStats(statsData);
+      // Placeholder - REID is a skeleton module (no database tables yet)
+      setProfiles([]);
+      setStats({ total: 0, avg_score: 0, strong_buy_count: 0 });
     } catch (error) {
       console.error('Failed to load AI profiles:', error);
     } finally {
@@ -79,16 +91,7 @@ export function AIProfilesClient() {
   }
 
   async function handleArchive(id: string, currentStatus: string) {
-    try {
-      if (currentStatus === 'active') {
-        await aiProfilesProvider.archive(id);
-      } else {
-        await aiProfilesProvider.unarchive(id);
-      }
-      await loadData();
-    } catch (error) {
-      console.error('Failed to update profile:', error);
-    }
+    console.log(`Archive feature coming soon - REID module under development`);
   }
 
   if (loading) {

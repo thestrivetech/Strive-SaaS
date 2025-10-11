@@ -2,8 +2,6 @@ import { prisma } from '@/lib/database/prisma';
 import { withTenantContext } from '@/lib/database/utils';
 import { handleDatabaseError } from '@/lib/database/errors';
 import type { Prisma } from '@prisma/client';
-import { dataConfig } from '@/lib/data/config';
-import { reviewsProvider, purchasesProvider } from '@/lib/data';
 
 /**
  * Marketplace Reviews Queries Module
@@ -38,6 +36,14 @@ export interface ReviewStats {
   };
 }
 
+export interface ReviewFilters {
+  rating?: number;
+  sort_by?: 'rating' | 'created_at';
+  sort_order?: 'asc' | 'desc';
+  offset?: number;
+  limit?: number;
+}
+
 /**
  * Get all reviews for a specific tool
  *
@@ -49,39 +55,6 @@ export async function getToolReviews(
   toolId: string,
   filters?: ReviewFilters
 ): Promise<ReviewWithReviewer[]> {
-  // Mock data path
-  if (dataConfig.useMocks) {
-    const reviews = await reviewsProvider.findMany(toolId);
-
-    let filtered = [...reviews];
-
-    // Rating filter
-    if (filters?.rating) {
-      filtered = filtered.filter((r) => r.rating === filters.rating);
-    }
-
-    // Sorting
-    if (filters?.sort_by === 'rating') {
-      filtered.sort((a, b) =>
-        filters.sort_order === 'asc' ? a.rating - b.rating : b.rating - a.rating
-      );
-    } else {
-      filtered.sort((a, b) =>
-        filters.sort_order === 'asc'
-          ? a.created_at.getTime() - b.created_at.getTime()
-          : b.created_at.getTime() - a.created_at.getTime()
-      );
-    }
-
-    // Pagination
-    const offset = filters?.offset || 0;
-    const limit = filters?.limit || 20;
-    const paginated = filtered.slice(offset, offset + limit);
-
-    return paginated as any;
-  }
-
-  // Real Prisma query
   try {
     const where: Prisma.tool_reviewsWhereInput = {
       tool_id: toolId,
@@ -134,24 +107,6 @@ export async function getUserReviewForTool(
   toolId: string,
   userId?: string
 ): Promise<ReviewWithReviewer | null> {
-  // Mock data path
-  if (dataConfig.useMocks) {
-    // Get current user if userId not provided
-    if (!userId) {
-      const { requireAuth } = await import('@/lib/auth/auth-helpers');
-      const user = await requireAuth();
-      userId = user.id;
-    }
-
-    const hasReviewed = await reviewsProvider.hasReviewed(toolId, userId);
-    if (!hasReviewed) return null;
-
-    const reviews = await reviewsProvider.findMany(toolId);
-    const userReview = reviews.find((r) => r.user_id === userId);
-    return (userReview || null) as any;
-  }
-
-  // Real Prisma query
   return withTenantContext(async () => {
     try {
       // Get current user if userId not provided
@@ -193,43 +148,6 @@ export async function getUserReviewForTool(
  * @returns Review stats including average rating and distribution
  */
 export async function getReviewStats(toolId: string): Promise<ReviewStats> {
-  // Mock data path
-  if (dataConfig.useMocks) {
-    const reviews = await reviewsProvider.findMany(toolId);
-
-    const totalReviews = reviews.length;
-
-    if (totalReviews === 0) {
-      return {
-        averageRating: 0,
-        totalReviews: 0,
-        ratingDistribution: {
-          1: 0,
-          2: 0,
-          3: 0,
-          4: 0,
-          5: 0,
-        },
-      };
-    }
-
-    // Calculate rating distribution
-    const ratingDistribution = { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0 };
-    reviews.forEach((review) => {
-      ratingDistribution[review.rating as keyof typeof ratingDistribution]++;
-    });
-
-    const averageRating =
-      reviews.reduce((sum, r) => sum + r.rating, 0) / totalReviews;
-
-    return {
-      totalReviews,
-      averageRating: Math.round(averageRating * 10) / 10,
-      ratingDistribution,
-    };
-  }
-
-  // Real Prisma query
   try {
     const reviews = await prisma.tool_reviews.findMany({
       where: { tool_id: toolId },
@@ -290,21 +208,6 @@ export async function getReviewStats(toolId: string): Promise<ReviewStats> {
 export async function getUserReviews(
   userId?: string
 ): Promise<ReviewWithReviewer[]> {
-  // Mock data path
-  if (dataConfig.useMocks) {
-    // Get current user if userId not provided
-    if (!userId) {
-      const { requireAuth } = await import('@/lib/auth/auth-helpers');
-      const user = await requireAuth();
-      userId = user.id;
-    }
-
-    // Mock provider doesn't have findByUser yet
-    // Return empty array for now
-    return [];
-  }
-
-  // Real Prisma query
   return withTenantContext(async () => {
     try {
       // Get current user if userId not provided
@@ -351,25 +254,6 @@ export async function hasUserPurchasedTool(
   toolId: string,
   userId?: string
 ): Promise<boolean> {
-  // Mock data path
-  if (dataConfig.useMocks) {
-    // Get current user if userId not provided
-    if (!userId) {
-      const { requireAuth } = await import('@/lib/auth/auth-helpers');
-      const user = await requireAuth();
-      userId = user.id;
-    }
-
-    const { getCurrentUser } = await import('@/lib/auth/auth-helpers');
-    const user = await getCurrentUser();
-    const orgId =
-      user?.organizationId || user?.organization_members?.[0]?.organization_id || 'demo-org';
-
-    const hasAccess = await purchasesProvider.hasAccess(toolId, orgId);
-    return hasAccess;
-  }
-
-  // Real Prisma query
   return withTenantContext(async () => {
     try {
       // Get current user if userId not provided

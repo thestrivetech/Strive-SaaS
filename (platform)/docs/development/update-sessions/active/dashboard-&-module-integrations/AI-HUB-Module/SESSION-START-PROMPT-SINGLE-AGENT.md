@@ -9,7 +9,7 @@ Use this prompt at the beginning of each session. Replace `{SESSION_NUMBER}` wit
 ## 📋 SESSION START PROMPT
 
 ```
-I'm starting Session {1} of the AI-HUB Module integration.
+I'm starting Session {7} of the AI-HUB Module integration.
 
 ## STEP 1: READ ESSENTIAL DOCUMENTATION
 
@@ -31,7 +31,7 @@ Read these files in order (ALWAYS at session start):
    - Tri-fold architecture overview
    - Read-before-edit mandate
    - Database workflow (NEVER use MCP list_tables)
-   - Mock data development mode (ACTIVE - we're using mocks)
+   - Production database usage (real Prisma queries)
 
 3. **Platform-Specific Standards**:
    C:\Users\zochr\Desktop\GitHub\Strive-SaaS\(platform)\CLAUDE.md
@@ -41,13 +41,13 @@ Read these files in order (ALWAYS at session start):
    - Dual-role RBAC system
    - 6-tier subscription enforcement
    - Security mandates (AI model configs, multi-tenancy)
-   - Mock Data Mode (UI-first development pattern)
+   - Production database patterns (Prisma + RLS)
 
 4. **Session Plan**:
-   C:\Users\zochr\Desktop\GitHub\Strive-SaaS\(platform)\update-sessions\dashboard-&-module-integrations\AI-HUB-Module\session-{SESSION_NUMBER}.plan.md
+   C:\Users\zochr\Desktop\GitHub\Strive-SaaS\(platform)\docs\development\update-sessions\active\dashboard-&-module-integrations\AI-HUB-Module\session-{SESSION_NUMBER}.plan.md
 
 5. **Dashboard Modernization Guide** (dashboard already complete):
-   C:\Users\zochr\Desktop\GitHub\Strive-SaaS\(platform)\update-sessions\dashboard-&-module-integrations\AI-HUB-Module\DASHBOARD-MODERNIZATION-UPDATE.md
+   C:\Users\zochr\Desktop\GitHub\Strive-SaaS\(platform)\docs\development\update-sessions\active\dashboard-&-module-integrations\AI-HUB-Module\DASHBOARD-MODERNIZATION-UPDATE.md
 
    NOTE: AI-HUB dashboard completed in Phase 4 (Oct 2025)
    - 243 lines, production-ready futuristic UI
@@ -67,10 +67,12 @@ AI-HUB Module (NeuroFlow Hub) - Session {SESSION_NUMBER}
 ## Context Files Already Read
 You can reference patterns from:
 - single-agent-usage-guide.md (orchestration patterns)
-- Root CLAUDE.md (tri-fold architecture, mock data workflow)
+- Root CLAUDE.md (tri-fold architecture, database workflow)
 - Platform CLAUDE.md (multi-industry structure, security requirements)
 - session-{SESSION_NUMBER}.plan.md (objectives and requirements)
 - DASHBOARD-MODERNIZATION-UPDATE.md (design system, completed dashboard)
+- AI-HUB-ARCHITECTURE.md (unified control center architecture)
+- prisma/AI-HUB-SCHEMA-DECISION.md (schema decisions from Session 1)
 
 ## Session Objectives
 [Copy objectives from session plan]
@@ -78,12 +80,13 @@ You can reference patterns from:
 ## Requirements
 
 Database:
-⚠️ MOCK DATA MODE ACTIVE - We're still using mock data for UI development
-- Read (platform)/MOCK-DATA-WORKFLOW.md for mock data patterns
-- For future schema needs: Document requirements (don't implement yet)
-- Use provider pattern: Import from @/lib/data instead of Prisma
-- Schema planning only: Note what models will be needed
-- When ready for database: Follow platform db:migrate workflow
+✅ PRODUCTION DATABASE ACTIVE - Using real Prisma queries
+- AI-HUB schema complete: 9 models added in Session 1 (ai_agents, agent_teams, automation_workflows, etc.)
+- Read prisma/SCHEMA-QUICK-REF.md for model reference (99% token savings vs MCP)
+- Read prisma/AI-HUB-SCHEMA-DECISION.md for AI-HUB architecture decisions
+- Use Prisma client: Import from @prisma/client
+- Multi-tenancy: ALWAYS filter by organizationId
+- RLS policies: Pending (Session 2) - use application-level filtering for now
 
 Security (Platform-Specific):
 - Dual-role RBAC: Check BOTH GlobalRole AND OrganizationRole
@@ -119,7 +122,7 @@ Implementation:
 1. Create TodoWrite list FIRST (granular tasks with activeForm)
 2. Read existing files before editing (READ-BEFORE-EDIT mandate)
 3. Follow session plan implementation steps
-4. Use mock data providers for UI development
+4. Use Prisma queries with proper organizationId filtering
 5. Test as you build (TypeScript, linting, functionality)
 6. Verify security requirements (RBAC, organizationId, tier validation)
 
@@ -137,7 +140,7 @@ Provide ✅ EXECUTION REPORT with:
 - Verification Results: [actual command outputs, not just 'passed']
 - Changes Summary: [what was implemented]
 - Issues Found: NONE / [detailed list with resolutions]
-- Mock Data Used: [list providers/mocks used]
+- Database Queries: [models queried, organizationId filtering confirmed]
 
 BLOCKING: DO NOT report complete without verification command outputs.
 "
@@ -151,8 +154,8 @@ As the agent works, verify quality in real-time:
 ### ✅ Positive Indicators
 - Agent creates TodoWrite list BEFORE coding
 - Agent reads files before editing them
-- Agent uses mock data providers (not Prisma during UI dev)
-- Agent includes organizationId filters in queries
+- Agent uses Prisma queries with proper organizationId filtering
+- Agent includes organizationId filters in ALL queries
 - Agent checks BOTH GlobalRole AND OrganizationRole
 - Agent provides actual command outputs in reports
 - Agent stays within 500-line file limit
@@ -161,8 +164,8 @@ As the agent works, verify quality in real-time:
 ### 🚨 Warning Signs (Intervene Immediately)
 - Skips TodoWrite tool
 - Creates files without reading existing patterns
-- Uses Prisma queries instead of mock providers (UI dev phase)
 - Queries without organizationId filter (data leak risk!)
+- Uses raw SQL instead of Prisma (bypasses RLS)
 - Only checks GlobalRole (missing OrganizationRole)
 - Reports success without verification outputs
 - Creates files >500 lines
@@ -175,7 +178,7 @@ As the agent works, verify quality in real-time:
 - Bypasses security checks (no RBAC validation)
 - Commits security violations (exposes secrets, missing validation)
 - Breaks multi-tenancy (cross-org data access possible)
-- Creates database migrations during mock data phase
+- Creates database schema changes without migration workflow
 
 ### Intervention Pattern
 If agent deviates from requirements:
@@ -211,7 +214,7 @@ After agent reports complete, independently verify:
 - [ ] Linting: 0 warnings (actual output shown)
 - [ ] Tests: All passing (actual output shown)
 - [ ] Build: Successful (actual output shown)
-- [ ] Mock data providers used correctly (if applicable)
+- [ ] Database queries use organizationId filtering
 
 ### Security Validation
 - [ ] All queries filter by organizationId (multi-tenancy)
@@ -267,7 +270,7 @@ Required sections:
 4. **Key Implementations** - Features added, components built
 5. **Security Implementation** - RBAC checks, multi-tenancy, validation
 6. **Testing** - What was tested, coverage achieved
-7. **Mock Data Used** - Providers/mocks used for UI development
+7. **Database Usage** - Models queried, organizationId filtering confirmed
 8. **Issues & Resolutions** - Problems encountered and how solved
 9. **Next Session Readiness** - What's ready, any blockers
 10. **Overall Progress** - Percentage complete for full integration
@@ -369,16 +372,18 @@ export async function executeAgent(agentId: string, task: string) {
 ```
 
 ### Database Models (AI-HUB Specific)
-⚠️ MOCK DATA MODE - Document these for future implementation:
-- Workflow - Workflow definitions
-- WorkflowExecution - Execution records
-- AIAgent - AI agent configurations
-- AgentExecution - Agent execution records
-- AgentTeam - Team configurations
-- TeamMember - Team membership
-- TeamExecution - Team execution records
-- Integration - External integrations
-- WorkflowTemplate - Template marketplace
+✅ PRODUCTION SCHEMA - Available in Prisma client (Session 1 complete):
+- automation_workflows - AI automation workflow definitions
+- workflow_executions - Execution records (both transaction & AI workflows)
+- ai_agents - AI agent configurations
+- agent_executions - Agent execution records
+- agent_teams - Team configurations
+- team_members - Team membership
+- team_executions - Team execution records
+- integrations - External integrations
+- workflow_templates - Template marketplace
+
+📖 **Full schema details:** `prisma/AI-HUB-SCHEMA-DECISION.md`
 
 ### API Routes
 ```
@@ -444,7 +449,7 @@ Session is complete when:
 ✅ Security requirements met (RBAC, multi-tenancy, validation)
 ✅ Architecture standards followed (routes, components, file sizes)
 ✅ NeuroFlow design system applied (electric colors, glass effects, cyber grid)
-✅ Mock data providers used correctly (if UI development)
+✅ Database queries use proper organizationId filtering
 ✅ Session summary created with all required sections
 ✅ Ready to proceed to next session
 
@@ -457,11 +462,12 @@ Session is complete when:
 
 ## 💡 QUICK TIPS
 
-**Mock Data Development:**
-- UI-first approach: Build with mocks, design schema later
-- Use provider pattern: Import from @/lib/data
-- Document needs: Track what database models will be needed
-- Schema migration: When ready, follow platform db:migrate workflow
+**Database Development:**
+- Schema complete: 9 AI-HUB models ready (Session 1)
+- Use Prisma client: Import models from @prisma/client
+- Multi-tenancy: ALWAYS filter by organizationId
+- RLS pending: Use application-level filtering until Session 2
+- Schema docs: Read prisma/SCHEMA-QUICK-REF.md (99% token savings)
 
 **Token Efficiency:**
 - Local schema docs: ~500 tokens vs MCP list_tables: ~18,000 tokens
@@ -480,8 +486,9 @@ Session is complete when:
 - Exposed API keys → Security breach
 - Files >500 lines → ESLint block
 - Missing glass effects → Design inconsistency
-- Using Prisma during UI dev → Should use mocks
+- Raw SQL queries → Bypasses RLS/security
 
 ---
 
-**Version:** 1.0 - Single Agent Orchestration | Last Updated: 2025-10-08
+**Version:** 1.1 - Single Agent Orchestration | Last Updated: 2025-10-10
+**Changes:** Updated for production database (Session 1 complete)

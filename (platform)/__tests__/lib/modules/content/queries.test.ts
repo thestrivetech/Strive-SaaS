@@ -43,7 +43,7 @@ describe('Content Queries', () => {
       const { organization: org2, user: user2 } = await createTestOrgWithUser(OrgRole.OWNER);
 
       // Create content in org1
-      await testPrisma.content_items.create({
+      await testPrisma.content.create({
         data: {
           title: 'Org 1 Content',
           slug: 'org1-content',
@@ -56,7 +56,7 @@ describe('Content Queries', () => {
       });
 
       // Create content in org2
-      await testPrisma.content_items.create({
+      await testPrisma.content.create({
         data: {
           title: 'Org 2 Content',
           slug: 'org2-content',
@@ -87,7 +87,7 @@ describe('Content Queries', () => {
 
       // Create multiple content items
       for (let i = 0; i < 5; i++) {
-        await testPrisma.content_items.create({
+        await testPrisma.content.create({
           data: {
             title: `Org 1 Content ${i}`,
             slug: `org1-content-${i}`,
@@ -101,7 +101,7 @@ describe('Content Queries', () => {
       }
 
       for (let i = 0; i < 3; i++) {
-        await testPrisma.content_items.create({
+        await testPrisma.content.create({
           data: {
             title: `Org 2 Content ${i}`,
             slug: `org2-content-${i}`,
@@ -129,7 +129,7 @@ describe('Content Queries', () => {
       const { organization: org2, user: user2 } = await createTestOrgWithUser(OrgRole.OWNER);
 
       // Create content in org2
-      const org2Content = await testPrisma.content_items.create({
+      const org2Content = await testPrisma.content.create({
         data: {
           title: 'Org 2 Content',
           slug: 'org2-content',
@@ -161,7 +161,7 @@ describe('Content Queries', () => {
       const { organization, user } = await createTestOrgWithUser(OrgRole.OWNER);
 
       // Create test content with various statuses and types
-      await testPrisma.content_items.createMany({
+      await testPrisma.content.createMany({
         data: [
           {
             title: 'Published Blog Post',
@@ -268,7 +268,7 @@ describe('Content Queries', () => {
         },
       });
 
-      await testPrisma.content_items.create({
+      await testPrisma.content.create({
         data: {
           title: 'Tech Content',
           slug: 'tech-content',
@@ -317,7 +317,7 @@ describe('Content Queries', () => {
 
       // Create 25 content items
       for (let i = 0; i < 25; i++) {
-        await testPrisma.content_items.create({
+        await testPrisma.content.create({
           data: {
             title: `Content ${i.toString().padStart(2, '0')}`,
             slug: `content-${i}`,
@@ -375,7 +375,7 @@ describe('Content Queries', () => {
     it('should get published content by slug', async () => {
       const { organization, user } = await createTestOrgWithUser(OrgRole.OWNER);
 
-      await testPrisma.content_items.create({
+      await testPrisma.content.create({
         data: {
           title: 'Public Content',
           slug: 'public-content',
@@ -397,7 +397,7 @@ describe('Content Queries', () => {
     it('should only return published content (not drafts)', async () => {
       const { organization, user } = await createTestOrgWithUser(OrgRole.OWNER);
 
-      await testPrisma.content_items.create({
+      await testPrisma.content.create({
         data: {
           title: 'Draft Content',
           slug: 'draft-content',
@@ -418,7 +418,7 @@ describe('Content Queries', () => {
       const { organization: org2, user: user2 } = await createTestOrgWithUser(OrgRole.OWNER);
 
       // Same slug in different orgs
-      await testPrisma.content_items.create({
+      await testPrisma.content.create({
         data: {
           title: 'Org 1 Content',
           slug: 'same-slug',
@@ -430,7 +430,7 @@ describe('Content Queries', () => {
         },
       });
 
-      await testPrisma.content_items.create({
+      await testPrisma.content.create({
         data: {
           title: 'Org 2 Content',
           slug: 'same-slug',
@@ -458,7 +458,7 @@ describe('Content Queries', () => {
       const { organization, user } = await createTestOrgWithUser(OrgRole.OWNER);
 
       // Create content with different statuses
-      await testPrisma.content_items.createMany({
+      await testPrisma.content.createMany({
         data: [
           {
             title: 'Published 1',
@@ -531,7 +531,7 @@ describe('Content Queries', () => {
         },
       });
 
-      const content = await testPrisma.content_items.create({
+      const content = await testPrisma.content.create({
         data: {
           title: 'Full Content',
           slug: 'full-content',

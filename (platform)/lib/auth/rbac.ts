@@ -755,3 +755,81 @@ export function getMarketplaceLimits(tier: string) {
 
   return limits[tier] || limits.FREE;
 }
+
+/**
+ * AI-HUB Module Access Control
+ */
+export const AI_HUB_PERMISSIONS = {
+  AI_HUB_ACCESS: 'ai-hub:access',
+  WORKFLOWS_VIEW: 'ai-hub:workflows:view',
+  WORKFLOWS_CREATE: 'ai-hub:workflows:create',
+  WORKFLOWS_EDIT: 'ai-hub:workflows:edit',
+  WORKFLOWS_DELETE: 'ai-hub:workflows:delete',
+  WORKFLOWS_EXECUTE: 'ai-hub:workflows:execute',
+} as const;
+
+/**
+ * Check if user can access AI Hub module
+ * Requires GROWTH tier minimum (SUPER_ADMIN bypasses)
+ */
+export function canAccessAIHub(user: any): boolean {
+  const userRole = user.globalRole || user.role;
+
+  // SUPER_ADMIN bypasses tier restrictions
+  if (userRole === 'SUPER_ADMIN') {
+    return true;
+  }
+
+  // Check subscription tier (GROWTH+ required)
+  const tier = user.subscriptionTier || 'FREE';
+  const hasRequiredTier = ['GROWTH', 'ELITE', 'ENTERPRISE'].includes(tier);
+
+  if (!hasRequiredTier) {
+    return false;
+  }
+
+  const hasGlobalRole = ['SUPER_ADMIN', 'ADMIN', 'MODERATOR', 'USER'].includes(userRole);
+  const hasOrgAccess = ['OWNER', 'ADMIN', 'MEMBER'].includes(user.organizationRole);
+
+  return hasGlobalRole && hasOrgAccess;
+}
+
+/**
+ * Check if user can manage AI Hub (create, edit, delete)
+ */
+export function canManageAIHub(user: any): boolean {
+  const userRole = user.globalRole || user.role;
+
+  // SUPER_ADMIN bypasses tier restrictions
+  if (userRole === 'SUPER_ADMIN') {
+    return true;
+  }
+
+  // Check subscription tier (GROWTH+ required)
+  const tier = user.subscriptionTier || 'FREE';
+  const hasRequiredTier = ['GROWTH', 'ELITE', 'ENTERPRISE'].includes(tier);
+
+  if (!hasRequiredTier) {
+    return false;
+  }
+
+  const hasGlobalRole = ['SUPER_ADMIN', 'ADMIN', 'MODERATOR'].includes(userRole);
+  const canManage = ['OWNER', 'ADMIN', 'MEMBER'].includes(user.organizationRole);
+
+  return hasGlobalRole && canManage;
+}
+
+/**
+ * Get AI Hub feature limits by subscription tier
+ */
+export function getAIHubLimits(tier: string) {
+  const limits: Record<string, { workflows: number; agents: number; executions: number }> = {
+    FREE: { workflows: 0, agents: 0, executions: 0 },
+    STARTER: { workflows: 0, agents: 0, executions: 0 },
+    GROWTH: { workflows: 10, agents: 5, executions: 1000 }, // Per month
+    ELITE: { workflows: -1, agents: -1, executions: -1 }, // Unlimited
+    ENTERPRISE: { workflows: -1, agents: -1, executions: -1 }, // Unlimited
+  };
+
+  return limits[tier] || limits.FREE;
+}

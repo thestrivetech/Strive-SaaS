@@ -5,7 +5,6 @@ import { Prisma } from '@prisma/client';
 import { requireAuth, getCurrentUser } from '@/lib/auth/middleware';
 import { cache } from 'react';
 import { getUserOrganizationId } from '@/lib/auth/user-helpers';
-import { CMS_MOCK_DATA } from '@/lib/data/mocks/content';
 
 /**
  * Content Analytics Module - Content Performance Queries
@@ -42,55 +41,8 @@ export const getContentPerformance = cache(async (period: 'week' | 'month' | 'ye
   if (!user) throw new Error('Unauthorized');
 
   const organization_id = getUserOrganizationId(user);
-  const useMocks = process.env.NEXT_PUBLIC_USE_MOCKS === 'true';
   const startDate = getStartDate(period);
-
-  if (useMocks) {
-    // Filter mock data by date and calculate metrics
-    const content = CMS_MOCK_DATA.contentItems
-      .filter(
-        (item) =>
-          item.organization_id === organization_id &&
-          item.status === 'PUBLISHED' &&
-          item.published_at &&
-          item.published_at >= startDate
-      )
-      .sort((a, b) => b.view_count - a.view_count)
-      .slice(0, 20)
-      .map((item) => ({
-        id: item.id,
-        title: item.title,
-        type: item.type,
-        view_count: item.view_count,
-        share_count: item.share_count,
-        like_count: item.like_count,
-        comment_count: item.comment_count,
-        published_at: item.published_at,
-        category: item.category_id ? { name: item.category_id } : null,
-      }));
-
-    const totalViews = content.reduce((sum, item) => sum + item.view_count, 0);
-    const totalShares = content.reduce((sum, item) => sum + item.share_count, 0);
-    const totalLikes = content.reduce((sum, item) => sum + item.like_count, 0);
-    const totalComments = content.reduce((sum, item) => sum + item.comment_count, 0);
-    const avgEngagement =
-      content.length > 0 ? (totalLikes + totalShares + totalComments) / content.length : 0;
-
-    return {
-      content,
-      metrics: {
-        totalViews,
-        totalShares,
-        totalLikes,
-        totalComments,
-        avgEngagement: Math.round(avgEngagement),
-        totalPosts: content.length,
-      },
-    };
-  }
-
-  // Original Prisma code for production
-  const content = await prisma.content_items.findMany({
+  const content = await prisma.content.findMany({
     where: {
       organization_id,
       status: 'PUBLISHED',
@@ -164,14 +116,14 @@ export const getContentTrends = cache(async (months: number = 6) => {
     const end = new Date(date.getFullYear(), date.getMonth() + 1, 0, 23, 59, 59);
 
     return Promise.all([
-      prisma.content_items.aggregate({
+      prisma.content.aggregate({
         where: {
           organization_id,
           published_at: { gte: start, lte: end },
         },
         _sum: { view_count: true },
       }),
-      prisma.content_items.aggregate({
+      prisma.content.aggregate({
         where: {
           organization_id,
           published_at: { gte: start, lte: end },
@@ -214,7 +166,7 @@ export const getTopPerformingContent = cache(async (type?: string) => {
 
   const organization_id = getUserOrganizationId(user);
 
-  const where: Prisma.content_itemsWhereInput = {
+  const where: Prisma.contentWhereInput = {
     organization_id,
     status: 'PUBLISHED',
   };
@@ -223,7 +175,7 @@ export const getTopPerformingContent = cache(async (type?: string) => {
     where.type = type as any;
   }
 
-  return await prisma.content_items.findMany({
+  return await prisma.content.findMany({
     where,
     select: {
       id: true,
@@ -253,7 +205,7 @@ export const getContentPerformanceByType = cache(async () => {
 
   const organization_id = getUserOrganizationId(user);
 
-  const contentByType = await prisma.content_items.groupBy({
+  const contentByType = await prisma.content.groupBy({
     by: ['type'],
     where: {
       organization_id,

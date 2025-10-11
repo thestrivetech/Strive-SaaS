@@ -1,6 +1,6 @@
 # Prisma Schema - Quick Reference
 
-**Generated:** 2025-10-10T20:40:33.745Z
+**Generated:** 2025-10-11T00:05:10.911Z
 **Source:** `(platform)/prisma/schema.prisma`
 
 > 🎯 **Purpose:** Lightning-fast schema reference to avoid expensive MCP calls
@@ -12,13 +12,13 @@
 
 ## 📊 Statistics
 
-- **Models:** 42
-- **Enums:** 69
-- **Total:** 111 types
+- **Models:** 80
+- **Enums:** 88
+- **Total:** 168 types
 
 ---
 
-## 📋 Models (42)
+## 📋 Models (80)
 
 ### Core (4)
 ```
@@ -49,17 +49,28 @@ transaction_loops
 transaction_tasks
 ```
 
-### Content & CMS (1)
+### Content & CMS (10)
 ```
+campaign_content
+campaigns
 content
+content_categories
+content_comments
+content_revisions
+content_tag_relations
+content_tags
+email_campaigns
+social_media_posts
 ```
 
-### AI (4)
+### AI (6)
 ```
+ai_agents
 ai_conversations
 ai_tools
 conversations
 example_conversations
+reid_ai_profiles
 ```
 
 ### Analytics (6)
@@ -72,6 +83,16 @@ platform_metrics
 web_vitals_metrics
 ```
 
+### Marketplace (6)
+```
+marketplace_bundle_items
+marketplace_bundles
+marketplace_cart
+marketplace_purchases
+marketplace_reviews
+marketplace_tools
+```
+
 ### Admin (4)
 ```
 admin_action_logs
@@ -80,23 +101,44 @@ onboarding_sessions
 system_alerts
 ```
 
-### Other (10)
+### Other (31)
 ```
 activities
 activity_logs
+agent_executions
+agent_teams
+alert_triggers
 appointments
 attachments
+automation_workflows
+commissions
+expense_categories
+expenses
+integrations
+market_reports
+neighborhood_insights
 notifications
+open_house_attendees
+open_houses
 projects
+property_alerts
+receipts
+reid_roi_simulations
 tasks
+tax_estimates
+tax_reports
+team_executions
+team_members
 usage_tracking
 user_sessions
+workflow_executions
+workflow_templates
 workflows
 ```
 
 ---
 
-## 🏷️ Enums (69)
+## 🏷️ Enums (88)
 
 ```
 SubscriptionTier
@@ -168,6 +210,25 @@ TransactionType
 UserRole
 WidgetType
 WorkflowStatus
+AgentStatus
+TeamStructure
+TeamRole
+ExecutionStatus
+IntegrationStatus
+TemplateCategory
+DifficultyLevel
+PriceModel
+IntegrationType
+ToolStatus
+BundleStatus
+PaymentMethod
+ReviewStatus
+PurchaseType
+CartItemType
+TaxReportType
+TaxReportStatus
+QuarterEnum
+CalculationMethod
 ```
 
 ---

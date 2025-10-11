@@ -428,7 +428,7 @@ describe('Campaign Actions', () => {
         },
       });
 
-      const contentItem = await testPrisma.content_items.create({
+      const contentItem = await testPrisma.content.create({
         data: {
           title: 'Campaign Article',
           slug: 'campaign-article',
@@ -468,7 +468,7 @@ describe('Campaign Actions', () => {
         },
       });
 
-      const contentItem = await testPrisma.content_items.create({
+      const contentItem = await testPrisma.content.create({
         data: {
           title: 'Org 2 Content',
           slug: 'org2-content',

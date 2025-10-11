@@ -11,12 +11,12 @@ export async function getExpenseReports() {
     throw new Error('Unauthorized: Expense access required');
   }
 
-  const reports = await prisma.expense_reports.findMany({
+  const reports = await prisma.tax_reports.findMany({
     where: {
       organization_id: user.organizationId,
     },
     include: {
-      creator: {
+      user: {
         select: {
           id: true,
           name: true,
@@ -37,10 +37,10 @@ export async function getExpenseReportById(id: string) {
     throw new Error('Unauthorized: Expense access required');
   }
 
-  const report = await prisma.expense_reports.findUnique({
+  const report = await prisma.tax_reports.findUnique({
     where: { id },
     include: {
-      creator: {
+      user: {
         select: {
           id: true,
           name: true,

@@ -8,7 +8,6 @@ import { TaxConfiguration } from '@/components/real-estate/expense-tax/settings/
 import { ModuleHeroSection } from '@/components/shared/dashboard/ModuleHeroSection';
 import { EnhancedCard, CardHeader, CardTitle, CardContent } from '@/components/shared/dashboard/EnhancedCard';
 import { HeroSkeleton } from '@/components/shared/dashboard/skeletons';
-import { categoriesProvider, taxProvider } from '@/lib/data';
 
 /**
  * Expense & Tax Settings Page
@@ -121,56 +120,26 @@ async function HeroSectionWrapper({
 }: {
   user: any; // TODO: Use proper UserWithOrganization type
 }) {
-  const organizationId = user.organization_members[0]?.organization_id || '';
-
-  // Fetch real data from providers
-  const categories = await categoriesProvider.findAll(organizationId);
-  // Tax provider doesn't have findMany - get current year's estimates
-  const currentYear = new Date().getFullYear();
-  const yearSummary = await taxProvider.getYearSummary(organizationId, currentYear);
-  const taxEstimates = yearSummary.quarters;
-
-  // Calculate stats
-  const totalCategories = categories.length;
-  const customCategories = categories.filter(cat => cat.is_custom).length;
-  const taxConfigurations = taxEstimates.length;
-
-  // Find most recently updated item
-  const allUpdates = [
-    ...categories.map(c => new Date(c.updated_at)),
-    ...taxEstimates.map(t => new Date(t.updated_at)),
-  ].sort((a, b) => b.getTime() - a.getTime());
-
-  const lastUpdate = allUpdates[0];
-  const daysSinceUpdate = lastUpdate
-    ? Math.floor((Date.now() - lastUpdate.getTime()) / (1000 * 60 * 60 * 24))
-    : 0;
-
-  const lastUpdatedText = daysSinceUpdate === 0
-    ? 'Today'
-    : daysSinceUpdate === 1
-    ? 'Yesterday'
-    : `${daysSinceUpdate} days ago`;
-
+  // Placeholder data - Expense & Tax is a skeleton module (no database tables yet)
   const stats = [
     {
       label: 'Total Categories',
-      value: totalCategories.toString(),
+      value: '0',
       icon: 'tasks' as const,
     },
     {
       label: 'Custom Categories',
-      value: customCategories.toString(),
+      value: '0',
       icon: 'customers' as const,
     },
     {
       label: 'Tax Configurations',
-      value: taxConfigurations.toString(),
+      value: '0',
       icon: 'projects' as const,
     },
     {
       label: 'Last Updated',
-      value: lastUpdatedText,
+      value: 'Never',
       icon: 'revenue' as const,
     },
   ];

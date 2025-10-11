@@ -3,6 +3,9 @@
 import { prisma } from '@/lib/database/prisma';
 import { requireAuth } from '@/lib/auth/middleware';
 
+/**
+ * Get user preferences (creates default if none exist)
+ */
 export async function getUserPreferences() {
   const user = await requireAuth();
 

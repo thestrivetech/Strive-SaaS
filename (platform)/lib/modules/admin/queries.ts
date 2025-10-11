@@ -58,7 +58,7 @@ export const getAllUsers = cache(async function(filters?: {
  */
 export const getAllOrganizations = cache(async function(filters?: {
   subscriptionTier?: string;
-  isActive?: boolean;
+  subscriptionStatus?: string;
   limit?: number;
   offset?: number;
 }) {
@@ -69,9 +69,21 @@ export const getAllOrganizations = cache(async function(filters?: {
   }
 
   const where: any = {};
-  if (filters?.subscriptionTier) where.subscription_tier = filters.subscriptionTier;
+  const subscriptionWhere: any = {};
 
-  const [organizations, total] = await Promise.all([
+  if (filters?.subscriptionTier) {
+    subscriptionWhere.tier = filters.subscriptionTier;
+  }
+  if (filters?.subscriptionStatus) {
+    subscriptionWhere.status = filters.subscriptionStatus;
+  }
+
+  // Only apply subscription filter if needed
+  if (Object.keys(subscriptionWhere).length > 0) {
+    where.subscriptions = subscriptionWhere;
+  }
+
+  const [orgs, total] = await Promise.all([
     prisma.organizations.findMany({
       where,
       include: {
@@ -92,8 +104,37 @@ export const getAllOrganizations = cache(async function(filters?: {
     prisma.organizations.count({ where }),
   ]);
 
+  // Transform to match expected format
+  const organizations = orgs.map(org => ({
+    id: org.id,
+    name: org.name,
+    website: org.website || '',
+    member_count: org._count.organization_members,
+    subscription_tier: org.subscriptions?.tier || 'FREE',
+    subscription_status: org.subscriptions?.status || 'INACTIVE',
+    monthly_revenue: getMonthlyRevenue(org.subscriptions?.tier),
+    created_at: org.created_at.toISOString(),
+    updated_at: org.updated_at.toISOString(),
+  }));
+
   return { organizations, total };
 });
+
+/**
+ * Helper: Get monthly revenue for a tier
+ */
+function getMonthlyRevenue(tier?: string): number {
+  if (!tier) return 0;
+  const pricing: Record<string, number> = {
+    FREE: 0,
+    CUSTOM: 0,
+    STARTER: 299,
+    GROWTH: 699,
+    ELITE: 999,
+    ENTERPRISE: 0,
+  };
+  return pricing[tier] || 0;
+}
 
 /**
  * Get all feature flags

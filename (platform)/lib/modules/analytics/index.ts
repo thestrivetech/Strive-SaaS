@@ -21,33 +21,17 @@
  * ```
  */
 
-// Check if mock mode is enabled
-import { dataConfig } from '@/lib/data/config';
-
-// KPIs - Use mock data if enabled
-export const getOverviewKPIs = dataConfig.useMocks
-  ? async () => (await import('@/lib/data/providers/analytics-provider')).getOverviewKPIs()
-  : async () => (await import('./kpis')).getOverviewKPIs();
-
+// KPIs
+export { getOverviewKPIs } from './kpis';
 export type { OverviewKPIs } from './kpis';
 
-// Pipeline Metrics - Use mock data if enabled
-export const getSalesFunnelData = dataConfig.useMocks
-  ? async () => (await import('@/lib/data/providers/analytics-provider')).getSalesFunnelData()
-  : async () => (await import('./pipeline-metrics')).getSalesFunnelData();
-
-export const getPipelineByStage = dataConfig.useMocks
-  ? async () => []
-  : async () => (await import('./pipeline-metrics')).getPipelineByStage();
-
-export const getStageConversionRates = dataConfig.useMocks
-  ? async () => []
-  : async () => (await import('./pipeline-metrics')).getStageConversionRates();
-
-export const getAverageTimeInStage = dataConfig.useMocks
-  ? async () => []
-  : async () => (await import('./pipeline-metrics')).getAverageTimeInStage();
-
+// Pipeline Metrics
+export {
+  getSalesFunnelData,
+  getPipelineByStage,
+  getStageConversionRates,
+  getAverageTimeInStage,
+} from './pipeline-metrics';
 export type { SalesFunnelStage, PipelineByStage } from './pipeline-metrics';
 
 // Revenue Metrics
@@ -59,19 +43,12 @@ export {
 } from './revenue-metrics';
 export type { MonthlyRevenue, RevenueBySource } from './revenue-metrics';
 
-// Performance Metrics - Use mock data if enabled
-export const getAgentPerformance = dataConfig.useMocks
-  ? async (timeRange: any) => (await import('@/lib/data/providers/analytics-provider')).getAgentPerformance(timeRange)
-  : async (timeRange: any) => (await import('./performance-metrics')).getAgentPerformance(timeRange);
-
-export const getAgentPerformanceById = dataConfig.useMocks
-  ? async () => null
-  : async (agentId: string, timeRange: any) => (await import('./performance-metrics')).getAgentPerformanceById(agentId, timeRange);
-
-export const getTeamActivityStats = dataConfig.useMocks
-  ? async (timeRange: any) => []
-  : async (timeRange: any) => (await import('./performance-metrics')).getTeamActivityStats(timeRange);
-
+// Performance Metrics
+export {
+  getAgentPerformance,
+  getAgentPerformanceById,
+  getTeamActivityStats,
+} from './performance-metrics';
 export type {
   AgentMetrics,
   AgentPerformance,

@@ -1,7 +1,22 @@
 'use client';
 
-import { type MockAIProfile } from '@/lib/data';
 import { REIDCard, REIDCardContent } from '../shared/REIDCard';
+
+// Type definition (previously from mock data)
+interface MockAIProfile {
+  id: string;
+  property_address: string;
+  city: string;
+  state: string;
+  recommendation: string;
+  ai_score: number;
+  estimated_roi: number;
+  estimated_cash_flow: number;
+  score_breakdown: Record<string, number>;
+  insights: string[];
+  analysis_date: Date;
+  status: string;
+}
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Archive, MapPin, TrendingUp, DollarSign, Brain } from 'lucide-react';

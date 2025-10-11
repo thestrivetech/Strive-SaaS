@@ -47,7 +47,7 @@ async function isSlugTaken(
   slug: string,
   organizationId: string
 ): Promise<boolean> {
-  const existing = await prisma.content_items.findFirst({
+  const existing = await prisma.content.findFirst({
     where: {
       slug,
       organization_id: organizationId,

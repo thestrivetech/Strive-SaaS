@@ -7,6 +7,41 @@ import { cache } from 'react';
 import { Prisma } from '@prisma/client';
 
 /**
+ * Get dashboard overview with latest metrics
+ */
+export const getDashboardOverview = cache(async function() {
+  const user = await getCurrentUser();
+
+  if (!user || !canViewPlatformMetrics(user.role)) {
+    throw new Error('Unauthorized: Admin access required');
+  }
+
+  const [metrics, dbStats, securityAlerts] = await Promise.all([
+    getPlatformMetrics(),
+    getDatabaseStats(),
+    getSecurityAlertCount(),
+  ]);
+
+  return {
+    overview: {
+      totalOrganizations: metrics.total_orgs,
+      totalUsers: metrics.total_users,
+      monthlyRevenue: Number(metrics.mrr_cents),
+      activeSubscriptions: await getActiveSubscriptionCount(),
+      systemHealth: 99.9, // Placeholder - implement uptime monitoring
+      securityAlerts: securityAlerts,
+      superAdminCount: await getSuperAdminCount(),
+    },
+    database: {
+      size: dbStats.size,
+      totalRecords: dbStats.totalRecords,
+      dailyGrowth: dbStats.dailyGrowth,
+    },
+    metrics,
+  };
+});
+
+/**
  * Get latest platform metrics (cached 1 hour)
  */
 export const getPlatformMetrics = cache(async function() {
@@ -147,4 +182,65 @@ export async function getMetricsHistory(days: number = 30) {
     },
     orderBy: { date: 'asc' },
   });
+}
+
+/**
+ * Helper: Get active subscription count
+ */
+async function getActiveSubscriptionCount(): Promise<number> {
+  return await prisma.subscriptions.count({
+    where: { status: 'ACTIVE' },
+  });
+}
+
+/**
+ * Helper: Get security alert count
+ */
+async function getSecurityAlertCount(): Promise<number> {
+  return await prisma.system_alerts.count({
+    where: {
+      is_active: true,
+      level: { in: ['CRITICAL', 'ERROR'] },
+    },
+  });
+}
+
+/**
+ * Helper: Get super admin count
+ */
+async function getSuperAdminCount(): Promise<number> {
+  return await prisma.users.count({
+    where: { role: 'SUPER_ADMIN' },
+  });
+}
+
+/**
+ * Helper: Get database statistics
+ */
+async function getDatabaseStats() {
+  // Get approximate record counts across key tables
+  const [
+    usersCount,
+    orgsCount,
+    projectsCount,
+    transactionsCount,
+  ] = await Promise.all([
+    prisma.users.count(),
+    prisma.organizations.count(),
+    prisma.projects.count(),
+    prisma.transactions.count(),
+  ]);
+
+  const totalRecords = usersCount + orgsCount + projectsCount + transactionsCount;
+
+  // Database size would require raw SQL query to PostgreSQL
+  // Placeholder for now - implement with Supabase API
+  const size = '0 GB';
+  const dailyGrowth = '+0 MB';
+
+  return {
+    size,
+    totalRecords,
+    dailyGrowth,
+  };
 }

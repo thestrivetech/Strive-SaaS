@@ -8,7 +8,6 @@ import { CategoryBreakdown } from '@/components/real-estate/expense-tax/charts/C
 import { ModuleHeroSection } from '@/components/shared/dashboard/ModuleHeroSection';
 import { EnhancedCard, CardHeader, CardTitle, CardContent } from '@/components/shared/dashboard/EnhancedCard';
 import { HeroSkeleton } from '@/components/shared/dashboard/skeletons';
-import { expensesProvider } from '@/lib/data';
 
 /**
  * Expense & Tax Dashboard Page
@@ -118,23 +117,52 @@ async function HeroSectionWrapper({
   user: Awaited<ReturnType<typeof getCurrentUser>>;
   organizationId: string;
 }) {
-  // Fetch real expense summary from provider
-  const summary = await expensesProvider.getSummary(organizationId);
+  // TypeScript guard: user is guaranteed non-null due to redirect above
+  if (!user) {
+    return null;
+  }
+
+  // Fetch real expense summary data from backend
+  const { getExpenseSummary } = await import('@/lib/modules/expenses/expenses/queries');
+
+  let summary;
+  try {
+    summary = await getExpenseSummary();
+  } catch (error) {
+    console.error('Failed to fetch expense summary:', error);
+    // Fallback to zeros on error
+    summary = {
+      ytdTotal: 0,
+      monthlyTotal: 0,
+      deductibleTotal: 0,
+      receiptCount: 0,
+      totalCount: 0,
+    };
+  }
+
+  // Format currency helper
+  const formatCurrency = (amount: number) =>
+    new Intl.NumberFormat('en-US', {
+      style: 'currency',
+      currency: 'USD',
+      minimumFractionDigits: 0,
+      maximumFractionDigits: 0,
+    }).format(amount);
 
   const stats = [
     {
       label: 'YTD Expenses',
-      value: `$${summary.totalExpenses.toLocaleString()}`,
+      value: formatCurrency(summary.ytdTotal),
       icon: 'revenue' as const,
     },
     {
       label: 'Current Month',
-      value: `$${summary.currentMonth.toLocaleString()}`,
+      value: formatCurrency(summary.monthlyTotal),
       icon: 'customers' as const,
     },
     {
       label: 'Tax Deductible',
-      value: `$${summary.deductibleTotal.toLocaleString()}`,
+      value: formatCurrency(summary.deductibleTotal),
       icon: 'projects' as const,
     },
     {
@@ -143,11 +171,6 @@ async function HeroSectionWrapper({
       icon: 'tasks' as const,
     },
   ];
-
-  // TypeScript guard: user is guaranteed non-null due to redirect above
-  if (!user) {
-    return null;
-  }
 
   return (
     <ModuleHeroSection

@@ -4,7 +4,6 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/com
 import { Button } from '@/components/ui/button';
 import { Bot, Sparkles, Zap, Brain, Plus, Settings, Grid3x3 } from 'lucide-react';
 import Link from 'next/link';
-import { conversationsProvider, aiHubDashboardProvider } from '@/lib/data';
 import { ConversationList } from '@/components/real-estate/ai-hub/conversation-list';
 import { UsageStats } from '@/components/real-estate/ai-hub/usage-stats';
 import { FeaturedTools } from '@/components/real-estate/ai-hub/featured-tools';
@@ -42,9 +41,25 @@ export default async function AIHubDashboardPage() {
 
   const firstName = user.name?.split(' ')[0] || 'User';
 
-  // Fetch dashboard data
-  const conversations = await conversationsProvider.findMany(organizationId, user.id);
-  const dashboardData = await aiHubDashboardProvider.getDashboardData(organizationId, user.id);
+  // Placeholder data - AI Hub is a skeleton module (no database tables yet)
+  const conversations: Array<{
+    id: string;
+    title: string;
+    summary?: string;
+    status: 'ACTIVE' | 'ARCHIVED';
+    last_message_at: Date;
+    message_count: number;
+  }> = [];
+
+  const dashboardData = {
+    usageStats: {
+      conversationsThisMonth: 0,
+      tokensUsedThisMonth: 0,
+      mostUsedFeatures: [],
+      usageTrends: []
+    },
+    featuredTools: []
+  };
 
   return (
     <div className="space-y-6">

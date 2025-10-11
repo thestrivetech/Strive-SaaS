@@ -4,8 +4,9 @@ import { revalidatePath } from 'next/cache';
 import { prisma } from '@/lib/database/prisma';
 import { requireAuth } from '@/lib/auth/middleware';
 import { canAccessExpenses } from '@/lib/auth/rbac';
+import { SimpleTaxReportInput } from './schemas';
 
-export async function createExpenseReport(input: ExpenseReportInput) {
+export async function createExpenseReport(input: SimpleTaxReportInput) {
   const user = await requireAuth();
 
   if (!canAccessExpenses(user.role)) {
@@ -41,7 +42,7 @@ export async function createExpenseReport(input: ExpenseReportInput) {
       where,
       include: {
         listing: true,
-        creator: {
+        user: {
           select: {
             id: true,
             name: true,
@@ -68,7 +69,7 @@ export async function createExpenseReport(input: ExpenseReportInput) {
         amount: Number(e.amount),
         isDeductible: e.is_deductible,
         listingAddress: e.listing?.address || null,
-        createdBy: e.creator.name || e.creator.email,
+        createdBy: e.user.name || e.user.email,
       })),
       summary: {
         totalExpenses,
@@ -86,20 +87,17 @@ export async function createExpenseReport(input: ExpenseReportInput) {
     };
 
     // Create report record
-    const report = await prisma.expense_reports.create({
+    const report = await prisma.tax_reports.create({
       data: {
         name: validated.name,
-        report_type: validated.reportType,
-        start_date: validated.startDate,
-        end_date: validated.endDate,
-        categories: validated.categories,
-        listings: validated.listings,
-        merchants: validated.merchants,
-        report_data: reportData,
+        template_type: validated.reportType,
+        tax_year: new Date(validated.startDate).getFullYear(),
+        period_start: validated.startDate,
+        period_end: validated.endDate,
         total_expenses: totalExpenses,
-        total_deductible: totalDeductible,
+        status: 'COMPLETED',
         organization_id: user.organizationId,
-        created_by_id: user.id,
+        user_id: user.id,
       }
     });
 
@@ -119,7 +117,7 @@ export async function deleteExpenseReport(id: string) {
   }
 
   try {
-    const existing = await prisma.expense_reports.findUnique({
+    const existing = await prisma.tax_reports.findUnique({
       where: { id },
       select: { organization_id: true }
     });
@@ -128,7 +126,7 @@ export async function deleteExpenseReport(id: string) {
       throw new Error('Report not found');
     }
 
-    await prisma.expense_reports.delete({
+    await prisma.tax_reports.delete({
       where: { id }
     });
 

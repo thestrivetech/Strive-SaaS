@@ -8,12 +8,18 @@ import { hasOrgPermission } from '@/lib/auth/org-rbac';
 import { canAccessFeature } from '@/lib/auth/subscription';
 import { withTenantContext } from '@/lib/database/utils';
 import { handleDatabaseError } from '@/lib/database/errors';
-type CreateDealInput = any;
-type UpdateDealInput = any;
-type UpdateDealStageInput = any;
-type CloseDealInput = any;
-type BulkUpdateDealsInput = any;
-type DeleteDealInput = any;
+import {
+  createDealSchema,
+  updateDealSchema,
+  updateDealStageSchema,
+  updateDealStatusSchema,
+  bulkAssignDealsSchema,
+  type CreateDealInput,
+  type UpdateDealInput,
+  type UpdateDealStageInput,
+  type UpdateDealStatusInput,
+  type BulkAssignDealsInput,
+} from './schemas';
 
 /**
  * Create a new deal
@@ -49,7 +55,7 @@ export async function createDeal(input: CreateDealInput) {
   }
 
   // Validate input
-  const validated = input;
+  const validated = createDealSchema.parse(input);
 
   return withTenantContext(async () => {
     try {
@@ -133,7 +139,7 @@ export async function updateDeal(input: UpdateDealInput) {
   }
 
   // Validate input
-  const validated = input;
+  const validated = updateDealSchema.parse(input);
   const { id, ...updates} = validated;
 
   return withTenantContext(async () => {
@@ -217,7 +223,7 @@ export async function updateDealStage(input: UpdateDealStageInput) {
   }
 
   // Validate input
-  const validated = input;
+  const validated = updateDealStageSchema.parse(input);
 
   return withTenantContext(async () => {
     try {
@@ -276,7 +282,7 @@ export async function updateDealStage(input: UpdateDealStageInput) {
  * @param input - Close deal data
  * @returns Closed deal
  */
-export async function closeDeal(input: CloseDealInput) {
+export async function closeDeal(input: UpdateDealStatusInput) {
   await requireAuth();
   const user = await getCurrentUser();
 
@@ -301,7 +307,7 @@ export async function closeDeal(input: CloseDealInput) {
   }
 
   // Validate input
-  const validated = input;
+  const validated = updateDealStatusSchema.parse(input);
 
   return withTenantContext(async () => {
     try {
@@ -364,7 +370,7 @@ export async function closeDeal(input: CloseDealInput) {
  * @param input - Bulk update data
  * @returns Updated deals count
  */
-export async function bulkUpdateDeals(input: BulkUpdateDealsInput) {
+export async function bulkUpdateDeals(input: BulkAssignDealsInput) {
   await requireAuth();
   const user = await getCurrentUser();
 
@@ -389,7 +395,7 @@ export async function bulkUpdateDeals(input: BulkUpdateDealsInput) {
   }
 
   // Validate input
-  const validated = input;
+  const validated = bulkAssignDealsSchema.parse(input);
 
   return withTenantContext(async () => {
     try {
@@ -399,7 +405,7 @@ export async function bulkUpdateDeals(input: BulkUpdateDealsInput) {
             in: validated.deal_ids,
           },
         },
-        data: validated.updates,
+        data: { assigned_to_id: validated.assigned_to_id },
       });
 
       // Create activity for bulk update
@@ -436,10 +442,10 @@ export async function bulkUpdateDeals(input: BulkUpdateDealsInput) {
  * RBAC: Requires CRM access + delete permission
  * Subscription: Requires STARTER tier minimum
  *
- * @param input - Delete deal data
+ * @param dealId - Deal ID to delete
  * @returns Success status
  */
-export async function deleteDeal(input: DeleteDealInput) {
+export async function deleteDeal(dealId: string) {
   await requireAuth();
   const user = await getCurrentUser();
 
@@ -463,14 +469,11 @@ export async function deleteDeal(input: DeleteDealInput) {
     throw new Error('Unauthorized: Insufficient organization permissions to delete deals');
   }
 
-  // Validate input
-  const validated = input;
-
   return withTenantContext(async () => {
     try {
       // Get deal details before deleting
       const deal = await prisma.deals.findUnique({
-        where: { id: validated.id },
+        where: { id: dealId },
         select: { title: true },
       });
 
@@ -480,7 +483,7 @@ export async function deleteDeal(input: DeleteDealInput) {
 
       // Delete the deal
       await prisma.deals.delete({
-        where: { id: validated.id },
+        where: { id: dealId },
       });
 
       // Create activity for deletion

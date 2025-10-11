@@ -22,7 +22,8 @@ import { MarketplaceGrid } from '@/components/real-estate/marketplace/grid/Marke
 import { BundleGrid } from '@/components/real-estate/marketplace/bundles/BundleGrid';
 import { ShoppingCartPanel } from '@/components/real-estate/marketplace/cart/ShoppingCartPanel';
 import { getShoppingCart } from '@/lib/modules/marketplace';
-import { purchasesProvider, toolsProvider } from '@/lib/data';
+import { prisma } from '@/lib/database/prisma';
+import { setTenantContext } from '@/lib/database/prisma-middleware';
 
 /**
  * Marketplace Dashboard Page
@@ -195,9 +196,15 @@ async function HeroSectionWrapper({
   user: UserWithOrganization;
   organizationId: string;
 }) {
-  // Fetch real data from providers
-  const allTools = await toolsProvider.findMany();
-  const purchases = await purchasesProvider.findMany(organizationId);
+  // Set tenant context for automatic organizationId filtering
+  await setTenantContext({ organizationId, userId: user.id });
+
+  // Fetch data from Prisma (marketplace has real database tables)
+  const allTools = await prisma.ai_tools.findMany();
+
+  // Note: Checking schema - no tool_purchases table found
+  // Marketplace is partially implemented - tools exist but purchases need implementation
+  const purchases: Array<{ status: string; price_at_purchase: number }> = [];
   const activePurchases = purchases.filter(p => p.status === 'ACTIVE');
 
   const stats = [
@@ -246,7 +253,15 @@ async function ActiveSubscriptionsSection({
   userId: string;
   organizationId: string;
 }) {
-  const purchases = await purchasesProvider.findMany(organizationId);
+  // Placeholder - tool_purchases table doesn't exist yet
+  const purchases: Array<{
+    id: string;
+    tool_id: string;
+    tool?: { name: string; id: string };
+    purchased_at: Date;
+    price_at_purchase: number;
+    status: string;
+  }> = [];
   const activePurchases = purchases
     .filter(p => p.status === 'ACTIVE')
     .sort((a, b) => new Date(b.purchased_at).getTime() - new Date(a.purchased_at).getTime())
@@ -294,12 +309,15 @@ async function ActiveSubscriptionsSection({
  * Displays most popular tools by install count
  */
 async function PopularToolsSection() {
-  const allTools = await toolsProvider.findMany();
+  // Fetch tools from Prisma
+  const allTools = await prisma.ai_tools.findMany({
+    take: 5,
+    orderBy: {
+      created_at: 'desc' // Note: install_count field doesn't exist, using created_at as proxy
+    }
+  });
 
-  // Sort by installs and take top 5
-  const popularTools = [...allTools]
-    .sort((a, b) => b.install_count - a.install_count)
-    .slice(0, 5);
+  const popularTools = allTools;
 
   return (
     <EnhancedCard glassEffect="strong" neonBorder="orange" hoverEffect={true}>
@@ -325,7 +343,7 @@ async function PopularToolsSection() {
               </div>
               <div className="flex items-center gap-2 text-sm text-muted-foreground">
                 <Users className="h-4 w-4" />
-                <span>{tool.install_count.toLocaleString()} installs</span>
+                <span>New</span>
                 <TrendingUp className="h-4 w-4 text-green-500" />
               </div>
             </Link>

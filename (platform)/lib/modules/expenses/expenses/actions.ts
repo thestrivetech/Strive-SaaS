@@ -4,6 +4,8 @@ import { revalidatePath } from 'next/cache';
 import { prisma } from '@/lib/database/prisma';
 import { requireAuth } from '@/lib/auth/middleware';
 import { canAccessExpenses } from '@/lib/auth/rbac';
+import { ExpenseSchema, ExpenseUpdateSchema } from './schemas';
+import type { ExpenseInput, ExpenseUpdate } from './schemas';
 
 /**
  * Create Expense
@@ -20,22 +22,32 @@ export async function createExpense(input: ExpenseInput) {
     throw new Error('Unauthorized: Expense access required');
   }
 
-  const validated = input;
+  // Validate input with Zod
+  const validated = ExpenseSchema.parse(input);
 
   try {
+    // Calculate tax year from date
+    const taxYear = validated.date.getFullYear();
+
     const expense = await prisma.expenses.create({
       data: {
         date: validated.date,
         merchant: validated.merchant,
-        category: validated.category,
+        category_id: validated.categoryId,
         amount: validated.amount,
-        listing_id: validated.listingId,
+        description: validated.description,
         notes: validated.notes,
+        listing_id: validated.listingId,
         is_deductible: validated.isDeductible,
-        tax_category: validated.taxCategory,
+        deduction_percent: validated.deductionPercent,
+        tax_year: taxYear,
+        mileage_start: validated.mileageStart,
+        mileage_end: validated.mileageEnd,
+        mileage_distance: validated.mileageDistance,
+        mileage_purpose: validated.mileagePurpose,
         status: 'PENDING',
         organization_id: user.organizationId,
-        created_by_id: user.id,
+        user_id: user.id,
       },
       include: {
         listing: {
@@ -44,11 +56,18 @@ export async function createExpense(input: ExpenseInput) {
             address: true,
           },
         },
-        creator: {
+        user: {
           select: {
             id: true,
             name: true,
             email: true,
+          },
+        },
+        category: {
+          select: {
+            id: true,
+            name: true,
+            code: true,
           },
         },
       },
@@ -63,7 +82,8 @@ export async function createExpense(input: ExpenseInput) {
         id: expense.id,
         date: expense.date.toISOString(),
         merchant: expense.merchant,
-        category: expense.category,
+        category: expense.category.name,
+        categoryId: expense.category.id,
         amount: Number(expense.amount),
         listing: expense.listing
           ? {
@@ -71,15 +91,16 @@ export async function createExpense(input: ExpenseInput) {
               address: expense.listing.address,
             }
           : null,
+        description: expense.description,
         notes: expense.notes,
         isDeductible: expense.is_deductible,
-        taxCategory: expense.tax_category,
+        deductionPercent: expense.deduction_percent,
         status: expense.status,
         createdAt: expense.created_at.toISOString(),
         createdBy: {
-          id: expense.creator.id,
-          name: expense.creator.name,
-          email: expense.creator.email,
+          id: expense.user.id,
+          name: expense.user.name,
+          email: expense.user.email,
         },
       },
     };
@@ -104,7 +125,8 @@ export async function updateExpense(input: ExpenseUpdate) {
     throw new Error('Unauthorized: Expense access required');
   }
 
-  const validated = input;
+  // Validate input with Zod
+  const validated = ExpenseUpdateSchema.parse(input);
 
   try {
     // Verify expense exists and belongs to organization
@@ -121,16 +143,26 @@ export async function updateExpense(input: ExpenseUpdate) {
 
     // Build update data (only include provided fields)
     const updateData: any = {};
-    if (validated.date !== undefined) updateData.date = validated.date;
+    if (validated.date !== undefined) {
+      updateData.date = validated.date;
+      updateData.tax_year = validated.date.getFullYear();
+    }
     if (validated.merchant !== undefined) updateData.merchant = validated.merchant;
-    if (validated.category !== undefined) updateData.category = validated.category;
+    if (validated.categoryId !== undefined) updateData.category_id = validated.categoryId;
     if (validated.amount !== undefined) updateData.amount = validated.amount;
-    if (validated.listingId !== undefined) updateData.listing_id = validated.listingId;
+    if (validated.description !== undefined) updateData.description = validated.description;
     if (validated.notes !== undefined) updateData.notes = validated.notes;
+    if (validated.listingId !== undefined) updateData.listing_id = validated.listingId;
     if (validated.isDeductible !== undefined)
       updateData.is_deductible = validated.isDeductible;
-    if (validated.taxCategory !== undefined)
-      updateData.tax_category = validated.taxCategory;
+    if (validated.deductionPercent !== undefined)
+      updateData.deduction_percent = validated.deductionPercent;
+    if (validated.mileageStart !== undefined) updateData.mileage_start = validated.mileageStart;
+    if (validated.mileageEnd !== undefined) updateData.mileage_end = validated.mileageEnd;
+    if (validated.mileageDistance !== undefined)
+      updateData.mileage_distance = validated.mileageDistance;
+    if (validated.mileagePurpose !== undefined)
+      updateData.mileage_purpose = validated.mileagePurpose;
 
     const expense = await prisma.expenses.update({
       where: { id: validated.id },
@@ -142,11 +174,18 @@ export async function updateExpense(input: ExpenseUpdate) {
             address: true,
           },
         },
-        creator: {
+        user: {
           select: {
             id: true,
             name: true,
             email: true,
+          },
+        },
+        category: {
+          select: {
+            id: true,
+            name: true,
+            code: true,
           },
         },
       },
@@ -161,7 +200,8 @@ export async function updateExpense(input: ExpenseUpdate) {
         id: expense.id,
         date: expense.date.toISOString(),
         merchant: expense.merchant,
-        category: expense.category,
+        category: expense.category.name,
+        categoryId: expense.category.id,
         amount: Number(expense.amount),
         listing: expense.listing
           ? {
@@ -169,9 +209,10 @@ export async function updateExpense(input: ExpenseUpdate) {
               address: expense.listing.address,
             }
           : null,
+        description: expense.description,
         notes: expense.notes,
         isDeductible: expense.is_deductible,
-        taxCategory: expense.tax_category,
+        deductionPercent: expense.deduction_percent,
         status: expense.status,
         updatedAt: expense.updated_at.toISOString(),
       },
@@ -186,7 +227,7 @@ export async function updateExpense(input: ExpenseUpdate) {
  * Delete Expense
  *
  * Deletes an expense with organization validation.
- * Also deletes associated receipt from Supabase Storage if exists.
+ * Also deletes associated receipts from the receipts table (cascade delete via FK).
  *
  * @param id - Expense ID
  * @returns Success status
@@ -207,7 +248,6 @@ export async function deleteExpense(id: string) {
       },
       select: {
         id: true,
-        receipt_url: true,
       },
     });
 
@@ -215,14 +255,7 @@ export async function deleteExpense(id: string) {
       throw new Error('Expense not found or access denied');
     }
 
-    // TODO: Delete receipt from Supabase Storage if exists
-    // This will be implemented when we add the receipts module
-    if (existing.receipt_url) {
-      // const { deleteReceipt } = await import('../receipts/actions');
-      // await deleteReceipt(id);
-    }
-
-    // Delete expense
+    // Delete expense (receipts will be cascade deleted via FK constraint)
     await prisma.expenses.delete({
       where: { id },
     });

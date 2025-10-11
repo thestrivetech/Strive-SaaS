@@ -1,7 +1,19 @@
 'use client';
 
-import { type MockREIDReport } from '@/lib/data';
 import { REIDCard, REIDCardContent } from '../shared/REIDCard';
+
+// Type definition (previously from mock data)
+interface MockREIDReport {
+  id: string;
+  title: string;
+  report_type: string;
+  cities: string[];
+  zip_codes: string[];
+  summary: string;
+  generated_at: Date;
+  key_findings: string[];
+  recommendations: string[];
+}
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import {

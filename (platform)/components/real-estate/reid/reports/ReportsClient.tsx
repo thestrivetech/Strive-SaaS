@@ -1,8 +1,20 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { reidReportsProvider, type MockREIDReport } from '@/lib/data';
 import { REIDCard, REIDCardHeader, REIDCardContent } from '../shared/REIDCard';
+
+// Type definition (previously from mock data)
+interface MockREIDReport {
+  id: string;
+  title: string;
+  report_type: string;
+  cities: string[];
+  zip_codes: string[];
+  summary: string;
+  generated_at: Date;
+  key_findings: string[];
+  recommendations: string[];
+}
 import { ReportCard } from './ReportCard';
 import { MetricCard } from '../shared/MetricCard';
 import { FileText, Clock, Download } from 'lucide-react';
@@ -18,8 +30,8 @@ export function ReportsClient() {
   async function loadReports() {
     try {
       setLoading(true);
-      const data = await reidReportsProvider.findAll();
-      setReports(data);
+      // Placeholder - REID is a skeleton module (no database tables yet)
+      setReports([]);
     } catch (error) {
       console.error('Failed to load reports:', error);
     } finally {
@@ -28,17 +40,11 @@ export function ReportsClient() {
   }
 
   async function handleDownload(id: string, format: string) {
-    console.log(`Downloading report ${id} in ${format} format`);
-    // Mock download - in real app would trigger actual download
+    console.log(`Download feature coming soon - REID module under development`);
   }
 
   async function handleDelete(id: string) {
-    try {
-      await reidReportsProvider.delete(id);
-      await loadReports();
-    } catch (error) {
-      console.error('Failed to delete report:', error);
-    }
+    console.log(`Delete feature coming soon - REID module under development`);
   }
 
   if (loading) {

@@ -1,16 +1,16 @@
 # Session 7: AI Agents Lab UI - Agent Management Interface
 
 ## Session Overview
-**Goal:** Build the AI Agent Lab interface with agent cards, configuration modals, team collaboration board, and real-time status monitoring using the futuristic glassmorphic design.
+**Goal:** Build the AI Agent Lab interface with agent cards, configuration modals, team collaboration board, and real-time status monitoring using platform design standards.
 
 **Duration:** 4-5 hours
 **Complexity:** High
-**Dependencies:** Session 3, 4, 6 (theme CSS)
+**Dependencies:** Session 3, 4, 6
 
 ## Objectives
 
 1. ✅ Create AI Agent Lab main page
-2. ✅ Build agent card grid with glassmorphic design
+2. ✅ Build agent card grid with EnhancedCard components
 3. ✅ Implement agent creation wizard
 4. ✅ Add agent configuration modal
 5. ✅ Create team collaboration board
@@ -18,38 +18,41 @@
 7. ✅ Implement agent test/execute interface
 8. ✅ Add performance metrics display
 
-## Design Elements
+## Design System (Platform Standards)
+
+**Components:**
+- Use `EnhancedCard` with `glassEffect` and `neonBorder` props
+- Use `ModuleHeroSection` for page header
+- Use standard shadcn/ui components (Avatar, Badge, Button, etc.)
 
 **Agent Cards:**
-- Glassmorphic background
-- Avatar with status ring
-- Neon glow based on status
-- Performance metrics
-- Quick action buttons
+- Glass effect via `glassEffect="strong"`
+- Neon borders via `neonBorder` prop (cyan/purple/green)
+- Standard Avatar component with status indicator
+- Performance metrics using platform typography
+- shadcn/ui Button components for actions
 
 **Status Indicators:**
-- IDLE: Gray ring
-- BUSY: Yellow pulsing ring
-- OFFLINE: Gray faded
-- ERROR: Red ring
+- IDLE: Green dot (bg-green-500)
+- BUSY: Yellow pulsing dot (bg-yellow-500 animate-pulse)
+- OFFLINE: Gray dot (bg-gray-500)
+- ERROR: Red dot (bg-red-500)
 
-**Team Board:**
-- Cyber-grid background
-- Agent avatars with connections
-- Coordination pattern visualization
-- Real-time execution indicators
+**Layouts:**
+- Responsive grids: `grid gap-6 md:grid-cols-2 lg:grid-cols-3`
+- Use Suspense boundaries for async content
 
 ## File Structure
 
 ```
-app/(platform)/ai-hub/agents/
+app/real-estate/ai-hub/agents/
 ├── page.tsx                    # Agent Lab main
 ├── new/page.tsx               # Create agent
 ├── [id]/
 │   ├── page.tsx               # Agent detail
 │   └── edit/page.tsx          # Edit agent
 
-app/(platform)/ai-hub/teams/
+app/real-estate/ai-hub/teams/
 ├── page.tsx                    # Teams list
 ├── new/page.tsx               # Create team
 ├── [id]/page.tsx              # Team collaboration board
@@ -74,7 +77,7 @@ components/real-estate/ai-hub/teams/
 
 ### Step 1: Create Agent Lab Main Page
 
-**File:** `app/(platform)/ai-hub/agents/page.tsx`
+**File:** `app/real-estate/ai-hub/agents/page.tsx`
 
 ```typescript
 import { Suspense } from 'react';
@@ -239,8 +242,8 @@ Features:
 
 ## Files Created
 
-- ✅ `app/(platform)/ai-hub/agents/**` - All agent pages
-- ✅ `app/(platform)/ai-hub/teams/**` - All team pages
+- ✅ `app/real-estate/ai-hub/agents/**` - All agent pages
+- ✅ `app/real-estate/ai-hub/teams/**` - All team pages
 - ✅ `components/real-estate/ai-hub/agents/**` - All agent components
 - ✅ `components/real-estate/ai-hub/teams/**` - All team components
 

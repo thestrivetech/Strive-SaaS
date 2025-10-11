@@ -1,7 +1,7 @@
 # Session 6: Workflow Builder UI - React Flow Canvas
 
 ## Session Overview
-**Goal:** Implement the futuristic workflow builder UI with React Flow drag-and-drop canvas, node palette, mini-map, and execution controls preserving the exact glassmorphic design from NeuroFlow Hub.
+**Goal:** Implement the workflow builder UI with React Flow drag-and-drop canvas, node palette, mini-map, and execution controls using platform design standards.
 
 **Duration:** 5-6 hours
 **Complexity:** High
@@ -10,7 +10,7 @@
 ## Objectives
 
 1. ✅ Add React Flow and dependencies
-2. ✅ Create futuristic glassmorphic theme CSS
+2. ✅ Use platform design system components and utilities
 3. ✅ Build workflow builder canvas component
 4. ✅ Implement node palette with drag-and-drop
 5. ✅ Create custom node components
@@ -18,29 +18,30 @@
 7. ✅ Implement real-time execution visualization
 8. ✅ Add workflow save/load functionality
 
-## Design Theme
+## Design System (Platform Standards)
 
-**Electric Colors:**
-- Electric Blue: `#00D2FF` (primary)
-- Cyber Green: `#39FF14` (success)
-- Violet: `#8B5CF6` (secondary)
+**Color Palette:**
+- Primary: Strive Orange `#FF7033`
+- Neon Accents (via utility classes):
+  - Cyan `#00D2FF` - primary features
+  - Purple `#8B5CF6` - metrics/stats
+  - Green `#39FF14` - success/activity
+  - Orange `#FF7033` - actions/CTAs
 
-**Glass Morphism:**
-- `backdrop-filter: blur(20px)`
-- Dark glass backgrounds `rgba(15, 23, 42, 0.8)`
-- Neon borders with glow effects
+**Components:**
+- Use `EnhancedCard` with `glassEffect` and `neonBorder` props
+- Use `ModuleHeroSection` for dashboard header
+- Use standard shadcn/ui components (Button, Badge, Tabs, etc.)
 
-**Key Visual Elements:**
-- Floating node palette
-- Cyber grid background
-- Neon-glowing nodes
-- Animated execution progress
-- Glass morphism cards
+**Visual Effects (from globals.css):**
+- Glass morphism: `.glass`, `.glass-strong`, `.glass-subtle`
+- Neon borders: `.neon-border-cyan`, `.neon-border-purple`, etc.
+- Animations: `.animate-pulse-slow`, `.animate-glow`, etc.
 
 ## File Structure
 
 ```
-app/(platform)/ai-hub/workflows/
+app/real-estate/ai-hub/workflows/
 ├── page.tsx                    # Workflows list
 ├── new/page.tsx               # Create workflow
 ├── [id]/
@@ -66,96 +67,22 @@ cd "(platform)"
 npm install reactflow @xyflow/react
 ```
 
-### Step 2: Add Glassmorphic Theme CSS
+### Step 2: Use Platform Design System
 
-**File:** `app/globals.css` (add to existing)
+**NOTE:** All necessary CSS utilities are already available in `app/globals.css` (lines 221-619). No new CSS needs to be added.
 
-```css
-/* NeuroFlow Hub Theme */
-:root {
-  /* Electric colors */
-  --electric-blue: #00D2FF;
-  --cyber-green: #39FF14;
-  --neon-violet: #8B5CF6;
-  
-  /* Glass morphism */
-  --glass-dark: rgba(15, 23, 42, 0.8);
-  --glass-border: rgba(0, 210, 255, 0.3);
-  
-  /* Neon glow effects */
-  --neon-glow-blue: 0 0 20px rgba(0, 210, 255, 0.5);
-  --neon-glow-green: 0 0 20px rgba(57, 255, 20, 0.5);
-}
+**Available Utilities:**
+- Glass effects: `.glass`, `.glass-strong`, `.glass-subtle`
+- Neon borders: `.neon-border-cyan`, `.neon-border-purple`, `.neon-border-green`, `.neon-border-orange`
+- Animations: `.animate-pulse-slow`, `.animate-glow`, `.animate-float`
 
-/* Electric gradient animation */
-@keyframes electric-pulse {
-  0%, 100% { 
-    box-shadow: var(--neon-glow-blue);
-    border-color: var(--electric-blue);
-  }
-  50% { 
-    box-shadow: var(--neon-glow-green);
-    border-color: var(--cyber-green);
-  }
-}
+**Use EnhancedCard Component Instead of Custom CSS:**
+```tsx
+import { EnhancedCard } from '@/components/shared/dashboard/EnhancedCard';
 
-.electric-border {
-  border: 1px solid var(--electric-blue);
-  animation: electric-pulse 2s ease-in-out infinite;
-}
-
-/* Cyber grid background */
-.cyber-grid {
-  background-image: 
-    linear-gradient(rgba(0, 210, 255, 0.1) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(0, 210, 255, 0.1) 1px, transparent 1px);
-  background-size: 20px 20px;
-}
-
-/* Floating node palette */
-.floating-palette {
-  background: var(--glass-dark);
-  backdrop-filter: blur(20px);
-  border: 1px solid var(--glass-border);
-  box-shadow: var(--neon-glow-blue);
-}
-
-/* Workflow node styling */
-.workflow-node {
-  background: linear-gradient(135deg, rgba(0, 210, 255, 0.2), rgba(139, 92, 246, 0.2));
-  border: 1px solid var(--electric-blue);
-  backdrop-filter: blur(10px);
-}
-
-.workflow-node:hover {
-  box-shadow: var(--neon-glow-blue);
-  transform: scale(1.05);
-}
-
-/* Execution progress bar */
-.execution-progress {
-  background: linear-gradient(90deg, var(--electric-blue), var(--cyber-green));
-  height: 4px;
-  border-radius: 2px;
-  position: relative;
-  overflow: hidden;
-}
-
-.execution-progress::after {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: -100%;
-  width: 100%;
-  height: 100%;
-  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
-  animation: progress-shine 1.5s infinite;
-}
-
-@keyframes progress-shine {
-  0% { left: -100%; }
-  100% { left: 100%; }
-}
+<EnhancedCard glassEffect="strong" neonBorder="cyan">
+  {/* Content */}
+</EnhancedCard>
 ```
 
 ### Step 3: Create Workflow Builder Component
@@ -207,7 +134,7 @@ Features:
 
 ### Step 7: Create Workflow Pages
 
-**File:** `app/(platform)/ai-hub/workflows/new/page.tsx`
+**File:** `app/real-estate/ai-hub/workflows/new/page.tsx`
 
 ```typescript
 import { WorkflowBuilder } from '@/components/real-estate/ai-hub/workflows/WorkflowBuilder';
@@ -246,18 +173,18 @@ export default function NewWorkflowPage() {
 
 ## Success Criteria
 
-- [x] React Flow canvas operational
-- [x] Node palette with drag-and-drop
-- [x] Custom nodes with glassmorphic design
-- [x] Save/load workflows
-- [x] Execution visualization
-- [x] Mini-map and controls
-- [x] Responsive design
-- [x] Keyboard navigation
+- ✅ React Flow canvas operational
+- ✅ Node palette with drag-and-drop
+- ✅ Custom nodes with glassmorphic design
+- ✅ Save/load workflows
+- ✅ Execution visualization
+- ✅ Mini-map and controls
+- ✅ Responsive design
+- ✅ Keyboard navigation
 
 ## Files Created
 
-- ✅ `app/(platform)/ai-hub/workflows/**` - All workflow pages
+- ✅ `app/real-estate/ai-hub/workflows/**` - All workflow pages
 - ✅ `components/real-estate/ai-hub/workflows/**` - All workflow components
 - ✅ Updated `app/globals.css` with NeuroFlow theme
 

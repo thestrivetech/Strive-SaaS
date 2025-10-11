@@ -8,7 +8,6 @@ import { CategoryTrends } from '@/components/real-estate/expense-tax/analytics/C
 import { ModuleHeroSection } from '@/components/shared/dashboard/ModuleHeroSection';
 import { EnhancedCard, CardHeader, CardTitle, CardContent } from '@/components/shared/dashboard/EnhancedCard';
 import { HeroSkeleton } from '@/components/shared/dashboard/skeletons';
-import { expensesProvider, categoriesProvider } from '@/lib/data';
 
 /**
  * Expense Analytics Page
@@ -121,53 +120,26 @@ async function HeroSectionWrapper({
 }: {
   user: Awaited<ReturnType<typeof getCurrentUser>>;
 }) {
-  const organizationId = user?.organization_members[0]?.organization_id || '';
-
-  // Fetch real data from providers
-  const summary = await expensesProvider.getSummary(organizationId);
-  const expenses = await expensesProvider.findMany(organizationId);
-  const categories = await categoriesProvider.findAll(organizationId);
-
-  // Calculate YTD growth (comparing to same period last year)
-  const currentYear = new Date().getFullYear();
-  const thisYearExpenses = expenses.filter(e =>
-    new Date(e.date).getFullYear() === currentYear
-  );
-  const lastYearExpenses = expenses.filter(e =>
-    new Date(e.date).getFullYear() === currentYear - 1
-  );
-
-  const thisYearTotal = thisYearExpenses.reduce((sum, e) => sum + e.amount, 0);
-  const lastYearTotal = lastYearExpenses.reduce((sum, e) => sum + e.amount, 0);
-  const ytdGrowth = lastYearTotal > 0
-    ? ((thisYearTotal - lastYearTotal) / lastYearTotal) * 100
-    : 0;
-
-  // Find highest spending category
-  const highestCategory = summary.byCategory[0]?.category || 'N/A';
-
-  // Calculate average monthly spend
-  const avgMonthly = Math.floor(thisYearTotal / (new Date().getMonth() + 1));
-
+  // Placeholder data - Expense & Tax is a skeleton module (no database tables yet)
   const stats = [
     {
       label: 'Total Analyzed',
-      value: `$${summary.totalExpenses.toLocaleString()}`,
+      value: '$0',
       icon: 'revenue' as const,
     },
     {
       label: 'YTD Growth',
-      value: `${ytdGrowth.toFixed(1)}%`,
+      value: '0%',
       icon: 'projects' as const,
     },
     {
       label: 'Highest Category',
-      value: highestCategory,
+      value: 'N/A',
       icon: 'customers' as const,
     },
     {
       label: 'Avg Monthly',
-      value: `$${avgMonthly.toLocaleString()}`,
+      value: '$0',
       icon: 'tasks' as const,
     },
   ];

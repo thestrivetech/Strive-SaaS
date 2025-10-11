@@ -8,11 +8,18 @@ import { hasOrgPermission } from '@/lib/auth/org-rbac';
 import { canAccessFeature } from '@/lib/auth/subscription';
 import { withTenantContext } from '@/lib/database/utils';
 import { handleDatabaseError } from '@/lib/database/errors';
-type CreateLeadInput = any;
-type UpdateLeadInput = any;
-type UpdateLeadScoreInput = any;
-type UpdateLeadStatusInput = any;
-type BulkAssignLeadsInput = any;
+import {
+  createLeadSchema,
+  updateLeadSchema,
+  updateLeadScoreSchema,
+  updateLeadStatusSchema,
+  bulkAssignLeadsSchema,
+  type CreateLeadInput,
+  type UpdateLeadInput,
+  type UpdateLeadScoreInput,
+  type UpdateLeadStatusInput,
+  type BulkAssignLeadsInput,
+} from './schemas';
 
 /**
  * Create a new lead
@@ -51,7 +58,7 @@ export async function createLead(input: CreateLeadInput) {
   }
 
   // Validate input
-  const validated = input;
+  const validated = createLeadSchema.parse(input);
 
   return withTenantContext(async () => {
     try {
@@ -125,7 +132,7 @@ export async function updateLead(input: UpdateLeadInput) {
     throw new Error('Unauthorized: Insufficient organization permissions to update leads');
   }
 
-  const validated = input;
+  const validated = updateLeadSchema.parse(input);
   const { id, ...updateData } = validated;
 
   return withTenantContext(async () => {
@@ -256,7 +263,7 @@ export async function updateLeadScore(input: UpdateLeadScoreInput) {
     throw new Error('Unauthorized: Insufficient organization permissions');
   }
 
-  const validated = input;
+  const validated = updateLeadScoreSchema.parse(input);
 
   return withTenantContext(async () => {
     try {
@@ -320,7 +327,7 @@ export async function updateLeadStatus(input: UpdateLeadStatusInput) {
     throw new Error('Unauthorized: Insufficient organization permissions');
   }
 
-  const validated = input;
+  const validated = updateLeadStatusSchema.parse(input);
 
   return withTenantContext(async () => {
     try {
@@ -386,7 +393,7 @@ export async function bulkAssignLeads(input: BulkAssignLeadsInput) {
     throw new Error('Unauthorized: Insufficient organization permissions');
   }
 
-  const validated = input;
+  const validated = bulkAssignLeadsSchema.parse(input);
 
   return withTenantContext(async () => {
     try {

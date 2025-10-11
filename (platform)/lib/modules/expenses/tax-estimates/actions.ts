@@ -5,8 +5,9 @@ import { prisma } from '@/lib/database/prisma';
 import { requireAuth } from '@/lib/auth/middleware';
 import { canAccessExpenses } from '@/lib/auth/rbac';
 import { calculateYearlyTaxEstimate, calculateQuarterlyTaxEstimate } from './calculations';
+import { SimpleTaxEstimateInput, UpdateTaxEstimateInput } from './schemas';
 
-export async function createTaxEstimate(input: TaxEstimateInput) {
+export async function createTaxEstimate(input: SimpleTaxEstimateInput) {
   const user = await requireAuth();
 
   if (!canAccessExpenses(user.role)) {
@@ -28,21 +29,32 @@ export async function createTaxEstimate(input: TaxEstimateInput) {
           validated.year
         );
 
+    // Calculate period dates
+    const periodStart = validated.quarter
+      ? new Date(validated.year, (validated.quarter - 1) * 3, 1)
+      : new Date(validated.year, 0, 1);
+    const periodEnd = validated.quarter
+      ? new Date(validated.year, validated.quarter * 3, 0)
+      : new Date(validated.year, 11, 31);
+
     const taxEstimate = await prisma.tax_estimates.create({
       data: {
-        year: validated.year,
+        tax_year: validated.year,
         quarter: validated.quarter,
+        period_start: periodStart,
+        period_end: periodEnd,
         total_income: calculation.totalIncome,
-        business_income: calculation.businessIncome,
-        other_income: calculation.otherIncome,
+        total_expenses: 0,
         total_deductions: calculation.totalDeductions,
-        business_deductions: calculation.businessDeductions,
-        standard_deduction: calculation.standardDeduction,
-        taxable_income: calculation.taxableIncome,
-        estimated_tax: calculation.estimatedTax,
-        tax_rate: calculation.effectiveTaxRate,
+        net_income: calculation.taxableIncome,
+        estimated_tax_rate: calculation.effectiveTaxRate,
+        federal_tax_estimated: calculation.estimatedTax,
+        state_tax_estimated: 0,
+        self_employment_tax: 0,
+        total_tax_estimated: calculation.estimatedTax,
+        calculation_method: 'STANDARD',
         organization_id: user.organizationId,
-        created_by_id: user.id,
+        user_id: user.id,
       }
     });
 
@@ -74,19 +86,17 @@ export async function updateTaxEstimate(input: UpdateTaxEstimateInput) {
       throw new Error('Tax estimate not found');
     }
 
+    const updateData: any = {};
+
+    if (data.year !== undefined) updateData.tax_year = data.year;
+    if (data.quarter !== undefined) updateData.quarter = data.quarter;
+    if (data.totalIncome !== undefined) updateData.total_income = data.totalIncome;
+    if (data.totalDeductions !== undefined) updateData.total_deductions = data.totalDeductions;
+    if (data.taxRate !== undefined) updateData.estimated_tax_rate = data.taxRate;
+
     const taxEstimate = await prisma.tax_estimates.update({
       where: { id },
-      data: {
-        year: data.year,
-        quarter: data.quarter,
-        total_income: data.totalIncome,
-        business_income: data.businessIncome,
-        other_income: data.otherIncome,
-        total_deductions: data.totalDeductions,
-        business_deductions: data.businessDeductions,
-        standard_deduction: data.standardDeduction,
-        tax_rate: data.taxRate,
-      }
+      data: updateData,
     });
 
     revalidatePath('/real-estate/expense-tax');

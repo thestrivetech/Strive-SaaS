@@ -33,7 +33,19 @@ import {
 } from 'lucide-react';
 import { format } from 'date-fns';
 import { cn } from '@/lib/utils';
-import type { MockGeneratedReport } from '@/lib/data/mocks/expense-tax-reports';
+
+// Type definition (previously from mock data)
+interface MockGeneratedReport {
+  id: string;
+  templateId: string;
+  templateName: string;
+  year: number;
+  status: 'completed' | 'generating' | 'failed';
+  dateGenerated: Date;
+  fileSize: string;
+  sharedWith: string[];
+  formats: Array<'pdf' | 'excel'>;
+}
 
 /**
  * Report List Component

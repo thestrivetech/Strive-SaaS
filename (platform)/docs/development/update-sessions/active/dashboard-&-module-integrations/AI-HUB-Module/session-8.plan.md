@@ -1,11 +1,18 @@
 # Session 8: Dashboard & Analytics UI - Final Integration
 
 ## Session Overview
-**Goal:** Create the main AI Hub dashboard with analytics, template marketplace, integrations panel, and complete the navigation integration into the platform.
+**Goal:** Create the main AI Hub dashboard with analytics, template marketplace, integrations panel, and complete the navigation integration using platform design standards.
 
 **Duration:** 4-5 hours
 **Complexity:** Medium
 **Dependencies:** All previous sessions
+
+**Design Standards:**
+- Use `ModuleHeroSection` for dashboard header with personalized greeting
+- Use `EnhancedCard` with `glassEffect` and `neonBorder` props
+- Follow marketplace dashboard pattern (`app/real-estate/marketplace/dashboard/page.tsx`)
+- Use shadcn/ui components (Tabs, Button, Badge, etc.)
+- Implement Suspense boundaries for async content
 
 ## Objectives
 
@@ -21,7 +28,7 @@
 ## File Structure
 
 ```
-app/(platform)/ai-hub/
+app/real-estate/ai-hub/
 ├── page.tsx                    # Redirect to dashboard
 ├── dashboard/
 │   └── page.tsx               # Main dashboard
@@ -60,7 +67,7 @@ components/real-estate/ai-hub/integrations/
 
 ### Step 1: Create Main Dashboard
 
-**File:** `app/(platform)/ai-hub/dashboard/page.tsx`
+**File:** `app/real-estate/ai-hub/dashboard/page.tsx`
 
 ```typescript
 import { Suspense } from 'react';
@@ -142,7 +149,7 @@ export default function AIHubDashboard() {
 
 ### Step 3: Create Template Marketplace
 
-**File:** `app/(platform)/ai-hub/marketplace/page.tsx`
+**File:** `app/real-estate/ai-hub/marketplace/page.tsx`
 
 Features:
 - Template gallery with categories
@@ -196,7 +203,7 @@ Features:
 
 ### Step 4: Create Integrations Panel
 
-**File:** `app/(platform)/ai-hub/integrations/page.tsx`
+**File:** `app/real-estate/ai-hub/integrations/page.tsx`
 
 Features:
 - Available integrations list
@@ -239,7 +246,7 @@ Add AI Hub section:
 
 ### Step 6: Create Analytics Page
 
-**File:** `app/(platform)/ai-hub/analytics/page.tsx`
+**File:** `app/real-estate/ai-hub/analytics/page.tsx`
 
 Features:
 - Execution trends (daily/weekly/monthly)
@@ -315,7 +322,7 @@ Features:
 
 ## Files Created
 
-- ✅ `app/(platform)/ai-hub/**` - All remaining pages
+- ✅ `app/real-estate/ai-hub/**` - All remaining pages
 - ✅ `components/real-estate/ai-hub/dashboard/**` - Dashboard components
 - ✅ `components/real-estate/ai-hub/marketplace/**` - Marketplace components
 - ✅ `components/real-estate/ai-hub/integrations/**` - Integration components

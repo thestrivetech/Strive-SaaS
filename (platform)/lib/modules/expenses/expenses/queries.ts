@@ -3,6 +3,8 @@
 import { prisma } from '@/lib/database/prisma';
 import { requireAuth } from '@/lib/auth/middleware';
 import { canAccessExpenses } from '@/lib/auth/rbac';
+import { ExpenseFilterSchema } from './schemas';
+import type { ExpenseFilter } from './schemas';
 
 /**
  * Get Expenses with Filtering and Pagination
@@ -20,7 +22,8 @@ export async function getExpenses(filters: Partial<ExpenseFilter> = {}) {
     throw new Error('Unauthorized: Expense access required');
   }
 
-  const validated = filters;
+  // Validate and set defaults for filters
+  const validated = ExpenseFilterSchema.partial().parse(filters);
 
   try {
     // Build where clause with organization isolation
@@ -29,8 +32,8 @@ export async function getExpenses(filters: Partial<ExpenseFilter> = {}) {
     };
 
     // Apply filters
-    if (validated.category) {
-      where.category = validated.category;
+    if (validated.categoryId) {
+      where.category_id = validated.categoryId;
     }
 
     if (validated.status) {
@@ -74,11 +77,13 @@ export async function getExpenses(filters: Partial<ExpenseFilter> = {}) {
 
     // Build orderBy clause
     const orderBy: any = {
-      [validated.sortBy]: validated.sortOrder,
+      [validated.sortBy || 'date']: validated.sortOrder || 'desc',
     };
 
     // Calculate pagination
-    const skip = (validated.page - 1) * validated.limit;
+    const page = validated.page || 1;
+    const limit = validated.limit || 50;
+    const skip = (page - 1) * limit;
 
     // Fetch expenses with related data
     const [expenses, total] = await Promise.all([
@@ -91,33 +96,41 @@ export async function getExpenses(filters: Partial<ExpenseFilter> = {}) {
               address: true,
             },
           },
-          creator: {
+          user: {
             select: {
               id: true,
               name: true,
               email: true,
             },
           },
-          receipt: true,
+          category: {
+            select: {
+              id: true,
+              name: true,
+              code: true,
+            },
+          },
+          receipts: true,
         },
         orderBy,
         skip,
-        take: validated.limit,
+        take: limit,
       }),
       prisma.expenses.count({ where }),
     ]);
 
     // Calculate pagination metadata
-    const totalPages = Math.ceil(total / validated.limit);
-    const hasNextPage = validated.page < totalPages;
-    const hasPreviousPage = validated.page > 1;
+    const totalPages = Math.ceil(total / limit);
+    const hasNextPage = page < totalPages;
+    const hasPreviousPage = page > 1;
 
     return {
       expenses: expenses.map((expense: any) => ({
         id: expense.id,
         date: expense.date.toISOString(),
         merchant: expense.merchant,
-        category: expense.category,
+        category: expense.category.name,
+        categoryId: expense.category.id,
         amount: Number(expense.amount),
         listing: expense.listing
           ? {
@@ -125,25 +138,28 @@ export async function getExpenses(filters: Partial<ExpenseFilter> = {}) {
               address: expense.listing.address,
             }
           : null,
+        description: expense.description,
         notes: expense.notes,
         isDeductible: expense.is_deductible,
-        taxCategory: expense.tax_category,
-        receiptUrl: expense.receipt_url,
-        receiptName: expense.receipt_name,
-        receiptType: expense.receipt_type,
+        deductionPercent: expense.deduction_percent,
         status: expense.status,
-        reviewedAt: expense.reviewed_at?.toISOString() || null,
         createdAt: expense.created_at.toISOString(),
         updatedAt: expense.updated_at.toISOString(),
         createdBy: {
-          id: expense.creator.id,
-          name: expense.creator.name,
-          email: expense.creator.email,
+          id: expense.user.id,
+          name: expense.user.name,
+          email: expense.user.email,
         },
+        receipts: expense.receipts.map((receipt: any) => ({
+          id: receipt.id,
+          fileName: receipt.file_name,
+          fileUrl: receipt.file_url,
+          fileType: receipt.file_type,
+        })),
       })),
       pagination: {
-        page: validated.page,
-        limit: validated.limit,
+        page,
+        limit,
         total,
         totalPages,
         hasNextPage,
@@ -184,14 +200,21 @@ export async function getExpenseById(id: string) {
             address: true,
           },
         },
-        creator: {
+        user: {
           select: {
             id: true,
             name: true,
             email: true,
           },
         },
-        receipt: true,
+        category: {
+          select: {
+            id: true,
+            name: true,
+            code: true,
+          },
+        },
+        receipts: true,
       },
     });
 
@@ -203,7 +226,8 @@ export async function getExpenseById(id: string) {
       id: expense.id,
       date: expense.date.toISOString(),
       merchant: expense.merchant,
-      category: expense.category,
+      category: expense.category.name,
+      categoryId: expense.category.id,
       amount: Number(expense.amount),
       listing: expense.listing
         ? {
@@ -211,21 +235,24 @@ export async function getExpenseById(id: string) {
             address: expense.listing.address,
           }
         : null,
+      description: expense.description,
       notes: expense.notes,
       isDeductible: expense.is_deductible,
-      taxCategory: expense.tax_category,
-      receiptUrl: expense.receipt_url,
-      receiptName: expense.receipt_name,
-      receiptType: expense.receipt_type,
+      deductionPercent: expense.deduction_percent,
       status: expense.status,
-      reviewedAt: expense.reviewed_at?.toISOString() || null,
       createdAt: expense.created_at.toISOString(),
       updatedAt: expense.updated_at.toISOString(),
       createdBy: {
-        id: expense.creator.id,
-        name: expense.creator.name,
-        email: expense.creator.email,
+        id: expense.user.id,
+        name: expense.user.name,
+        email: expense.user.email,
       },
+      receipts: expense.receipts.map((receipt: any) => ({
+        id: receipt.id,
+        fileName: receipt.file_name,
+        fileUrl: receipt.file_url,
+        fileType: receipt.file_type,
+      })),
     };
   } catch (error) {
     console.error('Failed to fetch expense:', error);
@@ -297,13 +324,10 @@ export async function getExpenseSummary() {
             amount: true,
           },
         }),
-        // Receipt count
-        prisma.expenses.count({
+        // Receipt count from separate receipts table
+        prisma.receipts.count({
           where: {
-            ...where,
-            receipt_url: {
-              not: null,
-            },
+            organization_id: user.organizationId,
           },
         }),
       ]);

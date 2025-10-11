@@ -1,8 +1,25 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { schoolsProvider, type MockSchool } from '@/lib/data';
 import { REIDCard, REIDCardHeader, REIDCardContent } from '../shared/REIDCard';
+
+// Type definition (previously from mock data)
+interface MockSchool {
+  id: string;
+  name: string;
+  district: string;
+  type: string;
+  rating: number;
+  test_scores: number;
+  student_count: number;
+  teacher_ratio: number;
+  grade_levels: string;
+  distance_miles: number;
+  address: string;
+  city: string;
+  state: string;
+  zip_code: string;
+}
 import { MetricCard } from '../shared/MetricCard';
 import { SchoolComparisonDialog } from './SchoolComparisonDialog';
 import { GraduationCap, Star, Award } from 'lucide-react';
@@ -36,9 +53,8 @@ export function SchoolsClient() {
   async function loadSchools() {
     try {
       setLoading(true);
-      // Load schools from multiple zip codes for variety
-      const topSchools = await schoolsProvider.getTopRated(50);
-      setSchools(topSchools);
+      // Placeholder - REID is a skeleton module (no database tables yet)
+      setSchools([]);
     } catch (error) {
       console.error('Failed to load schools:', error);
     } finally {

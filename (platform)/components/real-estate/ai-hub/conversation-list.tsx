@@ -6,7 +6,16 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import { MessageSquare, Search, Filter, Clock } from 'lucide-react';
-import type { MockConversation } from '@/lib/data';
+
+// Type definition (previously from mock data)
+interface MockConversation {
+  id: string;
+  title: string;
+  summary?: string;
+  status: 'ACTIVE' | 'ARCHIVED';
+  last_message_at: Date;
+  message_count: number;
+}
 
 interface ConversationListProps {
   conversations: MockConversation[];

@@ -3,7 +3,7 @@
 import React from 'react';
 import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
-import type { PlatformSettings } from '@/lib/data/admin/mock-settings';
+import type { PlatformSettings } from '@/lib/modules/admin';
 
 interface FeatureFlagsProps {
   settings: PlatformSettings['features'];

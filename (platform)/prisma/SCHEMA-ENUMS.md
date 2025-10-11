@@ -1,13 +1,13 @@
 # Prisma Schema - Enums Documentation
 
-**Generated:** 2025-10-10T20:40:33.752Z
+**Generated:** 2025-10-11T00:05:10.920Z
 **Source:** `(platform)/prisma/schema.prisma`
 
 > 🏷️ **Purpose:** Complete enum values reference
 > - Use this when you need to know: "What are the valid values for X enum?"
 > - For quick lookup, see: `SCHEMA-QUICK-REF.md`
 
-**Total Enums:** 69
+**Total Enums:** 88
 
 ---
 
@@ -57,6 +57,17 @@ FEATURE_FLAG_UPDATE
 SYSTEM_CONFIG_UPDATE
 DATA_EXPORT
 BULK_ACTION
+```
+
+---
+
+## AgentStatus
+
+```typescript
+IDLE
+BUSY
+OFFLINE
+ERROR
 ```
 
 ---
@@ -190,6 +201,16 @@ YEARLY
 
 ---
 
+## BundleStatus
+
+```typescript
+ACTIVE
+ARCHIVED
+DRAFT
+```
+
+---
+
 ## BundleType
 
 ```typescript
@@ -197,6 +218,16 @@ STARTER_PACK
 GROWTH_PACK
 ELITE_PACK
 CUSTOM_PACK
+```
+
+---
+
+## CalculationMethod
+
+```typescript
+STANDARD
+SIMPLIFIED
+CUSTOM
 ```
 
 ---
@@ -225,6 +256,15 @@ SEO_CAMPAIGN
 LEAD_GENERATION
 BRAND_AWARENESS
 PRODUCT_LAUNCH
+```
+
+---
+
+## CartItemType
+
+```typescript
+TOOL
+BUNDLE
 ```
 
 ---
@@ -377,6 +417,17 @@ ABANDONED
 
 ---
 
+## DifficultyLevel
+
+```typescript
+BEGINNER
+INTERMEDIATE
+ADVANCED
+EXPERT
+```
+
+---
+
 ## DocumentStatus
 
 ```typescript
@@ -407,6 +458,18 @@ FAILED
 DEVELOPMENT
 STAGING
 PRODUCTION
+```
+
+---
+
+## ExecutionStatus
+
+```typescript
+PENDING
+RUNNING
+COMPLETED
+FAILED
+CANCELLED
 ```
 
 ---
@@ -448,6 +511,30 @@ REAL_ESTATE
 HEALTHCARE
 STRIVE
 GENERAL
+```
+
+---
+
+## IntegrationStatus
+
+```typescript
+CONNECTED
+DISCONNECTED
+ERROR
+TESTING
+```
+
+---
+
+## IntegrationType
+
+```typescript
+API
+WEBHOOK
+EMBED
+STANDALONE
+N8N_WORKFLOW
+NATIVE
 ```
 
 ---
@@ -592,6 +679,17 @@ REMOVED
 
 ---
 
+## PaymentMethod
+
+```typescript
+CREDIT_CARD
+ACH
+INVOICE
+PLATFORM_CREDITS
+```
+
+---
+
 ## PaymentStatus
 
 ```typescript
@@ -612,6 +710,19 @@ DRAFT
 SCHEDULED
 PUBLISHED
 FAILED
+```
+
+---
+
+## PriceModel
+
+```typescript
+FREE
+ONE_TIME
+MONTHLY
+ANNUAL
+USAGE_BASED
+CUSTOM
 ```
 
 ---
@@ -664,6 +775,26 @@ EXPIRED
 
 ---
 
+## PurchaseType
+
+```typescript
+TOOL
+BUNDLE
+```
+
+---
+
+## QuarterEnum
+
+```typescript
+Q1
+Q2
+Q3
+Q4
+```
+
+---
+
 ## ReidReportType
 
 ```typescript
@@ -696,6 +827,17 @@ AI_TOKENS
 API_CALLS
 STORAGE
 SEATS
+```
+
+---
+
+## ReviewStatus
+
+```typescript
+PENDING
+APPROVED
+REJECTED
+FLAGGED
 ```
 
 ---
@@ -784,15 +926,99 @@ CANCELLED
 
 ---
 
+## TaxReportStatus
+
+```typescript
+GENERATING
+COMPLETED
+FAILED
+EXPIRED
+```
+
+---
+
+## TaxReportType
+
+```typescript
+FORM_1099_MISC
+FORM_1099_NEC
+SCHEDULE_C
+SCHEDULE_E
+EXPENSE_SUMMARY
+CATEGORY_BREAKDOWN
+QUARTERLY_ESTIMATE
+ANNUAL_SUMMARY
+CUSTOM
+```
+
+---
+
+## TeamRole
+
+```typescript
+LEADER
+WORKER
+COORDINATOR
+SPECIALIST
+```
+
+---
+
+## TeamStructure
+
+```typescript
+HIERARCHICAL
+COLLABORATIVE
+PIPELINE
+DEMOCRATIC
+```
+
+---
+
+## TemplateCategory
+
+```typescript
+SALES
+SUPPORT
+MARKETING
+DATA_PROCESSING
+AUTOMATION
+ANALYTICS
+CONTENT
+COMMUNICATION
+```
+
+---
+
 ## ToolCategory
 
 ```typescript
-FOUNDATION
-GROWTH
-ELITE
-CUSTOM
-ADVANCED
-INTEGRATION
+LEAD_GENERATION
+LEAD_NURTURING
+LISTING_OPTIMIZATION
+PROPERTY_SHOPPING
+MARKET_INTELLIGENCE
+INVESTMENT_ANALYSIS
+DOCUMENT_PROCESSING
+COMMISSION_FINANCIAL
+BOOKING_SCHEDULING
+COMMUNICATION
+CRM_TOOLS
+ANALYTICS_TOOLS
+AUTOMATION_TOOLS
+INTEGRATION_TOOLS
+```
+
+---
+
+## ToolStatus
+
+```typescript
+ACTIVE
+COMING_SOON
+BETA
+DEPRECATED
+DISABLED
 ```
 
 ---

@@ -22,6 +22,7 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
+import { useQuery } from '@tanstack/react-query';
 import { createExpense } from '@/lib/modules/expenses/expenses/actions';
 import { uploadReceipt } from '@/lib/modules/expenses/receipts/actions';
 import { toast } from 'sonner';
@@ -68,6 +69,19 @@ export function AddExpenseModal({
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [receiptFile, setReceiptFile] = useState<File | null>(null);
 
+  // Fetch expense categories from API
+  const { data: categoriesData, isLoading: loadingCategories } = useQuery({
+    queryKey: ['expense-categories'],
+    queryFn: async () => {
+      const res = await fetch('/api/v1/expenses/categories/list');
+      if (!res.ok) throw new Error('Failed to load categories');
+      return res.json();
+    },
+    staleTime: 5 * 60 * 1000, // Cache for 5 minutes
+  });
+
+  const categories = categoriesData?.categories || [];
+
   const form = useForm<ExpenseFormData>({
     resolver: zodResolver(expenseFormSchema) as any,
     defaultValues: {
@@ -91,13 +105,12 @@ export function AddExpenseModal({
       const result = await createExpense({
         date: new Date(data.date),
         merchant: data.merchant,
-        category: data.category as any, // ExpenseCategory enum
+        categoryId: data.category, // Category ID from select
         amount: parsedAmount,
         listingId: data.listingId || null,
         notes: data.notes || null,
         isDeductible: data.isDeductible,
-        taxCategory: null,
-        organizationId: '', // Will be set by Server Action from session
+        deductionPercent: 100,
       });
 
       // Upload receipt if provided
@@ -199,23 +212,41 @@ export function AddExpenseModal({
             <Label htmlFor="category" className="text-gray-700 dark:text-gray-300">
               Category
             </Label>
-            <Select onValueChange={(value) => form.setValue('category', value)}>
+            <Select
+              onValueChange={(value) => form.setValue('category', value)}
+              disabled={loadingCategories}
+            >
               <SelectTrigger className="dark:bg-gray-800 dark:text-white">
-                <SelectValue placeholder="Select category" />
+                <SelectValue
+                  placeholder={
+                    loadingCategories
+                      ? 'Loading categories...'
+                      : 'Select category'
+                  }
+                />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="COMMISSION">Commission</SelectItem>
-                <SelectItem value="TRAVEL">Travel</SelectItem>
-                <SelectItem value="MARKETING">Marketing</SelectItem>
-                <SelectItem value="OFFICE">Office</SelectItem>
-                <SelectItem value="UTILITIES">Utilities</SelectItem>
-                <SelectItem value="LEGAL">Legal</SelectItem>
-                <SelectItem value="INSURANCE">Insurance</SelectItem>
-                <SelectItem value="REPAIRS">Repairs</SelectItem>
-                <SelectItem value="MEALS">Meals</SelectItem>
-                <SelectItem value="EDUCATION">Education</SelectItem>
-                <SelectItem value="SOFTWARE">Software</SelectItem>
-                <SelectItem value="OTHER">Other</SelectItem>
+                {categories.length > 0 ? (
+                  categories.map((cat: any) => (
+                    <SelectItem key={cat.id} value={cat.id}>
+                      <div className="flex items-center gap-2">
+                        {cat.color && (
+                          <div
+                            className="w-3 h-3 rounded-full"
+                            style={{ backgroundColor: cat.color }}
+                          />
+                        )}
+                        <span>{cat.name}</span>
+                      </div>
+                    </SelectItem>
+                  ))
+                ) : (
+                  <SelectItem value="none" disabled>
+                    {loadingCategories
+                      ? 'Loading...'
+                      : 'No categories available'}
+                  </SelectItem>
+                )}
               </SelectContent>
             </Select>
             {form.formState.errors.category && (

@@ -18,7 +18,17 @@ import {
 } from '@/components/ui/collapsible';
 import { ChevronDown, Loader2, FileText, Calculator, FolderTree, CalendarCheck, Clock } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import type { MockReportTemplate } from '@/lib/data/mocks/expense-tax-reports';
+
+// Type definition (previously from mock data)
+interface MockReportTemplate {
+  id: string;
+  name: string;
+  description: string;
+  category: string;
+  icon: string;
+  whatsIncluded: string[];
+  estimatedTime: string;
+}
 
 /**
  * Report Template Card Component

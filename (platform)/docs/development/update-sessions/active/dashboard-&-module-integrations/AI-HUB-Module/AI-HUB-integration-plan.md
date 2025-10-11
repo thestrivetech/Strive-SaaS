@@ -8,24 +8,23 @@ This guide provides step-by-step instructions to integrate the NeuroFlow Hub AI 
 - NeuroFlow Hub code imported into repository
 - Understanding of multi-tenant RLS and RBAC patterns
 
-## UI Design Analysis (From Documentation)
+## UI Design System (Platform Standards)
 **Design Theme:**
-- **Futuristic UI**: Glassmorphism effects with neon accents
-- **Color Palette**: 
-  - Electric Blue: #00D2FF (primary)
-  - Cyber Green: #39FF14 (success)
-  - Violet accents: #8B5CF6 (secondary)
-- **Dark Theme**: Gradient backgrounds with glass morphism
+- **Professional Enterprise UI**: Clean, data-focused design with subtle visual enhancements
+- **Color Palette**:
+  - Primary: Strive Orange #FF7033 (brand)
+  - Neon Accents: Cyan #00D2FF, Purple #8B5CF6, Green #39FF14, Orange #FF7033
+  - Background: Deep Navy #020A1C
+- **Typography**: Inter (UI/data), Outfit (headings), JetBrains Mono (numbers)
 - **Interactive Elements**: React Flow drag-and-drop workflow canvas
 - **Real-time Updates**: WebSocket-powered live execution monitoring
 
-**Key Visual Elements:**
-- Floating node palette with smooth animations
-- Mini-map for large workflow navigation
-- Glass morphism cards with neon borders
-- Real-time execution visualizer with animated progress
-- Team collaboration board with cyber-grid background
-- Agent avatars with status rings and neon glows
+**Key Components:**
+- ModuleHeroSection with personalized greeting and stats
+- EnhancedCard with glassEffect and neonBorder props
+- Standard shadcn/ui components (Button, Tabs, Badge, etc.)
+- Suspense boundaries for async content
+- Responsive grid layouts (1/2/3/4 columns based on viewport)
 
 ## Integration Steps
 
@@ -391,14 +390,14 @@ npx prisma generate
 #### 2.1 Create NeuroFlow Hub Route Structure
 ```bash
 # From platform root
-mkdir -p app/\(platform\)/ai-hub/{dashboard,workflows,agents,teams,marketplace,analytics,integrations}
+mkdir -p app/real-estate/ai-hub/{dashboard,workflows,agents,teams,marketplace,analytics,integrations}
 ```
 
 #### 2.2 Copy and Adapt Components
-Create `components/features/ai-hub/` directory:
+Create `components/real-estate/ai-hub/` directory:
 
 ```bash
-mkdir -p components/features/ai-hub/{
+mkdir -p components/real-estate/ai-hub/{
   workflows,
   agents,
   teams,
@@ -694,162 +693,142 @@ export function getAIHubLimits(tier: SubscriptionTier) {
 }
 ```
 
-### Phase 5: UI Component Recreation (Futuristic Design)
+### Phase 5: UI Component Implementation (Platform Standards)
 
-#### 5.1 Add NeuroFlow Theme CSS
-Update `app/globals.css`:
+#### 5.1 Theme CSS (Already Available)
+The platform `app/globals.css` already includes:
 
 ```css
-/* NeuroFlow Hub Theme */
-:root {
-  /* Electric colors */
-  --electric-blue: #00D2FF;
-  --cyber-green: #39FF14;
-  --neon-violet: #8B5CF6;
-  
-  /* Glass morphism */
-  --glass-dark: rgba(15, 23, 42, 0.8);
-  --glass-border: rgba(0, 210, 255, 0.3);
-  
-  /* Neon glow effects */
-  --neon-glow-blue: 0 0 20px rgba(0, 210, 255, 0.5);
-  --neon-glow-green: 0 0 20px rgba(57, 255, 20, 0.5);
-}
+/* Glass morphism effects (lines 227-261) */
+.glass { /* Standard glass effect */ }
+.glass-strong { /* Strong blur glass effect */ }
+.glass-subtle { /* Subtle glass effect */ }
 
-/* Electric gradient animation */
-@keyframes electric-pulse {
-  0%, 100% { 
-    box-shadow: var(--neon-glow-blue);
-    border-color: var(--electric-blue);
-  }
-  50% { 
-    box-shadow: var(--neon-glow-green);
-    border-color: var(--cyber-green);
-  }
-}
+/* Neon border effects (lines 289-319) */
+.neon-border-cyan { /* Cyan neon border */ }
+.neon-border-purple { /* Purple neon border */ }
+.neon-border-green { /* Green neon border */ }
+.neon-border-orange { /* Orange action border */ }
 
-.electric-border {
-  border: 1px solid var(--electric-blue);
-  animation: electric-pulse 2s ease-in-out infinite;
-}
-
-/* Cyber grid background */
-.cyber-grid {
-  background-image: 
-    linear-gradient(rgba(0, 210, 255, 0.1) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(0, 210, 255, 0.1) 1px, transparent 1px);
-  background-size: 20px 20px;
-}
-
-/* Floating node palette */
-.floating-palette {
-  background: var(--glass-dark);
-  backdrop-filter: blur(20px);
-  border: 1px solid var(--glass-border);
-  box-shadow: var(--neon-glow-blue);
-}
-
-/* Workflow node styling */
-.workflow-node {
-  background: linear-gradient(135deg, rgba(0, 210, 255, 0.2), rgba(139, 92, 246, 0.2));
-  border: 1px solid var(--electric-blue);
-  backdrop-filter: blur(10px);
-}
-
-.workflow-node:hover {
-  box-shadow: var(--neon-glow-blue);
-  transform: scale(1.05);
-}
-
-/* Agent avatar with status ring */
-.agent-avatar {
-  position: relative;
-  border: 2px solid var(--electric-blue);
-  box-shadow: var(--neon-glow-blue);
-}
-
-.agent-avatar.active {
-  border-color: var(--cyber-green);
-  box-shadow: var(--neon-glow-green);
-}
-
-/* Execution progress bar */
-.execution-progress {
-  background: linear-gradient(90deg, var(--electric-blue), var(--cyber-green));
-  height: 4px;
-  border-radius: 2px;
-  position: relative;
-  overflow: hidden;
-}
-
-.execution-progress::after {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: -100%;
-  width: 100%;
-  height: 100%;
-  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
-  animation: progress-shine 1.5s infinite;
-}
-
-@keyframes progress-shine {
-  0% { left: -100%; }
-  100% { left: 100%; }
-}
+/* Available animations (lines 116-208) */
+.animate-float { /* Floating animation */ }
+.animate-glow { /* Glowing animation */ }
+.animate-pulse-slow { /* Slow pulse */ }
 ```
 
-#### 5.2 Create Main AI Hub Dashboard
-Create `app/(platform)/ai-hub/dashboard/page.tsx`:
-```tsx
-import { Suspense } from 'react'
-import { AIHubHeader } from '@/components/features/ai-hub/dashboard/header'
-import { WorkflowOverview } from '@/components/features/ai-hub/dashboard/workflow-overview'
-import { AgentStatus } from '@/components/features/ai-hub/dashboard/agent-status'
-import { ExecutionMetrics } from '@/components/features/ai-hub/dashboard/execution-metrics'
-import { QuickActions } from '@/components/features/ai-hub/dashboard/quick-actions'
-import { Skeleton } from '@/components/ui/skeleton'
+**Note:** No new CSS required - use existing platform utilities via component props
 
-export default function AIHubDashboard() {
+#### 5.2 Create Main AI Hub Dashboard
+Create `app/real-estate/ai-hub/dashboard/page.tsx`:
+```tsx
+import { Metadata } from 'next';
+import { requireAuth, getCurrentUser } from '@/lib/auth/auth-helpers';
+import { redirect } from 'next/navigation';
+import { Suspense } from 'react';
+import { ModuleHeroSection } from '@/components/shared/dashboard/ModuleHeroSection';
+import { EnhancedCard, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/shared/dashboard/EnhancedCard';
+import { Button } from '@/components/ui/button';
+import { Brain, Workflow, Users, TrendingUp, ArrowRight } from 'lucide-react';
+import Link from 'next/link';
+
+export const metadata: Metadata = {
+  title: 'AI Hub Dashboard | Strive Platform',
+  description: 'AI-powered automation and intelligence tools',
+};
+
+export default async function AIHubDashboard() {
+  await requireAuth();
+  const user = await getCurrentUser();
+
+  if (!user) redirect('/login');
+
+  const organizationId = user.organization_members[0]?.organization_id;
+  if (!organizationId) redirect('/onboarding/organization');
+
+  // Fetch AI Hub stats (from mock or real providers)
+  const stats = [
+    { label: 'Active Workflows', value: '12', icon: 'projects' as const },
+    { label: 'AI Agents', value: '8', icon: 'tasks' as const },
+    { label: 'Executions Today', value: '156', icon: 'customers' as const },
+    { label: 'Success Rate', value: '94%', icon: 'revenue' as const },
+  ];
+
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-950 via-blue-950 to-violet-950 cyber-grid">
-      {/* Header */}
-      <AIHubHeader />
-      
-      <div className="max-w-7xl mx-auto px-6 py-8">
-        <div className="grid grid-cols-1 xl:grid-cols-4 gap-8">
-          {/* Main Content */}
-          <div className="xl:col-span-3 space-y-8">
-            <Suspense fallback={<Skeleton className="h-96" />}>
-              <WorkflowOverview />
-            </Suspense>
-            
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-              <Suspense fallback={<Skeleton className="h-64" />}>
-                <AgentStatus />
-              </Suspense>
-              
-              <Suspense fallback={<Skeleton className="h-64" />}>
-                <ExecutionMetrics />
-              </Suspense>
-            </div>
-          </div>
-          
-          {/* Side Panel */}
-          <div className="xl:col-span-1">
-            <Suspense fallback={<Skeleton className="h-96" />}>
-              <QuickActions />
-            </Suspense>
-          </div>
-        </div>
+    <div className="space-y-6">
+      {/* Hero Section */}
+      <ModuleHeroSection
+        user={user}
+        moduleName="AI Hub"
+        moduleDescription="Intelligent automation and AI-powered workflows"
+        stats={stats}
+      />
+
+      {/* Main Content */}
+      <div className="grid gap-6 lg:grid-cols-3">
+        {/* Workflows Card */}
+        <EnhancedCard glassEffect="strong" neonBorder="cyan" hoverEffect={true}>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <Workflow className="h-5 w-5" />
+              Workflow Automation
+            </CardTitle>
+            <CardDescription>Design and execute AI workflows</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <Button asChild className="w-full">
+              <Link href="/real-estate/ai-hub/workflows">
+                Manage Workflows
+                <ArrowRight className="ml-2 h-4 w-4" />
+              </Link>
+            </Button>
+          </CardContent>
+        </EnhancedCard>
+
+        {/* Agents Card */}
+        <EnhancedCard glassEffect="strong" neonBorder="purple" hoverEffect={true}>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <Brain className="h-5 w-5" />
+              AI Agents
+            </CardTitle>
+            <CardDescription>Configure intelligent agents</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <Button asChild className="w-full">
+              <Link href="/real-estate/ai-hub/agents">
+                Manage Agents
+                <ArrowRight className="ml-2 h-4 w-4" />
+              </Link>
+            </Button>
+          </CardContent>
+        </EnhancedCard>
+
+        {/* Teams Card */}
+        <EnhancedCard glassEffect="strong" neonBorder="green" hoverEffect={true}>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <Users className="h-5 w-5" />
+              Agent Teams
+            </CardTitle>
+            <CardDescription>Multi-agent collaboration</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <Button asChild className="w-full">
+              <Link href="/real-estate/ai-hub/teams">
+                Manage Teams
+                <ArrowRight className="ml-2 h-4 w-4" />
+              </Link>
+            </Button>
+          </CardContent>
+        </EnhancedCard>
       </div>
     </div>
-  )
+  );
 }
 ```
 
 #### 5.3 Create Workflow Builder Interface
-Create `components/features/ai-hub/workflows/WorkflowBuilder.tsx`:
+Create `components/real-estate/ai-hub/workflows/WorkflowBuilder.tsx`:
 ```tsx
 'use client'
 
@@ -1035,7 +1014,7 @@ export function WorkflowBuilder() {
 ```
 
 #### 5.4 Create Agent Management Interface
-Create `components/features/ai-hub/agents/AgentLab.tsx`:
+Create `components/real-estate/ai-hub/agents/AgentLab.tsx`:
 ```tsx
 'use client'
 
@@ -1326,22 +1305,22 @@ export async function POST(
 ### Phase 7: Navigation Integration
 
 #### 7.1 Update Platform Sidebar
-Update `components/shared/layouts/sidebar.tsx`:
+Update `components/layouts/sidebar.tsx`:
 ```typescript
 const navigationItems = [
   // ... existing items
   {
     name: 'AI Hub (NeuroFlow)',
-    href: '/ai-hub/dashboard',
+    href: '/real-estate/ai-hub/dashboard',
     icon: Zap,
     children: [
-      { name: 'Dashboard', href: '/ai-hub/dashboard' },
-      { name: 'Workflows', href: '/ai-hub/workflows' },
-      { name: 'AI Agents', href: '/ai-hub/agents' },
-      { name: 'Teams', href: '/ai-hub/teams' },
-      { name: 'Marketplace', href: '/ai-hub/marketplace' },
-      { name: 'Analytics', href: '/ai-hub/analytics' },
-      { name: 'Integrations', href: '/ai-hub/integrations' },
+      { name: 'Dashboard', href: '/real-estate/ai-hub/dashboard' },
+      { name: 'Workflows', href: '/real-estate/ai-hub/workflows' },
+      { name: 'AI Agents', href: '/real-estate/ai-hub/agents' },
+      { name: 'Teams', href: '/real-estate/ai-hub/teams' },
+      { name: 'Marketplace', href: '/real-estate/ai-hub/marketplace' },
+      { name: 'Analytics', href: '/real-estate/ai-hub/analytics' },
+      { name: 'Integrations', href: '/real-estate/ai-hub/integrations' },
     ]
   }
 ]

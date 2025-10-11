@@ -67,7 +67,7 @@ describe('Content Actions', () => {
       expect(content.title).toBe('Test Article');
 
       // Verify in database
-      const dbContent = await testPrisma.content_items.findUnique({
+      const dbContent = await testPrisma.content.findUnique({
         where: { id: content.id },
       });
       expect(dbContent?.organization_id).toBe(organization.id);
@@ -78,7 +78,7 @@ describe('Content Actions', () => {
       const { organization: org2 } = await createTestOrgWithUser(OrgRole.OWNER);
 
       // Create content in org1
-      const content = await testPrisma.content_items.create({
+      const content = await testPrisma.content.create({
         data: {
           title: 'Org 1 Content',
           slug: 'org1-content',
@@ -111,7 +111,7 @@ describe('Content Actions', () => {
       const { organization: org2, user: user2 } = await createTestOrgWithUser(OrgRole.OWNER);
 
       // Create content in both orgs
-      await testPrisma.content_items.create({
+      await testPrisma.content.create({
         data: {
           title: 'Org 1 Content',
           slug: 'org1-content',
@@ -124,7 +124,7 @@ describe('Content Actions', () => {
         },
       });
 
-      await testPrisma.content_items.create({
+      await testPrisma.content.create({
         data: {
           title: 'Org 2 Content',
           slug: 'org2-content',
@@ -138,7 +138,7 @@ describe('Content Actions', () => {
       });
 
       // Query should only return org1 content
-      const org1Content = await testPrisma.content_items.findMany({
+      const org1Content = await testPrisma.content.findMany({
         where: { organization_id: org1.id },
       });
 
@@ -210,7 +210,7 @@ describe('Content Actions', () => {
     it('should check both GlobalRole and OrganizationRole for publish permission', async () => {
       const { organization, user } = await createTestOrgWithUser(OrgRole.MEMBER);
 
-      const content = await testPrisma.content_items.create({
+      const content = await testPrisma.content.create({
         data: {
           title: 'Draft Content',
           slug: 'draft-content',
@@ -236,7 +236,7 @@ describe('Content Actions', () => {
     it('should allow OWNER/ADMIN to publish content', async () => {
       const { organization, user } = await createTestOrgWithUser(OrgRole.OWNER);
 
-      const content = await testPrisma.content_items.create({
+      const content = await testPrisma.content.create({
         data: {
           title: 'Draft Content',
           slug: 'draft-content',
@@ -371,7 +371,7 @@ describe('Content Actions', () => {
     it('should create content revision on update', async () => {
       const { organization, user } = await createTestOrgWithUser(OrgRole.OWNER);
 
-      const content = await testPrisma.content_items.create({
+      const content = await testPrisma.content.create({
         data: {
           title: 'Original Title',
           slug: 'original-title',
@@ -410,7 +410,7 @@ describe('Content Actions', () => {
     it('should set publishedAt when publishing', async () => {
       const { organization, user } = await createTestOrgWithUser(OrgRole.OWNER);
 
-      const content = await testPrisma.content_items.create({
+      const content = await testPrisma.content.create({
         data: {
           title: 'Draft Content',
           slug: 'draft-content',
@@ -439,7 +439,7 @@ describe('Content Actions', () => {
     it('should clear publishedAt when unpublishing', async () => {
       const { organization, user } = await createTestOrgWithUser(OrgRole.OWNER);
 
-      const content = await testPrisma.content_items.create({
+      const content = await testPrisma.content.create({
         data: {
           title: 'Published Content',
           slug: 'published-content',
@@ -467,7 +467,7 @@ describe('Content Actions', () => {
     it('should schedule content for future publishing', async () => {
       const { organization, user } = await createTestOrgWithUser(OrgRole.OWNER);
 
-      const content = await testPrisma.content_items.create({
+      const content = await testPrisma.content.create({
         data: {
           title: 'Future Content',
           slug: 'future-content',
@@ -499,7 +499,7 @@ describe('Content Actions', () => {
     it('should delete content successfully', async () => {
       const { organization, user } = await createTestOrgWithUser(OrgRole.OWNER);
 
-      const content = await testPrisma.content_items.create({
+      const content = await testPrisma.content.create({
         data: {
           title: 'To Delete',
           slug: 'to-delete',
@@ -521,7 +521,7 @@ describe('Content Actions', () => {
       expect(result.success).toBe(true);
 
       // Verify deletion
-      const deleted = await testPrisma.content_items.findUnique({
+      const deleted = await testPrisma.content.findUnique({
         where: { id: content.id },
       });
       expect(deleted).toBeNull();
@@ -531,7 +531,7 @@ describe('Content Actions', () => {
       const { organization: org1, user: user1 } = await createTestOrgWithUser(OrgRole.OWNER);
       const { organization: org2 } = await createTestOrgWithUser(OrgRole.OWNER);
 
-      const content = await testPrisma.content_items.create({
+      const content = await testPrisma.content.create({
         data: {
           title: 'Org 1 Content',
           slug: 'org1-content',

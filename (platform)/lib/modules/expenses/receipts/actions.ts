@@ -87,13 +87,15 @@ export async function uploadReceipt(formData: FormData) {
       throw new Error('Failed to generate receipt URL');
     }
 
-    // Update expense with receipt information
-    await prisma.expenses.update({
-      where: { id: expenseId },
+    // Create receipt record in receipts table
+    await prisma.receipts.create({
       data: {
-        receipt_url: urlData.publicUrl,
-        receipt_name: file.name,
-        receipt_type: file.type,
+        expense_id: expenseId,
+        organization_id: user.organizationId,
+        file_name: file.name,
+        file_url: urlData.publicUrl,
+        file_type: file.type,
+        file_size_bytes: BigInt(file.size),
       },
     });
 
@@ -137,7 +139,6 @@ export async function deleteReceipt(expenseId: string) {
       },
       select: {
         id: true,
-        receipt_url: true,
       },
     });
 
@@ -145,12 +146,20 @@ export async function deleteReceipt(expenseId: string) {
       throw new Error('Expense not found or access denied');
     }
 
-    if (!expense.receipt_url) {
+    // Find receipt for this expense
+    const receipt = await prisma.receipts.findFirst({
+      where: {
+        expense_id: expenseId,
+        organization_id: user.organizationId,
+      },
+    });
+
+    if (!receipt) {
       throw new Error('No receipt found for this expense');
     }
 
     // Extract file path from URL
-    const url = new URL(expense.receipt_url);
+    const url = new URL(receipt.file_url);
     const pathParts = url.pathname.split('/expense-receipts/');
     const filePath = pathParts[1];
 
@@ -169,14 +178,9 @@ export async function deleteReceipt(expenseId: string) {
       // Continue anyway to clear the database record
     }
 
-    // Update expense to remove receipt information
-    await prisma.expenses.update({
-      where: { id: expenseId },
-      data: {
-        receipt_url: null,
-        receipt_name: null,
-        receipt_type: null,
-      },
+    // Delete receipt record from database
+    await prisma.receipts.delete({
+      where: { id: receipt.id },
     });
 
     revalidatePath('/real-estate/expense-tax');

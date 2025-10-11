@@ -1,6 +1,5 @@
 import { PrismaClient } from '@prisma/client';
 import { tenantIsolationExtension } from './prisma-middleware';
-import { dataConfig } from '@/lib/data/config';
 
 /**
  * Prisma Client Singleton with Security & Monitoring
@@ -111,51 +110,6 @@ function createPrismaClient() {
     client.$on('info', (e) => {
       console.info('ℹ️  Prisma Info:', e);
     });
-  }
-
-  // 🚨 SHOWCASE MODE: Return mock client if mock mode is enabled
-  if (dataConfig.useMocks) {
-    console.log('[Mock Mode] Prisma queries will be intercepted');
-
-    // Create a proxy that intercepts all Prisma calls and returns empty data
-    return new Proxy(client, {
-      get(target, prop) {
-        // Allow system methods
-        if (prop === '$disconnect' || prop === '$connect' || prop === '$on' || prop === '$queryRaw') {
-          return target[prop as keyof typeof target];
-        }
-
-        // For model access (e.g., prisma.users, prisma.leads)
-        return new Proxy({}, {
-          get(modelTarget, action) {
-            // Return mock functions for all actions
-            return async (...args: any[]) => {
-              console.log(`[Mock Mode] Blocked Prisma.${String(prop)}.${String(action)}()`);
-
-              switch (action) {
-                case 'findMany':
-                  return [];
-                case 'findFirst':
-                case 'findUnique':
-                  return null;
-                case 'count':
-                  return 0;
-                case 'aggregate':
-                  return { _count: 0, _sum: {}, _avg: {}, _min: {}, _max: {} };
-                case 'create':
-                case 'update':
-                case 'upsert':
-                  return { id: 'mock-id' };
-                case 'delete':
-                  return { id: 'mock-id' };
-                default:
-                  return null;
-              }
-            };
-          }
-        });
-      }
-    }) as any;
   }
 
   // Apply tenant isolation extension

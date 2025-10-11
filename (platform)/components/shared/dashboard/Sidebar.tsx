@@ -143,7 +143,51 @@ export function Sidebar({ isOpen = true, onClose }: SidebarProps) {
       id: 'ai-hub',
       title: 'AI Hub',
       icon: Bot,
-      href: '/real-estate/ai-hub/ai-hub-dashboard',
+      badge: 'NEW',
+      children: [
+        {
+          id: 'ai-hub-dashboard',
+          title: 'Dashboard',
+          icon: Home,
+          href: '/real-estate/ai-hub/dashboard',
+        },
+        {
+          id: 'workflows',
+          title: 'Workflows',
+          icon: FileText,
+          href: '/real-estate/ai-hub/workflows',
+        },
+        {
+          id: 'agents',
+          title: 'AI Agents',
+          icon: Bot,
+          href: '/real-estate/ai-hub/agents',
+        },
+        {
+          id: 'teams',
+          title: 'Teams',
+          icon: Users,
+          href: '/real-estate/ai-hub/teams',
+        },
+        {
+          id: 'marketplace',
+          title: 'Marketplace',
+          icon: ShoppingBag,
+          href: '/real-estate/ai-hub/marketplace',
+        },
+        {
+          id: 'ai-integrations',
+          title: 'Integrations',
+          icon: Settings,
+          href: '/real-estate/ai-hub/integrations',
+        },
+        {
+          id: 'ai-analytics',
+          title: 'Analytics',
+          icon: BarChart3,
+          href: '/real-estate/ai-hub/analytics',
+        },
+      ],
     },
     {
       id: 'reid',

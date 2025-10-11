@@ -33,9 +33,9 @@ export async function GET() {
     const now = new Date();
     const yearStart = new Date(now.getFullYear(), 0, 1);
 
-    // Group expenses by category with aggregations
+    // Group expenses by category_id with aggregations
     const categoryBreakdown = await prisma.expenses.groupBy({
-      by: ['category'],
+      by: ['category_id'],
       where: {
         organization_id: organizationId,
         date: { gte: yearStart },
@@ -45,6 +45,22 @@ export async function GET() {
       },
       _count: true,
     });
+
+    // Fetch category details for all category IDs
+    const categoryIds = categoryBreakdown.map((cat) => cat.category_id);
+    const categoryDetails = await prisma.expense_categories.findMany({
+      where: {
+        id: { in: categoryIds },
+      },
+      select: {
+        id: true,
+        name: true,
+        code: true,
+      },
+    });
+
+    // Create a map for quick category lookup
+    const categoryMap = new Map(categoryDetails.map((cat) => [cat.id, cat]));
 
     // Calculate total for percentage calculations
     const totalAmount = categoryBreakdown.reduce(
@@ -69,9 +85,10 @@ export async function GET() {
       .map((cat) => {
         const amount = Number(cat._sum.amount || 0);
         const percentage = totalAmount > 0 ? (amount / totalAmount) * 100 : 0;
+        const categoryInfo = categoryMap.get(cat.category_id);
 
         return {
-          category: cat.category,
+          category: categoryInfo?.name || 'Unknown',
           amount,
           count: cat._count,
           percentage: Math.round(percentage * 10) / 10, // Round to 1 decimal

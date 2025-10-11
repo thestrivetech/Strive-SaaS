@@ -43,7 +43,7 @@ describe('Content Analytics', () => {
       const { organization: org2, user: user2 } = await createTestOrgWithUser(OrgRole.OWNER);
 
       // Create content in org1
-      await testPrisma.content_items.create({
+      await testPrisma.content.create({
         data: {
           title: 'Org 1 Content',
           slug: 'org1-content',
@@ -60,7 +60,7 @@ describe('Content Analytics', () => {
       });
 
       // Create content in org2
-      await testPrisma.content_items.create({
+      await testPrisma.content.create({
         data: {
           title: 'Org 2 Content',
           slug: 'org2-content',
@@ -95,7 +95,7 @@ describe('Content Analytics', () => {
 
       // Create 5 content items in org1
       for (let i = 0; i < 5; i++) {
-        await testPrisma.content_items.create({
+        await testPrisma.content.create({
           data: {
             title: `Org 1 Content ${i}`,
             slug: `org1-content-${i}`,
@@ -112,7 +112,7 @@ describe('Content Analytics', () => {
 
       // Create 3 content items in org2
       for (let i = 0; i < 3; i++) {
-        await testPrisma.content_items.create({
+        await testPrisma.content.create({
           data: {
             title: `Org 2 Content ${i}`,
             slug: `org2-content-${i}`,
@@ -150,7 +150,7 @@ describe('Content Analytics', () => {
 
       // Create 10 published content items
       for (let i = 0; i < 10; i++) {
-        await testPrisma.content_items.create({
+        await testPrisma.content.create({
           data: {
             title: `Content ${i}`,
             slug: `content-${i}`,
@@ -182,7 +182,7 @@ describe('Content Analytics', () => {
 
       // Create published content
       for (let i = 0; i < 7; i++) {
-        await testPrisma.content_items.create({
+        await testPrisma.content.create({
           data: {
             title: `Published ${i}`,
             slug: `published-${i}`,
@@ -198,7 +198,7 @@ describe('Content Analytics', () => {
 
       // Create draft content
       for (let i = 0; i < 3; i++) {
-        await testPrisma.content_items.create({
+        await testPrisma.content.create({
           data: {
             title: `Draft ${i}`,
             slug: `draft-${i}`,
@@ -211,11 +211,11 @@ describe('Content Analytics', () => {
         });
       }
 
-      const totalCount = await testPrisma.content_items.count({
+      const totalCount = await testPrisma.content.count({
         where: { organization_id: organization.id },
       });
 
-      const publishedCount = await testPrisma.content_items.count({
+      const publishedCount = await testPrisma.content.count({
         where: {
           organization_id: organization.id,
           status: ContentStatus.PUBLISHED,
@@ -237,7 +237,7 @@ describe('Content Analytics', () => {
       ];
 
       for (let i = 0; i < engagementData.length; i++) {
-        await testPrisma.content_items.create({
+        await testPrisma.content.create({
           data: {
             title: `Content ${i}`,
             slug: `content-${i}`,
@@ -283,7 +283,7 @@ describe('Content Analytics', () => {
       const twoWeeksAgo = new Date(now.getTime() - 14 * 24 * 60 * 60 * 1000);
 
       // Recent content (within week)
-      await testPrisma.content_items.create({
+      await testPrisma.content.create({
         data: {
           title: 'Recent Content',
           slug: 'recent-content',
@@ -298,7 +298,7 @@ describe('Content Analytics', () => {
       });
 
       // Old content (outside week)
-      await testPrisma.content_items.create({
+      await testPrisma.content.create({
         data: {
           title: 'Old Content',
           slug: 'old-content',
@@ -332,7 +332,7 @@ describe('Content Analytics', () => {
       const lastMonth = new Date(now.getFullYear(), now.getMonth() - 1, 15);
 
       // This month
-      await testPrisma.content_items.create({
+      await testPrisma.content.create({
         data: {
           title: 'This Month',
           slug: 'this-month',
@@ -347,7 +347,7 @@ describe('Content Analytics', () => {
       });
 
       // Last month
-      await testPrisma.content_items.create({
+      await testPrisma.content.create({
         data: {
           title: 'Last Month',
           slug: 'last-month',
@@ -379,7 +379,7 @@ describe('Content Analytics', () => {
       const lastYear = new Date();
       lastYear.setFullYear(lastYear.getFullYear() - 1);
 
-      await testPrisma.content_items.create({
+      await testPrisma.content.create({
         data: {
           title: 'Last Year',
           slug: 'last-year',
@@ -420,7 +420,7 @@ describe('Content Analytics', () => {
       for (let monthOffset = 0; monthOffset < 3; monthOffset++) {
         const date = new Date(now.getFullYear(), now.getMonth() - monthOffset, 15);
 
-        await testPrisma.content_items.create({
+        await testPrisma.content.create({
           data: {
             title: `Content Month ${monthOffset}`,
             slug: `content-month-${monthOffset}`,
@@ -462,7 +462,7 @@ describe('Content Analytics', () => {
 
       // Create 15 content items with varying views
       for (let i = 0; i < 15; i++) {
-        await testPrisma.content_items.create({
+        await testPrisma.content.create({
           data: {
             title: `Content ${i}`,
             slug: `content-${i}`,
@@ -494,7 +494,7 @@ describe('Content Analytics', () => {
 
       // Create blog posts
       for (let i = 0; i < 5; i++) {
-        await testPrisma.content_items.create({
+        await testPrisma.content.create({
           data: {
             title: `Blog ${i}`,
             slug: `blog-${i}`,
@@ -511,7 +511,7 @@ describe('Content Analytics', () => {
 
       // Create articles
       for (let i = 0; i < 3; i++) {
-        await testPrisma.content_items.create({
+        await testPrisma.content.create({
           data: {
             title: `Article ${i}`,
             slug: `article-${i}`,
@@ -549,7 +549,7 @@ describe('Content Analytics', () => {
       const { organization, user } = await createTestOrgWithUser(OrgRole.OWNER);
 
       // Create different content types
-      await testPrisma.content_items.create({
+      await testPrisma.content.create({
         data: {
           title: 'Blog Post',
           slug: 'blog-post',
@@ -565,7 +565,7 @@ describe('Content Analytics', () => {
         },
       });
 
-      await testPrisma.content_items.create({
+      await testPrisma.content.create({
         data: {
           title: 'Article',
           slug: 'article',

@@ -12,7 +12,6 @@ type PurchaseBundleInput = any;
  * Marketplace Server Actions Module
  *
  * RBAC-protected mutations for purchasing tools and bundles
- * MOCK MODE: Uses mock data providers when NEXT_PUBLIC_USE_MOCKS=true
  */
 
 /**
@@ -43,33 +42,6 @@ export async function purchaseTool(input: PurchaseToolInput) {
 
   // Validate input
   const validated = input;
-
-  // Mock data path
-  if (dataConfig.useMocks) {
-    // Check if tool exists
-    const tool = await toolsProvider.findById(validated.tool_id);
-    if (!tool) {
-      throw new Error('Tool not found or inactive');
-    }
-
-    // Check if already purchased
-    const existing = await purchasesProvider.findByToolId(validated.tool_id, organizationId);
-    if (existing) {
-      throw new Error('Tool already purchased by your organization');
-    }
-
-    // Create purchase
-    const purchase = await purchasesProvider.create({
-      toolId: validated.tool_id,
-      orgId: organizationId,
-      userId: user.id,
-    });
-
-    revalidatePath('/real-estate/marketplace');
-    revalidatePath('/real-estate/marketplace/purchases');
-
-    return purchase as any;
-  }
 
   // Real Prisma mutations
   return withTenantContext(async () => {

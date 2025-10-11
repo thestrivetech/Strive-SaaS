@@ -23,23 +23,11 @@ export async function GET(request: NextRequest) {
     const searchParams = request.nextUrl.searchParams;
 
     // Build filter object
-    const filters: {
-      category?: string | null;
-      status?: string | null;
-      listingId?: string | null;
-      startDate?: Date;
-      endDate?: Date;
-      isDeductible?: boolean;
-      page?: number;
-      limit?: number;
-      sortBy?: string | null;
-      sortOrder?: string | null;
-      search?: string | null;
-    } = {};
+    const filters: any = {};
 
     // Category filter
     if (searchParams.has('category')) {
-      filters.category = searchParams.get('category');
+      filters.categoryId = searchParams.get('category');
     }
 
     // Status filter
