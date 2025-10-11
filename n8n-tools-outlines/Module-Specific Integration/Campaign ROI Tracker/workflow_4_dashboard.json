@@ -1,0 +1,201 @@
+{
+  "name": "campaign-dashboard-api-v1",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "campaign-dashboard",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "id": "webhook-dashboard",
+      "name": "Dashboard Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [250, 400]
+    },
+    {
+      "parameters": {
+        "jsCode": "// ===============================================\n// DASHBOARD REQUEST VALIDATION\n// ===============================================\nconst startTime = Date.now();\nconst input = $input.first().json.body || $input.first().json;\n\n// Validate required fields\nif (!input.organization_id) {\n  return [{\n    json: {\n      valid: false,\n      error: 'organization_id is required',\n      error_code: 400\n    }\n  }];\n}\n\n// Set defaults\nconst query = {\n  organization_id: input.organization_id,\n  date_range: input.date_range || {\n    start: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],\n    end: new Date().toISOString().split('T')[0]\n  },\n  metrics: input.metrics || ['roi', 'spend', 'revenue', 'conversions'],\n  campaign_ids: input.campaign_ids || null, // null = all campaigns\n  group_by: input.group_by || 'campaign', // campaign, channel, day\n  include_attribution: input.include_attribution !== false,\n  include_predictions: input.include_predictions || false\n};\n\n// Generate cache key\nconst cacheKey = `dashboard:${query.organization_id}:${query.date_range.start}:${query.date_range.end}:${query.group_by}`;\n\nreturn [{\n  json: {\n    valid: true,\n    query: query,\n    cache_key: cacheKey,\n    request_timestamp: new Date().toISOString()\n  }\n}];"
+      },
+      "id": "validate-request",
+      "name": "Validate Request",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [450, 400]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "boolean": [{"value1": "={{ $json.valid }}", "value2": true}]
+        }
+      },
+      "id": "check-valid",
+      "name": "Check Valid",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [650, 400]
+    },
+    {
+      "parameters": {
+        "method": "GET",
+        "url": "={{ $env.SUPABASE_URL }}/rest/v1/campaigns",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {"name": "apikey", "value": "={{ $env.SUPABASE_SERVICE_KEY }}"},
+            {"name": "Authorization", "value": "=Bearer {{ $env.SUPABASE_SERVICE_KEY }}"}
+          ]
+        },
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {"name": "organization_id", "value": "=eq.{{ $json.query.organization_id }}"},
+            {"name": "select", "value": "id,name,platform,status,budget,spend,revenue,roi,impressions,clicks,conversions,created_at"}
+          ]
+        },
+        "options": {"timeout": 10000}
+      },
+      "id": "fetch-campaigns",
+      "name": "Fetch Campaigns",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [850, 300]
+    },
+    {
+      "parameters": {
+        "method": "GET",
+        "url": "={{ $env.SUPABASE_URL }}/rest/v1/campaign_metrics",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {"name": "apikey", "value": "={{ $env.SUPABASE_SERVICE_KEY }}"},
+            {"name": "Authorization", "value": "=Bearer {{ $env.SUPABASE_SERVICE_KEY }}"}
+          ]
+        },
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {"name": "organization_id", "value": "=eq.{{ $('Validate Request').item.json.query.organization_id }}"},
+            {"name": "date", "value": "=gte.{{ $('Validate Request').item.json.query.date_range.start }}"},
+            {"name": "date", "value": "=lte.{{ $('Validate Request').item.json.query.date_range.end }}"},
+            {"name": "select", "value": "campaign_id,date,spend,revenue,roi,impressions,clicks,conversions,leads_generated"}
+          ]
+        },
+        "options": {"timeout": 10000}
+      },
+      "id": "fetch-metrics",
+      "name": "Fetch Metrics",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [850, 400]
+    },
+    {
+      "parameters": {
+        "method": "GET",
+        "url": "={{ $env.SUPABASE_URL }}/rest/v1/campaign_attribution",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {"name": "apikey", "value": "={{ $env.SUPABASE_SERVICE_KEY }}"},
+            {"name": "Authorization", "value": "=Bearer {{ $env.SUPABASE_SERVICE_KEY }}"}
+          ]
+        },
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {"name": "organization_id", "value": "=eq.{{ $('Validate Request').item.json.query.organization_id }}"},
+            {"name": "attribution_model", "value": "=eq.ensemble"},
+            {"name": "select", "value": "campaign_id,attribution_value,confidence_score,channel_attribution"},
+            {"name": "limit", "value": "1000"}
+          ]
+        },
+        "options": {"timeout": 10000}
+      },
+      "id": "fetch-attribution",
+      "name": "Fetch Attribution",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [850, 500]
+    },
+    {
+      "parameters": {
+        "jsCode": "// ===============================================\n// AGGREGATE DASHBOARD DATA\n// ===============================================\nconst campaigns = $('Fetch Campaigns').all().map(i => i.json).flat();\nconst metrics = $('Fetch Metrics').all().map(i => i.json).flat();\nconst attribution = $('Fetch Attribution').all().map(i => i.json).flat();\nconst query = $('Validate Request').item.json.query;\n\n// Calculate summary metrics\nconst summary = {\n  total_campaigns: campaigns.length,\n  active_campaigns: campaigns.filter(c => c.status === 'active').length,\n  total_spend: 0,\n  total_revenue: 0,\n  total_impressions: 0,\n  total_clicks: 0,\n  total_conversions: 0,\n  overall_roi: 0,\n  overall_ctr: 0,\n  overall_conversion_rate: 0,\n  period: `${query.date_range.start} to ${query.date_range.end}`\n};\n\ncampaigns.forEach(c => {\n  summary.total_spend += parseFloat(c.spend || 0);\n  summary.total_revenue += parseFloat(c.revenue || 0);\n  summary.total_impressions += parseInt(c.impressions || 0);\n  summary.total_clicks += parseInt(c.clicks || 0);\n  summary.total_conversions += parseInt(c.conversions || 0);\n});\n\nsummary.overall_roi = summary.total_spend > 0 \n  ? ((summary.total_revenue - summary.total_spend) / summary.total_spend).toFixed(2)\n  : 0;\nsummary.overall_ctr = summary.total_impressions > 0\n  ? ((summary.total_clicks / summary.total_impressions) * 100).toFixed(2)\n  : 0;\nsummary.overall_conversion_rate = summary.total_clicks > 0\n  ? ((summary.total_conversions / summary.total_clicks) * 100).toFixed(2)\n  : 0;\n\n// Round summary numbers\nsummary.total_spend = parseFloat(summary.total_spend.toFixed(2));\nsummary.total_revenue = parseFloat(summary.total_revenue.toFixed(2));\n\n// Build campaign details\nconst campaignDetails = campaigns.map(campaign => {\n  // Get metrics for this campaign\n  const campaignMetrics = metrics.filter(m => m.campaign_id === campaign.id);\n  \n  // Aggregate daily metrics\n  const aggregated = {\n    spend: 0,\n    revenue: 0,\n    impressions: 0,\n    clicks: 0,\n    conversions: 0,\n    leads: 0\n  };\n  \n  campaignMetrics.forEach(m => {\n    aggregated.spend += parseFloat(m.spend || 0);\n    aggregated.revenue += parseFloat(m.revenue || 0);\n    aggregated.impressions += parseInt(m.impressions || 0);\n    aggregated.clicks += parseInt(m.clicks || 0);\n    aggregated.conversions += parseInt(m.conversions || 0);\n    aggregated.leads += parseInt(m.leads_generated || 0);\n  });\n  \n  // Calculate derived metrics\n  const roi = aggregated.spend > 0\n    ? ((aggregated.revenue - aggregated.spend) / aggregated.spend)\n    : 0;\n  const ctr = aggregated.impressions > 0\n    ? (aggregated.clicks / aggregated.impressions * 100)\n    : 0;\n  const conversionRate = aggregated.clicks > 0\n    ? (aggregated.conversions / aggregated.clicks * 100)\n    : 0;\n  const cpc = aggregated.clicks > 0\n    ? (aggregated.spend / aggregated.clicks)\n    : 0;\n  \n  // Get attribution data\n  const campaignAttribution = attribution.find(a => a.campaign_id === campaign.id);\n  \n  return {\n    campaign_id: campaign.id,\n    name: campaign.name,\n    platform: campaign.platform,\n    status: campaign.status,\n    budget: parseFloat(campaign.budget || 0),\n    spend: parseFloat(aggregated.spend.toFixed(2)),\n    revenue: parseFloat(aggregated.revenue.toFixed(2)),\n    roi: parseFloat(roi.toFixed(2)),\n    impressions: aggregated.impressions,\n    clicks: aggregated.clicks,\n    conversions: aggregated.conversions,\n    leads: aggregated.leads,\n    ctr: parseFloat(ctr.toFixed(2)),\n    conversion_rate: parseFloat(conversionRate.toFixed(2)),\n    cpc: parseFloat(cpc.toFixed(2)),\n    attribution: campaignAttribution ? {\n      model: 'ensemble',\n      confidence: parseFloat(campaignAttribution.confidence_score),\n      channel_breakdown: JSON.parse(campaignAttribution.channel_attribution)\n    } : null,\n    performance_rating: calculatePerformanceRating(roi, conversionRate)\n  };\n});\n\n// Sort by ROI descending\ncampaignDetails.sort((a, b) => b.roi - a.roi);\n\n// Channel performance aggregation\nconst channelPerformance = {};\ncampaigns.forEach(c => {\n  const platform = c.platform;\n  if (!channelPerformance[platform]) {\n    channelPerformance[platform] = {\n      spend: 0,\n      revenue: 0,\n      roi: 0,\n      campaigns: 0,\n      conversions: 0\n    };\n  }\n  channelPerformance[platform].spend += parseFloat(c.spend || 0);\n  channelPerformance[platform].revenue += parseFloat(c.revenue || 0);\n  channelPerformance[platform].campaigns += 1;\n  channelPerformance[platform].conversions += parseInt(c.conversions || 0);\n});\n\n// Calculate ROI for each channel\nObject.keys(channelPerformance).forEach(channel => {\n  const ch = channelPerformance[channel];\n  ch.roi = ch.spend > 0 ? ((ch.revenue - ch.spend) / ch.spend) : 0;\n  ch.roi = parseFloat(ch.roi.toFixed(2));\n  ch.spend = parseFloat(ch.spend.toFixed(2));\n  ch.revenue = parseFloat(ch.revenue.toFixed(2));\n});\n\n// Calculate trends (simplified - compare first half vs second half)\nconst midpoint = new Date((new Date(query.date_range.start).getTime() + new Date(query.date_range.end).getTime()) / 2);\nconst firstHalfMetrics = metrics.filter(m => new Date(m.date) < midpoint);\nconst secondHalfMetrics = metrics.filter(m => new Date(m.date) >= midpoint);\n\nconst firstHalfROI = calculateAverageROI(firstHalfMetrics);\nconst secondHalfROI = calculateAverageROI(secondHalfMetrics);\nconst roiTrend = firstHalfROI > 0 ? ((secondHalfROI - firstHalfROI) / firstHalfROI * 100) : 0;\n\nfunction calculateAverageROI(metricsArray) {\n  if (metricsArray.length === 0) return 0;\n  const totalSpend = metricsArray.reduce((sum, m) => sum + parseFloat(m.spend || 0), 0);\n  const totalRevenue = metricsArray.reduce((sum, m) => sum + parseFloat(m.revenue || 0), 0);\n  return totalSpend > 0 ? ((totalRevenue - totalSpend) / totalSpend) : 0;\n}\n\nfunction calculatePerformanceRating(roi, conversionRate) {\n  const roiScore = roi > 3 ? 5 : roi > 2 ? 4 : roi > 1 ? 3 : roi > 0.5 ? 2 : 1;\n  const conversionScore = conversionRate > 5 ? 5 : conversionRate > 3 ? 4 : conversionRate > 2 ? 3 : conversionRate > 1 ? 2 : 1;\n  const avgScore = (roiScore + conversionScore) / 2;\n  \n  if (avgScore >= 4.5) return 'excellent';\n  if (avgScore >= 3.5) return 'good';\n  if (avgScore >= 2.5) return 'fair';\n  return 'poor';\n}\n\nreturn [{\n  json: {\n    summary: summary,\n    campaigns: campaignDetails,\n    channel_performance: channelPerformance,\n    trends: {\n      roi_trend: roiTrend > 0 ? `+${roiTrend.toFixed(1)}%` : `${roiTrend.toFixed(1)}%`,\n      roi_trend_value: parseFloat(roiTrend.toFixed(2))\n    },\n    query_metadata: {\n      organization_id: query.organization_id,\n      date_range: query.date_range,\n      data_points: metrics.length,\n      attribution_records: attribution.length\n    }\n  }\n}];"
+      },
+      "id": "aggregate-data",
+      "name": "Aggregate Dashboard Data",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1050, 400]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ JSON.stringify({\n  success: true,\n  data: $json,\n  metadata: {\n    cached: false,\n    query_time_ms: Date.now() - new Date($('Validate Request').item.json.request_timestamp).getTime(),\n    timestamp: new Date().toISOString()\n  }\n}) }}",
+        "options": {
+          "responseCode": 200,
+          "responseHeaders": {
+            "entries": [
+              {"name": "Content-Type", "value": "application/json"},
+              {"name": "Cache-Control", "value": "public, max-age=300"}
+            ]
+          }
+        }
+      },
+      "id": "success-response",
+      "name": "Success Response",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [1250, 400]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ JSON.stringify({\n  success: false,\n  error: $json.error,\n  error_code: $json.error_code,\n  timestamp: new Date().toISOString()\n}) }}",
+        "options": {
+          "responseCode": "={{ $json.error_code || 400 }}"
+        }
+      },
+      "id": "error-response",
+      "name": "Error Response",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [850, 600]
+    }
+  ],
+  "connections": {
+    "Dashboard Webhook": {
+      "main": [[{"node": "Validate Request", "type": "main", "index": 0}]]
+    },
+    "Validate Request": {
+      "main": [[{"node": "Check Valid", "type": "main", "index": 0}]]
+    },
+    "Check Valid": {
+      "main": [
+        [
+          {"node": "Fetch Campaigns", "type": "main", "index": 0},
+          {"node": "Fetch Metrics", "type": "main", "index": 0},
+          {"node": "Fetch Attribution", "type": "main", "index": 0}
+        ],
+        [{"node": "Error Response", "type": "main", "index": 0}]
+      ]
+    },
+    "Fetch Campaigns": {
+      "main": [[{"node": "Aggregate Dashboard Data", "type": "main", "index": 0}]]
+    },
+    "Fetch Metrics": {
+      "main": [[{"node": "Aggregate Dashboard Data", "type": "main", "index": 0}]]
+    },
+    "Fetch Attribution": {
+      "main": [[{"node": "Aggregate Dashboard Data", "type": "main", "index": 0}]]
+    },
+    "Aggregate Dashboard Data": {
+      "main": [[{"node": "Success Response", "type": "main", "index": 0}]]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "saveDataErrorExecution": "all",
+    "saveDataSuccessExecution": "all"
+  }
+}

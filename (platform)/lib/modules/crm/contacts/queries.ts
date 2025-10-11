@@ -6,6 +6,7 @@ import { canAccessCRM } from '@/lib/auth/rbac';
 import { withTenantContext } from '@/lib/database/utils';
 import { handleDatabaseError } from '@/lib/database/errors';
 import type { contacts, users, activities, deals } from '@prisma/client';
+import { contactFiltersSchema, type ContactFilters } from './schemas';
 
 /**
  * Contact with assignee user data

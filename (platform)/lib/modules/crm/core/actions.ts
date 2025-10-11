@@ -2,7 +2,7 @@
 
 import { prisma } from '@/lib/database/prisma';
 import { withTenantContext } from '@/lib/database/utils';
-import { createServerSupabaseClientWithAuth } from '@/lib/supabase-server';
+import { createServerSupabaseClientWithAuth } from '@/lib/supabase/server';
 import { hasOrgPermission } from '@/lib/auth/org-rbac';
 import { canAccessFeature } from '@/lib/auth/subscription';
 import { canAccessCRM } from '@/lib/auth/rbac';

@@ -14,10 +14,10 @@ import {
 } from '@/__tests__/utils/test-helpers';
 import { createCustomer, updateCustomer, deleteCustomer } from '@/lib/modules/crm/core/actions';
 import { getUserOrganizations } from '@/lib/modules/organization/queries';
-import { createServerSupabaseClientWithAuth } from '@/lib/supabase-server';
+import { createServerSupabaseClientWithAuth } from '@/lib/supabase/server';
 
 // Mock Supabase auth
-jest.mock('@/lib/supabase-server', () => ({
+jest.mock('@/lib/supabase/server', () => ({
   createServerSupabaseClientWithAuth: jest.fn(() => ({
     auth: {
       getUser: jest.fn(() => ({

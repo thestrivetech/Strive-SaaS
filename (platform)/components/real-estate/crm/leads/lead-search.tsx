@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { Input } from '@/components/ui/input';
 import { Search } from 'lucide-react';
-import { useDebounce } from '@/hooks/use-debounce';
+import { useDebounce } from '@/hooks/useDebounce';
 
 export function LeadSearch() {
   const router = useRouter();

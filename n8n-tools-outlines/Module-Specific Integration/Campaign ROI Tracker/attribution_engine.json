@@ -1,0 +1,191 @@
+{
+  "name": "campaign-attribution-engine-v1",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "cronExpression",
+              "expression": "*/10 * * * *"
+            }
+          ]
+        }
+      },
+      "id": "attribution-schedule",
+      "name": "Every 10 Minutes",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [250, 400]
+    },
+    {
+      "parameters": {
+        "method": "GET",
+        "url": "={{ $env.SUPABASE_URL }}/rest/v1/campaign_conversions",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {"name": "apikey", "value": "={{ $env.SUPABASE_SERVICE_KEY }}"},
+            {"name": "Authorization", "value": "=Bearer {{ $env.SUPABASE_SERVICE_KEY }}"}
+          ]
+        },
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {"name": "select", "value": "id,organization_id,campaign_id,lead_id,conversion_value,timestamp"},
+            {"name": "limit", "value": "100"},
+            {"name": "order", "value": "timestamp.desc"}
+          ]
+        }
+      },
+      "id": "fetch-conversions",
+      "name": "Fetch Recent Conversions",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [450, 400]
+    },
+    {
+      "parameters": {
+        "jsCode": "// For each conversion, check if attribution already calculated\nconst conversions = $input.all();\nconst unattributed = [];\n\nfor (const item of conversions) {\n  const conv = item.json;\n  \n  // In production, check if attribution exists for ALL models\n  // For now, mark for processing\n  unattributed.push({\n    json: {\n      conversion_id: conv.id,\n      organization_id: conv.organization_id,\n      campaign_id: conv.campaign_id,\n      lead_id: conv.lead_id,\n      conversion_value: conv.conversion_value,\n      conversion_timestamp: conv.timestamp,\n      needs_attribution: true\n    }\n  });\n}\n\nreturn unattributed;"
+      },
+      "id": "filter-unattributed",
+      "name": "Filter Unattributed",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [650, 400]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $env.SUPABASE_URL }}/rest/v1/rpc/get_lead_journey",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {"name": "apikey", "value": "={{ $env.SUPABASE_SERVICE_KEY }}"},
+            {"name": "Authorization", "value": "=Bearer {{ $env.SUPABASE_SERVICE_KEY }}"},
+            {"name": "Content-Type", "value": "application/json"}
+          ]
+        },
+        "sendBody": true,
+        "contentType": "application/json",
+        "body": "={{ JSON.stringify({\n  p_lead_id: $json.lead_id,\n  p_end_timestamp: $json.conversion_timestamp\n}) }}"
+      },
+      "id": "fetch-journey",
+      "name": "Fetch Customer Journey",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [850, 400]
+    },
+    {
+      "parameters": {
+        "jsCode": "// ======================================================\n// MULTI-TOUCH ATTRIBUTION ENGINE\n// Implements 6 attribution models\n// ======================================================\n\nconst conversion = $input.first().json;\nconst touchpoints = conversion.touchpoints || [];\nconst conversionValue = parseFloat(conversion.conversion_value);\n\nif (touchpoints.length === 0) {\n  return [{\n    json: {\n      conversion_id: conversion.conversion_id,\n      error: 'No touchpoints found',\n      attribution_results: []\n    }\n  }];\n}\n\n// ======================================================\n// MODEL 1: FIRST TOUCH ATTRIBUTION\n// ======================================================\nfunction firstTouchAttribution(touchpoints, value) {\n  const weights = touchpoints.map((_, i) => i === 0 ? 1 : 0);\n  return calculateAttribution(touchpoints, weights, value, 'first_touch');\n}\n\n// ======================================================\n// MODEL 2: LAST TOUCH ATTRIBUTION\n// ======================================================\nfunction lastTouchAttribution(touchpoints, value) {\n  const lastIndex = touchpoints.length - 1;\n  const weights = touchpoints.map((_, i) => i === lastIndex ? 1 : 0);\n  return calculateAttribution(touchpoints, weights, value, 'last_touch');\n}\n\n// ======================================================\n// MODEL 3: LINEAR ATTRIBUTION\n// ======================================================\nfunction linearAttribution(touchpoints, value) {\n  const equalWeight = 1 / touchpoints.length;\n  const weights = touchpoints.map(() => equalWeight);\n  return calculateAttribution(touchpoints, weights, value, 'linear');\n}\n\n// ======================================================\n// MODEL 4: TIME DECAY ATTRIBUTION\n// ======================================================\nfunction timeDecayAttribution(touchpoints, value, halfLifeDays = 7) {\n  const conversionTime = new Date(touchpoints[touchpoints.length - 1].timestamp).getTime();\n  \n  const weights = touchpoints.map(tp => {\n    const tpTime = new Date(tp.timestamp).getTime();\n    const daysBefore = (conversionTime - tpTime) / (1000 * 60 * 60 * 24);\n    return Math.pow(2, -daysBefore / halfLifeDays);\n  });\n  \n  // Normalize\n  const totalWeight = weights.reduce((sum, w) => sum + w, 0);\n  const normalized = weights.map(w => w / totalWeight);\n  \n  return calculateAttribution(touchpoints, normalized, value, 'time_decay');\n}\n\n// ======================================================\n// MODEL 5: POSITION-BASED (U-SHAPED) ATTRIBUTION\n// ======================================================\nfunction positionBasedAttribution(touchpoints, value) {\n  if (touchpoints.length === 1) {\n    return calculateAttribution(touchpoints, [1], value, 'position_based');\n  }\n  \n  if (touchpoints.length === 2) {\n    return calculateAttribution(touchpoints, [0.5, 0.5], value, 'position_based');\n  }\n  \n  // 40% first, 40% last, 20% distributed among middle\n  const weights = [];\n  const middleCount = touchpoints.length - 2;\n  const middleWeight = 0.2 / middleCount;\n  \n  for (let i = 0; i < touchpoints.length; i++) {\n    if (i === 0) weights.push(0.4);\n    else if (i === touchpoints.length - 1) weights.push(0.4);\n    else weights.push(middleWeight);\n  }\n  \n  return calculateAttribution(touchpoints, weights, value, 'position_based');\n}\n\n// ======================================================\n// MODEL 6: DATA-DRIVEN ATTRIBUTION (Simplified)\n// Uses engagement scores and channel performance\n// ======================================================\nfunction dataDrivenAttribution(touchpoints, value) {\n  // Weight by engagement score and channel effectiveness\n  const channelWeights = {\n    'google_ads': 1.2,\n    'facebook': 1.1,\n    'email': 1.3,\n    'organic_search': 1.4,\n    'direct': 1.5,\n    'referral': 1.0\n  };\n  \n  const weights = touchpoints.map(tp => {\n    const engagementScore = tp.engagement_score || 10;\n    const channelMultiplier = channelWeights[tp.channel] || 1.0;\n    const timeDecay = calculateTimeDecay(tp.timestamp, touchpoints[touchpoints.length - 1].timestamp);\n    \n    return engagementScore * channelMultiplier * timeDecay;\n  });\n  \n  // Normalize\n  const totalWeight = weights.reduce((sum, w) => sum + w, 0);\n  const normalized = weights.map(w => w / totalWeight);\n  \n  return calculateAttribution(touchpoints, normalized, value, 'data_driven');\n}\n\nfunction calculateTimeDecay(touchpointTime, conversionTime) {\n  const tp = new Date(touchpointTime).getTime();\n  const conv = new Date(conversionTime).getTime();\n  const daysDiff = (conv - tp) / (1000 * 60 * 60 * 24);\n  return Math.pow(2, -daysDiff / 7);\n}\n\n// ======================================================\n// HELPER: CALCULATE ATTRIBUTION\n// ======================================================\nfunction calculateAttribution(touchpoints, weights, value, modelName) {\n  const channelAttribution = {};\n  const touchpointContributions = [];\n  \n  touchpoints.forEach((tp, index) => {\n    const attributedValue = value * weights[index];\n    const channel = tp.channel;\n    \n    // Aggregate by channel\n    if (!channelAttribution[channel]) {\n      channelAttribution[channel] = {\n        value: 0,\n        percentage: 0,\n        touchpoints: 0\n      };\n    }\n    \n    channelAttribution[channel].value += attributedValue;\n    channelAttribution[channel].touchpoints += 1;\n    \n    // Store individual touchpoint contribution\n    touchpointContributions.push({\n      touchpoint_id: tp.id,\n      channel: channel,\n      weight: weights[index],\n      attributed_value: attributedValue,\n      engagement_score: tp.engagement_score || 0\n    });\n  });\n  \n  // Calculate percentages\n  Object.keys(channelAttribution).forEach(channel => {\n    channelAttribution[channel].percentage = \n      (channelAttribution[channel].value / value * 100).toFixed(2);\n  });\n  \n  // Calculate confidence score\n  const confidenceScore = calculateConfidence(touchpoints, weights);\n  \n  return {\n    model: modelName,\n    attribution_value: value,\n    channel_attribution: channelAttribution,\n    touchpoint_contributions: touchpointContributions,\n    confidence_score: confidenceScore,\n    journey_length: touchpoints.length,\n    journey_duration_days: calculateJourneyDuration(touchpoints)\n  };\n}\n\nfunction calculateConfidence(touchpoints, weights) {\n  // Higher confidence for:\n  // - More touchpoints\n  // - More balanced distribution\n  // - Higher engagement scores\n  \n  const lengthFactor = Math.min(touchpoints.length / 10, 1);\n  \n  // Calculate entropy (distribution balance)\n  const entropy = -weights.reduce((sum, w) => {\n    if (w > 0) return sum + w * Math.log(w);\n    return sum;\n  }, 0);\n  const maxEntropy = Math.log(weights.length);\n  const balanceFactor = entropy / maxEntropy;\n  \n  // Average engagement\n  const avgEngagement = touchpoints.reduce((sum, tp) => \n    sum + (tp.engagement_score || 0), 0) / touchpoints.length;\n  const engagementFactor = Math.min(avgEngagement / 100, 1);\n  \n  return ((lengthFactor * 0.4 + balanceFactor * 0.3 + engagementFactor * 0.3)).toFixed(4);\n}\n\nfunction calculateJourneyDuration(touchpoints) {\n  if (touchpoints.length < 2) return 0;\n  \n  const first = new Date(touchpoints[0].timestamp);\n  const last = new Date(touchpoints[touchpoints.length - 1].timestamp);\n  const diffDays = (last - first) / (1000 * 60 * 60 * 24);\n  \n  return Math.round(diffDays);\n}\n\n// ======================================================\n// RUN ALL ATTRIBUTION MODELS\n// ======================================================\n\nconst attributionResults = [\n  firstTouchAttribution(touchpoints, conversionValue),\n  lastTouchAttribution(touchpoints, conversionValue),\n  linearAttribution(touchpoints, conversionValue),\n  timeDecayAttribution(touchpoints, conversionValue),\n  positionBasedAttribution(touchpoints, conversionValue),\n  dataDrivenAttribution(touchpoints, conversionValue)\n];\n\n// ======================================================\n// ENSEMBLE MODEL (Weighted Average)\n// ======================================================\nconst ensembleWeights = {\n  'first_touch': 0.1,\n  'last_touch': 0.15,\n  'linear': 0.15,\n  'time_decay': 0.2,\n  'position_based': 0.2,\n  'data_driven': 0.2\n};\n\nconst ensembleChannelAttribution = {};\n\nattributionResults.forEach(result => {\n  const modelWeight = ensembleWeights[result.model];\n  \n  Object.keys(result.channel_attribution).forEach(channel => {\n    if (!ensembleChannelAttribution[channel]) {\n      ensembleChannelAttribution[channel] = {\n        value: 0,\n        touchpoints: result.channel_attribution[channel].touchpoints\n      };\n    }\n    ensembleChannelAttribution[channel].value += \n      result.channel_attribution[channel].value * modelWeight;\n  });\n});\n\n// Finalize ensemble percentages\nObject.keys(ensembleChannelAttribution).forEach(channel => {\n  ensembleChannelAttribution[channel].percentage = \n    (ensembleChannelAttribution[channel].value / conversionValue * 100).toFixed(2);\n});\n\nconst ensembleResult = {\n  model: 'ensemble',\n  attribution_value: conversionValue,\n  channel_attribution: ensembleChannelAttribution,\n  touchpoint_contributions: [], // Averaged from all models\n  confidence_score: attributionResults.reduce((sum, r) => \n    sum + parseFloat(r.confidence_score) * ensembleWeights[r.model], 0).toFixed(4),\n  journey_length: touchpoints.length,\n  journey_duration_days: calculateJourneyDuration(touchpoints)\n};\n\nattributionResults.push(ensembleResult);\n\n// ======================================================\n// RETURN ALL RESULTS\n// ======================================================\n\nreturn [{\n  json: {\n    conversion_id: conversion.conversion_id,\n    organization_id: conversion.organization_id,\n    lead_id: conversion.lead_id,\n    campaign_id: conversion.campaign_id,\n    attribution_results: attributionResults,\n    recommended_model: 'ensemble',\n    calculated_at: new Date().toISOString()\n  }\n}];"
+      },
+      "id": "calculate-attribution",
+      "name": "Calculate Multi-Touch Attribution",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1050, 400]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Prepare attribution records for database insert\nconst result = $input.first().json;\nconst attributionRecords = [];\n\nif (!result.attribution_results || result.attribution_results.length === 0) {\n  return [];\n}\n\nresult.attribution_results.forEach(modelResult => {\n  attributionRecords.push({\n    json: {\n      organization_id: result.organization_id,\n      campaign_id: result.campaign_id,\n      lead_id: result.lead_id,\n      conversion_id: result.conversion_id,\n      attribution_model: modelResult.model,\n      attribution_value: modelResult.attribution_value,\n      attribution_percentage: 100,\n      confidence_score: parseFloat(modelResult.confidence_score),\n      journey_path: JSON.stringify({\n        touchpoints: modelResult.touchpoint_contributions || [],\n        length: modelResult.journey_length,\n        duration_days: modelResult.journey_duration_days\n      }),\n      journey_length: modelResult.journey_length,\n      journey_duration_days: modelResult.journey_duration_days,\n      touchpoint_contributions: JSON.stringify(modelResult.touchpoint_contributions || []),\n      channel_attribution: JSON.stringify(modelResult.channel_attribution),\n      calculated_at: new Date().toISOString()\n    }\n  });\n});\n\nreturn attributionRecords;"
+      },
+      "id": "format-records",
+      "name": "Format for Database",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1250, 400]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $env.SUPABASE_URL }}/rest/v1/campaign_attribution",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {"name": "apikey", "value": "={{ $env.SUPABASE_SERVICE_KEY }}"},
+            {"name": "Authorization", "value": "=Bearer {{ $env.SUPABASE_SERVICE_KEY }}"},
+            {"name": "Content-Type", "value": "application/json"},
+            {"name": "Prefer", "value": "resolution=merge-duplicates"}
+          ]
+        },
+        "sendBody": true,
+        "contentType": "application/json",
+        "body": "={{ JSON.stringify($json) }}",
+        "options": {
+          "batching": {
+            "batch": {
+              "batchSize": 50
+            }
+          }
+        }
+      },
+      "id": "save-attribution",
+      "name": "Save Attribution Results",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [1450, 400]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Aggregate execution summary\nconst items = $input.all();\n\nconst summary = {\n  conversions_attributed: new Set(items.map(i => i.json.conversion_id)).size,\n  attribution_records_created: items.length,\n  models_calculated: ['first_touch', 'last_touch', 'linear', 'time_decay', 'position_based', 'data_driven', 'ensemble'],\n  avg_journey_length: (items.reduce((sum, i) => sum + (JSON.parse(i.json.journey_path).length || 0), 0) / items.length).toFixed(1),\n  completed_at: new Date().toISOString()\n};\n\nreturn [{ json: summary }];"
+      },
+      "id": "summarize",
+      "name": "Summarize Execution",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1650, 400]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $env.SUPABASE_URL }}/rest/v1/workflow_executions",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {"name": "apikey", "value": "={{ $env.SUPABASE_SERVICE_KEY }}"},
+            {"name": "Authorization", "value": "=Bearer {{ $env.SUPABASE_SERVICE_KEY }}"},
+            {"name": "Content-Type", "value": "application/json"}
+          ]
+        },
+        "sendBody": true,
+        "contentType": "application/json",
+        "body": "={{ JSON.stringify({\n  workflow_name: 'campaign-attribution-engine-v1',\n  execution_id: $execution.id,\n  trigger_type: 'schedule',\n  status: 'success',\n  items_processed: $json.conversions_attributed,\n  output_data: $json,\n  completed_at: new Date().toISOString()\n}) }}"
+      },
+      "id": "log-exec",
+      "name": "Log Execution",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [1850, 400]
+    }
+  ],
+  "connections": {
+    "Every 10 Minutes": {
+      "main": [[{"node": "Fetch Recent Conversions", "type": "main", "index": 0}]]
+    },
+    "Fetch Recent Conversions": {
+      "main": [[{"node": "Filter Unattributed", "type": "main", "index": 0}]]
+    },
+    "Filter Unattributed": {
+      "main": [[{"node": "Fetch Customer Journey", "type": "main", "index": 0}]]
+    },
+    "Fetch Customer Journey": {
+      "main": [[{"node": "Calculate Multi-Touch Attribution", "type": "main", "index": 0}]]
+    },
+    "Calculate Multi-Touch Attribution": {
+      "main": [[{"node": "Format for Database", "type": "main", "index": 0}]]
+    },
+    "Format for Database": {
+      "main": [[{"node": "Save Attribution Results", "type": "main", "index": 0}]]
+    },
+    "Save Attribution Results": {
+      "main": [[{"node": "Summarize Execution", "type": "main", "index": 0}]]
+    },
+    "Summarize Execution": {
+      "main": [[{"node": "Log Execution", "type": "main", "index": 0}]]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  }
+}

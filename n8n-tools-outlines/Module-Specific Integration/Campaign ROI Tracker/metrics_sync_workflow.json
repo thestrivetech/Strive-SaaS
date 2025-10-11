@@ -1,0 +1,253 @@
+{
+  "name": "campaign-metrics-sync-v1",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "cronExpression",
+              "expression": "*/15 * * * *"
+            }
+          ]
+        }
+      },
+      "id": "schedule-trigger",
+      "name": "Every 15 Minutes",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [250, 300]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Fetch active campaigns for all organizations\n// In production, this would query organizations table\n// For now, return structure for metric sync\n\nconst syncConfig = {\n  sync_timestamp: new Date().toISOString(),\n  date_range: {\n    start: new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString().split('T')[0],\n    end: new Date().toISOString().split('T')[0]\n  },\n  platforms: ['google_ads', 'facebook', 'email', 'organic'],\n  status: 'initialized'\n};\n\nreturn [{ json: syncConfig }];"
+      },
+      "id": "init-sync",
+      "name": "Initialize Sync",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [450, 300]
+    },
+    {
+      "parameters": {
+        "method": "GET",
+        "url": "={{ $env.SUPABASE_URL }}/rest/v1/campaigns",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "apikey",
+              "value": "={{ $env.SUPABASE_SERVICE_KEY }}"
+            },
+            {
+              "name": "Authorization",
+              "value": "=Bearer {{ $env.SUPABASE_SERVICE_KEY }}"
+            }
+          ]
+        },
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "status",
+              "value": "eq.active"
+            },
+            {
+              "name": "select",
+              "value": "id,organization_id,name,platform,platform_campaign_id"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "fetch-campaigns",
+      "name": "Fetch Active Campaigns",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [650, 300]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Process each campaign and prepare for platform-specific API calls\nconst campaigns = $input.all();\nconst results = [];\n\nfor (const item of campaigns) {\n  const campaign = item.json;\n  \n  // Prepare metrics fetch configuration for each platform\n  results.push({\n    json: {\n      campaign_id: campaign.id,\n      organization_id: campaign.organization_id,\n      platform: campaign.platform,\n      platform_campaign_id: campaign.platform_campaign_id,\n      fetch_config: {\n        date_range: $('Initialize Sync').item.json.date_range,\n        metrics_needed: [\n          'impressions',\n          'clicks',\n          'spend',\n          'conversions',\n          'ctr',\n          'cpc',\n          'conversion_rate'\n        ]\n      }\n    }\n  });\n}\n\nreturn results;"
+      },
+      "id": "prepare-fetch",
+      "name": "Prepare Platform Fetch",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [850, 300]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "string": [
+            {
+              "value1": "={{ $json.platform }}",
+              "operation": "equals",
+              "value2": "google_ads"
+            }
+          ]
+        }
+      },
+      "id": "route-platform",
+      "name": "Route by Platform",
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3,
+      "position": [1050, 300]
+    },
+    {
+      "parameters": {
+        "jsCode": "// GOOGLE ADS METRICS FETCH\n// This would use Google Ads API in production\n// For now, return mock/template structure\n\nconst campaign = $input.first().json;\nconst dateRange = campaign.fetch_config.date_range;\n\n// In production:\n// const response = await $http.get('https://googleads.googleapis.com/v14/customers/...')\n\n// Mock metrics for structure\nconst metrics = {\n  campaign_id: campaign.campaign_id,\n  organization_id: campaign.organization_id,\n  date: dateRange.end,\n  platform: 'google_ads',\n  \n  // Core metrics\n  impressions: Math.floor(Math.random() * 10000) + 1000,\n  clicks: Math.floor(Math.random() * 500) + 50,\n  spend: (Math.random() * 500 + 100).toFixed(2),\n  conversions: Math.floor(Math.random() * 20) + 1,\n  \n  // Calculated metrics\n  ctr: 0,\n  cpc: 0,\n  conversion_rate: 0,\n  \n  // Platform specific\n  platform_metrics: {\n    avg_position: (Math.random() * 3 + 1).toFixed(2),\n    quality_score: Math.floor(Math.random() * 3) + 7,\n    search_impression_share: (Math.random() * 0.4 + 0.3).toFixed(4)\n  },\n  \n  fetched_at: new Date().toISOString()\n};\n\n// Calculate derived metrics\nmetrics.ctr = (metrics.clicks / metrics.impressions * 100).toFixed(4);\nmetrics.cpc = (metrics.spend / metrics.clicks).toFixed(2);\nmetrics.conversion_rate = (metrics.conversions / metrics.clicks * 100).toFixed(4);\n\nreturn [{ json: metrics }];"
+      },
+      "id": "fetch-google",
+      "name": "Fetch Google Ads",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1250, 200]
+    },
+    {
+      "parameters": {
+        "jsCode": "// FACEBOOK ADS METRICS FETCH\n// This would use Facebook Marketing API in production\n\nconst campaign = $input.first().json;\nconst dateRange = campaign.fetch_config.date_range;\n\nconst metrics = {\n  campaign_id: campaign.campaign_id,\n  organization_id: campaign.organization_id,\n  date: dateRange.end,\n  platform: 'facebook',\n  \n  impressions: Math.floor(Math.random() * 15000) + 2000,\n  clicks: Math.floor(Math.random() * 600) + 80,\n  spend: (Math.random() * 400 + 80).toFixed(2),\n  conversions: Math.floor(Math.random() * 15) + 1,\n  \n  ctr: 0,\n  cpc: 0,\n  conversion_rate: 0,\n  \n  platform_metrics: {\n    reach: Math.floor(Math.random() * 8000) + 1000,\n    frequency: (Math.random() * 2 + 1).toFixed(2),\n    relevance_score: Math.floor(Math.random() * 3) + 7,\n    engagement_rate: (Math.random() * 5 + 1).toFixed(2)\n  },\n  \n  fetched_at: new Date().toISOString()\n};\n\nmetrics.ctr = (metrics.clicks / metrics.impressions * 100).toFixed(4);\nmetrics.cpc = (metrics.spend / metrics.clicks).toFixed(2);\nmetrics.conversion_rate = (metrics.conversions / metrics.clicks * 100).toFixed(4);\n\nreturn [{ json: metrics }];"
+      },
+      "id": "fetch-facebook",
+      "name": "Fetch Facebook Ads",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1250, 350]
+    },
+    {
+      "parameters": {
+        "jsCode": "// GENERIC FALLBACK\nconst campaign = $input.first().json;\n\nreturn [{\n  json: {\n    campaign_id: campaign.campaign_id,\n    organization_id: campaign.organization_id,\n    date: new Date().toISOString().split('T')[0],\n    platform: campaign.platform,\n    status: 'skipped',\n    reason: 'Platform not yet implemented'\n  }\n}];"
+      },
+      "id": "fetch-other",
+      "name": "Other Platforms",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1250, 500]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $env.SUPABASE_URL }}/rest/v1/campaign_metrics",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "apikey",
+              "value": "={{ $env.SUPABASE_SERVICE_KEY }}"
+            },
+            {
+              "name": "Authorization",
+              "value": "=Bearer {{ $env.SUPABASE_SERVICE_KEY }}"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            },
+            {
+              "name": "Prefer",
+              "value": "resolution=merge-duplicates"
+            }
+          ]
+        },
+        "sendBody": true,
+        "contentType": "application/json",
+        "body": "={{ JSON.stringify($json) }}",
+        "options": {
+          "batching": {
+            "batch": {
+              "batchSize": 50,
+              "batchInterval": 1000
+            }
+          }
+        }
+      },
+      "id": "upsert-metrics",
+      "name": "Upsert Metrics",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [1450, 300]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Aggregate sync results\nconst items = $input.all();\n\nconst summary = {\n  total_campaigns: items.length,\n  successful: items.filter(i => !i.json.status || i.json.status !== 'skipped').length,\n  skipped: items.filter(i => i.json.status === 'skipped').length,\n  platforms: {},\n  sync_completed_at: new Date().toISOString()\n};\n\nitems.forEach(item => {\n  const platform = item.json.platform;\n  if (!summary.platforms[platform]) {\n    summary.platforms[platform] = { count: 0, total_spend: 0, total_impressions: 0 };\n  }\n  summary.platforms[platform].count++;\n  summary.platforms[platform].total_spend += parseFloat(item.json.spend || 0);\n  summary.platforms[platform].total_impressions += parseInt(item.json.impressions || 0);\n});\n\nreturn [{ json: summary }];"
+      },
+      "id": "aggregate-results",
+      "name": "Aggregate Results",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1650, 300]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $env.SUPABASE_URL }}/rest/v1/workflow_executions",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "apikey",
+              "value": "={{ $env.SUPABASE_SERVICE_KEY }}"
+            },
+            {
+              "name": "Authorization",
+              "value": "=Bearer {{ $env.SUPABASE_SERVICE_KEY }}"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "contentType": "application/json",
+        "body": "={{ JSON.stringify({\n  workflow_name: 'campaign-metrics-sync-v1',\n  execution_id: $execution.id,\n  trigger_type: 'schedule',\n  status: 'success',\n  items_processed: $json.total_campaigns,\n  output_data: $json,\n  completed_at: new Date().toISOString()\n}) }}"
+      },
+      "id": "log-execution",
+      "name": "Log Execution",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [1850, 300]
+    }
+  ],
+  "connections": {
+    "Every 15 Minutes": {
+      "main": [[{"node": "Initialize Sync", "type": "main", "index": 0}]]
+    },
+    "Initialize Sync": {
+      "main": [[{"node": "Fetch Active Campaigns", "type": "main", "index": 0}]]
+    },
+    "Fetch Active Campaigns": {
+      "main": [[{"node": "Prepare Platform Fetch", "type": "main", "index": 0}]]
+    },
+    "Prepare Platform Fetch": {
+      "main": [[{"node": "Route by Platform", "type": "main", "index": 0}]]
+    },
+    "Route by Platform": {
+      "main": [
+        [{"node": "Fetch Google Ads", "type": "main", "index": 0}],
+        [{"node": "Fetch Facebook Ads", "type": "main", "index": 0}],
+        [{"node": "Other Platforms", "type": "main", "index": 0}]
+      ]
+    },
+    "Fetch Google Ads": {
+      "main": [[{"node": "Upsert Metrics", "type": "main", "index": 0}]]
+    },
+    "Fetch Facebook Ads": {
+      "main": [[{"node": "Upsert Metrics", "type": "main", "index": 0}]]
+    },
+    "Other Platforms": {
+      "main": [[{"node": "Upsert Metrics", "type": "main", "index": 0}]]
+    },
+    "Upsert Metrics": {
+      "main": [[{"node": "Aggregate Results", "type": "main", "index": 0}]]
+    },
+    "Aggregate Results": {
+      "main": [[{"node": "Log Execution", "type": "main", "index": 0}]]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "saveDataErrorExecution": "all",
+    "saveDataSuccessExecution": "all"
+  }
+}

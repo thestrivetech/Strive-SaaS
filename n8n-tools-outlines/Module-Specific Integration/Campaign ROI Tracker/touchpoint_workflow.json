@@ -1,0 +1,245 @@
+{
+  "name": "campaign-touchpoint-capture-v1",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "campaign-touchpoint",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "id": "a1b2c3d4-1111-1111-1111-111111111111",
+      "name": "Touchpoint Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [250, 300]
+    },
+    {
+      "parameters": {
+        "jsCode": "// ===============================================\n// TOUCHPOINT VALIDATION & ENRICHMENT\n// ===============================================\nconst startTime = Date.now();\nconst input = $input.all()[0].json.body || $input.all()[0].json;\n\n// CRITICAL: Multi-tenant validation\nconst required = ['organization_id', 'channel', 'touchpoint_type'];\nconst missing = required.filter(field => !input[field]);\n\nif (missing.length > 0) {\n  return [{\n    json: {\n      validation_passed: false,\n      error: `Missing required fields: ${missing.join(', ')}`,\n      error_code: 400\n    }\n  }];\n}\n\n// Validate UUID format\nconst uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;\nif (!uuidRegex.test(input.organization_id)) {\n  return [{\n    json: {\n      validation_passed: false,\n      error: 'Invalid organization_id format',\n      error_code: 400\n    }\n  }];\n}\n\n// Calculate engagement score\nfunction calculateEngagementScore(data) {\n  let score = 0;\n  \n  const typeScores = {\n    'impression': 1,\n    'click': 10,\n    'page_view': 15,\n    'email_open': 12,\n    'email_click': 25,\n    'form_view': 30,\n    'form_submit': 50,\n    'download': 35,\n    'video_play': 20,\n    'video_complete': 40\n  };\n  \n  score += typeScores[data.touchpoint_type] || 5;\n  \n  if (data.time_spent_seconds) {\n    if (data.time_spent_seconds > 300) score += 20;\n    else if (data.time_spent_seconds > 120) score += 10;\n    else if (data.time_spent_seconds > 30) score += 5;\n  }\n  \n  if (data.channel === 'direct' || !data.referrer_url) {\n    score += 5;\n  }\n  \n  return Math.min(score, 100);\n}\n\n// Build enriched touchpoint\nconst touchpoint = {\n  organization_id: input.organization_id,\n  campaign_id: input.campaign_id || null,\n  lead_id: input.lead_id || null,\n  \n  channel: input.channel,\n  touchpoint_type: input.touchpoint_type,\n  \n  content_type: input.content_type || null,\n  content_id: input.content_id || null,\n  content_title: input.content_title || null,\n  \n  engagement_score: calculateEngagementScore(input),\n  time_spent_seconds: input.time_spent_seconds || 0,\n  \n  device_type: input.device_type || 'unknown',\n  browser: input.browser || null,\n  location_city: input.location_city || null,\n  location_region: input.location_region || null,\n  location_country: input.location_country || null,\n  \n  session_id: input.session_id || null,\n  user_agent: input.user_agent || null,\n  referrer_url: input.referrer_url || null,\n  landing_url: input.landing_url || null,\n  \n  cost: parseFloat(input.cost) || 0,\n  \n  metadata: typeof input.metadata === 'object' ? input.metadata : {},\n  \n  timestamp: input.timestamp || new Date().toISOString()\n};\n\nreturn [{\n  json: {\n    validation_passed: true,\n    touchpoint: touchpoint,\n    processing_time_ms: Date.now() - startTime\n  }\n}];"
+      },
+      "id": "a1b2c3d4-2222-2222-2222-222222222222",
+      "name": "Validate & Enrich",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [450, 300]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "boolean": [
+            {
+              "value1": "={{ $json.validation_passed }}",
+              "value2": true
+            }
+          ]
+        }
+      },
+      "id": "a1b2c3d4-3333-3333-3333-333333333333",
+      "name": "Check Valid",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [650, 300]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $env.SUPABASE_URL }}/rest/v1/campaign_touchpoints",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "supabaseApi",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "apikey",
+              "value": "={{ $env.SUPABASE_SERVICE_KEY }}"
+            },
+            {
+              "name": "Authorization",
+              "value": "=Bearer {{ $env.SUPABASE_SERVICE_KEY }}"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            },
+            {
+              "name": "Prefer",
+              "value": "return=representation"
+            }
+          ]
+        },
+        "sendBody": true,
+        "contentType": "application/json",
+        "body": "={{ JSON.stringify($json.touchpoint) }}",
+        "options": {
+          "timeout": 10000,
+          "retry": {
+            "enabled": true,
+            "maxRetries": 3,
+            "retryInterval": 1000
+          }
+        }
+      },
+      "id": "a1b2c3d4-4444-4444-4444-444444444444",
+      "name": "Insert Touchpoint",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [850, 200],
+      "credentials": {
+        "supabaseApi": {
+          "id": "supabase_creds",
+          "name": "Supabase Account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $env.SUPABASE_URL }}/rest/v1/workflow_executions",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "supabaseApi",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "apikey",
+              "value": "={{ $env.SUPABASE_SERVICE_KEY }}"
+            },
+            {
+              "name": "Authorization",
+              "value": "=Bearer {{ $env.SUPABASE_SERVICE_KEY }}"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "contentType": "application/json",
+        "body": "={{ JSON.stringify({\n  workflow_name: 'campaign-touchpoint-capture-v1',\n  execution_id: $execution.id,\n  organization_id: $('Validate & Enrich').item.json.touchpoint.organization_id,\n  trigger_type: 'webhook',\n  status: 'success',\n  items_processed: 1,\n  completed_at: new Date().toISOString()\n}) }}",
+        "options": {}
+      },
+      "id": "a1b2c3d4-5555-5555-5555-555555555555",
+      "name": "Log Success",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [1050, 200]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ JSON.stringify({\n  success: true,\n  touchpoint_id: $('Insert Touchpoint').item.json[0].id,\n  engagement_score: $('Insert Touchpoint').item.json[0].engagement_score,\n  message: 'Touchpoint captured successfully',\n  timestamp: new Date().toISOString()\n}) }}",
+        "options": {
+          "responseCode": 201,
+          "responseHeaders": {
+            "entries": [
+              {
+                "name": "Content-Type",
+                "value": "application/json"
+              }
+            ]
+          }
+        }
+      },
+      "id": "a1b2c3d4-6666-6666-6666-666666666666",
+      "name": "Success Response",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [1250, 200]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ JSON.stringify({\n  success: false,\n  error: $json.error || 'Validation failed',\n  error_code: $json.error_code || 400,\n  timestamp: new Date().toISOString()\n}) }}",
+        "options": {
+          "responseCode": "={{ $json.error_code || 400 }}"
+        }
+      },
+      "id": "a1b2c3d4-7777-7777-7777-777777777777",
+      "name": "Error Response",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [850, 400]
+    }
+  ],
+  "connections": {
+    "Touchpoint Webhook": {
+      "main": [
+        [
+          {
+            "node": "Validate & Enrich",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Validate & Enrich": {
+      "main": [
+        [
+          {
+            "node": "Check Valid",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Check Valid": {
+      "main": [
+        [
+          {
+            "node": "Insert Touchpoint",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Error Response",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Insert Touchpoint": {
+      "main": [
+        [
+          {
+            "node": "Log Success",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Log Success": {
+      "main": [
+        [
+          {
+            "node": "Success Response",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "saveDataErrorExecution": "all",
+    "saveDataSuccessExecution": "all",
+    "saveManualExecutions": true,
+    "callerPolicy": "workflowsFromSameOwner"
+  },
+  "staticData": null,
+  "meta": {
+    "instanceId": "strive-tech-production"
+  },
+  "pinData": {},
+  "versionId": "1.0.0",
+  "triggerCount": 1,
+  "tags": []
+}

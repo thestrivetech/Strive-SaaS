@@ -1,7 +1,7 @@
 'use server';
 
 import { prisma } from '@/lib/database/prisma';
-import { createServerSupabaseClientWithAuth } from '@/lib/supabase-server';
+import { createServerSupabaseClientWithAuth } from '@/lib/supabase/server';
 type CreateProjectInput = any;
 type UpdateProjectInput = any;
 
