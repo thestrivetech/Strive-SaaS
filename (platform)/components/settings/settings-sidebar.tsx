@@ -10,6 +10,7 @@ import {
   CreditCard,
   Bell,
   Shield,
+  Link2,
 } from 'lucide-react';
 
 interface SettingsSidebarProps {
@@ -49,6 +50,11 @@ const navigationItems = [
     title: 'Security',
     href: '/settings/security',
     icon: Shield,
+  },
+  {
+    title: 'Connections',
+    href: '/settings/connections',
+    icon: Link2,
   },
 ];
 

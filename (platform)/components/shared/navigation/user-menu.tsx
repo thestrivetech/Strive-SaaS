@@ -13,7 +13,7 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { LogOut, Settings as SettingsIcon, User as UserIcon, Shield, Building2 } from 'lucide-react';
+import { LogOut, Settings as SettingsIcon, User as UserIcon, Shield, Building2, Link2 } from 'lucide-react';
 
 interface UserMenuProps {
   user: users;
@@ -64,6 +64,12 @@ export function UserMenu({ user }: UserMenuProps) {
           <Link href="/settings" className="flex items-center">
             <SettingsIcon className="mr-2 h-4 w-4" />
             Settings
+          </Link>
+        </DropdownMenuItem>
+        <DropdownMenuItem asChild>
+          <Link href="/settings/connections" className="flex items-center">
+            <Link2 className="mr-2 h-4 w-4" />
+            Connections
           </Link>
         </DropdownMenuItem>
         {/* Organization Admin - for ADMIN and SUPER_ADMIN */}

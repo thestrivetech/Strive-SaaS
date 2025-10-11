@@ -15,7 +15,7 @@ import { handleDatabaseError } from '@/lib/database/errors';
 export async function getShoppingCart(userId: string) {
   return withTenantContext(async () => {
     try {
-      return await prisma.shopping_carts.findUnique({
+      return await prisma.marketplace_cart.findFirst({
         where: { user_id: userId },
       });
     } catch (error) {
@@ -40,38 +40,33 @@ export const getCart = getShoppingCart;
 export async function getCartWithItems(userId: string) {
   return withTenantContext(async () => {
     try {
-      const cart = await prisma.shopping_carts.findUnique({
+      const cartItems = await prisma.marketplace_cart.findMany({
         where: { user_id: userId },
-      });
-
-      if (!cart) {
-        return null;
-      }
-
-      const toolIds = (cart.tools as string[]) || [];
-      const bundleIds = (cart.bundles as string[]) || [];
-
-      const [tools, bundles] = await Promise.all([
-        prisma.marketplace_tools.findMany({
-          where: { id: { in: toolIds }, is_active: true },
-        }),
-        prisma.tool_bundles.findMany({
-          where: { id: { in: bundleIds }, is_active: true },
-          include: {
-            tools: {
-              include: {
-                tool: true,
+        include: {
+          tool: true,
+          bundle: {
+            include: {
+              items: {
+                include: {
+                  tool: true,
+                },
               },
             },
           },
-        }),
-      ]);
+        },
+      });
+
+      if (!cartItems || cartItems.length === 0) {
+        return null;
+      }
+
+      const tools = cartItems.filter(item => item.item_type === 'TOOL' && item.tool).map(item => item.tool);
+      const bundles = cartItems.filter(item => item.item_type === 'BUNDLE' && item.bundle).map(item => item.bundle);
 
       return {
-        cart,
+        cartItems,
         tools,
         bundles,
-        totalPrice: cart.total_price,
       };
     } catch (error) {
       const dbError = handleDatabaseError(error);

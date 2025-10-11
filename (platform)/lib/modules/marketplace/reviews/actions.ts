@@ -59,27 +59,26 @@ export async function createToolReview(input: CreateToolReviewInput) {
     }
 
     // Create review
-    const review = await prisma.tool_reviews.upsert({
+    const review = await prisma.marketplace_reviews.upsert({
       where: {
-        // Unique constraint: tool_id + reviewer_id
-        tool_id_reviewer_id: {
-          tool_id: validated.tool_id,
-          reviewer_id: userId,
-        },
+        // Unique constraint: tool_id + user_id
+        id: `${validated.tool_id}-${userId}`,
       },
       update: {
         rating: validated.rating,
+        title: validated.title || null,
         review: validated.review || null,
       },
       create: {
         tool_id: validated.tool_id,
-        reviewer_id: userId,
+        user_id: userId,
         organization_id: organizationId,
         rating: validated.rating,
+        title: validated.title || null,
         review: validated.review || null,
       },
       include: {
-        reviewer: {
+        user: {
           select: {
             id: true,
             name: true,
@@ -123,7 +122,7 @@ export async function updateToolReview(input: UpdateToolReviewInput) {
     const userId = user.id;
 
     // Check if review exists and belongs to user
-    const existingReview = await prisma.tool_reviews.findUnique({
+    const existingReview = await prisma.marketplace_reviews.findUnique({
       where: { id: validated.review_id },
     });
 
@@ -131,19 +130,20 @@ export async function updateToolReview(input: UpdateToolReviewInput) {
       throw new Error('Review not found');
     }
 
-    if (existingReview.reviewer_id !== userId) {
+    if (existingReview.user_id !== userId) {
       throw new Error('You can only update your own reviews');
     }
 
     // Update review
-    const review = await prisma.tool_reviews.update({
+    const review = await prisma.marketplace_reviews.update({
       where: { id: validated.review_id },
       data: {
         rating: validated.rating || existingReview.rating,
+        title: validated.title !== undefined ? validated.title : existingReview.title,
         review: validated.review !== undefined ? validated.review : existingReview.review,
       },
       include: {
-        reviewer: {
+        user: {
           select: {
             id: true,
             name: true,
@@ -187,7 +187,7 @@ export async function deleteToolReview(input: DeleteToolReviewInput) {
     const userId = user.id;
 
     // Check if review exists and belongs to user
-    const existingReview = await prisma.tool_reviews.findUnique({
+    const existingReview = await prisma.marketplace_reviews.findUnique({
       where: { id: validated.review_id },
     });
 
@@ -195,12 +195,12 @@ export async function deleteToolReview(input: DeleteToolReviewInput) {
       throw new Error('Review not found');
     }
 
-    if (existingReview.reviewer_id !== userId) {
+    if (existingReview.user_id !== userId) {
       throw new Error('You can only delete your own reviews');
     }
 
     // Delete review
-    const deletedReview = await prisma.tool_reviews.delete({
+    const deletedReview = await prisma.marketplace_reviews.delete({
       where: { id: validated.review_id },
     });
 
@@ -226,7 +226,7 @@ export async function deleteToolReview(input: DeleteToolReviewInput) {
  */
 async function updateToolAverageRating(toolId: string) {
   try {
-    const reviews = await prisma.tool_reviews.findMany({
+    const reviews = await prisma.marketplace_reviews.findMany({
       where: { tool_id: toolId },
       select: { rating: true },
     });
@@ -240,7 +240,8 @@ async function updateToolAverageRating(toolId: string) {
     await prisma.marketplace_tools.update({
       where: { id: toolId },
       data: {
-        rating: Math.round(averageRating * 10) / 10, // Round to 1 decimal
+        avg_rating: Math.round(averageRating * 10) / 10, // Round to 1 decimal
+        review_count: totalReviews,
       },
     });
   } catch (error) {

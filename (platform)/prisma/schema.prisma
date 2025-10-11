@@ -1362,6 +1362,33 @@ model users {
   content_comments_authored      content_comments[]       @relation("ContentCommentAuthor")
   content_revisions_created      content_revisions[]      @relation("ContentRevisionCreator")
   user_preferences               user_preferences?        @relation("UserPreferences")
+  user_connections               user_connections[]
+}
+
+/// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
+model user_connections {
+  id              String             @id @default(cuid())
+  user_id         String
+  provider        ConnectionProvider
+  provider_user_id String?           @db.VarChar(255)
+  access_token    String?            @db.Text
+  refresh_token   String?            @db.Text
+  expires_at      DateTime?
+  scope           String?            @db.Text
+  profile_data    Json?              @db.JsonB
+  status          ConnectionStatus   @default(DISCONNECTED)
+  is_active       Boolean            @default(true)
+  last_synced     DateTime?
+  error_message   String?            @db.Text
+  created_at      DateTime           @default(now())
+  updated_at      DateTime           @updatedAt
+  user            users              @relation(fields: [user_id], references: [id], onDelete: Cascade)
+
+  @@unique([user_id, provider])
+  @@index([user_id])
+  @@index([provider])
+  @@index([status])
+  @@map("user_connections")
 }
 
 model web_vitals_metrics {
@@ -3296,4 +3323,23 @@ enum CalculationMethod {
   STANDARD
   SIMPLIFIED
   CUSTOM
+}
+
+enum ConnectionProvider {
+  GOOGLE
+  FACEBOOK
+  TWITTER
+  INSTAGRAM
+  LINKEDIN
+  YOUTUBE
+  TIKTOK
+  GITHUB
+  MICROSOFT
+}
+
+enum ConnectionStatus {
+  CONNECTED
+  DISCONNECTED
+  ERROR
+  EXPIRED
 }

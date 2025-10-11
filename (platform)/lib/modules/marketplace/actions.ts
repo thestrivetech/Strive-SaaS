@@ -47,12 +47,11 @@ export async function purchaseTool(input: PurchaseToolInput) {
   return withTenantContext(async () => {
     try {
       // Check if already purchased
-      const existing = await prisma.tool_purchases.findUnique({
+      const existing = await prisma.marketplace_purchases.findFirst({
         where: {
-          tool_id_organization_id: {
-            tool_id: validated.tool_id,
-            organization_id: organizationId,
-          },
+          tool_id: validated.tool_id,
+          organization_id: organizationId,
+          status: 'ACTIVE',
         },
       });
 
@@ -65,17 +64,21 @@ export async function purchaseTool(input: PurchaseToolInput) {
         where: { id: validated.tool_id },
       });
 
-      if (!tool || !tool.is_active) {
+      if (!tool || tool.status !== 'ACTIVE') {
         throw new Error('Tool not found or inactive');
       }
 
       // Create purchase
-      const purchase = await prisma.tool_purchases.create({
+      const purchase = await prisma.marketplace_purchases.create({
         data: {
           tool_id: validated.tool_id,
-          price_at_purchase: tool.price,
+          purchase_type: 'TOOL',
+          amount: tool.price_amount,
+          currency: tool.currency,
+          payment_method: 'CREDIT_CARD',
+          payment_status: 'COMPLETED',
           organization_id: organizationId,
-          purchased_by: user.id,
+          user_id: user.id,
           status: 'ACTIVE',
         },
         include: {
@@ -132,10 +135,10 @@ export async function purchaseBundle(input: PurchaseBundleInput) {
   return withTenantContext(async () => {
     try {
       // Get bundle details
-      const bundle = await prisma.tool_bundles.findUnique({
+      const bundle = await prisma.marketplace_bundles.findUnique({
         where: { id: validated.bundle_id },
         include: {
-          tools: {
+          items: {
             include: {
               tool: true,
             },
@@ -143,23 +146,27 @@ export async function purchaseBundle(input: PurchaseBundleInput) {
         },
       });
 
-      if (!bundle || !bundle.is_active) {
+      if (!bundle || bundle.status !== 'ACTIVE') {
         throw new Error('Bundle not found or inactive');
       }
 
       // Create bundle purchase
-      const bundlePurchase = await prisma.bundle_purchases.create({
+      const bundlePurchase = await prisma.marketplace_purchases.create({
         data: {
           bundle_id: validated.bundle_id,
-          price_at_purchase: bundle.bundle_price,
+          purchase_type: 'BUNDLE',
+          amount: bundle.price_amount,
+          currency: bundle.currency,
+          payment_method: 'CREDIT_CARD',
+          payment_status: 'COMPLETED',
           organization_id: organizationId,
-          purchased_by: user.id,
+          user_id: user.id,
           status: 'ACTIVE',
         },
         include: {
           bundle: {
             include: {
-              tools: {
+              items: {
                 include: {
                   tool: true,
                 },
@@ -170,20 +177,21 @@ export async function purchaseBundle(input: PurchaseBundleInput) {
       });
 
       // Create individual tool purchases for each tool in bundle
-      const toolPurchasePromises = bundle.tools.map((bundleTool: { tool_id: string }) =>
-        prisma.tool_purchases.upsert({
+      const toolPurchasePromises = bundle.items.map((bundleItem: { tool_id: string }) =>
+        prisma.marketplace_purchases.upsert({
           where: {
-            tool_id_organization_id: {
-              tool_id: bundleTool.tool_id,
-              organization_id: organizationId,
-            },
+            id: `${bundleItem.tool_id}-${organizationId}`,
           },
           update: {}, // If already purchased, do nothing
           create: {
-            tool_id: bundleTool.tool_id,
-            price_at_purchase: 0, // Part of bundle, no separate cost
+            tool_id: bundleItem.tool_id,
+            purchase_type: 'TOOL',
+            amount: 0, // Part of bundle, no separate cost
+            currency: 'USD',
+            payment_method: 'CREDIT_CARD',
+            payment_status: 'COMPLETED',
             organization_id: organizationId,
-            purchased_by: user.id,
+            user_id: user.id,
             status: 'ACTIVE',
           },
         })
@@ -221,7 +229,7 @@ export async function trackToolUsage(toolId: string) {
 
   return withTenantContext(async () => {
     try {
-      const purchase = await prisma.tool_purchases.findFirst({
+      const purchase = await prisma.marketplace_purchases.findFirst({
         where: {
           tool_id: toolId,
           organization_id: organizationId,
@@ -233,7 +241,7 @@ export async function trackToolUsage(toolId: string) {
         throw new Error('Tool purchase not found');
       }
 
-      return await prisma.tool_purchases.update({
+      return await prisma.marketplace_purchases.update({
         where: {
           id: purchase.id,
         },
@@ -241,7 +249,7 @@ export async function trackToolUsage(toolId: string) {
           usage_count: {
             increment: 1,
           },
-          last_used: new Date(),
+          last_used_at: new Date(),
         },
       });
     } catch (error) {

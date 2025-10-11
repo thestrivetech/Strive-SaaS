@@ -12,9 +12,9 @@ import type { Prisma } from '@prisma/client';
  * - Multi-tenancy isolation for user's own reviews
  */
 
-export type ReviewWithReviewer = Prisma.tool_reviewsGetPayload<{
+export type ReviewWithReviewer = Prisma.marketplace_reviewsGetPayload<{
   include: {
-    reviewer: {
+    user: {
       select: {
         id: true;
         name: true;
@@ -56,7 +56,7 @@ export async function getToolReviews(
   filters?: ReviewFilters
 ): Promise<ReviewWithReviewer[]> {
   try {
-    const where: Prisma.tool_reviewsWhereInput = {
+    const where: Prisma.marketplace_reviewsWhereInput = {
       tool_id: toolId,
     };
 
@@ -66,17 +66,17 @@ export async function getToolReviews(
     }
 
     // Sorting
-    const orderBy: Prisma.tool_reviewsOrderByWithRelationInput = {};
+    const orderBy: Prisma.marketplace_reviewsOrderByWithRelationInput = {};
     if (filters?.sort_by === 'rating') {
       orderBy.rating = filters?.sort_order || 'desc';
     } else {
       orderBy.created_at = filters?.sort_order || 'desc';
     }
 
-    return await prisma.tool_reviews.findMany({
+    return await prisma.marketplace_reviews.findMany({
       where,
       include: {
-        reviewer: {
+        user: {
           select: {
             id: true,
             name: true,
@@ -117,13 +117,13 @@ export async function getUserReviewForTool(
       }
       const reviewerId = userId;
 
-      return await prisma.tool_reviews.findFirst({
+      return await prisma.marketplace_reviews.findFirst({
         where: {
           tool_id: toolId,
-          reviewer_id: reviewerId,
+          user_id: reviewerId,
         },
         include: {
-          reviewer: {
+          user: {
             select: {
               id: true,
               name: true,
@@ -149,7 +149,7 @@ export async function getUserReviewForTool(
  */
 export async function getReviewStats(toolId: string): Promise<ReviewStats> {
   try {
-    const reviews = await prisma.tool_reviews.findMany({
+    const reviews = await prisma.marketplace_reviews.findMany({
       where: { tool_id: toolId },
       select: { rating: true },
     });
@@ -218,12 +218,12 @@ export async function getUserReviews(
       }
       const reviewerId = userId;
 
-      return await prisma.tool_reviews.findMany({
+      return await prisma.marketplace_reviews.findMany({
         where: {
-          reviewer_id: reviewerId,
+          user_id: reviewerId,
         },
         include: {
-          reviewer: {
+          user: {
             select: {
               id: true,
               name: true,
@@ -264,10 +264,10 @@ export async function hasUserPurchasedTool(
       }
       const purchaserId = userId;
 
-      const purchase = await prisma.tool_purchases.findFirst({
+      const purchase = await prisma.marketplace_purchases.findFirst({
         where: {
           tool_id: toolId,
-          purchaser_id: purchaserId,
+          user_id: purchaserId,
           status: 'ACTIVE',
         },
       });

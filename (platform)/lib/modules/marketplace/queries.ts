@@ -20,7 +20,7 @@ type ToolWithStats = Prisma.marketplace_toolsGetPayload<{
   };
 }>;
 
-type BundleWithTools = Prisma.tool_bundlesGetPayload<{
+type BundleWithTools = Prisma.marketplace_bundlesGetPayload<{
   include: {
     tools: {
       include: {
@@ -162,13 +162,13 @@ export const getMarketplaceToolById = cache(async (toolId: string) => {
 export async function getPurchasedTools() {
   return withTenantContext(async () => {
     try {
-      return await prisma.tool_purchases.findMany({
+      return await prisma.marketplace_purchases.findMany({
         where: {
           status: 'ACTIVE',
         },
         include: {
           tool: true,
-          purchaser: {
+          user: {
             select: {
               id: true,
               name: true,
@@ -195,7 +195,7 @@ export async function getPurchasedTools() {
 export async function getToolPurchase(toolId: string) {
   return withTenantContext(async () => {
     try {
-      return await prisma.tool_purchases.findFirst({
+      return await prisma.marketplace_purchases.findFirst({
         where: {
           tool_id: toolId,
           status: 'ACTIVE',
@@ -223,12 +223,12 @@ export async function getToolPurchase(toolId: string) {
 export const getToolBundles = unstable_cache(
   async (): Promise<BundleWithTools[]> => {
     try {
-      return await prisma.tool_bundles.findMany({
+      return await prisma.marketplace_bundles.findMany({
         where: {
-          is_active: true,
+          status: 'ACTIVE',
         },
         include: {
-          tools: {
+          items: {
             include: {
               tool: true,
             },
@@ -260,10 +260,10 @@ export const getToolBundles = unstable_cache(
  */
 export async function getToolBundleById(bundleId: string) {
   try {
-    return await prisma.tool_bundles.findUnique({
+    return await prisma.marketplace_bundles.findUnique({
       where: { id: bundleId },
       include: {
-        tools: {
+        items: {
           include: {
             tool: true,
           },
@@ -285,21 +285,22 @@ export async function getToolBundleById(bundleId: string) {
 export async function getPurchasedBundles() {
   return withTenantContext(async () => {
     try {
-      return await prisma.bundle_purchases.findMany({
+      return await prisma.marketplace_purchases.findMany({
         where: {
           status: 'ACTIVE',
+          purchase_type: 'BUNDLE',
         },
         include: {
           bundle: {
             include: {
-              tools: {
+              items: {
                 include: {
                   tool: true,
                 },
               },
             },
           },
-          purchaser: {
+          user: {
             select: {
               id: true,
               name: true,
@@ -331,10 +332,10 @@ export async function getMarketplaceStats() {
         totalBundles,
         purchasedBundlesCount,
       ] = await Promise.all([
-        prisma.marketplace_tools.count({ where: { is_active: true } }),
-        prisma.tool_purchases.count({ where: { status: 'ACTIVE' } }),
-        prisma.tool_bundles.count({ where: { is_active: true } }),
-        prisma.bundle_purchases.count({ where: { status: 'ACTIVE' } }),
+        prisma.marketplace_tools.count({ where: { status: 'ACTIVE' } }),
+        prisma.marketplace_purchases.count({ where: { status: 'ACTIVE', purchase_type: 'TOOL' } }),
+        prisma.marketplace_bundles.count({ where: { status: 'ACTIVE' } }),
+        prisma.marketplace_purchases.count({ where: { status: 'ACTIVE', purchase_type: 'BUNDLE' } }),
       ]);
 
       return {
@@ -359,13 +360,13 @@ export async function getMarketplaceStats() {
 export async function getPurchasedToolsWithStats() {
   return withTenantContext(async () => {
     try {
-      const purchases = await prisma.tool_purchases.findMany({
+      const purchases = await prisma.marketplace_purchases.findMany({
         where: {
           status: 'ACTIVE',
         },
         include: {
           tool: true,
-          purchaser: {
+          user: {
             select: {
               id: true,
               name: true,
@@ -378,7 +379,7 @@ export async function getPurchasedToolsWithStats() {
 
       // Calculate total investment
       const totalInvestment = purchases.reduce(
-        (sum: number, purchase: { price_at_purchase: number }) => sum + purchase.price_at_purchase,
+        (sum: number, purchase: { amount: any }) => sum + Number(purchase.amount),
         0
       );
 
@@ -404,14 +405,14 @@ export async function getPurchasedToolsWithStats() {
 export async function getToolPurchaseDetails(toolId: string) {
   return withTenantContext(async () => {
     try {
-      return await prisma.tool_purchases.findFirst({
+      return await prisma.marketplace_purchases.findFirst({
         where: {
           tool_id: toolId,
           status: 'ACTIVE',
         },
         include: {
           tool: true,
-          purchaser: {
+          user: {
             select: {
               id: true,
               name: true,
