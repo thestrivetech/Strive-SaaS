@@ -2,7 +2,7 @@ import { Suspense } from 'react';
 import { redirect } from 'next/navigation';
 import { requireAuth, getCurrentUser } from '@/lib/auth/auth-helpers';
 import { getUserOrganizations } from '@/lib/modules/organization/queries';
-import { searchListings, getListingStats, type ListingFilters } from '@/lib/modules/transactions/listings';
+import { searchListings, getListingStats, type ListingFilters } from '@/lib/modules/workspace/listings';
 import { ListingCard } from '@/components/real-estate/crm/listings/listing-card';
 import { ListingFilters as ListingFiltersBar } from '@/components/real-estate/crm/listings/listing-filters';
 import { ListingSearch } from '@/components/real-estate/crm/listings/listing-search';

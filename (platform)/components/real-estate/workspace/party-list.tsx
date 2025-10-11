@@ -15,7 +15,7 @@ import {
 import { useToast } from '@/hooks/use-toast';
 import { Users, Mail, Phone, Trash2, Loader2 } from 'lucide-react';
 import { PartyInviteDialog } from './party-invite-dialog';
-import { getPartiesByLoop, removeParty, type PartyWithCounts } from '@/lib/modules/transactions/parties';
+import { getPartiesByLoop, removeParty, type PartyWithCounts } from '@/lib/modules/workspace/parties';
 import { PartyRole, PartyStatus } from '@prisma/client';
 import {
   AlertDialog,

@@ -2,7 +2,7 @@ import {
   createSignatureRequest,
   signDocument,
   declineSignature,
-} from '@/lib/modules/transactions/signatures/actions';
+} from '@/lib/modules/workspace/signatures/actions';
 import { getCurrentUser } from '@/lib/auth/auth-helpers';
 import { prisma } from '@/lib/database/prisma';
 import { sendSignatureRequestEmail } from '@/lib/email/notifications';

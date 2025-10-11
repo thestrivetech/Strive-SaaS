@@ -11,7 +11,7 @@ import {
   getTasksByLoop,
   completeTransactionTask,
   type TaskWithDetails,
-} from '@/lib/modules/transactions/tasks';
+} from '@/lib/modules/workspace/tasks';
 import { TaskStatus, TaskPriority } from '@prisma/client';
 import { format } from 'date-fns';
 import { cn } from '@/lib/utils';

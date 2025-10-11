@@ -1,5 +1,5 @@
 /**
- * Transaction Analytics Module
+ * Workspace Analytics Module
  *
  * Public API for transaction analytics and reporting
  *
@@ -14,7 +14,7 @@
  *
  * @example
  * ```typescript
- * import { getTransactionAnalytics, getLoopVelocity } from '@/lib/modules/transactions/analytics';
+ * import { getTransactionAnalytics, getLoopVelocity } from '@/lib/modules/workspace/analytics';
  *
  * const analytics = await getTransactionAnalytics({ startDate, endDate });
  * const velocity = await getLoopVelocity({ months: 6 });

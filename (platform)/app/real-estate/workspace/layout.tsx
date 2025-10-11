@@ -1,8 +1,8 @@
 import { getCurrentUser } from '@/lib/auth/auth-helpers';
-import { canAccessTransactionModule } from '@/lib/modules/transactions/core/permissions';
+import { canAccessWorkspaceModule } from '@/lib/modules/workspace/core/permissions';
 import { redirect } from 'next/navigation';
 
-export default async function TransactionLayout({
+export default async function WorkspaceLayout({
   children,
 }: {
   children: React.ReactNode;
@@ -14,8 +14,8 @@ export default async function TransactionLayout({
   }
 
   // Check tier access (GROWTH minimum required)
-  if (!canAccessTransactionModule(user)) {
-    redirect('/pricing?upgrade=transaction-management&tier=GROWTH');
+  if (!canAccessWorkspaceModule(user)) {
+    redirect('/pricing?upgrade=workspace-management&tier=GROWTH');
   }
 
   return (

@@ -1,9 +1,13 @@
 'use client';
 
 import { REIDCard, REIDCardContent } from '../shared/REIDCard';
+import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
+import { Archive, MapPin, TrendingUp, DollarSign, Brain } from 'lucide-react';
+import { cn } from '@/lib/utils';
 
-// Type definition (previously from mock data)
-interface MockAIProfile {
+// AI Profile UI type (transformed from database record)
+export interface AIProfileUI {
   id: string;
   property_address: string;
   city: string;
@@ -17,13 +21,9 @@ interface MockAIProfile {
   analysis_date: Date;
   status: string;
 }
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { Archive, MapPin, TrendingUp, DollarSign, Brain } from 'lucide-react';
-import { cn } from '@/lib/utils';
 
 interface ProfileCardProps {
-  profile: MockAIProfile;
+  profile: AIProfileUI;
   onArchive: () => void;
 }
 

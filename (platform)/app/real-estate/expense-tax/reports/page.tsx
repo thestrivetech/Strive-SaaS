@@ -6,6 +6,7 @@ import { ModuleHeroSection } from '@/components/shared/dashboard/ModuleHeroSecti
 import { HeroSkeleton } from '@/components/shared/dashboard/skeletons';
 import { ReportTemplatesSection } from './report-templates-section';
 import { RecentReportsSection } from './recent-reports-section';
+import { getTaxReportStats } from '@/lib/modules/expense-tax/reports/queries';
 
 /**
  * Tax Reports Page
@@ -100,28 +101,42 @@ async function HeroSectionWrapper({
   user: Awaited<ReturnType<typeof getCurrentUser>>;
   organizationId: string;
 }) {
-  // Placeholder data - Expense & Tax is a skeleton module (no database tables yet)
   const currentYear = new Date().getFullYear();
+
+  // Fetch real stats from database
+  let reportStats;
+  try {
+    reportStats = await getTaxReportStats();
+  } catch (error) {
+    console.error('Failed to fetch tax report stats:', error);
+    // Fallback to zeros on error
+    reportStats = {
+      totalReports: 0,
+      currentYearReports: 0,
+      completedReports: 0,
+      sharedReports: 0,
+    };
+  }
 
   const stats = [
     {
       label: 'Total Reports',
-      value: '0',
+      value: reportStats.totalReports.toString(),
       icon: 'revenue' as const,
     },
     {
       label: `${currentYear} Reports`,
-      value: '0',
+      value: reportStats.currentYearReports.toString(),
       icon: 'customers' as const,
     },
     {
       label: 'Completed',
-      value: '0',
+      value: reportStats.completedReports.toString(),
       icon: 'projects' as const,
     },
     {
       label: 'Shared',
-      value: '0',
+      value: reportStats.sharedReports.toString(),
       icon: 'tasks' as const,
     },
   ];

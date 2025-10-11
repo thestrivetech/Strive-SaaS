@@ -19,7 +19,7 @@ const path = require('path');
 // Configuration
 // ============================================================================
 
-const ROOT_DIR = path.resolve(__dirname);
+const ROOT_DIR = path.resolve(__dirname, '..');
 const OUTPUT_TXT = path.join(ROOT_DIR, 'project-directory-map.txt');
 const OUTPUT_JSON = path.join(ROOT_DIR, 'project-directory-map.json');
 

@@ -3,7 +3,7 @@ import {
   applyWorkflowToLoop,
   updateWorkflowTemplate,
   deleteWorkflowTemplate,
-} from '@/lib/modules/transactions/workflows/actions';
+} from '@/lib/modules/workspace/workflows/actions';
 import { getCurrentUser } from '@/lib/auth/auth-helpers';
 import { prisma } from '@/lib/database/prisma';
 

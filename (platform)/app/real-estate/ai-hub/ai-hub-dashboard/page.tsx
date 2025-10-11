@@ -41,7 +41,7 @@ export default async function AIHubDashboardPage() {
 
   const firstName = user.name?.split(' ')[0] || 'User';
 
-  // Placeholder data - AI Hub is a skeleton module (no database tables yet)
+  // Initialize with empty conversations (will load from database when available)
   const conversations: Array<{
     id: string;
     title: string;

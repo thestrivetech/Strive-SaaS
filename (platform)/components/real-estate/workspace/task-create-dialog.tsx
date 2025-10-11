@@ -34,8 +34,8 @@ import { Plus, Loader2, Calendar } from 'lucide-react';
 import {
   createTransactionTask,
   type CreateTransactionTaskInput,
-} from '@/lib/modules/transactions/tasks';
-import { getPartiesByLoop } from '@/lib/modules/transactions/parties';
+} from '@/lib/modules/workspace/tasks';
+import { getPartiesByLoop } from '@/lib/modules/workspace/parties';
 import { TaskPriority } from '@prisma/client';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { format } from 'date-fns';

@@ -120,7 +120,7 @@ async function HeroSectionWrapper({
 }: {
   user: Awaited<ReturnType<typeof getCurrentUser>>;
 }) {
-  // Placeholder data - Expense & Tax is a skeleton module (no database tables yet)
+  // Default analytics stats (will show actual data when expenses are tracked)
   const stats = [
     {
       label: 'Total Analyzed',

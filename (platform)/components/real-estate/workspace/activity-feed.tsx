@@ -4,12 +4,12 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { formatDistanceToNow } from 'date-fns';
-import type { Activity } from '@/lib/modules/transactions/activity';
+import type { Activity } from '@/lib/modules/workspace/activity';
 import {
   formatActivityDescription,
   getActivityIcon,
   getActivityColor,
-} from '@/lib/modules/transactions/activity';
+} from '@/lib/modules/workspace/activity';
 import * as Icons from 'lucide-react';
 
 interface ActivityFeedProps {

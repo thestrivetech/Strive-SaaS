@@ -1,0 +1,197 @@
+{
+  "name": "Lead Nurture - Analytics Updater",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "cronExpression",
+              "expression": "1 0 * * *"
+            }
+          ]
+        }
+      },
+      "id": "daily_trigger",
+      "name": "Daily at Midnight",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.1,
+      "position": [240, 300]
+    },
+    {
+      "parameters": {
+        "jsCode": "// ============================================\n// PREPARE ANALYTICS CALCULATION\n// ============================================\n\nconst yesterday = new Date();\nyesterday.setDate(yesterday.getDate() - 1);\nyesterday.setHours(0, 0, 0, 0);\n\nconst today = new Date();\ntoday.setHours(0, 0, 0, 0);\n\nconsole.log(`Calculating analytics for date: ${yesterday.toISOString().split('T')[0]}`);\n\nreturn {\n  json: {\n    analytics_date: yesterday.toISOString().split('T')[0],\n    start_timestamp: yesterday.toISOString(),\n    end_timestamp: today.toISOString()\n  }\n};"
+      },
+      "id": "prepare_date",
+      "name": "Prepare Date Range",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [460, 300]
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "-- Get all active campaigns\nSELECT \n  id as campaign_id,\n  organization_id,\n  name as campaign_name\nFROM nurture_campaigns\nWHERE status = 'active'\nORDER BY organization_id, created_at;",
+        "options": {}
+      },
+      "id": "get_active_campaigns",
+      "name": "Get Active Campaigns",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.4,
+      "position": [680, 300],
+      "credentials": {
+        "postgres": {
+          "id": "supabase_main",
+          "name": "Supabase PostgreSQL"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// ============================================\n// CHECK IF CAMPAIGNS EXIST\n// ============================================\n\nconst campaigns = $input.first().json;\n\nif (!campaigns || campaigns.length === 0) {\n  console.log('No active campaigns to analyze');\n  return {\n    json: {\n      campaigns_analyzed: 0,\n      message: 'No active campaigns'\n    }\n  };\n}\n\nconsole.log(`Found ${campaigns.length} active campaigns`);\n\nreturn campaigns.map(c => ({ json: c }));"
+      },
+      "id": "check_campaigns",
+      "name": "Check Campaigns",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [900, 300]
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "-- Calculate daily metrics for campaign\nWITH daily_stats AS (\n  SELECT \n    lce.campaign_id,\n    lce.organization_id,\n    -- Enrollment metrics\n    COUNT(DISTINCT CASE \n      WHEN DATE(lce.enrolled_at) = '{{ $('Prepare Date Range').first().json.analytics_date }}' \n      THEN lce.id \n    END) as leads_enrolled_today,\n    \n    -- Email send metrics\n    COUNT(DISTINCT es.id) as emails_sent_today,\n    COUNT(DISTINCT CASE WHEN es.send_status = 'queued' THEN es.id END) as emails_scheduled_today,\n    \n    -- Engagement metrics (unique per lead)\n    COUNT(DISTINCT CASE WHEN es.opened_at IS NOT NULL THEN es.lead_id END) as unique_opens_today,\n    COUNT(DISTINCT CASE WHEN es.first_click_at IS NOT NULL THEN es.lead_id END) as unique_clicks_today,\n    \n    -- Problem metrics\n    COUNT(DISTINCT CASE WHEN es.send_status = 'bounced' THEN es.id END) as bounces_today,\n    COUNT(DISTINCT ee.id) FILTER (WHERE ee.event_type = 'unsubscribe') as unsubscribes_today,\n    \n    -- A/B test breakdown\n    COUNT(DISTINCT CASE \n      WHEN es.opened_at IS NOT NULL AND lce.variant_assigned = 'A' \n      THEN es.lead_id \n    END) as variant_a_opens,\n    COUNT(DISTINCT CASE \n      WHEN es.first_click_at IS NOT NULL AND lce.variant_assigned = 'A' \n      THEN es.lead_id \n    END) as variant_a_clicks,\n    COUNT(DISTINCT CASE \n      WHEN es.opened_at IS NOT NULL AND lce.variant_assigned = 'B' \n      THEN es.lead_id \n    END) as variant_b_opens,\n    COUNT(DISTINCT CASE \n      WHEN es.first_click_at IS NOT NULL AND lce.variant_assigned = 'B' \n      THEN es.lead_id \n    END) as variant_b_clicks\n    \n  FROM lead_campaign_enrollments lce\n  LEFT JOIN email_sends es ON es.enrollment_id = lce.id\n    AND DATE(es.actual_send_time) = '{{ $('Prepare Date Range').first().json.analytics_date }}'\n  LEFT JOIN email_events ee ON ee.email_send_id = es.id\n    AND DATE(ee.event_timestamp) = '{{ $('Prepare Date Range').first().json.analytics_date }}'\n  WHERE lce.campaign_id = '{{ $json.campaign_id }}'\n    AND lce.organization_id = '{{ $json.organization_id }}'\n  GROUP BY lce.campaign_id, lce.organization_id\n)\nSELECT \n  *,\n  -- Calculate rates\n  CASE \n    WHEN emails_sent_today > 0 THEN\n      ROUND((unique_opens_today::decimal / emails_sent_today::decimal) * 100, 2)\n    ELSE 0\n  END as open_rate,\n  CASE \n    WHEN emails_sent_today > 0 THEN\n      ROUND((unique_clicks_today::decimal / emails_sent_today::decimal) * 100, 2)\n    ELSE 0\n  END as click_rate,\n  CASE \n    WHEN unique_opens_today > 0 THEN\n      ROUND((unique_clicks_today::decimal / unique_opens_today::decimal) * 100, 2)\n    ELSE 0\n  END as click_to_open_rate,\n  CASE \n    WHEN emails_sent_today > 0 THEN\n      ROUND((unsubscribes_today::decimal / emails_sent_today::decimal) * 100, 2)\n    ELSE 0\n  END as unsubscribe_rate\nFROM daily_stats;",
+        "options": {}
+      },
+      "id": "calculate_metrics",
+      "name": "Calculate Daily Metrics",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.4,
+      "position": [1120, 300],
+      "credentials": {
+        "postgres": {
+          "id": "supabase_main",
+          "name": "Supabase PostgreSQL"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// ============================================\n// PREPARE ANALYTICS INSERT DATA\n// ============================================\n\nconst campaignData = $('Check Campaigns').item.json;\nconst metricsResult = $input.first().json;\nconst analyticsDate = $('Prepare Date Range').first().json.analytics_date;\n\nif (!metricsResult || metricsResult.length === 0) {\n  // No data for this campaign yesterday\n  return {\n    json: {\n      campaign_id: campaignData.campaign_id,\n      organization_id: campaignData.organization_id,\n      analytics_date: analyticsDate,\n      leads_enrolled_today: 0,\n      emails_sent_today: 0,\n      emails_scheduled_today: 0,\n      unique_opens_today: 0,\n      unique_clicks_today: 0,\n      unsubscribes_today: 0,\n      bounces_today: 0,\n      open_rate: 0,\n      click_rate: 0,\n      click_to_open_rate: 0,\n      unsubscribe_rate: 0,\n      variant_a_opens: 0,\n      variant_a_clicks: 0,\n      variant_b_opens: 0,\n      variant_b_clicks: 0\n    }\n  };\n}\n\nconst metrics = metricsResult[0];\n\nreturn {\n  json: {\n    ...metrics,\n    analytics_date: analyticsDate\n  }\n};"
+      },
+      "id": "prepare_insert",
+      "name": "Prepare Insert",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1340, 300]
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "-- Insert or update analytics\nINSERT INTO campaign_analytics (\n  organization_id, campaign_id, analytics_date,\n  leads_enrolled_today, emails_sent_today, emails_scheduled_today,\n  unique_opens_today, unique_clicks_today, unsubscribes_today, bounces_today,\n  open_rate, click_rate, click_to_open_rate, unsubscribe_rate,\n  variant_a_opens, variant_a_clicks, variant_b_opens, variant_b_clicks\n)\nVALUES (\n  '{{ $json.organization_id }}',\n  '{{ $json.campaign_id }}',\n  '{{ $json.analytics_date }}',\n  {{ $json.leads_enrolled_today }},\n  {{ $json.emails_sent_today }},\n  {{ $json.emails_scheduled_today }},\n  {{ $json.unique_opens_today }},\n  {{ $json.unique_clicks_today }},\n  {{ $json.unsubscribes_today }},\n  {{ $json.bounces_today }},\n  {{ $json.open_rate }},\n  {{ $json.click_rate }},\n  {{ $json.click_to_open_rate }},\n  {{ $json.unsubscribe_rate }},\n  {{ $json.variant_a_opens }},\n  {{ $json.variant_a_clicks }},\n  {{ $json.variant_b_opens }},\n  {{ $json.variant_b_clicks }}\n)\nON CONFLICT (campaign_id, analytics_date)\nDO UPDATE SET\n  leads_enrolled_today = EXCLUDED.leads_enrolled_today,\n  emails_sent_today = EXCLUDED.emails_sent_today,\n  emails_scheduled_today = EXCLUDED.emails_scheduled_today,\n  unique_opens_today = EXCLUDED.unique_opens_today,\n  unique_clicks_today = EXCLUDED.unique_clicks_today,\n  unsubscribes_today = EXCLUDED.unsubscribes_today,\n  bounces_today = EXCLUDED.bounces_today,\n  open_rate = EXCLUDED.open_rate,\n  click_rate = EXCLUDED.click_rate,\n  click_to_open_rate = EXCLUDED.click_to_open_rate,\n  unsubscribe_rate = EXCLUDED.unsubscribe_rate,\n  variant_a_opens = EXCLUDED.variant_a_opens,\n  variant_a_clicks = EXCLUDED.variant_a_clicks,\n  variant_b_opens = EXCLUDED.variant_b_opens,\n  variant_b_clicks = EXCLUDED.variant_b_clicks,\n  updated_at = NOW()\nRETURNING id;",
+        "options": {}
+      },
+      "id": "upsert_analytics",
+      "name": "Upsert Analytics",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.4,
+      "position": [1560, 300],
+      "credentials": {
+        "postgres": {
+          "id": "supabase_main",
+          "name": "Supabase PostgreSQL"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// ============================================\n// DETECT PERFORMANCE ANOMALIES\n// ============================================\n\nconst metrics = $('Prepare Insert').first().json;\nconst campaignData = $('Check Campaigns').item.json;\n\nconst alerts = [];\n\n// Alert if open rate drops below 20%\nif (metrics.emails_sent_today > 10 && metrics.open_rate < 20) {\n  alerts.push({\n    severity: 'warning',\n    metric: 'open_rate',\n    value: metrics.open_rate,\n    message: `Open rate (${metrics.open_rate}%) is below 20% threshold`\n  });\n}\n\n// Alert if click rate drops below 2%\nif (metrics.emails_sent_today > 10 && metrics.click_rate < 2) {\n  alerts.push({\n    severity: 'warning',\n    metric: 'click_rate',\n    value: metrics.click_rate,\n    message: `Click rate (${metrics.click_rate}%) is below 2% threshold`\n  });\n}\n\n// Alert if unsubscribe rate exceeds 1%\nif (metrics.emails_sent_today > 10 && metrics.unsubscribe_rate > 1) {\n  alerts.push({\n    severity: 'critical',\n    metric: 'unsubscribe_rate',\n    value: metrics.unsubscribe_rate,\n    message: `Unsubscribe rate (${metrics.unsubscribe_rate}%) exceeds 1% threshold`\n  });\n}\n\n// Alert if bounce rate exceeds 5%\nconst bounceRate = metrics.emails_sent_today > 0 \n  ? (metrics.bounces_today / metrics.emails_sent_today) * 100 \n  : 0;\nif (metrics.emails_sent_today > 10 && bounceRate > 5) {\n  alerts.push({\n    severity: 'warning',\n    metric: 'bounce_rate',\n    value: bounceRate,\n    message: `Bounce rate (${bounceRate.toFixed(2)}%) exceeds 5% threshold`\n  });\n}\n\nif (alerts.length > 0) {\n  console.log(`⚠️  Alerts for campaign ${campaignData.campaign_name}:`, alerts);\n}\n\nreturn {\n  json: {\n    campaign_id: campaignData.campaign_id,\n    campaign_name: campaignData.campaign_name,\n    metrics: metrics,\n    alerts: alerts,\n    has_alerts: alerts.length > 0\n  }\n};"
+      },
+      "id": "detect_anomalies",
+      "name": "Detect Anomalies",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1780, 300]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "boolean": [
+            {
+              "value1": "={{ $json.has_alerts }}",
+              "value2": true
+            }
+          ]
+        }
+      },
+      "id": "has_alerts",
+      "name": "Has Alerts?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 1,
+      "position": [2000, 300]
+    },
+    {
+      "parameters": {
+        "jsCode": "// ============================================\n// SEND ALERT EMAIL (Optional)\n// ============================================\n\nconst data = $json;\n\nconsole.log(`Sending performance alert for campaign: ${data.campaign_name}`);\nconsole.log('Alerts:', data.alerts);\n\n// In production, this would send an email via SendGrid\n// or post to a Slack channel\n\nreturn {\n  json: {\n    alert_sent: true,\n    campaign_name: data.campaign_name,\n    alert_count: data.alerts.length\n  }\n};"
+      },
+      "id": "send_alert",
+      "name": "Send Alert",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [2220, 180]
+    },
+    {
+      "parameters": {
+        "jsCode": "// ============================================\n// AGGREGATE ANALYTICS SUMMARY\n// ============================================\n\nconst allItems = $input.all();\nconst campaignsAnalyzed = allItems.length;\nconst campaignsWithAlerts = allItems.filter(item => item.json.has_alerts).length;\n\nconst totalMetrics = allItems.reduce((acc, item) => {\n  const metrics = item.json.metrics || {};\n  return {\n    total_emails_sent: acc.total_emails_sent + (metrics.emails_sent_today || 0),\n    total_opens: acc.total_opens + (metrics.unique_opens_today || 0),\n    total_clicks: acc.total_clicks + (metrics.unique_clicks_today || 0),\n    total_unsubscribes: acc.total_unsubscribes + (metrics.unsubscribes_today || 0)\n  };\n}, {\n  total_emails_sent: 0,\n  total_opens: 0,\n  total_clicks: 0,\n  total_unsubscribes: 0\n});\n\nconst overallOpenRate = totalMetrics.total_emails_sent > 0\n  ? ((totalMetrics.total_opens / totalMetrics.total_emails_sent) * 100).toFixed(2)\n  : 0;\n\nconst overallClickRate = totalMetrics.total_emails_sent > 0\n  ? ((totalMetrics.total_clicks / totalMetrics.total_emails_sent) * 100).toFixed(2)\n  : 0;\n\nconsole.log('═══════════════════════════════════════════');\nconsole.log('📊 DAILY ANALYTICS SUMMARY');\nconsole.log('═══════════════════════════════════════════');\nconsole.log(`Campaigns Analyzed: ${campaignsAnalyzed}`);\nconsole.log(`Campaigns with Alerts: ${campaignsWithAlerts}`);\nconsole.log(`Total Emails Sent: ${totalMetrics.total_emails_sent}`);\nconsole.log(`Overall Open Rate: ${overallOpenRate}%`);\nconsole.log(`Overall Click Rate: ${overallClickRate}%`);\nconsole.log(`Total Unsubscribes: ${totalMetrics.total_unsubscribes}`);\nconsole.log('═══════════════════════════════════════════');\n\nreturn {\n  json: {\n    success: true,\n    campaigns_analyzed: campaignsAnalyzed,\n    campaigns_with_alerts: campaignsWithAlerts,\n    summary: totalMetrics,\n    overall_open_rate: overallOpenRate,\n    overall_click_rate: overallClickRate,\n    timestamp: new Date().toISOString()\n  }\n};"
+      },
+      "id": "aggregate_summary",
+      "name": "Aggregate Summary",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [2440, 300]
+    }
+  ],
+  "connections": {
+    "Daily at Midnight": {
+      "main": [[{ "node": "Prepare Date Range", "type": "main", "index": 0 }]]
+    },
+    "Prepare Date Range": {
+      "main": [[{ "node": "Get Active Campaigns", "type": "main", "index": 0 }]]
+    },
+    "Get Active Campaigns": {
+      "main": [[{ "node": "Check Campaigns", "type": "main", "index": 0 }]]
+    },
+    "Check Campaigns": {
+      "main": [[{ "node": "Calculate Daily Metrics", "type": "main", "index": 0 }]]
+    },
+    "Calculate Daily Metrics": {
+      "main": [[{ "node": "Prepare Insert", "type": "main", "index": 0 }]]
+    },
+    "Prepare Insert": {
+      "main": [[{ "node": "Upsert Analytics", "type": "main", "index": 0 }]]
+    },
+    "Upsert Analytics": {
+      "main": [[{ "node": "Detect Anomalies", "type": "main", "index": 0 }]]
+    },
+    "Detect Anomalies": {
+      "main": [[{ "node": "Has Alerts?", "type": "main", "index": 0 }]]
+    },
+    "Has Alerts?": {
+      "main": [
+        [{ "node": "Send Alert", "type": "main", "index": 0 }],
+        [{ "node": "Aggregate Summary", "type": "main", "index": 0 }]
+      ]
+    },
+    "Send Alert": {
+      "main": [[{ "node": "Aggregate Summary", "type": "main", "index": 0 }]]
+    }
+  },
+  "pinData": {},
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "tags": ["nurture", "analytics", "reporting"],
+  "triggerCount": 1,
+  "updatedAt": "2025-10-10T00:00:00.000Z",
+  "versionId": "1"
+}

@@ -2,12 +2,12 @@ import {
   calculateLoopProgress,
   recalculateAllLoopProgress,
   getProgressSummary,
-} from '@/lib/modules/transactions/milestones/calculator';
+} from '@/lib/modules/workspace/milestones/calculator';
 import {
   getMilestonesForType,
   getCurrentMilestone,
   getNextMilestone,
-} from '@/lib/modules/transactions/milestones/utils';
+} from '@/lib/modules/workspace/milestones/utils';
 import { getCurrentUser } from '@/lib/auth/auth-helpers';
 import { prisma } from '@/lib/database/prisma';
 

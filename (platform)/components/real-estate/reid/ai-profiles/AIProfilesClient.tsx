@@ -2,33 +2,19 @@
 
 import { useState, useEffect } from 'react';
 import { REIDCard, REIDCardHeader, REIDCardContent } from '../shared/REIDCard';
-
-// Type definition (previously from mock data)
-interface MockAIProfile {
-  id: string;
-  property_address: string;
-  city: string;
-  state: string;
-  recommendation: string;
-  ai_score: number;
-  estimated_roi: number;
-  estimated_cash_flow: number;
-  score_breakdown: Record<string, number>;
-  insights: string[];
-  analysis_date: Date;
-  status: string;
-}
-import { ProfileCard } from './ProfileCard';
+import { ProfileCard, type AIProfileUI } from './ProfileCard';
 import { MetricCard } from '../shared/MetricCard';
 import { Brain, TrendingUp, Target } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Button } from '@/components/ui/button';
+import { getAIProfiles, getAIProfileStats } from '@/lib/modules/reid/ai/queries';
 
 export function AIProfilesClient() {
-  const [profiles, setProfiles] = useState<MockAIProfile[]>([]);
-  const [filteredProfiles, setFilteredProfiles] = useState<MockAIProfile[]>([]);
+  const [profiles, setProfiles] = useState<AIProfileUI[]>([]);
+  const [filteredProfiles, setFilteredProfiles] = useState<AIProfileUI[]>([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const [stats, setStats] = useState({ total: 0, avg_score: 0, strong_buy_count: 0 });
 
   // Filters
@@ -48,11 +34,71 @@ export function AIProfilesClient() {
   async function loadData() {
     try {
       setLoading(true);
-      // Placeholder - REID is a skeleton module (no database tables yet)
-      setProfiles([]);
-      setStats({ total: 0, avg_score: 0, strong_buy_count: 0 });
-    } catch (error) {
-      console.error('Failed to load AI profiles:', error);
+      setError(null);
+
+      // Fetch profiles and stats in parallel
+      const [dbProfiles, dbStats] = await Promise.all([
+        getAIProfiles(),
+        getAIProfileStats()
+      ]);
+
+      // Transform database records to UI format
+      const transformedProfiles: AIProfileUI[] = dbProfiles.map((profile) => {
+        // Extract recommendation from recommendations JSON
+        const recommendations = profile.recommendations as any;
+        const recommendation = recommendations?.primary_recommendation || 'hold';
+
+        // Extract metrics from metrics JSON
+        const metrics = profile.metrics as any;
+        const estimated_roi = metrics?.estimated_roi || 0;
+        const estimated_cash_flow = metrics?.estimated_cash_flow || 0;
+
+        // Build score breakdown from individual scores
+        const score_breakdown: Record<string, number> = {
+          investment: profile.investment_score || 0,
+          lifestyle: profile.lifestyle_score || 0,
+          growth: profile.growth_potential || 0,
+          risk: profile.risk_score || 0,
+        };
+
+        // Extract insights from strengths/opportunities
+        const strengths = (profile.strengths as any[]) || [];
+        const opportunities = (profile.opportunities as any[]) || [];
+        const insights = [...strengths.slice(0, 2), ...opportunities.slice(0, 1)];
+
+        // Determine status based on is_verified and expires_at
+        let status = 'active';
+        if (profile.expires_at && new Date(profile.expires_at) < new Date()) {
+          status = 'archived';
+        }
+
+        return {
+          id: profile.id,
+          property_address: profile.address || `${profile.city}, ${profile.state}`,
+          city: profile.city || '',
+          state: profile.state || '',
+          recommendation,
+          ai_score: profile.overall_score || 0,
+          estimated_roi,
+          estimated_cash_flow,
+          score_breakdown,
+          insights,
+          analysis_date: profile.created_at,
+          status,
+        };
+      });
+
+      setProfiles(transformedProfiles);
+
+      // Set stats
+      setStats({
+        total: dbStats.totalProfiles,
+        avg_score: parseFloat(dbStats.avgOverallScore || '0'),
+        strong_buy_count: 0, // This would need to be calculated from recommendations
+      });
+    } catch (err) {
+      console.error('Failed to load AI profiles:', err);
+      setError(err instanceof Error ? err.message : 'Failed to load profiles');
     } finally {
       setLoading(false);
     }
@@ -91,11 +137,21 @@ export function AIProfilesClient() {
   }
 
   async function handleArchive(id: string, currentStatus: string) {
-    console.log(`Archive feature coming soon - REID module under development`);
+    // TODO: Implement archive functionality using Server Action
+    console.log(`Archive feature - update profile status for ${id}`);
   }
 
   if (loading) {
     return <div className="text-center py-12 text-slate-400">Loading AI profiles...</div>;
+  }
+
+  if (error) {
+    return (
+      <div className="text-center py-12">
+        <p className="text-red-400 mb-4">Error: {error}</p>
+        <Button onClick={loadData} variant="outline">Retry</Button>
+      </div>
+    );
   }
 
   return (
@@ -174,11 +230,19 @@ export function AIProfilesClient() {
       </REIDCard>
 
       {/* Profiles Grid */}
-      {filteredProfiles.length === 0 ? (
+      {profiles.length === 0 ? (
         <REIDCard>
           <REIDCardContent>
             <div className="text-center py-12 text-slate-400">
-              No profiles found matching your filters.
+              No AI profiles found. Start analyzing properties to generate AI-powered investment profiles.
+            </div>
+          </REIDCardContent>
+        </REIDCard>
+      ) : filteredProfiles.length === 0 ? (
+        <REIDCard>
+          <REIDCardContent>
+            <div className="text-center py-12 text-slate-400">
+              No profiles found matching your filters. Try adjusting your search criteria.
             </div>
           </REIDCardContent>
         </REIDCard>

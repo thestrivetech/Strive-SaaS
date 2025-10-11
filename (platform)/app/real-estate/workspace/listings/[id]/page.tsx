@@ -3,7 +3,7 @@ import { redirect, notFound } from 'next/navigation';
 import Link from 'next/link';
 import Image from 'next/image';
 import { requireAuth, getCurrentUser } from '@/lib/auth/auth-helpers';
-import { getListingWithFullHistory } from '@/lib/modules/transactions/listings';
+import { getListingWithFullHistory } from '@/lib/modules/workspace/listings';
 import { ListingStatusBadge } from '@/components/real-estate/crm/listings/listing-status-badge';
 import { EnhancedCard, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/shared/dashboard/EnhancedCard';
 import { Button } from '@/components/ui/button';

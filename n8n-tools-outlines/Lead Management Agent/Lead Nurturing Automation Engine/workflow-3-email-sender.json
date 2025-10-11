@@ -1,0 +1,275 @@
+{
+  "name": "Lead Nurture - Email Sender",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "minutes",
+              "minutesInterval": 1
+            }
+          ]
+        }
+      },
+      "id": "sender_trigger",
+      "name": "Every Minute",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.1,
+      "position": [240, 300]
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT \n  id, organization_id, lead_id, enrollment_id, message_id,\n  recipient_email, recipient_name, subject_line, body_html,\n  tracking_pixel_id, scheduled_send_time, retry_count, max_retries\nFROM email_sends\nWHERE send_status = 'queued'\n  AND scheduled_send_time <= NOW()\n  AND retry_count < max_retries\nORDER BY scheduled_send_time ASC\nLIMIT 100;",
+        "options": {}
+      },
+      "id": "find_queued_emails",
+      "name": "Find Queued Emails",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.4,
+      "position": [460, 300],
+      "credentials": {
+        "postgres": {
+          "id": "supabase_main",
+          "name": "Supabase PostgreSQL"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// ============================================\n// CHECK RATE LIMITS\n// ============================================\n\nconst queuedEmails = $input.first().json;\n\nif (!queuedEmails || queuedEmails.length === 0) {\n  console.log('No emails queued for sending');\n  return {\n    json: {\n      emails_to_send: 0,\n      message: 'No queued emails'\n    }\n  };\n}\n\nconst maxEmailsPerMinute = parseInt(process.env.N8N_MAX_EMAILS_PER_MINUTE) || 100;\nconst emailsToSend = Math.min(queuedEmails.length, maxEmailsPerMinute);\n\nconsole.log(`Found ${queuedEmails.length} queued emails, sending ${emailsToSend}`);\n\n// Return only the emails we'll send this batch\nreturn queuedEmails.slice(0, emailsToSend).map(email => ({ json: email }));"
+      },
+      "id": "check_rate_limit",
+      "name": "Check Rate Limit",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [680, 300]
+    },
+    {
+      "parameters": {
+        "jsCode": "// ============================================\n// ADD TRACKING PIXEL & LINKS\n// ============================================\n\nconst email = $json;\nconst trackingDomain = process.env.N8N_TRACKING_DOMAIN || 'track.strivetech.io';\n\n// Add tracking pixel to body\nconst trackingPixel = `<img src=\"https://${trackingDomain}/pixel/${email.tracking_pixel_id}.gif\" width=\"1\" height=\"1\" alt=\"\" />`;\nlet bodyWithTracking = email.body_html;\n\n// Insert tracking pixel before closing </body> tag or at end\nif (bodyWithTracking.includes('</body>')) {\n  bodyWithTracking = bodyWithTracking.replace('</body>', `${trackingPixel}</body>`);\n} else {\n  bodyWithTracking += trackingPixel;\n}\n\n// Replace links with tracking URLs\n// Find all href links and wrap them with tracking redirects\nconst linkRegex = /href=[\"'](https?:\\/\\/[^\"']+)[\"']/gi;\nconst trackedLinks = [];\nlet linkIndex = 0;\n\nbodyWithTracking = bodyWithTracking.replace(linkRegex, (match, url) => {\n  linkIndex++;\n  const trackingUrl = `https://${trackingDomain}/click/${email.tracking_pixel_id}/${linkIndex}?url=${encodeURIComponent(url)}`;\n  trackedLinks.push({ position: linkIndex, original_url: url, tracking_url: trackingUrl });\n  return `href=\"${trackingUrl}\"`;\n});\n\nreturn {\n  json: {\n    ...email,\n    body_html_final: bodyWithTracking,\n    tracked_links: trackedLinks,\n    tracking_added: true\n  }\n};"
+      },
+      "id": "add_tracking",
+      "name": "Add Tracking",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [900, 300]
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "UPDATE email_sends\nSET send_status = 'sending'\nWHERE id = '{{ $json.id }}';",
+        "options": {}
+      },
+      "id": "mark_sending",
+      "name": "Mark as Sending",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.4,
+      "position": [1120, 300],
+      "credentials": {
+        "postgres": {
+          "id": "supabase_main",
+          "name": "Supabase PostgreSQL"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.sendgrid.com/v3/mail/send",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "sendGridApi",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"personalizations\": [{\n    \"to\": [{\n      \"email\": \"{{ $json.recipient_email }}\",\n      \"name\": \"{{ $json.recipient_name }}\"\n    }],\n    \"subject\": \"{{ $json.subject_line }}\"\n  }],\n  \"from\": {\n    \"email\": \"{{ $env.N8N_EMAIL_FROM_ADDRESS }}\",\n    \"name\": \"{{ $env.N8N_EMAIL_FROM_NAME }}\"\n  },\n  \"content\": [{\n    \"type\": \"text/html\",\n    \"value\": {{ JSON.stringify($json.body_html_final) }}\n  }],\n  \"custom_args\": {\n    \"email_send_id\": \"{{ $json.id }}\",\n    \"organization_id\": \"{{ $json.organization_id }}\",\n    \"tracking_pixel_id\": \"{{ $json.tracking_pixel_id }}\"\n  },\n  \"tracking_settings\": {\n    \"click_tracking\": {\n      \"enable\": false\n    },\n    \"open_tracking\": {\n      \"enable\": false\n    }\n  }\n}",
+        "options": {
+          "timeout": 30000
+        }
+      },
+      "id": "send_via_sendgrid",
+      "name": "Send via SendGrid",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [1340, 300],
+      "credentials": {
+        "sendGridApi": {
+          "id": "sendgrid_api",
+          "name": "SendGrid API"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// ============================================\n// PROCESS SENDGRID RESPONSE\n// ============================================\n\nconst response = $input.first();\nconst emailData = $('Add Tracking').first().json;\n\nconst statusCode = response.statusCode || 0;\nconst responseHeaders = response.headers || {};\n\nif (statusCode >= 200 && statusCode < 300) {\n  // Success\n  const messageId = responseHeaders['x-message-id'] || `sg_${Date.now()}`;\n  \n  console.log(`Email sent successfully: ${messageId}`);\n  \n  return {\n    json: {\n      email_send_id: emailData.id,\n      send_status: 'sent',\n      provider_message_id: messageId,\n      actual_send_time: new Date().toISOString(),\n      success: true\n    }\n  };\n} else {\n  // Failure\n  const errorMessage = response.json?.errors?.[0]?.message || 'Unknown error';\n  \n  console.error(`Email send failed: ${errorMessage}`);\n  \n  return {\n    json: {\n      email_send_id: emailData.id,\n      send_status: 'failed',\n      failure_reason: errorMessage,\n      retry_count: emailData.retry_count + 1,\n      success: false\n    }\n  };\n}"
+      },
+      "id": "process_response",
+      "name": "Process Response",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1560, 300]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "boolean": [
+            {
+              "value1": "={{ $json.success }}",
+              "value2": true
+            }
+          ]
+        }
+      },
+      "id": "send_successful",
+      "name": "Send Successful?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 1,
+      "position": [1780, 300]
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "UPDATE email_sends\nSET \n  send_status = 'sent',\n  provider_message_id = '{{ $json.provider_message_id }}',\n  actual_send_time = '{{ $json.actual_send_time }}'\nWHERE id = '{{ $json.email_send_id }}';",
+        "options": {}
+      },
+      "id": "update_success",
+      "name": "Update Success",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.4,
+      "position": [2000, 180],
+      "credentials": {
+        "postgres": {
+          "id": "supabase_main",
+          "name": "Supabase PostgreSQL"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "UPDATE email_sends\nSET \n  send_status = CASE \n    WHEN retry_count >= max_retries - 1 THEN 'failed'\n    ELSE 'queued'\n  END,\n  failure_reason = '{{ $json.failure_reason }}',\n  retry_count = retry_count + 1,\n  scheduled_send_time = CASE\n    WHEN retry_count < max_retries - 1 THEN NOW() + INTERVAL '5 minutes'\n    ELSE scheduled_send_time\n  END\nWHERE id = '{{ $json.email_send_id }}';",
+        "options": {}
+      },
+      "id": "update_failure",
+      "name": "Update Failure",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.4,
+      "position": [2000, 420],
+      "credentials": {
+        "postgres": {
+          "id": "supabase_main",
+          "name": "Supabase PostgreSQL"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "UPDATE campaign_messages\nSET times_sent = times_sent + 1\nWHERE id = '{{ $('Add Tracking').first().json.message_id }}';",
+        "options": {}
+      },
+      "id": "update_message_stats",
+      "name": "Update Message Stats",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.4,
+      "position": [2220, 180],
+      "credentials": {
+        "postgres": {
+          "id": "supabase_main",
+          "name": "Supabase PostgreSQL"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "UPDATE nurture_campaigns nc\nSET emails_sent = emails_sent + 1\nFROM lead_campaign_enrollments lce\nWHERE lce.campaign_id = nc.id\n  AND lce.id = '{{ $('Add Tracking').first().json.enrollment_id }}';",
+        "options": {}
+      },
+      "id": "update_campaign_stats",
+      "name": "Update Campaign Stats",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.4,
+      "position": [2440, 180],
+      "credentials": {
+        "postgres": {
+          "id": "supabase_main",
+          "name": "Supabase PostgreSQL"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// ============================================\n// LOG BATCH SUMMARY\n// ============================================\n\nconst allResults = $input.all();\nconst successCount = allResults.filter(item => item.json.success).length;\nconst failureCount = allResults.length - successCount;\n\nconsole.log(`Sender batch complete: ${successCount} sent, ${failureCount} failed`);\n\nreturn {\n  json: {\n    success: true,\n    emails_sent: successCount,\n    emails_failed: failureCount,\n    timestamp: new Date().toISOString()\n  }\n};"
+      },
+      "id": "log_batch_summary",
+      "name": "Log Batch Summary",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [2660, 300]
+    },
+    {
+      "parameters": {
+        "jsCode": "// ============================================\n// ERROR HANDLER\n// ============================================\n\nconst error = $input.first().json.error || {};\nconst emailData = $('Add Tracking').first().json;\n\nconsole.error(`Send error for email ${emailData.id}:`, error);\n\n// Update email status to failed\nreturn {\n  json: {\n    email_send_id: emailData.id,\n    send_status: 'failed',\n    failure_reason: error.message || 'Unknown error',\n    retry_count: emailData.retry_count + 1\n  }\n};"
+      },
+      "id": "error_handler",
+      "name": "Error Handler",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1340, 480]
+    }
+  ],
+  "connections": {
+    "Every Minute": {
+      "main": [[{ "node": "Find Queued Emails", "type": "main", "index": 0 }]]
+    },
+    "Find Queued Emails": {
+      "main": [[{ "node": "Check Rate Limit", "type": "main", "index": 0 }]]
+    },
+    "Check Rate Limit": {
+      "main": [[{ "node": "Add Tracking", "type": "main", "index": 0 }]]
+    },
+    "Add Tracking": {
+      "main": [[{ "node": "Mark as Sending", "type": "main", "index": 0 }]]
+    },
+    "Mark as Sending": {
+      "main": [[{ "node": "Send via SendGrid", "type": "main", "index": 0 }]]
+    },
+    "Send via SendGrid": {
+      "main": [[{ "node": "Process Response", "type": "main", "index": 0 }]]
+    },
+    "Process Response": {
+      "main": [[{ "node": "Send Successful?", "type": "main", "index": 0 }]]
+    },
+    "Send Successful?": {
+      "main": [
+        [{ "node": "Update Success", "type": "main", "index": 0 }],
+        [{ "node": "Update Failure", "type": "main", "index": 0 }]
+      ]
+    },
+    "Update Success": {
+      "main": [[{ "node": "Update Message Stats", "type": "main", "index": 0 }]]
+    },
+    "Update Message Stats": {
+      "main": [[{ "node": "Update Campaign Stats", "type": "main", "index": 0 }]]
+    },
+    "Update Campaign Stats": {
+      "main": [[{ "node": "Log Batch Summary", "type": "main", "index": 0 }]]
+    },
+    "Update Failure": {
+      "main": [[{ "node": "Log Batch Summary", "type": "main", "index": 0 }]]
+    },
+    "Error Handler": {
+      "main": [[{ "node": "Update Failure", "type": "main", "index": 0 }]]
+    }
+  },
+  "pinData": {},
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "tags": ["nurture", "email", "sender"],
+  "triggerCount": 1,
+  "updatedAt": "2025-10-10T00:00:00.000Z",
+  "versionId": "1"
+}

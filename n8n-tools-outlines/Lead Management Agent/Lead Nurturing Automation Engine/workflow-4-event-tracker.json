@@ -1,0 +1,332 @@
+{
+  "name": "Lead Nurture - Event Tracker",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "email-events",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "id": "webhook_email_events",
+      "name": "Email Events Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 1,
+      "position": [240, 300],
+      "webhookId": "email-events"
+    },
+    {
+      "parameters": {
+        "jsCode": "// ============================================\n// PARSE SENDGRID WEBHOOK EVENT\n// ============================================\n\nconst events = $input.first().json;\n\n// SendGrid sends events as an array\nif (!Array.isArray(events)) {\n  console.error('Expected array of events from SendGrid');\n  return {\n    json: {\n      success: false,\n      error: 'Invalid event format',\n      code: 400\n    }\n  };\n}\n\nif (events.length === 0) {\n  return {\n    json: {\n      success: true,\n      events_processed: 0,\n      message: 'No events to process'\n    }\n  };\n}\n\nconsole.log(`Received ${events.length} email events from SendGrid`);\n\n// Map SendGrid events to our format\nconst mappedEvents = events.map(event => {\n  // Extract custom args that contain our IDs\n  const emailSendId = event.email_send_id || event.sg_message_id;\n  const organizationId = event.organization_id;\n  const trackingPixelId = event.tracking_pixel_id;\n  \n  // Create unique event hash for deduplication\n  const eventHash = require('crypto')\n    .createHash('sha256')\n    .update(`${emailSendId}_${event.event}_${event.timestamp}`)\n    .digest('hex');\n  \n  return {\n    event_type: event.event, // 'delivered', 'open', 'click', 'bounce', etc.\n    email_send_id: emailSendId,\n    organization_id: organizationId,\n    tracking_pixel_id: trackingPixelId,\n    event_timestamp: new Date(event.timestamp * 1000).toISOString(),\n    ip_address: event.ip,\n    user_agent: event.useragent,\n    clicked_url: event.url,\n    bounce_reason: event.reason,\n    bounce_code: event.status,\n    provider_event_id: event.sg_event_id,\n    provider_raw_data: event,\n    event_hash: eventHash\n  };\n});\n\nreturn mappedEvents.map(e => ({ json: e }));"
+      },
+      "id": "parse_events",
+      "name": "Parse SendGrid Events",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [460, 300]
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "-- Check if event already processed (deduplication)\nSELECT id FROM email_events\nWHERE event_hash = '{{ $json.event_hash }}'\nLIMIT 1;",
+        "options": {}
+      },
+      "id": "check_duplicate",
+      "name": "Check Duplicate",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.4,
+      "position": [680, 300],
+      "credentials": {
+        "postgres": {
+          "id": "supabase_main",
+          "name": "Supabase PostgreSQL"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// ============================================\n// FILTER OUT DUPLICATES\n// ============================================\n\nconst eventData = $('Parse SendGrid Events').item.json;\nconst duplicateCheck = $input.first().json;\n\nif (duplicateCheck && duplicateCheck.length > 0) {\n  console.log(`Duplicate event detected: ${eventData.event_hash}`);\n  return {\n    json: {\n      ...eventData,\n      is_duplicate: true,\n      skip: true\n    }\n  };\n}\n\nreturn {\n  json: {\n    ...eventData,\n    is_duplicate: false,\n    skip: false\n  }\n};"
+      },
+      "id": "filter_duplicates",
+      "name": "Filter Duplicates",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [900, 300]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "boolean": [
+            {
+              "value1": "={{ $json.skip }}",
+              "value2": false
+            }
+          ]
+        }
+      },
+      "id": "should_process",
+      "name": "Should Process?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 1,
+      "position": [1120, 300]
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "-- Find email_send record and associated lead\nSELECT \n  es.id as email_send_id,\n  es.organization_id,\n  es.lead_id,\n  es.enrollment_id,\n  es.message_id,\n  lce.campaign_id\nFROM email_sends es\nLEFT JOIN lead_campaign_enrollments lce ON lce.id = es.enrollment_id\nWHERE es.tracking_pixel_id = '{{ $json.tracking_pixel_id }}'\n   OR es.provider_message_id = '{{ $json.email_send_id }}'\nLIMIT 1;",
+        "options": {}
+      },
+      "id": "find_email_send",
+      "name": "Find Email Send",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.4,
+      "position": [1340, 420],
+      "credentials": {
+        "postgres": {
+          "id": "supabase_main",
+          "name": "Supabase PostgreSQL"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// ============================================\n// VALIDATE EMAIL SEND EXISTS\n// ============================================\n\nconst eventData = $('Filter Duplicates').first().json;\nconst emailSendResult = $input.first().json;\n\nif (!emailSendResult || emailSendResult.length === 0) {\n  console.error(`Email send not found for tracking ID: ${eventData.tracking_pixel_id}`);\n  return {\n    json: {\n      ...eventData,\n      error: 'Email send not found',\n      skip: true\n    }\n  };\n}\n\nconst emailSend = emailSendResult[0];\n\nreturn {\n  json: {\n    ...eventData,\n    ...emailSend\n  }\n};"
+      },
+      "id": "validate_email_send",
+      "name": "Validate Email Send",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1560, 420]
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "INSERT INTO email_events (\n  organization_id, email_send_id, lead_id, event_type,\n  event_timestamp, ip_address, user_agent, clicked_url,\n  bounce_reason, bounce_code, provider_event_id,\n  provider_raw_data, event_hash\n)\nVALUES (\n  '{{ $json.organization_id }}',\n  '{{ $json.email_send_id }}',\n  '{{ $json.lead_id }}',\n  '{{ $json.event_type }}',\n  '{{ $json.event_timestamp }}',\n  {{ $json.ip_address ? \"'\" + $json.ip_address + \"'\" : \"NULL\" }},\n  {{ $json.user_agent ? \"'\" + $json.user_agent + \"'\" : \"NULL\" }},\n  {{ $json.clicked_url ? \"'\" + $json.clicked_url + \"'\" : \"NULL\" }},\n  {{ $json.bounce_reason ? \"'\" + $json.bounce_reason + \"'\" : \"NULL\" }},\n  {{ $json.bounce_code ? \"'\" + $json.bounce_code + \"'\" : \"NULL\" }},\n  {{ $json.provider_event_id ? \"'\" + $json.provider_event_id + \"'\" : \"NULL\" }},\n  '{{ JSON.stringify($json.provider_raw_data) }}'::jsonb,\n  '{{ $json.event_hash }}'\n)\nRETURNING id;",
+        "options": {}
+      },
+      "id": "insert_event",
+      "name": "Insert Event",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.4,
+      "position": [1780, 420],
+      "credentials": {
+        "postgres": {
+          "id": "supabase_main",
+          "name": "Supabase PostgreSQL"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "leftValue": "={{ $json.event_type }}",
+                  "comparison": "equal",
+                  "rightValue": "open"
+                }
+              },
+              "renameOutput": true,
+              "outputKey": "open"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "leftValue": "={{ $json.event_type }}",
+                  "comparison": "equal",
+                  "rightValue": "click"
+                }
+              },
+              "renameOutput": true,
+              "outputKey": "click"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "leftValue": "={{ $json.event_type }}",
+                  "comparison": "equal",
+                  "rightValue": "bounce"
+                }
+              },
+              "renameOutput": true,
+              "outputKey": "bounce"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "leftValue": "={{ $json.event_type }}",
+                  "comparison": "equal",
+                  "rightValue": "unsubscribe"
+                }
+              },
+              "renameOutput": true,
+              "outputKey": "unsubscribe"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "route_by_event_type",
+      "name": "Route by Event Type",
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3,
+      "position": [2000, 420]
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "-- Update email_sends for open event\nUPDATE email_sends\nSET \n  opened_at = COALESCE(opened_at, '{{ $json.event_timestamp }}'),\n  open_count = open_count + 1\nWHERE id = '{{ $json.email_send_id }}';\n\n-- Update enrollment engagement\nUPDATE lead_campaign_enrollments\nSET \n  emails_opened = emails_opened + 1,\n  last_engagement_at = '{{ $json.event_timestamp }}'\nWHERE id = '{{ $json.enrollment_id }}';\n\n-- Update campaign stats\nUPDATE nurture_campaigns\nSET total_opens = total_opens + 1\nWHERE id = '{{ $json.campaign_id }}';\n\n-- Update message stats\nUPDATE campaign_messages\nSET \n  unique_opens = CASE \n    WHEN (SELECT opened_at FROM email_sends WHERE id = '{{ $json.email_send_id }}') IS NULL \n    THEN unique_opens + 1 \n    ELSE unique_opens \n  END,\n  open_rate = ROUND((unique_opens::decimal / NULLIF(times_sent, 0)::decimal) * 100, 2)\nWHERE id = '{{ $json.message_id }}';",
+        "options": {}
+      },
+      "id": "handle_open",
+      "name": "Handle Open",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.4,
+      "position": [2220, 240],
+      "credentials": {
+        "postgres": {
+          "id": "supabase_main",
+          "name": "Supabase PostgreSQL"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "-- Update email_sends for click event\nUPDATE email_sends\nSET \n  first_click_at = COALESCE(first_click_at, '{{ $json.event_timestamp }}'),\n  click_count = click_count + 1\nWHERE id = '{{ $json.email_send_id }}';\n\n-- Update enrollment engagement\nUPDATE lead_campaign_enrollments\nSET \n  emails_clicked = emails_clicked + 1,\n  last_engagement_at = '{{ $json.event_timestamp }}'\nWHERE id = '{{ $json.enrollment_id }}';\n\n-- Update campaign stats\nUPDATE nurture_campaigns\nSET total_clicks = total_clicks + 1\nWHERE id = '{{ $json.campaign_id }}';\n\n-- Update message stats\nUPDATE campaign_messages\nSET \n  unique_clicks = CASE \n    WHEN (SELECT first_click_at FROM email_sends WHERE id = '{{ $json.email_send_id }}') IS NULL \n    THEN unique_clicks + 1 \n    ELSE unique_clicks \n  END,\n  click_rate = ROUND((unique_clicks::decimal / NULLIF(times_sent, 0)::decimal) * 100, 2)\nWHERE id = '{{ $json.message_id }}';\n\n-- Increase lead score for clicking\nUPDATE leads\nSET score = LEAST(score + 5, 100)\nWHERE id = '{{ $json.lead_id }}';",
+        "options": {}
+      },
+      "id": "handle_click",
+      "name": "Handle Click",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.4,
+      "position": [2220, 360],
+      "credentials": {
+        "postgres": {
+          "id": "supabase_main",
+          "name": "Supabase PostgreSQL"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "-- Update email_sends for bounce\nUPDATE email_sends\nSET \n  send_status = 'bounced',\n  bounce_type = CASE \n    WHEN '{{ $json.bounce_code }}' LIKE '5%' THEN 'hard'\n    WHEN '{{ $json.bounce_code }}' LIKE '4%' THEN 'soft'\n    ELSE 'unknown'\n  END\nWHERE id = '{{ $json.email_send_id }}';\n\n-- Mark email as invalid for hard bounce\nUPDATE leads\nSET metadata = jsonb_set(\n  COALESCE(metadata, '{}'::jsonb),\n  '{email_invalid}',\n  'true'::jsonb\n)\nWHERE id = '{{ $json.lead_id }}'\n  AND '{{ $json.bounce_code }}' LIKE '5%';",
+        "options": {}
+      },
+      "id": "handle_bounce",
+      "name": "Handle Bounce",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.4,
+      "position": [2220, 480],
+      "credentials": {
+        "postgres": {
+          "id": "supabase_main",
+          "name": "Supabase PostgreSQL"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "-- Handle unsubscribe\n-- Update preferences\nUPDATE lead_preferences\nSET \n  email_subscribed = false,\n  unsubscribed_at = '{{ $json.event_timestamp }}',\n  unsubscribe_reason = 'User unsubscribed via email link'\nWHERE lead_id = '{{ $json.lead_id }}';\n\n-- Stop all active campaigns for this lead\nUPDATE lead_campaign_enrollments\nSET \n  status = 'unsubscribed',\n  completed_at = '{{ $json.event_timestamp }}',\n  completion_reason = 'unsubscribed'\nWHERE lead_id = '{{ $json.lead_id }}'\n  AND status = 'active';\n\n-- Cancel queued emails\nUPDATE email_sends\nSET \n  send_status = 'failed',\n  failure_reason = 'Lead unsubscribed'\nWHERE lead_id = '{{ $json.lead_id }}'\n  AND send_status = 'queued';",
+        "options": {}
+      },
+      "id": "handle_unsubscribe",
+      "name": "Handle Unsubscribe",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.4,
+      "position": [2220, 600],
+      "credentials": {
+        "postgres": {
+          "id": "supabase_main",
+          "name": "Supabase PostgreSQL"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// ============================================\n// AGGREGATE EVENT PROCESSING RESULTS\n// ============================================\n\nconst allItems = $input.all();\nconst processedCount = allItems.filter(item => !item.json.skip).length;\nconst duplicateCount = allItems.filter(item => item.json.is_duplicate).length;\n\nconsole.log(`Event processing complete: ${processedCount} processed, ${duplicateCount} duplicates`);\n\nreturn {\n  json: {\n    success: true,\n    events_processed: processedCount,\n    events_skipped: duplicateCount,\n    timestamp: new Date().toISOString()\n  }\n};"
+      },
+      "id": "aggregate_results",
+      "name": "Aggregate Results",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [2440, 420]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ $json }}"
+      },
+      "id": "webhook_response",
+      "name": "Webhook Response",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1,
+      "position": [2660, 420]
+    }
+  ],
+  "connections": {
+    "Email Events Webhook": {
+      "main": [[{ "node": "Parse SendGrid Events", "type": "main", "index": 0 }]]
+    },
+    "Parse SendGrid Events": {
+      "main": [[{ "node": "Check Duplicate", "type": "main", "index": 0 }]]
+    },
+    "Check Duplicate": {
+      "main": [[{ "node": "Filter Duplicates", "type": "main", "index": 0 }]]
+    },
+    "Filter Duplicates": {
+      "main": [[{ "node": "Should Process?", "type": "main", "index": 0 }]]
+    },
+    "Should Process?": {
+      "main": [
+        [{ "node": "Aggregate Results", "type": "main", "index": 0 }],
+        [{ "node": "Find Email Send", "type": "main", "index": 0 }]
+      ]
+    },
+    "Find Email Send": {
+      "main": [[{ "node": "Validate Email Send", "type": "main", "index": 0 }]]
+    },
+    "Validate Email Send": {
+      "main": [[{ "node": "Insert Event", "type": "main", "index": 0 }]]
+    },
+    "Insert Event": {
+      "main": [[{ "node": "Route by Event Type", "type": "main", "index": 0 }]]
+    },
+    "Route by Event Type": {
+      "main": [
+        [{ "node": "Handle Open", "type": "main", "index": 0 }],
+        [{ "node": "Handle Click", "type": "main", "index": 0 }],
+        [{ "node": "Handle Bounce", "type": "main", "index": 0 }],
+        [{ "node": "Handle Unsubscribe", "type": "main", "index": 0 }]
+      ]
+    },
+    "Handle Open": {
+      "main": [[{ "node": "Aggregate Results", "type": "main", "index": 0 }]]
+    },
+    "Handle Click": {
+      "main": [[{ "node": "Aggregate Results", "type": "main", "index": 0 }]]
+    },
+    "Handle Bounce": {
+      "main": [[{ "node": "Aggregate Results", "type": "main", "index": 0 }]]
+    },
+    "Handle Unsubscribe": {
+      "main": [[{ "node": "Aggregate Results", "type": "main", "index": 0 }]]
+    },
+    "Aggregate Results": {
+      "main": [[{ "node": "Webhook Response", "type": "main", "index": 0 }]]
+    }
+  },
+  "pinData": {},
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "tags": ["nurture", "events", "tracking"],
+  "triggerCount": 1,
+  "updatedAt": "2025-10-10T00:00:00.000Z",
+  "versionId": "1"
+}

@@ -1,0 +1,1 @@
+Make sure to add survey mechanism or feedback tool for whenever people unsubsribe from newsletter or emails -> This was one of Tim's wants

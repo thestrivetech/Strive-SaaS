@@ -1,0 +1,336 @@
+{
+  "name": "Lead Nurture - Message Scheduler",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "minutes",
+              "minutesInterval": 5
+            }
+          ]
+        }
+      },
+      "id": "schedule_trigger",
+      "name": "Every 5 Minutes",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.1,
+      "position": [240, 300]
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT \n  lce.id as enrollment_id,\n  lce.organization_id,\n  lce.lead_id,\n  lce.campaign_id,\n  lce.variant_assigned,\n  lce.current_sequence_order,\n  lce.emails_sent,\n  l.name as lead_name,\n  l.email as lead_email,\n  l.timezone as lead_timezone,\n  nc.name as campaign_name,\n  nc.frequency_cap,\n  nc.time_window\nFROM lead_campaign_enrollments lce\nJOIN leads l ON l.id = lce.lead_id\nJOIN nurture_campaigns nc ON nc.id = lce.campaign_id\nWHERE lce.status = 'active'\n  AND lce.next_send_at <= NOW()\n  AND lce.next_send_at IS NOT NULL\nORDER BY lce.next_send_at ASC\nLIMIT 1000;",
+        "options": {}
+      },
+      "id": "find_due_enrollments",
+      "name": "Find Due Enrollments",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.4,
+      "position": [460, 300],
+      "credentials": {
+        "postgres": {
+          "id": "supabase_main",
+          "name": "Supabase PostgreSQL"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// ============================================\n// CHECK IF ANY ENROLLMENTS FOUND\n// ============================================\n\nconst enrollments = $input.first().json;\n\nif (!enrollments || enrollments.length === 0) {\n  console.log('No enrollments due for sending');\n  return {\n    json: {\n      enrollments_processed: 0,\n      message: 'No enrollments due'\n    }\n  };\n}\n\nconsole.log(`Found ${enrollments.length} enrollments due for processing`);\n\nreturn enrollments.map(e => ({ json: e }));"
+      },
+      "id": "check_enrollments",
+      "name": "Check Enrollments",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [680, 300]
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "-- Get the current sequence for this enrollment\nSELECT \n  cs.id as sequence_id,\n  cs.name as sequence_name,\n  cs.sequence_order,\n  cs.delay_value,\n  cs.delay_unit,\n  cs.send_time_preference,\n  cs.specific_send_time\nFROM campaign_sequences cs\nWHERE cs.campaign_id = '{{ $json.campaign_id }}'\n  AND cs.sequence_order = {{ $json.current_sequence_order }}\nLIMIT 1;",
+        "options": {}
+      },
+      "id": "load_sequence",
+      "name": "Load Sequence",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.4,
+      "position": [900, 300],
+      "credentials": {
+        "postgres": {
+          "id": "supabase_main",
+          "name": "Supabase PostgreSQL"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "-- Get the message template for this sequence and variant\nSELECT \n  cm.id as message_id,\n  cm.name as message_name,\n  cm.variant,\n  cm.subject_line,\n  cm.body_html,\n  cm.body_text,\n  cm.primary_cta_text,\n  cm.primary_cta_url\nFROM campaign_messages cm\nWHERE cm.sequence_id = '{{ $json[0].sequence_id }}'\n  AND cm.variant = '{{ $('Check Enrollments').item.json.variant_assigned }}'\n  AND cm.status = 'active'\nLIMIT 1;",
+        "options": {}
+      },
+      "id": "load_message",
+      "name": "Load Message Template",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.4,
+      "position": [1120, 300],
+      "credentials": {
+        "postgres": {
+          "id": "supabase_main",
+          "name": "Supabase PostgreSQL"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// ============================================\n// CHECK MESSAGE EXISTS\n// ============================================\n\nconst enrollment = $('Check Enrollments').item.json;\nconst sequence = $('Load Sequence').first().json[0];\nconst message = $input.first().json;\n\nif (!message || message.length === 0) {\n  console.error(`No message found for sequence ${sequence?.sequence_id}, variant ${enrollment.variant_assigned}`);\n  return {\n    json: {\n      skip: true,\n      reason: 'No message template found',\n      enrollment_id: enrollment.enrollment_id\n    }\n  };\n}\n\nconst messageData = message[0];\n\nreturn {\n  json: {\n    ...enrollment,\n    sequence: sequence,\n    message: messageData,\n    skip: false\n  }\n};"
+      },
+      "id": "validate_message",
+      "name": "Validate Message",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1340, 300]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "boolean": [
+            {
+              "value1": "={{ $json.skip }}",
+              "value2": true
+            }
+          ]
+        }
+      },
+      "id": "should_skip",
+      "name": "Should Skip?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 1,
+      "position": [1560, 300]
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "-- Check frequency cap (emails sent in last 7 days)\nSELECT COUNT(*) as recent_sends\nFROM email_sends\nWHERE lead_id = '{{ $json.lead_id }}'\n  AND organization_id = '{{ $json.organization_id }}'\n  AND created_at >= NOW() - INTERVAL '7 days'\n  AND send_status IN ('sent', 'sending');",
+        "options": {}
+      },
+      "id": "check_frequency",
+      "name": "Check Frequency Cap",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.4,
+      "position": [1780, 420],
+      "credentials": {
+        "postgres": {
+          "id": "supabase_main",
+          "name": "Supabase PostgreSQL"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// ============================================\n// VALIDATE SEND ELIGIBILITY\n// ============================================\n\nconst enrollmentData = $('Validate Message').first().json;\nconst frequencyCheck = $input.first().json[0];\n\nconst frequencyCap = enrollmentData.frequency_cap || { max_emails_per_week: 5 };\nconst recentSends = parseInt(frequencyCheck.recent_sends);\n\nif (recentSends >= frequencyCap.max_emails_per_week) {\n  console.log(`Lead ${enrollmentData.lead_id} exceeded frequency cap`);\n  return {\n    json: {\n      ...enrollmentData,\n      skip: true,\n      reason: 'Frequency cap exceeded',\n      recent_sends: recentSends\n    }\n  };\n}\n\n// Check if within allowed time window\nconst timeWindow = enrollmentData.time_window || { start_hour: 9, end_hour: 17 };\nconst currentHour = new Date().getHours();\n\nif (currentHour < timeWindow.start_hour || currentHour >= timeWindow.end_hour) {\n  console.log(`Outside time window for lead ${enrollmentData.lead_id}`);\n  // Reschedule for next allowed time\n  const nextDay = new Date();\n  nextDay.setDate(nextDay.getDate() + 1);\n  nextDay.setHours(timeWindow.start_hour, 0, 0, 0);\n  \n  return {\n    json: {\n      ...enrollmentData,\n      skip: true,\n      reason: 'Outside time window',\n      reschedule_for: nextDay.toISOString()\n    }\n  };\n}\n\nreturn {\n  json: {\n    ...enrollmentData,\n    eligible_to_send: true\n  }\n};"
+      },
+      "id": "validate_eligibility",
+      "name": "Validate Eligibility",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [2000, 420]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "boolean": [
+            {
+              "value1": "={{ $json.skip }}",
+              "value2": true
+            }
+          ]
+        }
+      },
+      "id": "is_eligible",
+      "name": "Is Eligible?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 1,
+      "position": [2220, 420]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $env.N8N_WEBHOOK_BASE_URL }}/webhook/nurture/personalize",
+        "authentication": "none",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "lead_id",
+              "value": "={{ $json.lead_id }}"
+            },
+            {
+              "name": "organization_id",
+              "value": "={{ $json.organization_id }}"
+            },
+            {
+              "name": "subject_line",
+              "value": "={{ $json.message.subject_line }}"
+            },
+            {
+              "name": "body_html",
+              "value": "={{ $json.message.body_html }}"
+            },
+            {
+              "name": "lead_name",
+              "value": "={{ $json.lead_name }}"
+            },
+            {
+              "name": "lead_email",
+              "value": "={{ $json.lead_email }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "personalize_content",
+      "name": "Personalize Content",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [2440, 540]
+    },
+    {
+      "parameters": {
+        "jsCode": "// ============================================\n// CALCULATE OPTIMAL SEND TIME\n// ============================================\n\nconst enrollmentData = $('Validate Eligibility').first().json;\nconst personalizedContent = $input.first().json;\n\nconst timezone = enrollmentData.lead_timezone || 'America/Chicago';\nconst sendPreference = enrollmentData.sequence?.send_time_preference || 'optimal';\n\nlet scheduledSendTime;\n\nif (sendPreference === 'specific' && enrollmentData.sequence.specific_send_time) {\n  // Use specific time\n  const now = new Date();\n  const [hours, minutes] = enrollmentData.sequence.specific_send_time.split(':');\n  scheduledSendTime = new Date(now.getFullYear(), now.getMonth(), now.getDate(), hours, minutes);\n  \n  // If time has passed today, schedule for tomorrow\n  if (scheduledSendTime < now) {\n    scheduledSendTime.setDate(scheduledSendTime.getDate() + 1);\n  }\n} else if (sendPreference === 'morning') {\n  // Schedule for 9 AM\n  scheduledSendTime = new Date();\n  scheduledSendTime.setHours(9, 0, 0, 0);\n  if (scheduledSendTime < new Date()) {\n    scheduledSendTime.setDate(scheduledSendTime.getDate() + 1);\n  }\n} else if (sendPreference === 'afternoon') {\n  // Schedule for 2 PM\n  scheduledSendTime = new Date();\n  scheduledSendTime.setHours(14, 0, 0, 0);\n  if (scheduledSendTime < new Date()) {\n    scheduledSendTime.setDate(scheduledSendTime.getDate() + 1);\n  }\n} else {\n  // Default optimal time: 10 AM local time\n  scheduledSendTime = new Date();\n  scheduledSendTime.setHours(10, 0, 0, 0);\n  if (scheduledSendTime < new Date()) {\n    scheduledSendTime.setDate(scheduledSendTime.getDate() + 1);\n  }\n}\n\n// Generate tracking pixel ID\nconst trackingPixelId = `${enrollmentData.enrollment_id}_${Date.now()}`;\n\nreturn {\n  json: {\n    organization_id: enrollmentData.organization_id,\n    lead_id: enrollmentData.lead_id,\n    enrollment_id: enrollmentData.enrollment_id,\n    message_id: enrollmentData.message.message_id,\n    recipient_email: enrollmentData.lead_email,\n    recipient_name: enrollmentData.lead_name,\n    subject_line: personalizedContent.subject_line,\n    body_html: personalizedContent.body_html,\n    scheduled_send_time: scheduledSendTime.toISOString(),\n    tracking_pixel_id: trackingPixelId,\n    send_status: 'queued',\n    provider: 'sendgrid'\n  }\n};"
+      },
+      "id": "calculate_send_time",
+      "name": "Calculate Send Time",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [2660, 540]
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "INSERT INTO email_sends (\n  organization_id, lead_id, enrollment_id, message_id,\n  recipient_email, recipient_name, subject_line, body_html,\n  scheduled_send_time, tracking_pixel_id, send_status, provider\n)\nVALUES (\n  '{{ $json.organization_id }}',\n  '{{ $json.lead_id }}',\n  '{{ $json.enrollment_id }}',\n  '{{ $json.message_id }}',\n  '{{ $json.recipient_email }}',\n  '{{ $json.recipient_name }}',\n  '{{ $json.subject_line }}',\n  '{{ $json.body_html }}',\n  '{{ $json.scheduled_send_time }}',\n  '{{ $json.tracking_pixel_id }}',\n  'queued',\n  '{{ $json.provider }}'\n)\nRETURNING id;",
+        "options": {}
+      },
+      "id": "create_email_send",
+      "name": "Create Email Send",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.4,
+      "position": [2880, 540],
+      "credentials": {
+        "postgres": {
+          "id": "supabase_main",
+          "name": "Supabase PostgreSQL"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "-- Update enrollment with next sequence\nWITH next_sequence AS (\n  SELECT \n    id, sequence_order, delay_value, delay_unit\n  FROM campaign_sequences\n  WHERE campaign_id = '{{ $('Validate Eligibility').first().json.campaign_id }}'\n    AND sequence_order = {{ $('Validate Eligibility').first().json.current_sequence_order }} + 1\n  LIMIT 1\n)\nUPDATE lead_campaign_enrollments\nSET \n  current_sequence_order = COALESCE((SELECT sequence_order FROM next_sequence), current_sequence_order),\n  next_send_at = CASE \n    WHEN EXISTS (SELECT 1 FROM next_sequence) THEN\n      calculate_next_send_time(\n        (SELECT delay_value FROM next_sequence),\n        (SELECT delay_unit FROM next_sequence),\n        NOW()\n      )\n    ELSE NULL\n  END,\n  emails_sent = emails_sent + 1,\n  status = CASE \n    WHEN NOT EXISTS (SELECT 1 FROM next_sequence) THEN 'completed'\n    ELSE 'active'\n  END,\n  completed_at = CASE \n    WHEN NOT EXISTS (SELECT 1 FROM next_sequence) THEN NOW()\n    ELSE completed_at\n  END,\n  completion_reason = CASE\n    WHEN NOT EXISTS (SELECT 1 FROM next_sequence) THEN 'finished_sequence'\n    ELSE completion_reason\n  END\nWHERE id = '{{ $('Validate Eligibility').first().json.enrollment_id }}';",
+        "options": {}
+      },
+      "id": "update_enrollment",
+      "name": "Update Enrollment",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.4,
+      "position": [3100, 540],
+      "credentials": {
+        "postgres": {
+          "id": "supabase_main",
+          "name": "Supabase PostgreSQL"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "-- Update enrollment if skipped (reschedule)\nUPDATE lead_campaign_enrollments\nSET \n  next_send_at = COALESCE(\n    '{{ $json.reschedule_for }}'::timestamp,\n    next_send_at + INTERVAL '1 hour'\n  )\nWHERE id = '{{ $json.enrollment_id }}';",
+        "options": {}
+      },
+      "id": "reschedule_enrollment",
+      "name": "Reschedule Enrollment",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.4,
+      "position": [2440, 300],
+      "credentials": {
+        "postgres": {
+          "id": "supabase_main",
+          "name": "Supabase PostgreSQL"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// ============================================\n// LOG EXECUTION SUMMARY\n// ============================================\n\nconst allItems = $input.all();\nconst processed = allItems.length;\n\nconsole.log(`Scheduler run complete: ${processed} enrollments processed`);\n\nreturn {\n  json: {\n    success: true,\n    enrollments_processed: processed,\n    timestamp: new Date().toISOString()\n  }\n};"
+      },
+      "id": "log_summary",
+      "name": "Log Summary",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [3320, 540]
+    }
+  ],
+  "connections": {
+    "Every 5 Minutes": {
+      "main": [[{ "node": "Find Due Enrollments", "type": "main", "index": 0 }]]
+    },
+    "Find Due Enrollments": {
+      "main": [[{ "node": "Check Enrollments", "type": "main", "index": 0 }]]
+    },
+    "Check Enrollments": {
+      "main": [[{ "node": "Load Sequence", "type": "main", "index": 0 }]]
+    },
+    "Load Sequence": {
+      "main": [[{ "node": "Load Message Template", "type": "main", "index": 0 }]]
+    },
+    "Load Message Template": {
+      "main": [[{ "node": "Validate Message", "type": "main", "index": 0 }]]
+    },
+    "Validate Message": {
+      "main": [[{ "node": "Should Skip?", "type": "main", "index": 0 }]]
+    },
+    "Should Skip?": {
+      "main": [
+        [{ "node": "Reschedule Enrollment", "type": "main", "index": 0 }],
+        [{ "node": "Check Frequency Cap", "type": "main", "index": 0 }]
+      ]
+    },
+    "Check Frequency Cap": {
+      "main": [[{ "node": "Validate Eligibility", "type": "main", "index": 0 }]]
+    },
+    "Validate Eligibility": {
+      "main": [[{ "node": "Is Eligible?", "type": "main", "index": 0 }]]
+    },
+    "Is Eligible?": {
+      "main": [
+        [{ "node": "Reschedule Enrollment", "type": "main", "index": 0 }],
+        [{ "node": "Personalize Content", "type": "main", "index": 0 }]
+      ]
+    },
+    "Personalize Content": {
+      "main": [[{ "node": "Calculate Send Time", "type": "main", "index": 0 }]]
+    },
+    "Calculate Send Time": {
+      "main": [[{ "node": "Create Email Send", "type": "main", "index": 0 }]]
+    },
+    "Create Email Send": {
+      "main": [[{ "node": "Update Enrollment", "type": "main", "index": 0 }]]
+    },
+    "Update Enrollment": {
+      "main": [[{ "node": "Log Summary", "type": "main", "index": 0 }]]
+    },
+    "Reschedule Enrollment": {
+      "main": [[{ "node": "Log Summary", "type": "main", "index": 0 }]]
+    }
+  },
+  "pinData": {},
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "tags": ["nurture", "scheduler", "automation"],
+  "triggerCount": 1,
+  "updatedAt": "2025-10-10T00:00:00.000Z",
+  "versionId": "1"
+}

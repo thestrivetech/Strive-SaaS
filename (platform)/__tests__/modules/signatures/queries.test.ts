@@ -4,7 +4,7 @@ import {
   getPendingSignatures,
   getSignatureById,
   getSignatureStats,
-} from '@/lib/modules/transactions/signatures/queries';
+} from '@/lib/modules/workspace/signatures/queries';
 import { getCurrentUser } from '@/lib/auth/auth-helpers';
 import { prisma } from '@/lib/database/prisma';
 

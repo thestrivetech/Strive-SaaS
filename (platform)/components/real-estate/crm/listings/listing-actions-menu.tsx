@@ -23,8 +23,8 @@ import {
 } from '@/components/ui/alert-dialog';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/use-toast';
-import { deleteListing, updateListingStatus } from '@/lib/modules/transactions/listings';
-import type { ListingWithAssignee } from '@/lib/modules/transactions/listings';
+import { deleteListing, updateListingStatus } from '@/lib/modules/workspace/listings';
+import type { ListingWithAssignee } from '@/lib/modules/workspace/listings';
 
 interface ListingActionsMenuProps {
   listing: ListingWithAssignee;

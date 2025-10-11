@@ -128,13 +128,13 @@ export function canModifyLoop(
 }
 
 /**
- * Check if user can access Transaction Management module
+ * Check if user can access Workspace module
  * Requires GROWTH tier or higher
  *
  * @param user - User with subscription tier
  * @returns True if user has required subscription tier
  */
-export function canAccessTransactionModule(user: UserWithRole): boolean {
+export function canAccessWorkspaceModule(user: UserWithRole): boolean {
   // Check dual-role RBAC first
   if (!hasTransactionPermission(user, TRANSACTION_PERMISSIONS.VIEW_LOOPS)) {
     return false;
@@ -144,6 +144,9 @@ export function canAccessTransactionModule(user: UserWithRole): boolean {
   const allowedTiers = ['GROWTH', 'ELITE', 'ENTERPRISE'];
   return allowedTiers.includes(user.subscription_tier);
 }
+
+// Alias for backward compatibility
+export const canAccessTransactionModule = canAccessWorkspaceModule;
 
 /**
  * Throw error if user cannot access transaction module

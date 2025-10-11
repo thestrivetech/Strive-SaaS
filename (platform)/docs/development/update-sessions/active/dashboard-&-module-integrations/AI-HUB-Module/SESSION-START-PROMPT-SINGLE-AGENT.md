@@ -9,7 +9,7 @@ Use this prompt at the beginning of each session. Replace `{SESSION_NUMBER}` wit
 ## 📋 SESSION START PROMPT
 
 ```
-I'm starting Session {7} of the AI-HUB Module integration.
+I'm starting Session {8} of the AI-HUB Module integration.
 
 ## STEP 1: READ ESSENTIAL DOCUMENTATION
 

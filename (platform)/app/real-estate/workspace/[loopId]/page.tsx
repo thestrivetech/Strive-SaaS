@@ -1,6 +1,6 @@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Badge } from '@/components/ui/badge';
-import { getLoopById } from '@/lib/modules/transactions';
+import { getLoopById } from '@/lib/modules/workspace';
 import { LoopOverview } from '@/components/real-estate/workspace/loop-overview';
 import { DocumentList } from '@/components/real-estate/workspace/document-list';
 import { PartyList } from '@/components/real-estate/workspace/party-list';

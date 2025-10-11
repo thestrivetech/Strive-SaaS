@@ -65,7 +65,7 @@ export async function createLoop(input: CreateLoopInput) {
   });
 
   // Revalidate cache
-  revalidatePath('/transactions');
+  revalidatePath('/real-estate/workspace');
 
   return { success: true, loop };
 }
@@ -145,8 +145,8 @@ export async function updateLoop(loopId: string, input: UpdateLoopInput) {
   });
 
   // Revalidate cache
-  revalidatePath('/transactions');
-  revalidatePath(`/transactions/${loopId}`);
+  revalidatePath('/real-estate/workspace');
+  revalidatePath(`/real-estate/workspace/${loopId}`);
 
   return { success: true, loop: updatedLoop };
 }
@@ -205,7 +205,7 @@ export async function deleteLoop(loopId: string) {
   });
 
   // Revalidate cache
-  revalidatePath('/transactions');
+  revalidatePath('/real-estate/workspace');
 
   return { success: true };
 }
@@ -254,7 +254,7 @@ export async function updateLoopProgress(loopId: string, progress: number) {
     data: { progress },
   });
 
-  revalidatePath(`/transactions/${loopId}`);
+  revalidatePath(`/real-estate/workspace/${loopId}`);
 
   return { success: true, progress: updated.progress };
 }

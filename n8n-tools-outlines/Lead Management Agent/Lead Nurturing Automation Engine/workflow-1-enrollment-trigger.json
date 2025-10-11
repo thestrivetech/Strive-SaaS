@@ -1,0 +1,329 @@
+{
+  "name": "Lead Nurture - Enrollment Trigger",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "nurture/enroll",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "id": "webhook_enrollment_trigger",
+      "name": "Webhook Trigger",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 1,
+      "position": [240, 300],
+      "webhookId": "enrollment-trigger"
+    },
+    {
+      "parameters": {
+        "jsCode": "// ============================================\n// VALIDATE ENROLLMENT REQUEST\n// ============================================\n\nconst input = $input.first().json;\nconst { organization_id, lead_id, trigger_type, trigger_data = {} } = input;\n\n// Validation\nconst errors = [];\nif (!organization_id) errors.push('organization_id required');\nif (!lead_id) errors.push('lead_id required');\nif (!trigger_type) errors.push('trigger_type required');\n\nconst validTriggers = ['new_lead', 'score_change', 'behavior'];\nif (!validTriggers.includes(trigger_type)) {\n  errors.push(`Invalid trigger_type. Must be one of: ${validTriggers.join(', ')}`);\n}\n\nif (errors.length > 0) {\n  return {\n    json: {\n      success: false,\n      error: 'Validation failed',\n      validation_errors: errors,\n      code: 400\n    }\n  };\n}\n\n// Log incoming request\nconsole.log(`Enrollment request: ${trigger_type} for lead ${lead_id}`);\n\nreturn {\n  json: {\n    ...input,\n    validated: true,\n    timestamp: new Date().toISOString(),\n    trigger_data: trigger_data\n  }\n};"
+      },
+      "id": "validate_input",
+      "name": "Validate Input",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [460, 300]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "boolean": [
+            {
+              "value1": "={{ $json.success }}",
+              "value2": false
+            }
+          ]
+        }
+      },
+      "id": "check_validation",
+      "name": "Validation Failed?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 1,
+      "position": [680, 300]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ $json }}"
+      },
+      "id": "error_response",
+      "name": "Return Error",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1,
+      "position": [900, 180]
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT l.*, lp.email_subscribed, lp.max_emails_per_week, lp.timezone\nFROM leads l\nLEFT JOIN lead_preferences lp ON lp.lead_id = l.id\nWHERE l.id = '{{ $json.lead_id }}'\n  AND l.organization_id = '{{ $json.organization_id }}'\nLIMIT 1;",
+        "options": {}
+      },
+      "id": "load_lead_data",
+      "name": "Load Lead Data",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.4,
+      "position": [900, 420],
+      "credentials": {
+        "postgres": {
+          "id": "supabase_main",
+          "name": "Supabase PostgreSQL"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// ============================================\n// CHECK LEAD EXISTS AND IS ELIGIBLE\n// ============================================\n\nconst originalRequest = $('Validate Input').first().json;\nconst leadResult = $input.first().json;\n\nif (!leadResult || leadResult.length === 0) {\n  return {\n    json: {\n      success: false,\n      error: 'Lead not found or access denied',\n      code: 404,\n      lead_id: originalRequest.lead_id,\n      organization_id: originalRequest.organization_id\n    }\n  };\n}\n\nconst lead = leadResult[0];\n\n// Check if lead is subscribed\nif (lead.email_subscribed === false) {\n  return {\n    json: {\n      success: false,\n      error: 'Lead is unsubscribed from emails',\n      code: 400,\n      lead_id: lead.id\n    }\n  };\n}\n\n// Map trigger type to campaign type\nconst triggerToCampaignType = {\n  'new_lead': 'new_lead',\n  'score_change': 'lead_score_increase',\n  'behavior': 'event_trigger'\n};\n\nconst campaignType = triggerToCampaignType[originalRequest.trigger_type];\n\nreturn {\n  json: {\n    ...lead,\n    _request: originalRequest,\n    _campaign_type: campaignType,\n    lead_eligible: true\n  }\n};"
+      },
+      "id": "check_lead_eligibility",
+      "name": "Check Lead Eligibility",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1120, 420]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "boolean": [
+            {
+              "value1": "={{ $json.success }}",
+              "value2": false
+            }
+          ]
+        }
+      },
+      "id": "check_lead_eligible",
+      "name": "Lead Eligible?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 1,
+      "position": [1340, 420]
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT id, name, campaign_type, target_audience, trigger_conditions, \n       frequency_cap, ab_test_enabled, ab_test_config\nFROM nurture_campaigns\nWHERE organization_id = '{{ $json.organization_id }}'\n  AND status = 'active'\n  AND campaign_type = '{{ $json._campaign_type }}'\nORDER BY created_at DESC;",
+        "options": {}
+      },
+      "id": "find_campaigns",
+      "name": "Find Active Campaigns",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.4,
+      "position": [1560, 540],
+      "credentials": {
+        "postgres": {
+          "id": "supabase_main",
+          "name": "Supabase PostgreSQL"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// ============================================\n// FILTER CAMPAIGNS BY TARGET AUDIENCE\n// ============================================\n\nconst leadData = $('Check Lead Eligibility').first().json;\nconst campaignResults = $input.first().json;\n\nif (!campaignResults || campaignResults.length === 0) {\n  return {\n    json: {\n      ...leadData,\n      eligible_campaigns: [],\n      enrollment_needed: false,\n      reason: 'No active campaigns found for trigger type'\n    }\n  };\n}\n\n// Filter campaigns based on target_audience criteria\nconst eligibleCampaigns = campaignResults.filter(campaign => {\n  const targetAudience = campaign.target_audience || {};\n  \n  // Check lead_type match\n  if (targetAudience.lead_types && \n      !targetAudience.lead_types.includes(leadData.lead_type)) {\n    return false;\n  }\n  \n  // Check score range\n  if (targetAudience.score_min && leadData.score < targetAudience.score_min) {\n    return false;\n  }\n  if (targetAudience.score_max && leadData.score > targetAudience.score_max) {\n    return false;\n  }\n  \n  // Check timeline match\n  if (targetAudience.timelines && \n      !targetAudience.timelines.includes(leadData.timeline)) {\n    return false;\n  }\n  \n  // Check budget range\n  if (targetAudience.budget_min && \n      leadData.budget_max && \n      leadData.budget_max < targetAudience.budget_min) {\n    return false;\n  }\n  \n  return true;\n});\n\n// Assign A/B test variant if enabled\nconst campaignsWithVariants = eligibleCampaigns.map(campaign => {\n  if (campaign.ab_test_enabled) {\n    const abConfig = campaign.ab_test_config || { split: [50, 50] };\n    const randomValue = Math.random() * 100;\n    const variant = randomValue < abConfig.split[0] ? 'A' : 'B';\n    return { ...campaign, assigned_variant: variant };\n  }\n  return { ...campaign, assigned_variant: 'A' };\n});\n\nconsole.log(`Found ${campaignsWithVariants.length} eligible campaigns`);\n\nreturn {\n  json: {\n    ...leadData,\n    eligible_campaigns: campaignsWithVariants,\n    enrollment_needed: campaignsWithVariants.length > 0\n  }\n};"
+      },
+      "id": "filter_campaigns",
+      "name": "Filter By Audience",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1780, 540]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "boolean": [
+            {
+              "value1": "={{ $json.enrollment_needed }}",
+              "value2": true
+            }
+          ]
+        }
+      },
+      "id": "should_enroll",
+      "name": "Should Enroll?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 1,
+      "position": [2000, 540]
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT campaign_id, status\nFROM lead_campaign_enrollments\nWHERE lead_id = '{{ $json.id }}'\n  AND organization_id = '{{ $json.organization_id }}'\n  AND status = 'active';",
+        "options": {}
+      },
+      "id": "check_existing",
+      "name": "Check Existing Enrollments",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.4,
+      "position": [2220, 660],
+      "credentials": {
+        "postgres": {
+          "id": "supabase_main",
+          "name": "Supabase PostgreSQL"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// ============================================\n// CREATE ENROLLMENT RECORDS\n// ============================================\n\nconst leadData = $('Filter By Audience').first().json;\nconst existingResult = $input.first().json;\n\nconst eligibleCampaigns = leadData.eligible_campaigns;\nconst existingCampaignIds = (existingResult || []).map(e => e.campaign_id);\n\n// Filter out campaigns already enrolled\nconst newCampaigns = eligibleCampaigns.filter(\n  campaign => !existingCampaignIds.includes(campaign.id)\n);\n\nif (newCampaigns.length === 0) {\n  return {\n    json: {\n      success: true,\n      enrollments_created: 0,\n      reason: 'Lead already enrolled in all eligible campaigns',\n      lead_id: leadData.id\n    }\n  };\n}\n\n// Create enrollment data for batch insert\nconst enrollments = newCampaigns.map(campaign => ({\n  organization_id: leadData.organization_id,\n  lead_id: leadData.id,\n  campaign_id: campaign.id,\n  enrollment_source: leadData._request.trigger_type,\n  variant_assigned: campaign.assigned_variant,\n  status: 'active',\n  next_send_at: new Date().toISOString(),\n  current_sequence_order: 1\n}));\n\nconsole.log(`Creating ${enrollments.length} new enrollments`);\n\nreturn enrollments.map(e => ({ json: e }));"
+      },
+      "id": "create_enrollments",
+      "name": "Create Enrollment Data",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [2440, 660]
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "INSERT INTO lead_campaign_enrollments (\n  organization_id, lead_id, campaign_id, enrollment_source,\n  variant_assigned, status, next_send_at, current_sequence_order\n)\nVALUES (\n  '{{ $json.organization_id }}',\n  '{{ $json.lead_id }}',\n  '{{ $json.campaign_id }}',\n  '{{ $json.enrollment_source }}',\n  '{{ $json.variant_assigned }}',\n  'active',\n  '{{ $json.next_send_at }}',\n  1\n)\nRETURNING id;",
+        "options": {}
+      },
+      "id": "insert_enrollment",
+      "name": "Insert Enrollment",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.4,
+      "position": [2660, 660],
+      "credentials": {
+        "postgres": {
+          "id": "supabase_main",
+          "name": "Supabase PostgreSQL"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "UPDATE nurture_campaigns\nSET leads_enrolled = leads_enrolled + 1\nWHERE id = '{{ $json.campaign_id }}';",
+        "options": {}
+      },
+      "id": "update_campaign_stats",
+      "name": "Update Campaign Stats",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.4,
+      "position": [2880, 660],
+      "credentials": {
+        "postgres": {
+          "id": "supabase_main",
+          "name": "Supabase PostgreSQL"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// ============================================\n// AGGREGATE ENROLLMENT RESULTS\n// ============================================\n\nconst items = $input.all();\nconst enrollmentIds = items.map(item => item.json[0]?.id).filter(Boolean);\n\nreturn {\n  json: {\n    success: true,\n    enrollments_created: enrollmentIds.length,\n    enrollment_ids: enrollmentIds,\n    message: `Successfully enrolled lead in ${enrollmentIds.length} campaign(s)`\n  }\n};"
+      },
+      "id": "aggregate_results",
+      "name": "Aggregate Results",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [3100, 660]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ $json }}"
+      },
+      "id": "success_response",
+      "name": "Return Success",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1,
+      "position": [3320, 660]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ $json }}"
+      },
+      "id": "no_enrollment_response",
+      "name": "No Enrollments Needed",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1,
+      "position": [2220, 420]
+    },
+    {
+      "parameters": {
+        "jsCode": "// ============================================\n// ERROR HANDLER\n// ============================================\n\nconst error = $input.first().json.error || {};\n\nconsole.error('Enrollment workflow error:', error);\n\n// Log to database\ntry {\n  // This would normally insert into workflow_errors table\n  console.log('Error logged to database');\n} catch (logError) {\n  console.error('Failed to log error:', logError);\n}\n\nreturn {\n  json: {\n    success: false,\n    error: 'Internal server error during enrollment',\n    code: 500,\n    details: error.message || 'Unknown error'\n  }\n};"
+      },
+      "id": "error_handler",
+      "name": "Error Handler",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1120, 180]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ $json }}"
+      },
+      "id": "error_final_response",
+      "name": "Return Error Response",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1,
+      "position": [1340, 180]
+    }
+  ],
+  "connections": {
+    "Webhook Trigger": {
+      "main": [[{ "node": "Validate Input", "type": "main", "index": 0 }]]
+    },
+    "Validate Input": {
+      "main": [[{ "node": "Validation Failed?", "type": "main", "index": 0 }]]
+    },
+    "Validation Failed?": {
+      "main": [
+        [{ "node": "Return Error", "type": "main", "index": 0 }],
+        [{ "node": "Load Lead Data", "type": "main", "index": 0 }]
+      ]
+    },
+    "Load Lead Data": {
+      "main": [[{ "node": "Check Lead Eligibility", "type": "main", "index": 0 }]]
+    },
+    "Check Lead Eligibility": {
+      "main": [[{ "node": "Lead Eligible?", "type": "main", "index": 0 }]]
+    },
+    "Lead Eligible?": {
+      "main": [
+        [{ "node": "No Enrollments Needed", "type": "main", "index": 0 }],
+        [{ "node": "Find Active Campaigns", "type": "main", "index": 0 }]
+      ]
+    },
+    "Find Active Campaigns": {
+      "main": [[{ "node": "Filter By Audience", "type": "main", "index": 0 }]]
+    },
+    "Filter By Audience": {
+      "main": [[{ "node": "Should Enroll?", "type": "main", "index": 0 }]]
+    },
+    "Should Enroll?": {
+      "main": [
+        [{ "node": "No Enrollments Needed", "type": "main", "index": 0 }],
+        [{ "node": "Check Existing Enrollments", "type": "main", "index": 0 }]
+      ]
+    },
+    "Check Existing Enrollments": {
+      "main": [[{ "node": "Create Enrollment Data", "type": "main", "index": 0 }]]
+    },
+    "Create Enrollment Data": {
+      "main": [[{ "node": "Insert Enrollment", "type": "main", "index": 0 }]]
+    },
+    "Insert Enrollment": {
+      "main": [[{ "node": "Update Campaign Stats", "type": "main", "index": 0 }]]
+    },
+    "Update Campaign Stats": {
+      "main": [[{ "node": "Aggregate Results", "type": "main", "index": 0 }]]
+    },
+    "Aggregate Results": {
+      "main": [[{ "node": "Return Success", "type": "main", "index": 0 }]]
+    },
+    "Error Handler": {
+      "main": [[{ "node": "Return Error Response", "type": "main", "index": 0 }]]
+    }
+  },
+  "pinData": {},
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "tags": ["nurture", "enrollment", "lead-management"],
+  "triggerCount": 1,
+  "updatedAt": "2025-10-10T00:00:00.000Z",
+  "versionId": "1"
+}

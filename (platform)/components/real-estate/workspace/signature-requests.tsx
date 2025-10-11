@@ -1,4 +1,4 @@
-import { getSignatureRequestsByLoop } from '@/lib/modules/transactions/signatures';
+import { getSignatureRequestsByLoop } from '@/lib/modules/workspace/signatures';
 import {
   Table,
   TableBody,

@@ -1,5 +1,5 @@
 /**
- * Transaction Activity Module
+ * Workspace Activity Module
  *
  * Public API for transaction activity feeds and audit logs
  *
@@ -17,7 +17,7 @@
  *   getActivityFeed,
  *   getLoopActivity,
  *   formatActivityDescription
- * } from '@/lib/modules/transactions/activity';
+ * } from '@/lib/modules/workspace/activity';
  *
  * const activities = await getActivityFeed({ loopId: '123', limit: 20 });
  * const description = formatActivityDescription(activities[0]);

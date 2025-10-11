@@ -13,6 +13,19 @@ export {
   regenerateAIProfile,
 } from './actions';
 
+// Query functions
+export {
+  getAIProfiles,
+  getAIProfileById,
+  getAIProfilesByLocation,
+  getAIProfilesByScore,
+  getAIProfileStats,
+  getRecentlyViewedProfiles,
+  getAIProfilesByTags,
+  getExpiredProfiles,
+  getProfilesNeedingRefresh,
+} from './queries';
+
 // Service functions (not exported - internal use only)
 // - generateNeighborhoodProfile (profile-generator.ts)
 // - extractKeyInsights (profile-generator.ts)

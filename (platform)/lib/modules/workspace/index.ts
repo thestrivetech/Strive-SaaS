@@ -1,7 +1,8 @@
 /**
- * Transactions Module - Public API
+ * Workspace Module - Public API
  *
- * Consolidated transactions module containing:
+ * Backend module for the /real-estate/workspace frontend.
+ * Handles transaction loop management with:
  * - Core transaction loop management
  * - Task management
  * - Activity tracking
@@ -15,7 +16,7 @@
  *
  * ⚠️ CLIENT COMPONENT IMPORTS:
  * If you're in a 'use client' component, import from './actions' instead:
- *   import { createLoop } from '@/lib/modules/transactions/actions'
+ *   import { createLoop } from '@/lib/modules/workspace/actions'
  *
  * This file exports queries which import Prisma (server-only).
  * Client components importing this will cause browser errors.

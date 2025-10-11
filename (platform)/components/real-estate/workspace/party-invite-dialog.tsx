@@ -31,7 +31,7 @@ import {
 import { Checkbox } from '@/components/ui/checkbox';
 import { useToast } from '@/hooks/use-toast';
 import { UserPlus, Loader2 } from 'lucide-react';
-import { inviteParty, type CreatePartyInput } from '@/lib/modules/transactions/parties';
+import { inviteParty, type CreatePartyInput } from '@/lib/modules/workspace/parties';
 import { PartyRole } from '@prisma/client';
 
 interface PartyInviteDialogProps {

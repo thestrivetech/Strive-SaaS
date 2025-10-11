@@ -21,7 +21,7 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
-import { uploadDocument } from '@/lib/modules/transactions/documents';
+import { uploadDocument } from '@/lib/modules/workspace/documents';
 import { useToast } from '@/hooks/use-toast';
 import { useRouter } from 'next/navigation';
 import { Upload } from 'lucide-react';

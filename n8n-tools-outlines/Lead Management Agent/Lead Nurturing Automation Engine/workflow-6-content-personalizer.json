@@ -1,0 +1,203 @@
+{
+  "name": "Lead Nurture - Content Personalizer",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "nurture/personalize",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "id": "webhook_personalize",
+      "name": "Personalize Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 1,
+      "position": [240, 300],
+      "webhookId": "content-personalizer"
+    },
+    {
+      "parameters": {
+        "jsCode": "// ============================================\n// VALIDATE PERSONALIZATION REQUEST\n// ============================================\n\nconst input = $input.first().json;\nconst { \n  lead_id, \n  organization_id, \n  subject_line, \n  body_html,\n  lead_name,\n  lead_email \n} = input;\n\nconst errors = [];\nif (!lead_id) errors.push('lead_id required');\nif (!organization_id) errors.push('organization_id required');\nif (!subject_line) errors.push('subject_line required');\nif (!body_html) errors.push('body_html required');\n\nif (errors.length > 0) {\n  return {\n    json: {\n      success: false,\n      error: 'Validation failed',\n      validation_errors: errors,\n      code: 400\n    }\n  };\n}\n\nreturn {\n  json: {\n    ...input,\n    validated: true\n  }\n};"
+      },
+      "id": "validate_request",
+      "name": "Validate Request",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [460, 300]
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT \n  l.id, l.name, l.email, l.phone, l.lead_type,\n  l.budget_min, l.budget_max, l.timeline, l.location_preferences,\n  l.property_type_preferences, l.bedrooms_min, l.bathrooms_min,\n  l.metadata,\n  u.full_name as agent_name,\n  u.email as agent_email,\n  u.phone as agent_phone\nFROM leads l\nLEFT JOIN user_organizations uo ON uo.organization_id = l.organization_id\nLEFT JOIN users u ON u.id = uo.user_id\nWHERE l.id = '{{ $json.lead_id }}'\n  AND l.organization_id = '{{ $json.organization_id }}'\n  AND uo.role IN ('owner', 'admin', 'agent')\nLIMIT 1;",
+        "options": {}
+      },
+      "id": "load_lead_data",
+      "name": "Load Lead Data",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.4,
+      "position": [680, 300],
+      "credentials": {
+        "postgres": {
+          "id": "supabase_main",
+          "name": "Supabase PostgreSQL"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// ============================================\n// EXTRACT PERSONALIZATION TOKENS\n// ============================================\n\nconst request = $('Validate Request').first().json;\nconst leadResult = $input.first().json;\n\nif (!leadResult || leadResult.length === 0) {\n  return {\n    json: {\n      success: false,\n      error: 'Lead not found',\n      code: 404\n    }\n  };\n}\n\nconst lead = leadResult[0];\n\n// Extract all tokens from subject and body\nconst tokenRegex = /\\{\\{\\s*([\\w_]+)\\s*\\}\\}/g;\nconst subjectTokens = [...request.subject_line.matchAll(tokenRegex)].map(m => m[1]);\nconst bodyTokens = [...request.body_html.matchAll(tokenRegex)].map(m => m[1]);\nconst allTokens = [...new Set([...subjectTokens, ...bodyTokens])];\n\nconsole.log(`Found tokens: ${allTokens.join(', ')}`);\n\n// Check which tokens need dynamic content\nconst dynamicTokens = allTokens.filter(token => \n  ['property_recommendations', 'market_update', 'recent_listings'].includes(token)\n);\n\nreturn {\n  json: {\n    ...request,\n    lead: lead,\n    tokens: allTokens,\n    dynamic_tokens: dynamicTokens,\n    needs_dynamic_content: dynamicTokens.length > 0\n  }\n};"
+      },
+      "id": "extract_tokens",
+      "name": "Extract Tokens",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [900, 300]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "boolean": [
+            {
+              "value1": "={{ $json.needs_dynamic_content }}",
+              "value2": true
+            }
+          ]
+        }
+      },
+      "id": "needs_dynamic",
+      "name": "Needs Dynamic Content?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 1,
+      "position": [1120, 300]
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "-- Fetch properties matching lead preferences\nSELECT \n  id, mls_id, address, city, state, zip,\n  price, bedrooms, bathrooms, square_feet,\n  property_type, listing_status,\n  photos_urls, description\nFROM properties\nWHERE organization_id = '{{ $json.organization_id }}'\n  AND listing_status = 'active'\n  -- Price range filter\n  AND (price BETWEEN \n    COALESCE({{ $json.lead.budget_min }}, 0) AND \n    COALESCE({{ $json.lead.budget_max }}, 999999999)\n  )\n  -- Property type filter\n  AND (\n    '{{ $json.lead.property_type_preferences }}' IS NULL OR\n    property_type = ANY(string_to_array('{{ $json.lead.property_type_preferences }}', ','))\n  )\n  -- Bedroom filter\n  AND bedrooms >= COALESCE({{ $json.lead.bedrooms_min }}, 0)\n  -- Bathroom filter\n  AND bathrooms >= COALESCE({{ $json.lead.bathrooms_min }}, 0)\n  -- Location filter (simplified - in production would use PostGIS)\n  AND (\n    '{{ $json.lead.location_preferences }}' IS NULL OR\n    city ILIKE ANY(string_to_array('{{ $json.lead.location_preferences }}', ','))\n  )\nORDER BY \n  CASE WHEN price BETWEEN \n    {{ $json.lead.budget_min }} * 0.9 AND \n    {{ $json.lead.budget_max }} * 1.1 \n  THEN 1 ELSE 2 END,\n  created_at DESC\nLIMIT 5;",
+        "options": {}
+      },
+      "id": "fetch_properties",
+      "name": "Fetch Matching Properties",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.4,
+      "position": [1340, 420],
+      "credentials": {
+        "postgres": {
+          "id": "supabase_main",
+          "name": "Supabase PostgreSQL"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// ============================================\n// GENERATE PROPERTY RECOMMENDATIONS HTML\n// ============================================\n\nconst properties = $input.first().json || [];\nconst contextData = $('Needs Dynamic Content?').first().json;\n\nif (properties.length === 0) {\n  return {\n    json: {\n      property_recommendations: '<p>No properties currently match your criteria, but we\\'re actively searching for you!</p>',\n      property_count: 0\n    }\n  };\n}\n\n// Generate HTML for property cards\nconst propertyCards = properties.map(prop => {\n  const primaryPhoto = Array.isArray(prop.photos_urls) && prop.photos_urls.length > 0\n    ? prop.photos_urls[0]\n    : 'https://via.placeholder.com/400x300?text=Property+Image';\n  \n  const priceFormatted = new Intl.NumberFormat('en-US', {\n    style: 'currency',\n    currency: 'USD',\n    maximumFractionDigits: 0\n  }).format(prop.price);\n  \n  return `\n    <div style=\"border: 1px solid #e0e0e0; border-radius: 8px; margin-bottom: 20px; overflow: hidden; font-family: Arial, sans-serif;\">\n      <img src=\"${primaryPhoto}\" alt=\"${prop.address}\" style=\"width: 100%; height: 250px; object-fit: cover;\" />\n      <div style=\"padding: 15px;\">\n        <h3 style=\"margin: 0 0 10px 0; color: #333; font-size: 18px;\">${prop.address}</h3>\n        <p style=\"margin: 0 0 10px 0; color: #666; font-size: 14px;\">${prop.city}, ${prop.state} ${prop.zip}</p>\n        <p style=\"margin: 0 0 10px 0; color: #2563eb; font-size: 24px; font-weight: bold;\">${priceFormatted}</p>\n        <div style=\"display: flex; gap: 15px; margin-bottom: 10px; font-size: 14px; color: #666;\">\n          <span>🛏️ ${prop.bedrooms} beds</span>\n          <span>🛁 ${prop.bathrooms} baths</span>\n          <span>📐 ${prop.square_feet?.toLocaleString() || 'N/A'} sq ft</span>\n        </div>\n        <p style=\"margin: 10px 0; color: #666; font-size: 14px; line-height: 1.5;\">\n          ${prop.description?.substring(0, 150) || 'Beautiful property available now'}...\n        </p>\n        <a href=\"https://yoursite.com/properties/${prop.id}\" \n           style=\"display: inline-block; background-color: #2563eb; color: white; padding: 10px 20px; \n                  text-decoration: none; border-radius: 5px; font-weight: 600; font-size: 14px;\">\n          View Details\n        </a>\n      </div>\n    </div>\n  `;\n}).join('\\n');\n\nconst recommendationsHtml = `\n  <div style=\"margin: 20px 0;\">\n    <h2 style=\"color: #333; font-size: 22px; margin-bottom: 20px;\">✨ Properties Picked Just For You</h2>\n    ${propertyCards}\n    <p style=\"text-align: center; margin-top: 20px;\">\n      <a href=\"https://yoursite.com/properties\" \n         style=\"display: inline-block; background-color: #16a34a; color: white; padding: 12px 30px; \n                text-decoration: none; border-radius: 5px; font-weight: 600;\">\n        View All ${properties.length} Matches\n      </a>\n    </p>\n  </div>\n`;\n\nreturn {\n  json: {\n    property_recommendations: recommendationsHtml,\n    property_count: properties.length,\n    properties: properties\n  }\n};"
+      },
+      "id": "generate_property_html",
+      "name": "Generate Property HTML",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1560, 420]
+    },
+    {
+      "parameters": {
+        "jsCode": "// ============================================\n// GENERATE MARKET UPDATE CONTENT\n// ============================================\n\nconst contextData = $('Needs Dynamic Content?').first().json;\nconst lead = contextData.lead;\n\n// In production, this would fetch real market data\n// For now, generate sample market update\n\nconst marketUpdateHtml = `\n  <div style=\"background-color: #f8fafc; padding: 20px; border-radius: 8px; margin: 20px 0; font-family: Arial, sans-serif;\">\n    <h3 style=\"color: #1e40af; margin: 0 0 15px 0; font-size: 20px;\">📊 Market Update for ${lead.location_preferences || 'Your Area'}</h3>\n    <div style=\"display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px;\">\n      <div style=\"background-color: white; padding: 15px; border-radius: 6px;\">\n        <div style=\"color: #64748b; font-size: 12px; text-transform: uppercase; margin-bottom: 5px;\">Median Price</div>\n        <div style=\"color: #0f172a; font-size: 24px; font-weight: bold;\">$425,000</div>\n        <div style=\"color: #16a34a; font-size: 12px; margin-top: 5px;\">↑ 3.2% from last month</div>\n      </div>\n      <div style=\"background-color: white; padding: 15px; border-radius: 6px;\">\n        <div style=\"color: #64748b; font-size: 12px; text-transform: uppercase; margin-bottom: 5px;\">Avg. Days on Market</div>\n        <div style=\"color: #0f172a; font-size: 24px; font-weight: bold;\">28 days</div>\n        <div style=\"color: #dc2626; font-size: 12px; margin-top: 5px;\">↓ 5 days faster</div>\n      </div>\n      <div style=\"background-color: white; padding: 15px; border-radius: 6px;\">\n        <div style=\"color: #64748b; font-size: 12px; text-transform: uppercase; margin-bottom: 5px;\">New Listings</div>\n        <div style=\"color: #0f172a; font-size: 24px; font-weight: bold;\">47</div>\n        <div style=\"color: #64748b; font-size: 12px; margin-top: 5px;\">This week</div>\n      </div>\n      <div style=\"background-color: white; padding: 15px; border-radius: 6px;\">\n        <div style=\"color: #64748b; font-size: 12px; text-transform: uppercase; margin-bottom: 5px;\">Market Status</div>\n        <div style=\"color: #0f172a; font-size: 24px; font-weight: bold;\">🔥 Hot</div>\n        <div style=\"color: #64748b; font-size: 12px; margin-top: 5px;\">Seller's market</div>\n      </div>\n    </div>\n    <p style=\"margin: 15px 0 0 0; color: #475569; font-size: 14px; line-height: 1.6;\">\n      💡 <strong>Insight:</strong> Properties in your price range are moving quickly. \n      Acting fast on new listings is recommended to secure the best options.\n    </p>\n  </div>\n`;\n\nreturn {\n  json: {\n    market_update: marketUpdateHtml\n  }\n};"
+      },
+      "id": "generate_market_update",
+      "name": "Generate Market Update",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1560, 540]
+    },
+    {
+      "parameters": {
+        "jsCode": "// ============================================\n// MERGE DYNAMIC CONTENT\n// ============================================\n\nconst contextData = $('Needs Dynamic Content?').first().json;\nconst propertyData = $('Generate Property HTML').first().json;\nconst marketData = $('Generate Market Update').first().json;\n\nreturn {\n  json: {\n    ...contextData,\n    dynamic_content: {\n      property_recommendations: propertyData.property_recommendations,\n      market_update: marketData.market_update,\n      property_count: propertyData.property_count\n    }\n  }\n};"
+      },
+      "id": "merge_dynamic_content",
+      "name": "Merge Dynamic Content",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1780, 420]
+    },
+    {
+      "parameters": {
+        "jsCode": "// ============================================\n// REPLACE ALL TOKENS WITH PERSONALIZED DATA\n// ============================================\n\nconst data = $json;\nconst lead = data.lead;\nconst dynamicContent = data.dynamic_content || {};\n\n// Build replacement map\nconst replacements = {\n  // Basic lead info\n  'name': lead.name || 'there',\n  'first_name': lead.name?.split(' ')[0] || 'there',\n  'email': lead.email || '',\n  'phone': lead.phone || '',\n  \n  // Agent info\n  'agent_name': lead.agent_name || 'Your Agent',\n  'agent_email': lead.agent_email || '',\n  'agent_phone': lead.agent_phone || '',\n  \n  // Lead preferences\n  'budget': lead.budget_min && lead.budget_max \n    ? `$${lead.budget_min.toLocaleString()} - $${lead.budget_max.toLocaleString()}`\n    : 'your budget',\n  'location': lead.location_preferences || 'your preferred area',\n  'property_type': lead.property_type_preferences || 'properties',\n  'timeline': lead.timeline || 'when you\\'re ready',\n  \n  // Dynamic content\n  'property_recommendations': dynamicContent.property_recommendations || '',\n  'market_update': dynamicContent.market_update || '',\n  'property_count': dynamicContent.property_count?.toString() || '0'\n};\n\n// Replace tokens in subject line\nlet personalizedSubject = data.subject_line;\nfor (const [token, value] of Object.entries(replacements)) {\n  const regex = new RegExp(`\\\\{\\\\{\\\\s*${token}\\\\s*\\\\}\\\\}`, 'g');\n  personalizedSubject = personalizedSubject.replace(regex, value);\n}\n\n// Replace tokens in body HTML\nlet personalizedBody = data.body_html;\nfor (const [token, value] of Object.entries(replacements)) {\n  const regex = new RegExp(`\\\\{\\\\{\\\\s*${token}\\\\s*\\\\}\\\\}`, 'g');\n  personalizedBody = personalizedBody.replace(regex, value);\n}\n\n// Log personalization\nconsole.log(`Personalized email for: ${lead.name} (${lead.email})`);\nconst tokensReplaced = Object.keys(replacements).filter(token => \n  data.subject_line.includes(`{{${token}}}`) || data.body_html.includes(`{{${token}}}`)\n);\nconsole.log(`Tokens replaced: ${tokensReplaced.join(', ')}`);\n\nreturn {\n  json: {\n    success: true,\n    subject_line: personalizedSubject,\n    body_html: personalizedBody,\n    tokens_replaced: tokensReplaced,\n    personalization_data: replacements\n  }\n};"
+      },
+      "id": "replace_tokens",
+      "name": "Replace All Tokens",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [2000, 300]
+    },
+    {
+      "parameters": {
+        "jsCode": "// ============================================\n// SIMPLE PERSONALIZATION (No Dynamic Content)\n// ============================================\n\nconst data = $json;\nconst lead = data.lead;\n\n// Build basic replacement map\nconst replacements = {\n  'name': lead.name || 'there',\n  'first_name': lead.name?.split(' ')[0] || 'there',\n  'email': lead.email || '',\n  'phone': lead.phone || '',\n  'agent_name': lead.agent_name || 'Your Agent',\n  'agent_email': lead.agent_email || '',\n  'agent_phone': lead.agent_phone || '',\n  'budget': lead.budget_min && lead.budget_max \n    ? `$${lead.budget_min.toLocaleString()} - $${lead.budget_max.toLocaleString()}`\n    : 'your budget',\n  'location': lead.location_preferences || 'your preferred area',\n  'property_type': lead.property_type_preferences || 'properties',\n  'timeline': lead.timeline || 'when you\\'re ready'\n};\n\n// Replace tokens in subject line\nlet personalizedSubject = data.subject_line;\nfor (const [token, value] of Object.entries(replacements)) {\n  const regex = new RegExp(`\\\\{\\\\{\\\\s*${token}\\\\s*\\\\}\\\\}`, 'g');\n  personalizedSubject = personalizedSubject.replace(regex, value);\n}\n\n// Replace tokens in body HTML\nlet personalizedBody = data.body_html;\nfor (const [token, value] of Object.entries(replacements)) {\n  const regex = new RegExp(`\\\\{\\\\{\\\\s*${token}\\\\s*\\\\}\\\\}`, 'g');\n  personalizedBody = personalizedBody.replace(regex, value);\n}\n\nreturn {\n  json: {\n    success: true,\n    subject_line: personalizedSubject,\n    body_html: personalizedBody,\n    personalization_data: replacements\n  }\n};"
+      },
+      "id": "simple_personalization",
+      "name": "Simple Personalization",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1340, 180]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ $json }}"
+      },
+      "id": "return_response",
+      "name": "Return Response",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1,
+      "position": [2220, 300]
+    }
+  ],
+  "connections": {
+    "Personalize Webhook": {
+      "main": [[{ "node": "Validate Request", "type": "main", "index": 0 }]]
+    },
+    "Validate Request": {
+      "main": [[{ "node": "Load Lead Data", "type": "main", "index": 0 }]]
+    },
+    "Load Lead Data": {
+      "main": [[{ "node": "Extract Tokens", "type": "main", "index": 0 }]]
+    },
+    "Extract Tokens": {
+      "main": [[{ "node": "Needs Dynamic Content?", "type": "main", "index": 0 }]]
+    },
+    "Needs Dynamic Content?": {
+      "main": [
+        [{ "node": "Simple Personalization", "type": "main", "index": 0 }],
+        [
+          { "node": "Fetch Matching Properties", "type": "main", "index": 0 },
+          { "node": "Generate Market Update", "type": "main", "index": 0 }
+        ]
+      ]
+    },
+    "Fetch Matching Properties": {
+      "main": [[{ "node": "Generate Property HTML", "type": "main", "index": 0 }]]
+    },
+    "Generate Property HTML": {
+      "main": [[{ "node": "Merge Dynamic Content", "type": "main", "index": 0 }]]
+    },
+    "Generate Market Update": {
+      "main": [[{ "node": "Merge Dynamic Content", "type": "main", "index": 0 }]]
+    },
+    "Merge Dynamic Content": {
+      "main": [[{ "node": "Replace All Tokens", "type": "main", "index": 0 }]]
+    },
+    "Replace All Tokens": {
+      "main": [[{ "node": "Return Response", "type": "main", "index": 0 }]]
+    },
+    "Simple Personalization": {
+      "main": [[{ "node": "Return Response", "type": "main", "index": 0 }]]
+    }
+  },
+  "pinData": {},
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "tags": ["nurture", "personalization", "content"],
+  "triggerCount": 1,
+  "updatedAt": "2025-10-10T00:00:00.000Z",
+  "versionId": "1"
+}

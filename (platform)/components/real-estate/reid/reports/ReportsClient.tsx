@@ -2,9 +2,15 @@
 
 import { useState, useEffect } from 'react';
 import { REIDCard, REIDCardHeader, REIDCardContent } from '../shared/REIDCard';
+import { ReportCard } from './ReportCard';
+import { MetricCard } from '../shared/MetricCard';
+import { FileText, Clock, Download } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { toast } from 'sonner';
+import { getMarketReports } from '@/lib/modules/reid/reports/queries';
 
-// Type definition (previously from mock data)
-interface MockREIDReport {
+// Type definition matching Prisma market_reports (with generated_at for UI compatibility)
+interface MarketReport {
   id: string;
   title: string;
   report_type: string;
@@ -15,13 +21,11 @@ interface MockREIDReport {
   key_findings: string[];
   recommendations: string[];
 }
-import { ReportCard } from './ReportCard';
-import { MetricCard } from '../shared/MetricCard';
-import { FileText, Clock, Download } from 'lucide-react';
 
 export function ReportsClient() {
-  const [reports, setReports] = useState<MockREIDReport[]>([]);
+  const [reports, setReports] = useState<MarketReport[]>([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     loadReports();
@@ -30,25 +34,54 @@ export function ReportsClient() {
   async function loadReports() {
     try {
       setLoading(true);
-      // Placeholder - REID is a skeleton module (no database tables yet)
-      setReports([]);
-    } catch (error) {
-      console.error('Failed to load reports:', error);
+      setError(null);
+
+      // Fetch reports using existing Server Action
+      const dbReports = await getMarketReports();
+
+      // Transform database records to component format
+      const transformedReports: MarketReport[] = dbReports.map((report) => ({
+        id: report.id,
+        title: report.title,
+        report_type: report.report_type,
+        cities: report.cities as string[] || [],
+        zip_codes: report.zip_codes as string[] || [],
+        summary: report.summary || '',
+        generated_at: report.created_at, // Map created_at to generated_at for UI compatibility
+        key_findings: report.key_findings as string[] || [],
+        recommendations: report.recommendations as string[] || [],
+      }));
+
+      setReports(transformedReports);
+    } catch (err) {
+      console.error('Failed to load reports:', err);
+      setError(err instanceof Error ? err.message : 'Failed to load reports');
     } finally {
       setLoading(false);
     }
   }
 
   async function handleDownload(id: string, format: string) {
-    console.log(`Download feature coming soon - REID module under development`);
+    toast.info('Download feature coming soon');
+    console.log(`Download report ${id} as ${format}`);
   }
 
   async function handleDelete(id: string) {
-    console.log(`Delete feature coming soon - REID module under development`);
+    toast.info('Delete feature coming soon');
+    console.log(`Delete report ${id}`);
   }
 
   if (loading) {
     return <div className="text-center py-12 text-slate-400">Loading reports...</div>;
+  }
+
+  if (error) {
+    return (
+      <div className="text-center py-12">
+        <p className="text-red-400 mb-4">Error: {error}</p>
+        <Button onClick={loadReports} variant="outline">Retry</Button>
+      </div>
+    );
   }
 
   const totalReports = reports.length;
@@ -87,7 +120,7 @@ export function ReportsClient() {
         <REIDCard>
           <REIDCardContent>
             <div className="text-center py-12 text-slate-400">
-              No reports generated yet. Create your first report to get started.
+              No market reports found. Generate your first report to get started with AI-powered market intelligence.
             </div>
           </REIDCardContent>
         </REIDCard>

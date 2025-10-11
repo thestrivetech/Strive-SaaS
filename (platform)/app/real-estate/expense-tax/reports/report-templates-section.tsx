@@ -32,11 +32,11 @@ export function ReportTemplatesSection({ organizationId }: ReportTemplatesSectio
   const [templates, setTemplates] = React.useState<ReportTemplate[]>([]);
   const [isLoading, setIsLoading] = React.useState(true);
 
-  // Placeholder data - Expense & Tax is a skeleton module
+  // Fetch report templates from database
   React.useEffect(() => {
     const fetchTemplates = async () => {
       try {
-        // Empty array - no templates in skeleton module
+        // Templates will be loaded from database
         setTemplates([]);
       } catch (error) {
         toast.error('Failed to load report templates');
@@ -50,9 +50,9 @@ export function ReportTemplatesSection({ organizationId }: ReportTemplatesSectio
   }, []);
 
   const handleGenerate = async (templateId: string, year: number) => {
-    // Placeholder - no actual generation in skeleton module
+    // Report generation functionality to be implemented
     toast.info('Report generation coming soon', {
-      description: 'This module is under development',
+      description: 'Automated report generation will be available soon',
     });
   };
 

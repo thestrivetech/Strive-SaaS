@@ -124,9 +124,10 @@ Server Action: lib/modules/crm/contacts/actions.ts
 Database: Supabase via Prisma
 ```
 
-**Naming Note:** Some modules have different names for UX
-- Frontend: `app/real-estate/workspace/` (user-friendly)
-- Backend: `lib/modules/transactions/` (technical accuracy)
+**Naming Consistency:** Frontend and backend aligned
+- Frontend: `app/real-estate/workspace/` - Transaction management UI
+- Backend: `lib/modules/workspace/` - Transaction management logic
+- Both use "workspace" terminology for consistency
 
 ---
 
@@ -158,7 +159,7 @@ Database: Supabase via Prisma
 ├── lib/
 │   ├── modules/           # Backend modules (13 consolidated)
 │   │   ├── crm/          # CRM (contacts, leads, deals)
-│   │   ├── transactions/ # Transactions (tasks, activity, listings)
+│   │   ├── workspace/    # Workspace (transaction loops, tasks, listings)
 │   │   └── [others]/     # Other modules
 │   ├── auth/             # Auth middleware, RBAC
 │   ├── database/         # Prisma client, middleware
@@ -347,7 +348,7 @@ export { createContact, updateContact } from './contacts/actions';
 export { getContacts, getContactById } from './contacts/queries';
 
 // ❌ NEVER cross-import between modules
-import { getTransactions } from '@/lib/modules/transactions/queries'; // FORBIDDEN
+import { getLoops } from '@/lib/modules/workspace/queries'; // FORBIDDEN
 ```
 
 ---

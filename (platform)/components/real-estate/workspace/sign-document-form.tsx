@@ -5,7 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
-import { signDocument, declineSignature } from '@/lib/modules/transactions/signatures';
+import { signDocument, declineSignature } from '@/lib/modules/workspace/signatures';
 import { useToast } from '@/hooks/use-toast';
 import { useRouter } from 'next/navigation';
 import { Pen, X } from 'lucide-react';

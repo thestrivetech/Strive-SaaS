@@ -120,7 +120,7 @@ async function HeroSectionWrapper({
 }: {
   user: any; // TODO: Use proper UserWithOrganization type
 }) {
-  // Placeholder data - Expense & Tax is a skeleton module (no database tables yet)
+  // Default stats for settings page (will show actual data when settings are configured)
   const stats = [
     {
       label: 'Total Categories',

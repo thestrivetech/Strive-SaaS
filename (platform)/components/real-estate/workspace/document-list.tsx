@@ -1,4 +1,4 @@
-import { getDocumentsByLoop } from '@/lib/modules/transactions/documents';
+import { getDocumentsByLoop } from '@/lib/modules/workspace/documents';
 import {
   Table,
   TableBody,

@@ -6,7 +6,7 @@ import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { ListingStatusBadge } from './listing-status-badge';
 import { ListingActionsMenu } from './listing-actions-menu';
-import type { ListingWithAssignee } from '@/lib/modules/transactions/listings';
+import type { ListingWithAssignee } from '@/lib/modules/workspace/listings';
 import { formatCurrency } from '@/lib/utils';
 import { Bed, Bath, Square, MapPin, Calendar } from 'lucide-react';
 

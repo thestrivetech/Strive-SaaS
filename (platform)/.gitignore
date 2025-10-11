@@ -42,5 +42,9 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 
+# Build artifacts (generated files)
+project-directory-map.json
+project-directory-map.txt
+
 /lib/generated/prisma
 app/CHATBOT-ENV-CONFIG.md

@@ -7,9 +7,9 @@ import {
   getAnalyticsByType,
   getAnalyticsByStatus,
   formatCurrency,
-} from '@/lib/modules/transactions/analytics';
+} from '@/lib/modules/workspace/analytics';
 import { getOrganizationCompliance, getComplianceStats } from '@/lib/modules/compliance';
-import { getRecentActivity } from '@/lib/modules/transactions/activity';
+import { getRecentActivity } from '@/lib/modules/workspace/activity';
 import { BarChart3, TrendingUp, AlertCircle, Activity } from 'lucide-react';
 
 export const metadata = {

@@ -2,7 +2,7 @@
 
 import { Button } from '@/components/ui/button';
 import { Download } from 'lucide-react';
-import { getDocumentDownloadUrl } from '@/lib/modules/transactions/documents';
+import { getDocumentDownloadUrl } from '@/lib/modules/workspace/documents';
 import { useToast } from '@/hooks/use-toast';
 import { useState } from 'react';
 

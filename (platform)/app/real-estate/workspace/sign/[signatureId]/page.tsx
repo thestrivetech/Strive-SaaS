@@ -1,4 +1,4 @@
-import { getSignatureById } from '@/lib/modules/transactions/signatures';
+import { getSignatureById } from '@/lib/modules/workspace/signatures';
 import { SignDocumentForm } from '@/components/real-estate/workspace/sign-document-form';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';

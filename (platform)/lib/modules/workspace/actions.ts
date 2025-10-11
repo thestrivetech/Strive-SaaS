@@ -1,5 +1,5 @@
 /**
- * Transaction Module - Client-Safe Actions Export
+ * Workspace Module - Client-Safe Actions Export
  *
  * SAFE FOR CLIENT COMPONENTS TO IMPORT
  *
@@ -7,7 +7,7 @@
  * NO query functions, NO Prisma imports.
  *
  * Client components should import from this file:
- *   import { createLoop } from '@/lib/modules/transactions/actions'
+ *   import { createLoop } from '@/lib/modules/workspace/actions'
  *
  * Server components can import from index.ts as usual.
  */
