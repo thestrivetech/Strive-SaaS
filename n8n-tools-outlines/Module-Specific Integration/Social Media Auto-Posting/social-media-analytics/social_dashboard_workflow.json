@@ -1,0 +1,196 @@
+{
+  "name": "social-media-dashboard-api-v1",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "social-media-dashboard",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "id": "webhook-trigger",
+      "name": "Social Dashboard Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [250, 400]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Validate and parse request\nconst input = $input.first().json.body || $input.first().json;\n\nif (!input.organization_id) {\n  return [{json: {valid: false, error: 'organization_id required', error_code: 400}}];\n}\n\nconst query = {\n  organization_id: input.organization_id,\n  date_range: input.date_range || {\n    start: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],\n    end: new Date().toISOString().split('T')[0]\n  },\n  platforms: input.platforms || null, // null = all platforms\n  metrics: input.metrics || ['engagement_rate', 'reach', 'impressions', 'posts_count'],\n  include_hashtags: input.include_hashtags !== false,\n  include_best_posts: input.include_best_posts !== false,\n  include_posting_times: input.include_posting_times || false\n};\n\nreturn [{json: {valid: true, query: query}}];"
+      },
+      "id": "validate-request",
+      "name": "Validate Request",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [450, 400]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "boolean": [{"value1": "={{ $json.valid }}", "value2": true}]
+        }
+      },
+      "id": "check-valid",
+      "name": "Check Valid",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [650, 400]
+    },
+    {
+      "parameters": {
+        "method": "GET",
+        "url": "={{ $env.SUPABASE_URL }}/rest/v1/social_media_posts",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {"name": "apikey", "value": "={{ $env.SUPABASE_SERVICE_KEY }}"},
+            {"name": "Authorization", "value": "=Bearer {{ $env.SUPABASE_SERVICE_KEY }}"}
+          ]
+        },
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {"name": "organization_id", "value": "=eq.{{ $('Validate Request').item.json.query.organization_id }}"},
+            {"name": "published_at", "value": "=gte.{{ $('Validate Request').item.json.query.date_range.start }}"},
+            {"name": "published_at", "value": "=lte.{{ $('Validate Request').item.json.query.date_range.end }}"},
+            {"name": "select", "value": "*"}
+          ]
+        }
+      },
+      "id": "fetch-posts",
+      "name": "Fetch Posts",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [850, 300]
+    },
+    {
+      "parameters": {
+        "method": "GET",
+        "url": "={{ $env.SUPABASE_URL }}/rest/v1/social_media_accounts",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {"name": "apikey", "value": "={{ $env.SUPABASE_SERVICE_KEY }}"},
+            {"name": "Authorization", "value": "=Bearer {{ $env.SUPABASE_SERVICE_KEY }}"}
+          ]
+        },
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {"name": "organization_id", "value": "=eq.{{ $('Validate Request').item.json.query.organization_id }}"},
+            {"name": "select", "value": "id,platform,account_name,followers_count,total_posts,engagement_rate"}
+          ]
+        }
+      },
+      "id": "fetch-accounts",
+      "name": "Fetch Accounts",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [850, 400]
+    },
+    {
+      "parameters": {
+        "method": "GET",
+        "url": "={{ $env.SUPABASE_URL }}/rest/v1/hashtag_performance",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {"name": "apikey", "value": "={{ $env.SUPABASE_SERVICE_KEY }}"},
+            {"name": "Authorization", "value": "=Bearer {{ $env.SUPABASE_SERVICE_KEY }}"}
+          ]
+        },
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {"name": "organization_id", "value": "=eq.{{ $('Validate Request').item.json.query.organization_id }}"},
+            {"name": "select", "value": "hashtag,platform,times_used,avg_engagement_rate,is_trending"},
+            {"name": "order", "value": "avg_engagement_rate.desc"},
+            {"name": "limit", "value": "20"}
+          ]
+        }
+      },
+      "id": "fetch-hashtags",
+      "name": "Fetch Top Hashtags",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [850, 500]
+    },
+    {
+      "parameters": {
+        "jsCode": "// ===============================================\n// AGGREGATE SOCIAL MEDIA ANALYTICS\n// ===============================================\n\nconst posts = $('Fetch Posts').all().map(i => i.json).flat();\nconst accounts = $('Fetch Accounts').all().map(i => i.json).flat();\nconst hashtags = $('Fetch Top Hashtags').all().map(i => i.json).flat();\n\n// Overall summary\nconst summary = {\n  total_posts: posts.length,\n  total_accounts: accounts.length,\n  total_engagement: 0,\n  total_reach: 0,\n  total_impressions: 0,\n  avg_engagement_rate: 0,\n  viral_posts: 0,\n  excellent_posts: 0\n};\n\nposts.forEach(p => {\n  summary.total_engagement += (p.likes_count + p.comments_count + p.shares_count);\n  summary.total_reach += p.reach || 0;\n  summary.total_impressions += p.impressions || 0;\n  if (p.performance_tier === 'viral') summary.viral_posts++;\n  if (p.performance_tier === 'excellent') summary.excellent_posts++;\n});\n\nsummary.avg_engagement_rate = posts.length > 0\n  ? (posts.reduce((sum, p) => sum + (p.engagement_rate || 0), 0) / posts.length).toFixed(2)\n  : 0;\n\n// Performance by platform\nconst platformPerformance = {};\nposts.forEach(p => {\n  if (!platformPerformance[p.platform]) {\n    platformPerformance[p.platform] = {\n      posts_count: 0,\n      total_likes: 0,\n      total_comments: 0,\n      total_shares: 0,\n      total_reach: 0,\n      avg_engagement_rate: 0,\n      engagement_rates: []\n    };\n  }\n  \n  const pp = platformPerformance[p.platform];\n  pp.posts_count++;\n  pp.total_likes += p.likes_count || 0;\n  pp.total_comments += p.comments_count || 0;\n  pp.total_shares += p.shares_count || 0;\n  pp.total_reach += p.reach || 0;\n  if (p.engagement_rate) pp.engagement_rates.push(p.engagement_rate);\n});\n\n// Calculate platform averages\nObject.keys(platformPerformance).forEach(platform => {\n  const pp = platformPerformance[platform];\n  pp.avg_engagement_rate = pp.engagement_rates.length > 0\n    ? (pp.engagement_rates.reduce((sum, r) => sum + r, 0) / pp.engagement_rates.length).toFixed(2)\n    : 0;\n  delete pp.engagement_rates;\n});\n\n// Performance by content type\nconst contentTypePerformance = {};\nposts.forEach(p => {\n  const type = p.content_type || 'text';\n  if (!contentTypePerformance[type]) {\n    contentTypePerformance[type] = {\n      posts_count: 0,\n      avg_engagement_rate: 0,\n      avg_reach: 0,\n      engagement_rates: []\n    };\n  }\n  \n  const ct = contentTypePerformance[type];\n  ct.posts_count++;\n  ct.avg_reach += p.reach || 0;\n  if (p.engagement_rate) ct.engagement_rates.push(p.engagement_rate);\n});\n\nObject.keys(contentTypePerformance).forEach(type => {\n  const ct = contentTypePerformance[type];\n  ct.avg_engagement_rate = ct.engagement_rates.length > 0\n    ? (ct.engagement_rates.reduce((sum, r) => sum + r, 0) / ct.engagement_rates.length).toFixed(2)\n    : 0;\n  ct.avg_reach = ct.posts_count > 0 ? Math.round(ct.avg_reach / ct.posts_count) : 0;\n  delete ct.engagement_rates;\n});\n\n// Best performing posts\nconst bestPosts = posts\n  .filter(p => p.performance_tier !== 'poor')\n  .sort((a, b) => (b.engagement_rate || 0) - (a.engagement_rate || 0))\n  .slice(0, 10)\n  .map(p => ({\n    id: p.id,\n    platform: p.platform,\n    content_preview: (p.content_text || '').substring(0, 100) + '...',\n    published_at: p.published_at,\n    likes: p.likes_count,\n    comments: p.comments_count,\n    shares: p.shares_count,\n    engagement_rate: p.engagement_rate,\n    performance_tier: p.performance_tier,\n    post_url: p.post_url\n  }));\n\n// Posting time analysis\nconst postingTimes = {};\nposts.forEach(p => {\n  const hour = p.posted_hour;\n  const day = p.posted_day_of_week;\n  const slot = p.posted_time_slot;\n  \n  if (!postingTimes[slot]) {\n    postingTimes[slot] = {\n      posts_count: 0,\n      avg_engagement_rate: 0,\n      engagement_rates: []\n    };\n  }\n  \n  const pt = postingTimes[slot];\n  pt.posts_count++;\n  if (p.engagement_rate) pt.engagement_rates.push(p.engagement_rate);\n});\n\nObject.keys(postingTimes).forEach(slot => {\n  const pt = postingTimes[slot];\n  pt.avg_engagement_rate = pt.engagement_rates.length > 0\n    ? (pt.engagement_rates.reduce((sum, r) => sum + r, 0) / pt.engagement_rates.length).toFixed(2)\n    : 0;\n  delete pt.engagement_rates;\n});\n\n// Find best posting time\nconst bestTimeSlot = Object.entries(postingTimes)\n  .sort((a, b) => parseFloat(b[1].avg_engagement_rate) - parseFloat(a[1].avg_engagement_rate))[0];\n\n// Account summary\nconst accountSummary = accounts.map(acc => ({\n  platform: acc.platform,\n  account_name: acc.account_name,\n  followers: acc.followers_count,\n  total_posts: acc.total_posts,\n  engagement_rate: acc.engagement_rate,\n  posts_in_period: posts.filter(p => p.account_id === acc.id).length\n}));\n\n// Top hashtags formatted\nconst topHashtags = hashtags.map(h => ({\n  hashtag: '#' + h.hashtag,\n  platform: h.platform,\n  times_used: h.times_used,\n  avg_engagement: h.avg_engagement_rate,\n  is_trending: h.is_trending\n}));\n\n// Growth trends (simplified - compare first half vs second half)\nconst midpoint = new Date(\n  (new Date($('Validate Request').item.json.query.date_range.start).getTime() +\n   new Date($('Validate Request').item.json.query.date_range.end).getTime()) / 2\n);\n\nconst firstHalf = posts.filter(p => new Date(p.published_at) < midpoint);\nconst secondHalf = posts.filter(p => new Date(p.published_at) >= midpoint);\n\nconst firstHalfEngagement = firstHalf.length > 0\n  ? firstHalf.reduce((sum, p) => sum + (p.engagement_rate || 0), 0) / firstHalf.length\n  : 0;\nconst secondHalfEngagement = secondHalf.length > 0\n  ? secondHalf.reduce((sum, p) => sum + (p.engagement_rate || 0), 0) / secondHalf.length\n  : 0;\n\nconst engagementTrend = firstHalfEngagement > 0\n  ? ((secondHalfEngagement - firstHalfEngagement) / firstHalfEngagement * 100).toFixed(1)\n  : 0;\n\nreturn [{\n  json: {\n    summary: summary,\n    platform_performance: platformPerformance,\n    content_type_performance: contentTypePerformance,\n    accounts: accountSummary,\n    best_posts: bestPosts,\n    top_hashtags: topHashtags,\n    posting_times: postingTimes,\n    best_posting_time: bestTimeSlot ? bestTimeSlot[0] : 'afternoon',\n    trends: {\n      engagement_rate_trend: engagementTrend > 0 ? `+${engagementTrend}%` : `${engagementTrend}%`,\n      posts_per_week: (posts.length / 4).toFixed(1)\n    },\n    recommendations: generateRecommendations(\n      platformPerformance,\n      contentTypePerformance,\n      postingTimes,\n      summary\n    )\n  }\n}];\n\nfunction generateRecommendations(platforms, contentTypes, times, summary) {\n  const recs = [];\n  \n  // Best platform recommendation\n  const bestPlatform = Object.entries(platforms)\n    .sort((a, b) => parseFloat(b[1].avg_engagement_rate) - parseFloat(a[1].avg_engagement_rate))[0];\n  \n  if (bestPlatform) {\n    recs.push({\n      type: 'platform_focus',\n      priority: 'medium',\n      message: `${bestPlatform[0]} has your highest engagement rate (${bestPlatform[1].avg_engagement_rate}%). Consider increasing post frequency on this platform.`\n    });\n  }\n  \n  // Best content type recommendation\n  const bestContent = Object.entries(contentTypes)\n    .sort((a, b) => parseFloat(b[1].avg_engagement_rate) - parseFloat(a[1].avg_engagement_rate))[0];\n  \n  if (bestContent) {\n    recs.push({\n      type: 'content_type',\n      priority: 'high',\n      message: `${bestContent[0]} posts perform best (${bestContent[1].avg_engagement_rate}% engagement). Create more ${bestContent[0]} content.`\n    });\n  }\n  \n  // Posting frequency\n  if (summary.total_posts < 20) {\n    recs.push({\n      type: 'posting_frequency',\n      priority: 'high',\n      message: `Post more consistently. You've posted ${summary.total_posts} times this period. Aim for 3-5 posts per week per platform.`\n    });\n  }\n  \n  // Viral content opportunity\n  if (summary.viral_posts > 0) {\n    recs.push({\n      type: 'content_replication',\n      priority: 'high',\n      message: `You have ${summary.viral_posts} viral posts! Analyze what made them successful and create similar content.`\n    });\n  }\n  \n  return recs;\n}"
+      },
+      "id": "aggregate-analytics",
+      "name": "Aggregate Analytics",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1050, 400]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ JSON.stringify({\n  success: true,\n  data: $json,\n  metadata: {\n    query_time_ms: Date.now() - new Date($('Validate Request').item.json.query.timestamp || Date.now()).getTime(),\n    period: $('Validate Request').item.json.query.date_range,\n    timestamp: new Date().toISOString()\n  }\n}) }}",
+        "options": {
+          "responseCode": 200,
+          "responseHeaders": {
+            "entries": [
+              {"name": "Content-Type", "value": "application/json"},
+              {"name": "Cache-Control", "value": "public, max-age=300"}
+            ]
+          }
+        }
+      },
+      "id": "success-response",
+      "name": "Success Response",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [1250, 400]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ JSON.stringify({\n  success: false,\n  error: $json.error,\n  error_code: $json.error_code,\n  timestamp: new Date().toISOString()\n}) }}",
+        "options": {
+          "responseCode": "={{ $json.error_code || 400 }}"
+        }
+      },
+      "id": "error-response",
+      "name": "Error Response",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [850, 600]
+    }
+  ],
+  "connections": {
+    "Social Dashboard Webhook": {
+      "main": [[{"node": "Validate Request", "type": "main", "index": 0}]]
+    },
+    "Validate Request": {
+      "main": [[{"node": "Check Valid", "type": "main", "index": 0}]]
+    },
+    "Check Valid": {
+      "main": [
+        [
+          {"node": "Fetch Posts", "type": "main", "index": 0},
+          {"node": "Fetch Accounts", "type": "main", "index": 0},
+          {"node": "Fetch Top Hashtags", "type": "main", "index": 0}
+        ],
+        [{"node": "Error Response", "type": "main", "index": 0}]
+      ]
+    },
+    "Fetch Posts": {
+      "main": [[{"node": "Aggregate Analytics", "type": "main", "index": 0}]]
+    },
+    "Fetch Accounts": {
+      "main": [[{"node": "Aggregate Analytics", "type": "main", "index": 0}]]
+    },
+    "Fetch Top Hashtags": {
+      "main": [[{"node": "Aggregate Analytics", "type": "main", "index": 0}]]
+    },
+    "Aggregate Analytics": {
+      "main": [[{"node": "Success Response", "type": "main", "index": 0}]]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  }
+}

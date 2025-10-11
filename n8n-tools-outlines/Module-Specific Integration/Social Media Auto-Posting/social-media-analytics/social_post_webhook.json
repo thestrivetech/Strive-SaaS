@@ -1,0 +1,262 @@
+{
+  "name": "social-post-webhook-v1",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "social-media-post",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "id": "webhook-trigger",
+      "name": "Post Published Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [250, 400]
+    },
+    {
+      "parameters": {
+        "jsCode": "// ===============================================\n// VALIDATE & ENRICH SOCIAL POST\n// ===============================================\nconst startTime = Date.now();\nconst input = $input.first().json.body || $input.first().json;\n\n// Required fields\nconst required = ['organization_id', 'account_id', 'platform', 'platform_post_id'];\nconst missing = required.filter(field => !input[field]);\n\nif (missing.length > 0) {\n  return [{\n    json: {\n      valid: false,\n      error: `Missing required fields: ${missing.join(', ')}`,\n      error_code: 400\n    }\n  }];\n}\n\n// Validate UUID formats\nconst uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;\nif (!uuidRegex.test(input.organization_id) || !uuidRegex.test(input.account_id)) {\n  return [{\n    json: {\n      valid: false,\n      error: 'Invalid UUID format for organization_id or account_id',\n      error_code: 400\n    }\n  }];\n}\n\n// Extract hashtags from content\nfunction extractHashtags(text) {\n  if (!text) return [];\n  const hashtagRegex = /#(\\w+)/g;\n  const hashtags = [];\n  let match;\n  while ((match = hashtagRegex.exec(text)) !== null) {\n    hashtags.push(match[1]);\n  }\n  return hashtags;\n}\n\n// Extract mentions\nfunction extractMentions(text) {\n  if (!text) return [];\n  const mentionRegex = /@([\\w.]+)/g;\n  const mentions = [];\n  let match;\n  while ((match = mentionRegex.exec(text)) !== null) {\n    mentions.push(match[1]);\n  }\n  return mentions;\n}\n\n// Classify content category based on keywords\nfunction classifyContent(text) {\n  if (!text) return 'general';\n  \n  const lower = text.toLowerCase();\n  \n  if (lower.includes('list') || lower.includes('sale') || lower.includes('sold') || \n      lower.includes('bedroom') || lower.includes('bath')) {\n    return 'listing';\n  }\n  \n  if (lower.includes('tip') || lower.includes('how to') || lower.includes('guide') || \n      lower.includes('learn') || lower.includes('advice')) {\n    return 'education';\n  }\n  \n  if (lower.includes('review') || lower.includes('testimonial') || lower.includes('client') ||\n      lower.includes('happy') || lower.includes('thank')) {\n    return 'testimonial';\n  }\n  \n  if (lower.includes('team') || lower.includes('office') || lower.includes('behind') ||\n      lower.includes('meet') || lower.includes('our')) {\n    return 'brand';\n  }\n  \n  if (lower.includes('community') || lower.includes('local') || lower.includes('neighborhood')) {\n    return 'community';\n  }\n  \n  return 'general';\n}\n\n// Determine target audience\nfunction determineAudience(text, category) {\n  if (!text) return 'general';\n  \n  const lower = text.toLowerCase();\n  \n  if (lower.includes('buyer') || lower.includes('buying') || lower.includes('purchase')) {\n    return 'buyers';\n  }\n  \n  if (lower.includes('sell') || lower.includes('listing') || lower.includes('seller')) {\n    return 'sellers';\n  }\n  \n  if (lower.includes('invest') || lower.includes('roi') || lower.includes('rental')) {\n    return 'investors';\n  }\n  \n  return 'general';\n}\n\n// Build enriched post object\nconst hashtags = extractHashtags(input.content_text);\nconst mentions = extractMentions(input.content_text);\nconst category = classifyContent(input.content_text);\nconst audience = determineAudience(input.content_text, category);\n\nconst post = {\n  organization_id: input.organization_id,\n  account_id: input.account_id,\n  \n  // Post identity\n  platform: input.platform,\n  platform_post_id: input.platform_post_id,\n  post_url: input.post_url || null,\n  \n  // Content\n  content_text: input.content_text || '',\n  content_type: input.content_type || 'text',\n  media_urls: typeof input.media_urls === 'string' ? input.media_urls : JSON.stringify(input.media_urls || []),\n  media_count: Array.isArray(input.media_urls) ? input.media_urls.length : (input.media_count || 0),\n  \n  // Publishing\n  published_at: input.published_at || new Date().toISOString(),\n  is_published: input.is_published !== false,\n  scheduled_for: input.scheduled_for || null,\n  \n  // Classification\n  hashtags: JSON.stringify(hashtags),\n  mentions: JSON.stringify(mentions),\n  campaign_id: input.campaign_id || null,\n  content_category: input.content_category || category,\n  target_audience: input.target_audience || audience,\n  \n  // Initial metrics (will be updated by sync)\n  likes_count: input.likes_count || 0,\n  comments_count: input.comments_count || 0,\n  shares_count: input.shares_count || 0,\n  saves_count: input.saves_count || 0,\n  views_count: input.views_count || 0,\n  clicks_count: input.clicks_count || 0,\n  reach: input.reach || 0,\n  impressions: input.impressions || 0,\n  \n  // Video metrics if applicable\n  video_duration_seconds: input.video_duration_seconds || null,\n  \n  // Timestamps\n  last_metrics_update: new Date().toISOString()\n};\n\nreturn [{\n  json: {\n    valid: true,\n    post: post,\n    enrichment: {\n      hashtags_found: hashtags.length,\n      mentions_found: mentions.length,\n      auto_category: category,\n      auto_audience: audience\n    },\n    processing_time_ms: Date.now() - startTime\n  }\n}];"
+      },
+      "id": "validate-enrich",
+      "name": "Validate & Enrich Post",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [450, 400]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "boolean": [{"value1": "={{ $json.valid }}", "value2": true}]
+        }
+      },
+      "id": "check-valid",
+      "name": "Check Valid",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [650, 400]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $env.SUPABASE_URL }}/rest/v1/social_media_posts",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {"name": "apikey", "value": "={{ $env.SUPABASE_SERVICE_KEY }}"},
+            {"name": "Authorization", "value": "=Bearer {{ $env.SUPABASE_SERVICE_KEY }}"},
+            {"name": "Content-Type", "value": "application/json"},
+            {"name": "Prefer", "value": "return=representation,resolution=merge-duplicates"}
+          ]
+        },
+        "sendBody": true,
+        "contentType": "application/json",
+        "body": "={{ JSON.stringify($json.post) }}",
+        "options": {
+          "timeout": 10000,
+          "retry": {
+            "enabled": true,
+            "maxRetries": 3,
+            "retryInterval": 1000
+          }
+        }
+      },
+      "id": "save-post",
+      "name": "Save Post to Database",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [850, 300]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Link post to campaign if campaign_id provided\nconst post = $('Save Post to Database').item.json[0];\nconst validationData = $('Validate & Enrich Post').item.json;\n\nif (!validationData.post.campaign_id) {\n  return [{\n    json: {\n      campaign_linked: false,\n      reason: 'No campaign_id provided'\n    }\n  }];\n}\n\nreturn [{\n  json: {\n    campaign_linked: true,\n    organization_id: post.organization_id,\n    campaign_id: validationData.post.campaign_id,\n    post_id: post.id,\n    campaign_phase: 'awareness', // Default, can be overridden\n    content_pillar: post.content_category\n  }\n}];"
+      },
+      "id": "check-campaign",
+      "name": "Check Campaign Link",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1050, 200]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "boolean": [{"value1": "={{ $json.campaign_linked }}", "value2": true}]
+        }
+      },
+      "id": "has-campaign",
+      "name": "Has Campaign?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [1250, 200]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $env.SUPABASE_URL }}/rest/v1/social_media_campaign_posts",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {"name": "apikey", "value": "={{ $env.SUPABASE_SERVICE_KEY }}"},
+            {"name": "Authorization", "value": "=Bearer {{ $env.SUPABASE_SERVICE_KEY }}"},
+            {"name": "Content-Type", "value": "application/json"},
+            {"name": "Prefer", "value": "resolution=merge-duplicates"}
+          ]
+        },
+        "sendBody": true,
+        "contentType": "application/json",
+        "body": "={{ JSON.stringify({\n  organization_id: $json.organization_id,\n  campaign_id: $json.campaign_id,\n  post_id: $json.post_id,\n  campaign_phase: $json.campaign_phase,\n  content_pillar: $json.content_pillar\n}) }}"
+      },
+      "id": "link-campaign",
+      "name": "Link to Campaign",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [1450, 150]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Create campaign touchpoint for tracking\nconst campaignPost = $('Check Campaign Link').item.json;\nconst post = $('Save Post to Database').item.json[0];\n\nreturn [{\n  json: {\n    organization_id: post.organization_id,\n    campaign_id: campaignPost.campaign_id,\n    lead_id: null, // Will be associated when users engage\n    channel: 'social_' + post.platform,\n    touchpoint_type: 'social_post',\n    content_type: post.content_type,\n    content_id: post.id,\n    content_title: post.content_text.substring(0, 100),\n    engagement_score: 5, // Initial score, will update with actual engagement\n    metadata: {\n      platform: post.platform,\n      post_url: post.post_url,\n      hashtags: post.hashtags,\n      content_category: post.content_category\n    },\n    timestamp: post.published_at\n  }\n}];"
+      },
+      "id": "create-touchpoint",
+      "name": "Create Campaign Touchpoint",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1650, 150]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $env.SUPABASE_URL }}/rest/v1/campaign_touchpoints",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {"name": "apikey", "value": "={{ $env.SUPABASE_SERVICE_KEY }}"},
+            {"name": "Authorization", "value": "=Bearer {{ $env.SUPABASE_SERVICE_KEY }}"},
+            {"name": "Content-Type", "value": "application/json"}
+          ]
+        },
+        "sendBody": true,
+        "contentType": "application/json",
+        "body": "={{ JSON.stringify($json) }}"
+      },
+      "id": "save-touchpoint",
+      "name": "Save Touchpoint",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [1850, 150]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Update account stats\nconst post = $('Save Post to Database').item.json[0];\n\nreturn [{\n  json: {\n    account_id: post.account_id,\n    action: 'increment_posts'\n  }\n}];"
+      },
+      "id": "update-account",
+      "name": "Update Account Stats",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1050, 300]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $env.SUPABASE_URL }}/rest/v1/rpc/update_account_stats",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {"name": "apikey", "value": "={{ $env.SUPABASE_SERVICE_KEY }}"},
+            {"name": "Authorization", "value": "=Bearer {{ $env.SUPABASE_SERVICE_KEY }}"},
+            {"name": "Content-Type", "value": "application/json"}
+          ]
+        },
+        "sendBody": true,
+        "contentType": "application/json",
+        "body": "={{ JSON.stringify({\n  p_account_id: $json.account_id\n}) }}"
+      },
+      "id": "call-update-stats",
+      "name": "Call Update Stats Function",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [1250, 300]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ JSON.stringify({\n  success: true,\n  post_id: $('Save Post to Database').item.json[0].id,\n  platform: $('Save Post to Database').item.json[0].platform,\n  enrichment: $('Validate & Enrich Post').item.json.enrichment,\n  campaign_linked: $('Check Campaign Link').item.json.campaign_linked,\n  message: 'Post tracked successfully',\n  timestamp: new Date().toISOString()\n}) }}",
+        "options": {
+          "responseCode": 201,
+          "responseHeaders": {
+            "entries": [{"name": "Content-Type", "value": "application/json"}]
+          }
+        }
+      },
+      "id": "success-response",
+      "name": "Success Response",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [1450, 300]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ JSON.stringify({\n  success: false,\n  error: $json.error || 'Validation failed',\n  error_code: $json.error_code || 400,\n  timestamp: new Date().toISOString()\n}) }}",
+        "options": {
+          "responseCode": "={{ $json.error_code || 400 }}"
+        }
+      },
+      "id": "error-response",
+      "name": "Error Response",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [850, 500]
+    }
+  ],
+  "connections": {
+    "Post Published Webhook": {
+      "main": [[{"node": "Validate & Enrich Post", "type": "main", "index": 0}]]
+    },
+    "Validate & Enrich Post": {
+      "main": [[{"node": "Check Valid", "type": "main", "index": 0}]]
+    },
+    "Check Valid": {
+      "main": [
+        [{"node": "Save Post to Database", "type": "main", "index": 0}],
+        [{"node": "Error Response", "type": "main", "index": 0}]
+      ]
+    },
+    "Save Post to Database": {
+      "main": [
+        [
+          {"node": "Check Campaign Link", "type": "main", "index": 0},
+          {"node": "Update Account Stats", "type": "main", "index": 0}
+        ]
+      ]
+    },
+    "Check Campaign Link": {
+      "main": [[{"node": "Has Campaign?", "type": "main", "index": 0}]]
+    },
+    "Has Campaign?": {
+      "main": [
+        [{"node": "Link to Campaign", "type": "main", "index": 0}],
+        [{"node": "Update Account Stats", "type": "main", "index": 0}]
+      ]
+    },
+    "Link to Campaign": {
+      "main": [[{"node": "Create Campaign Touchpoint", "type": "main", "index": 0}]]
+    },
+    "Create Campaign Touchpoint": {
+      "main": [[{"node": "Save Touchpoint", "type": "main", "index": 0}]]
+    },
+    "Save Touchpoint": {
+      "main": [[{"node": "Update Account Stats", "type": "main", "index": 0}]]
+    },
+    "Update Account Stats": {
+      "main": [[{"node": "Call Update Stats Function", "type": "main", "index": 0}]]
+    },
+    "Call Update Stats Function": {
+      "main": [[{"node": "Success Response", "type": "main", "index": 0}]]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "saveDataErrorExecution": "all",
+    "saveDataSuccessExecution": "all"
+  }
+}

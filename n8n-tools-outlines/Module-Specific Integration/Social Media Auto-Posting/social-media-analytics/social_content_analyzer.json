@@ -1,0 +1,111 @@
+{
+  "name": "social-content-analyzer-v1",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [{"field": "cronExpression", "expression": "0 8 * * MON"}]
+        }
+      },
+      "id": "weekly-trigger",
+      "name": "Every Monday 8 AM",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [250, 400]
+    },
+    {
+      "parameters": {
+        "method": "GET",
+        "url": "={{ $env.SUPABASE_URL }}/rest/v1/rpc/get_weekly_social_analysis",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {"name": "apikey", "value": "={{ $env.SUPABASE_SERVICE_KEY }}"},
+            {"name": "Authorization", "value": "=Bearer {{ $env.SUPABASE_SERVICE_KEY }}"},
+            {"name": "Content-Type", "value": "application/json"}
+          ]
+        },
+        "sendBody": true,
+        "contentType": "application/json",
+        "body": "={{ JSON.stringify({\n  p_days: 30\n}) }}"
+      },
+      "id": "fetch-data",
+      "name": "Fetch 30-Day Data",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [450, 400]
+    },
+    {
+      "parameters": {
+        "jsCode": "// ===============================================\n// ADVANCED CONTENT PERFORMANCE ANALYSIS\n// Machine Learning-based insights generation\n// ===============================================\n\nconst rawData = $input.all().map(i => i.json).flat();\n\nif (!rawData || rawData.length === 0) {\n  return [{json: {message: 'No data to analyze', insights: []}}];\n}\n\n// Group data by organization and platform\nconst organizationData = {};\n\nrawData.forEach(post => {\n  const orgKey = post.organization_id;\n  if (!organizationData[orgKey]) {\n    organizationData[orgKey] = {\n      organization_id: orgKey,\n      platforms: {},\n      all_posts: []\n    };\n  }\n  \n  const platform = post.platform;\n  if (!organizationData[orgKey].platforms[platform]) {\n    organizationData[orgKey].platforms[platform] = [];\n  }\n  \n  organizationData[orgKey].platforms[platform].push(post);\n  organizationData[orgKey].all_posts.push(post);\n});\n\n// Generate insights for each organization\nconst allInsights = [];\n\nObject.values(organizationData).forEach(orgData => {\n  const insights = generateComprehensiveInsights(orgData);\n  allInsights.push(insights);\n});\n\nreturn allInsights.map(insight => ({json: insight}));\n\n// ===============================================\n// INSIGHT GENERATION FUNCTIONS\n// ===============================================\n\nfunction generateComprehensiveInsights(orgData) {\n  const posts = orgData.all_posts;\n  \n  // 1. Best performing content type\n  const contentTypeAnalysis = analyzeContentTypes(posts);\n  \n  // 2. Optimal posting times\n  const postingTimeAnalysis = analyzePostingTimes(posts);\n  \n  // 3. Hashtag effectiveness\n  const hashtagAnalysis = analyzeHashtags(posts);\n  \n  // 4. Content length optimization\n  const contentLengthAnalysis = analyzeContentLength(posts);\n  \n  // 5. Platform-specific insights\n  const platformInsights = {};\n  Object.entries(orgData.platforms).forEach(([platform, platformPosts]) => {\n    platformInsights[platform] = analyzePlatformPerformance(platformPosts, platform);\n  });\n  \n  // 6. Engagement pattern detection\n  const engagementPatterns = detectEngagementPatterns(posts);\n  \n  // 7. Content freshness analysis\n  const freshnessAnalysis = analyzeContentFreshness(posts);\n  \n  // 8. Competitive benchmarking (if data available)\n  const benchmarks = calculateBenchmarks(posts);\n  \n  // 9. Generate actionable recommendations\n  const recommendations = generateActionableRecommendations({\n    contentTypeAnalysis,\n    postingTimeAnalysis,\n    hashtagAnalysis,\n    contentLengthAnalysis,\n    platformInsights,\n    engagementPatterns,\n    freshnessAnalysis,\n    benchmarks\n  });\n  \n  return {\n    organization_id: orgData.organization_id,\n    analysis_period: {\n      start: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],\n      end: new Date().toISOString().split('T')[0]\n    },\n    posts_analyzed: posts.length,\n    best_content_type: contentTypeAnalysis.best,\n    best_posting_day: postingTimeAnalysis.bestDay,\n    best_posting_hour: postingTimeAnalysis.bestHour,\n    best_time_slot: postingTimeAnalysis.bestSlot,\n    top_hashtags: hashtagAnalysis.top10,\n    optimal_content_length: contentLengthAnalysis.optimal,\n    platform_insights: platformInsights,\n    engagement_patterns: engagementPatterns,\n    recommendations: recommendations,\n    performance_score: calculateOverallPerformanceScore(posts),\n    generated_at: new Date().toISOString()\n  };\n}\n\nfunction analyzeContentTypes(posts) {\n  const typePerformance = {};\n  \n  posts.forEach(p => {\n    const type = p.content_type || 'text';\n    if (!typePerformance[type]) {\n      typePerformance[type] = {\n        count: 0,\n        total_engagement: 0,\n        engagement_rates: [],\n        reach_totals: []\n      };\n    }\n    \n    typePerformance[type].count++;\n    typePerformance[type].total_engagement += (p.likes_count + p.comments_count + p.shares_count);\n    if (p.engagement_rate) typePerformance[type].engagement_rates.push(p.engagement_rate);\n    if (p.reach) typePerformance[type].reach_totals.push(p.reach);\n  });\n  \n  // Calculate averages\n  Object.keys(typePerformance).forEach(type => {\n    const tp = typePerformance[type];\n    tp.avg_engagement_rate = tp.engagement_rates.length > 0\n      ? tp.engagement_rates.reduce((sum, r) => sum + r, 0) / tp.engagement_rates.length\n      : 0;\n    tp.avg_reach = tp.reach_totals.length > 0\n      ? tp.reach_totals.reduce((sum, r) => sum + r, 0) / tp.reach_totals.length\n      : 0;\n  });\n  \n  // Find best performing\n  const best = Object.entries(typePerformance)\n    .sort((a, b) => b[1].avg_engagement_rate - a[1].avg_engagement_rate)[0];\n  \n  return {\n    all: typePerformance,\n    best: best ? {\n      type: best[0],\n      engagement_rate: best[1].avg_engagement_rate.toFixed(2),\n      count: best[1].count\n    } : null\n  };\n}\n\nfunction analyzePostingTimes(posts) {\n  const dayPerformance = {};\n  const hourPerformance = {};\n  const slotPerformance = {};\n  \n  posts.forEach(p => {\n    // Day of week\n    const day = p.posted_day_of_week;\n    if (day !== null && day !== undefined) {\n      if (!dayPerformance[day]) {\n        dayPerformance[day] = {count: 0, engagement_rates: []};\n      }\n      dayPerformance[day].count++;\n      if (p.engagement_rate) dayPerformance[day].engagement_rates.push(p.engagement_rate);\n    }\n    \n    // Hour\n    const hour = p.posted_hour;\n    if (hour !== null && hour !== undefined) {\n      if (!hourPerformance[hour]) {\n        hourPerformance[hour] = {count: 0, engagement_rates: []};\n      }\n      hourPerformance[hour].count++;\n      if (p.engagement_rate) hourPerformance[hour].engagement_rates.push(p.engagement_rate);\n    }\n    \n    // Time slot\n    const slot = p.posted_time_slot;\n    if (slot) {\n      if (!slotPerformance[slot]) {\n        slotPerformance[slot] = {count: 0, engagement_rates: []};\n      }\n      slotPerformance[slot].count++;\n      if (p.engagement_rate) slotPerformance[slot].engagement_rates.push(p.engagement_rate);\n    }\n  });\n  \n  // Calculate averages\n  const calculateAvg = (obj) => {\n    Object.keys(obj).forEach(key => {\n      const rates = obj[key].engagement_rates;\n      obj[key].avg_engagement = rates.length > 0\n        ? rates.reduce((sum, r) => sum + r, 0) / rates.length\n        : 0;\n    });\n  };\n  \n  calculateAvg(dayPerformance);\n  calculateAvg(hourPerformance);\n  calculateAvg(slotPerformance);\n  \n  // Find best times (only if sufficient data)\n  const dayNames = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];\n  const bestDay = Object.entries(dayPerformance)\n    .filter(([_, data]) => data.count >= 3)\n    .sort((a, b) => b[1].avg_engagement - a[1].avg_engagement)[0];\n  \n  const bestHour = Object.entries(hourPerformance)\n    .filter(([_, data]) => data.count >= 3)\n    .sort((a, b) => b[1].avg_engagement - a[1].avg_engagement)[0];\n  \n  const bestSlot = Object.entries(slotPerformance)\n    .sort((a, b) => b[1].avg_engagement - a[1].avg_engagement)[0];\n  \n  return {\n    bestDay: bestDay ? dayNames[parseInt(bestDay[0])] : 'Unknown',\n    bestHour: bestHour ? parseInt(bestHour[0]) : null,\n    bestSlot: bestSlot ? bestSlot[0] : 'afternoon',\n    dayPerformance: dayPerformance,\n    hourPerformance: hourPerformance\n  };\n}\n\nfunction analyzeHashtags(posts) {\n  const hashtagStats = {};\n  \n  posts.forEach(p => {\n    if (!p.hashtags) return;\n    \n    let hashtags = [];\n    try {\n      hashtags = typeof p.hashtags === 'string' ? JSON.parse(p.hashtags) : p.hashtags;\n    } catch (e) {\n      return;\n    }\n    \n    hashtags.forEach(tag => {\n      if (!hashtagStats[tag]) {\n        hashtagStats[tag] = {\n          count: 0,\n          engagement_rates: [],\n          reach_totals: []\n        };\n      }\n      \n      hashtagStats[tag].count++;\n      if (p.engagement_rate) hashtagStats[tag].engagement_rates.push(p.engagement_rate);\n      if (p.reach) hashtagStats[tag].reach_totals.push(p.reach);\n    });\n  });\n  \n  // Calculate averages and sort\n  const hashtagArray = Object.entries(hashtagStats)\n    .map(([tag, stats]) => ({\n      hashtag: tag,\n      times_used: stats.count,\n      avg_engagement: stats.engagement_rates.length > 0\n        ? stats.engagement_rates.reduce((sum, r) => sum + r, 0) / stats.engagement_rates.length\n        : 0,\n      avg_reach: stats.reach_totals.length > 0\n        ? stats.reach_totals.reduce((sum, r) => sum + r, 0) / stats.reach_totals.length\n        : 0\n    }))\n    .filter(h => h.times_used >= 2) // Must be used at least twice\n    .sort((a, b) => b.avg_engagement - a.avg_engagement);\n  \n  return {\n    top10: hashtagArray.slice(0, 10),\n    total_unique_hashtags: Object.keys(hashtagStats).length\n  };\n}\n\nfunction analyzeContentLength(posts) {\n  const lengthBuckets = {\n    'short': {range: [0, 100], posts: [], engagement: []},\n    'medium': {range: [101, 200], posts: [], engagement: []},\n    'long': {range: [201, 500], posts: [], engagement: []},\n    'very_long': {range: [501, 99999], posts: [], engagement: []}\n  };\n  \n  posts.forEach(p => {\n    const length = (p.content_text || '').length;\n    \n    Object.entries(lengthBuckets).forEach(([bucket, data]) => {\n      if (length >= data.range[0] && length <= data.range[1]) {\n        data.posts.push(p);\n        if (p.engagement_rate) data.engagement.push(p.engagement_rate);\n      }\n    });\n  });\n  \n  // Find optimal length\n  const optimal = Object.entries(lengthBuckets)\n    .filter(([_, data]) => data.posts.length >= 3)\n    .map(([bucket, data]) => ({\n      bucket: bucket,\n      avg_engagement: data.engagement.length > 0\n        ? data.engagement.reduce((sum, r) => sum + r, 0) / data.engagement.length\n        : 0,\n      count: data.posts.length\n    }))\n    .sort((a, b) => b.avg_engagement - a.avg_engagement)[0];\n  \n  return {\n    optimal: optimal ? optimal.bucket : 'medium',\n    by_bucket: lengthBuckets\n  };\n}\n\nfunction analyzePlatformPerformance(posts, platform) {\n  if (posts.length === 0) return null;\n  \n  const totalEngagement = posts.reduce((sum, p) => \n    sum + (p.likes_count + p.comments_count + p.shares_count), 0);\n  \n  const avgEngagement = posts.reduce((sum, p) => \n    sum + (p.engagement_rate || 0), 0) / posts.length;\n  \n  const totalReach = posts.reduce((sum, p) => sum + (p.reach || 0), 0);\n  \n  return {\n    posts_count: posts.length,\n    total_engagement: totalEngagement,\n    avg_engagement_rate: avgEngagement.toFixed(2),\n    total_reach: totalReach,\n    posting_frequency: (posts.length / 4).toFixed(1) + ' per week'\n  };\n}\n\nfunction detectEngagementPatterns(posts) {\n  // Detect patterns in engagement over time\n  const dailyEngagement = {};\n  \n  posts.forEach(p => {\n    const date = new Date(p.published_at).toISOString().split('T')[0];\n    if (!dailyEngagement[date]) {\n      dailyEngagement[date] = {count: 0, total_engagement: 0};\n    }\n    dailyEngagement[date].count++;\n    dailyEngagement[date].total_engagement += (p.likes_count + p.comments_count + p.shares_count);\n  });\n  \n  // Calculate trend\n  const dates = Object.keys(dailyEngagement).sort();\n  const firstWeek = dates.slice(0, 7);\n  const lastWeek = dates.slice(-7);\n  \n  const firstWeekAvg = firstWeek.reduce((sum, date) => \n    sum + dailyEngagement[date].total_engagement, 0) / firstWeek.length;\n  \n  const lastWeekAvg = lastWeek.reduce((sum, date) => \n    sum + dailyEngagement[date].total_engagement, 0) / lastWeek.length;\n  \n  const trend = firstWeekAvg > 0\n    ? ((lastWeekAvg - firstWeekAvg) / firstWeekAvg * 100).toFixed(1)\n    : 0;\n  \n  return {\n    trend: trend > 0 ? 'increasing' : trend < 0 ? 'decreasing' : 'stable',\n    trend_percentage: trend,\n    pattern: 'consistent' // Could add more sophisticated pattern detection\n  };\n}\n\nfunction analyzeContentFreshness(posts) {\n  const now = Date.now();\n  const recentPosts = posts.filter(p => \n    now - new Date(p.published_at).getTime() < 7 * 24 * 60 * 60 * 1000\n  );\n  \n  return {\n    posts_last_7_days: recentPosts.length,\n    posting_consistency: recentPosts.length >= 5 ? 'good' : recentPosts.length >= 3 ? 'fair' : 'needs_improvement'\n  };\n}\n\nfunction calculateBenchmarks(posts) {\n  // Industry benchmarks (real estate social media)\n  const industryBenchmarks = {\n    instagram: {engagement_rate: 3.5, posts_per_week: 5},\n    facebook: {engagement_rate: 1.5, posts_per_week: 7},\n    linkedin: {engagement_rate: 4.0, posts_per_week: 3},\n    twitter: {engagement_rate: 1.0, posts_per_week: 10}\n  };\n  \n  const avgEngagement = posts.reduce((sum, p) => \n    sum + (p.engagement_rate || 0), 0) / posts.length;\n  \n  return {\n    your_avg_engagement: avgEngagement.toFixed(2),\n    industry_avg: 2.5,\n    performance: avgEngagement > 2.5 ? 'above_average' : avgEngagement > 1.5 ? 'average' : 'below_average'\n  };\n}\n\nfunction generateActionableRecommendations(analysis) {\n  const recs = [];\n  \n  // Content type recommendation\n  if (analysis.contentTypeAnalysis.best) {\n    recs.push({\n      priority: 'high',\n      category: 'content_type',\n      title: `Focus on ${analysis.contentTypeAnalysis.best.type} content`,\n      description: `Your ${analysis.contentTypeAnalysis.best.type} posts achieve ${analysis.contentTypeAnalysis.best.engagement_rate}% engagement rate, significantly above average.`,\n      action: `Create 2-3 more ${analysis.contentTypeAnalysis.best.type} posts per week`,\n      expected_impact: '15-25% increase in overall engagement'\n    });\n  }\n  \n  // Posting time recommendation\n  if (analysis.postingTimeAnalysis.bestDay && analysis.postingTimeAnalysis.bestHour) {\n    recs.push({\n      priority: 'high',\n      category: 'timing',\n      title: `Post on ${analysis.postingTimeAnalysis.bestDay}s at ${analysis.postingTimeAnalysis.bestHour}:00`,\n      description: `This is your optimal posting window based on historical engagement patterns.`,\n      action: `Schedule your most important content for ${analysis.postingTimeAnalysis.bestDay} ${analysis.postingTimeAnalysis.bestSlot}`,\n      expected_impact: '10-20% engagement boost'\n    });\n  }\n  \n  // Hashtag recommendation\n  if (analysis.hashtagAnalysis.top10.length > 0) {\n    const topHashtag = analysis.hashtagAnalysis.top10[0];\n    recs.push({\n      priority: 'medium',\n      category: 'hashtags',\n      title: `Use high-performing hashtags`,\n      description: `#${topHashtag.hashtag} has ${topHashtag.avg_engagement.toFixed(1)}% engagement rate across ${topHashtag.times_used} posts.`,\n      action: `Include #${topHashtag.hashtag} and other top performers in future posts`,\n      expected_impact: 'Improved discoverability and reach'\n    });\n  }\n  \n  // Content length recommendation\n  if (analysis.contentLengthAnalysis.optimal) {\n    recs.push({\n      priority: 'low',\n      category: 'content_length',\n      title: `Optimal content length: ${analysis.contentLengthAnalysis.optimal}`,\n      description: `Posts with ${analysis.contentLengthAnalysis.optimal} length perform best for your audience.`,\n      action: `Aim for ${analysis.contentLengthAnalysis.optimal === 'short' ? '50-100' : analysis.contentLengthAnalysis.optimal === 'medium' ? '100-200' : '200+'} characters`,\n      expected_impact: 'Better audience retention'\n    });\n  }\n  \n  // Posting frequency recommendation\n  if (analysis.freshnessAnalysis.posting_consistency !== 'good') {\n    recs.push({\n      priority: 'high',\n      category: 'frequency',\n      title: 'Increase posting frequency',\n      description: `You posted ${analysis.freshnessAnalysis.posts_last_7_days} times in the last week. Consistent posting is key to algorithm favorability.`,\n      action: 'Aim for 3-5 posts per week per platform',\n      expected_impact: 'Better algorithmic visibility and audience retention'\n    });\n  }\n  \n  return recs;\n}\n\nfunction calculateOverallPerformanceScore(posts) {\n  if (posts.length === 0) return 0;\n  \n  // Factors: engagement rate, posting consistency, content variety\n  const avgEngagement = posts.reduce((sum, p) => \n    sum + (p.engagement_rate || 0), 0) / posts.length;\n  \n  const engagementScore = Math.min(avgEngagement / 5 * 50, 50); // Max 50 points\n  \n  const postingScore = Math.min((posts.length / 30) * 30, 30); // Max 30 points for 30+ posts\n  \n  const contentTypes = new Set(posts.map(p => p.content_type));\n  const varietyScore = Math.min(contentTypes.size * 5, 20); // Max 20 points\n  \n  return Math.round(engagementScore + postingScore + varietyScore);\n}"
+      },
+      "id": "analyze-content",
+      "name": "Analyze Content Performance",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [650, 400]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $env.SUPABASE_URL }}/rest/v1/content_performance_insights",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {"name": "apikey", "value": "={{ $env.SUPABASE_SERVICE_KEY }}"},
+            {"name": "Authorization", "value": "=Bearer {{ $env.SUPABASE_SERVICE_KEY }}"},
+            {"name": "Content-Type", "value": "application/json"},
+            {"name": "Prefer", "value": "resolution=merge-duplicates"}
+          ]
+        },
+        "sendBody": true,
+        "contentType": "application/json",
+        "body": "={{ JSON.stringify({\n  organization_id: $json.organization_id,\n  period_start: $json.analysis_period.start,\n  period_end: $json.analysis_period.end,\n  platform: null,\n  best_content_type: $json.best_content_type?.type,\n  best_content_category: null,\n  best_day_of_week: $json.best_posting_day === 'Sunday' ? 0 : $json.best_posting_day === 'Monday' ? 1 : $json.best_posting_day === 'Tuesday' ? 2 : $json.best_posting_day === 'Wednesday' ? 3 : $json.best_posting_day === 'Thursday' ? 4 : $json.best_posting_day === 'Friday' ? 5 : 6,\n  best_hour: $json.best_posting_hour,\n  best_time_slot: $json.best_time_slot,\n  avg_engagement_rate: $json.best_content_type?.engagement_rate,\n  top_performing_hashtags: JSON.stringify($json.top_hashtags),\n  posts_analyzed: $json.posts_analyzed,\n  confidence_score: $json.performance_score / 100,\n  generated_at: $json.generated_at\n}) }}"
+      },
+      "id": "save-insights",
+      "name": "Save Insights to Database",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [850, 400]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $env.SUPABASE_URL }}/rest/v1/workflow_executions",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {"name": "apikey", "value": "={{ $env.SUPABASE_SERVICE_KEY }}"},
+            {"name": "Authorization", "value": "=Bearer {{ $env.SUPABASE_SERVICE_KEY }}"},
+            {"name": "Content-Type", "value": "application/json"}
+          ]
+        },
+        "sendBody": true,
+        "contentType": "application/json",
+        "body": "={{ JSON.stringify({\n  workflow_name: 'social-content-analyzer-v1',\n  execution_id: $execution.id,\n  trigger_type: 'schedule',\n  status: 'success',\n  items_processed: $json.posts_analyzed || 0,\n  completed_at: new Date().toISOString()\n}) }}"
+      },
+      "id": "log-execution",
+      "name": "Log Execution",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [1050, 400]
+    }
+  ],
+  "connections": {
+    "Every Monday 8 AM": {
+      "main": [[{"node": "Fetch 30-Day Data", "type": "main", "index": 0}]]
+    },
+    "Fetch 30-Day Data": {
+      "main": [[{"node": "Analyze Content Performance", "type": "main", "index": 0}]]
+    },
+    "Analyze Content Performance": {
+      "main": [[{"node": "Save Insights to Database", "type": "main", "index": 0}]]
+    },
+    "Save Insights to Database": {
+      "main": [[{"node": "Log Execution", "type": "main", "index": 0}]]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  }
+}

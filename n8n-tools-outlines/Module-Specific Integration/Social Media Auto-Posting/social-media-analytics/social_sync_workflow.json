@@ -1,0 +1,261 @@
+{
+  "name": "social-media-post-sync-v1",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "cronExpression",
+              "expression": "0 */2 * * *"
+            }
+          ]
+        }
+      },
+      "id": "schedule-trigger",
+      "name": "Every 2 Hours",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [250, 400]
+    },
+    {
+      "parameters": {
+        "method": "GET",
+        "url": "={{ $env.SUPABASE_URL }}/rest/v1/social_media_accounts",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {"name": "apikey", "value": "={{ $env.SUPABASE_SERVICE_KEY }}"},
+            {"name": "Authorization", "value": "=Bearer {{ $env.SUPABASE_SERVICE_KEY }}"}
+          ]
+        },
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {"name": "status", "value": "eq.active"},
+            {"name": "select", "value": "id,organization_id,platform,platform_account_id,account_name,followers_count"}
+          ]
+        }
+      },
+      "id": "fetch-accounts",
+      "name": "Fetch Active Accounts",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [450, 400]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "string": [
+            {"value1": "={{ $json.platform }}", "operation": "equals", "value2": "facebook"}
+          ]
+        }
+      },
+      "id": "route-platform",
+      "name": "Route by Platform",
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3,
+      "position": [650, 400]
+    },
+    {
+      "parameters": {
+        "jsCode": "// ===============================================\n// FACEBOOK POST SYNC\n// ===============================================\nconst account = $input.first().json;\n\n// Facebook Graph API call\n// URL: https://graph.facebook.com/v18.0/{page-id}/posts\n// Params: fields=id,message,created_time,permalink_url,attachments,insights.metric(post_impressions,post_engaged_users,post_reactions_like_total,post_reactions_love_total,post_comments,post_shares)\n\nconst apiUrl = `https://graph.facebook.com/v18.0/${account.platform_account_id}/posts`;\nconst fields = [\n  'id',\n  'message',\n  'created_time',\n  'permalink_url',\n  'attachments',\n  'full_picture',\n  'type',\n  'insights.metric(post_impressions,post_engaged_users,post_reactions_like_total,post_comments,post_shares)'\n].join(',');\n\n// In production, this would make actual API call:\n// const response = await fetch(`${apiUrl}?fields=${fields}&access_token=${accessToken}`);\n\n// Mock response for structure\nconst mockPosts = [\n  {\n    id: `${account.platform_account_id}_12345`,\n    message: 'Check out this stunning luxury property in downtown! 🏠✨ #RealEstate #LuxuryHomes #PropertyListing',\n    created_time: new Date(Date.now() - 6 * 60 * 60 * 1000).toISOString(),\n    permalink_url: `https://facebook.com/${account.platform_account_id}/posts/12345`,\n    type: 'photo',\n    full_picture: 'https://example.com/property-image.jpg',\n    insights: {\n      data: [\n        {name: 'post_impressions', values: [{value: 2500}]},\n        {name: 'post_engaged_users', values: [{value: 185}]},\n        {name: 'post_reactions_like_total', values: [{value: 142}]},\n        {name: 'post_comments', values: [{value: 23}]},\n        {name: 'post_shares', values: [{value: 12}]}\n      ]\n    },\n    attachments: {\n      data: [{media: {image: {src: 'https://example.com/property-image.jpg'}}}]\n    }\n  },\n  {\n    id: `${account.platform_account_id}_12346`,\n    message: 'Home buying tips for first-time buyers 📝 Link in bio! #HomeBuying #RealEstateTips #FirstTimeHomeBuyer',\n    created_time: new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString(),\n    permalink_url: `https://facebook.com/${account.platform_account_id}/posts/12346`,\n    type: 'link',\n    insights: {\n      data: [\n        {name: 'post_impressions', values: [{value: 1800}]},\n        {name: 'post_engaged_users', values: [{value: 95}]},\n        {name: 'post_reactions_like_total', values: [{value: 67}]},\n        {name: 'post_comments', values: [{value: 15}]},\n        {name: 'post_shares', values: [{value: 8}]}\n      ]\n    }\n  }\n];\n\n// Transform to our schema\nconst transformedPosts = mockPosts.map(post => {\n  // Extract insights\n  const insights = {};\n  if (post.insights && post.insights.data) {\n    post.insights.data.forEach(metric => {\n      insights[metric.name] = metric.values[0].value;\n    });\n  }\n  \n  // Extract hashtags\n  const hashtagRegex = /#(\\w+)/g;\n  const hashtags = [];\n  let match;\n  while ((match = hashtagRegex.exec(post.message || '')) !== null) {\n    hashtags.push(match[1]);\n  }\n  \n  // Determine content type\n  let contentType = 'text';\n  let mediaUrls = [];\n  if (post.type === 'photo') {\n    contentType = 'image';\n    if (post.full_picture) mediaUrls.push(post.full_picture);\n  } else if (post.type === 'video') {\n    contentType = 'video';\n  } else if (post.type === 'link') {\n    contentType = 'text';\n  }\n  \n  if (post.attachments && post.attachments.data) {\n    post.attachments.data.forEach(att => {\n      if (att.media && att.media.image) {\n        mediaUrls.push(att.media.image.src);\n        if (contentType === 'text') contentType = 'image';\n      }\n    });\n  }\n  \n  return {\n    organization_id: account.organization_id,\n    account_id: account.id,\n    platform: 'facebook',\n    platform_post_id: post.id,\n    post_url: post.permalink_url,\n    content_text: post.message || '',\n    content_type: contentType,\n    media_urls: JSON.stringify(mediaUrls),\n    media_count: mediaUrls.length,\n    published_at: post.created_time,\n    is_published: true,\n    hashtags: JSON.stringify(hashtags),\n    likes_count: insights.post_reactions_like_total || 0,\n    comments_count: insights.post_comments || 0,\n    shares_count: insights.post_shares || 0,\n    reach: insights.post_engaged_users || 0,\n    impressions: insights.post_impressions || 0,\n    last_metrics_update: new Date().toISOString()\n  };\n});\n\nreturn transformedPosts.map(post => ({json: post}));"
+      },
+      "id": "sync-facebook",
+      "name": "Sync Facebook Posts",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [850, 200]
+    },
+    {
+      "parameters": {
+        "jsCode": "// ===============================================\n// INSTAGRAM POST SYNC\n// ===============================================\nconst account = $input.first().json;\n\n// Instagram Graph API\n// URL: https://graph.facebook.com/v18.0/{ig-user-id}/media\n// Fields: id,caption,media_type,media_url,permalink,timestamp,like_count,comments_count,insights.metric(impressions,reach,engagement)\n\nconst mockPosts = [\n  {\n    id: 'ig_post_1',\n    caption: 'Breathtaking sunset views from this penthouse! 🌅 #LuxuryLiving #Penthouse #RealEstateGoals #DreamHome',\n    media_type: 'IMAGE',\n    media_url: 'https://example.com/ig-image.jpg',\n    permalink: `https://instagram.com/p/ABC123`,\n    timestamp: new Date(Date.now() - 12 * 60 * 60 * 1000).toISOString(),\n    like_count: 523,\n    comments_count: 47,\n    insights: {\n      data: [\n        {name: 'impressions', values: [{value: 4250}]},\n        {name: 'reach', values: [{value: 3180}]},\n        {name: 'engagement', values: [{value: 605}]},\n        {name: 'saved', values: [{value: 35}]}\n      ]\n    }\n  },\n  {\n    id: 'ig_post_2',\n    caption: 'New listing alert! 🚨 Modern 3BR in prime location. DM for details! #NewListing #ModernHome #ForSale',\n    media_type: 'CAROUSEL_ALBUM',\n    permalink: `https://instagram.com/p/DEF456`,\n    timestamp: new Date(Date.now() - 36 * 60 * 60 * 1000).toISOString(),\n    like_count: 387,\n    comments_count: 28,\n    insights: {\n      data: [\n        {name: 'impressions', values: [{value: 3100}]},\n        {name: 'reach', values: [{value: 2450}]},\n        {name: 'engagement', values: [{value: 445}]},\n        {name: 'saved', values: [{value: 30}]}\n      ]\n    }\n  },\n  {\n    id: 'ig_post_3',\n    caption: 'Virtual tour of our newest property! Swipe to see more 👉 #VirtualTour #PropertyShowcase',\n    media_type: 'VIDEO',\n    media_url: 'https://example.com/ig-video.mp4',\n    permalink: `https://instagram.com/p/GHI789`,\n    timestamp: new Date(Date.now() - 48 * 60 * 60 * 1000).toISOString(),\n    like_count: 612,\n    comments_count: 53,\n    video_views: 2850,\n    insights: {\n      data: [\n        {name: 'impressions', values: [{value: 5200}]},\n        {name: 'reach', values: [{value: 3900}]},\n        {name: 'engagement', values: [{value: 715}]},\n        {name: 'video_views', values: [{value: 2850}]}\n      ]\n    }\n  }\n];\n\nconst transformedPosts = mockPosts.map(post => {\n  const insights = {};\n  if (post.insights && post.insights.data) {\n    post.insights.data.forEach(metric => {\n      insights[metric.name] = metric.values[0].value;\n    });\n  }\n  \n  const hashtagRegex = /#(\\w+)/g;\n  const hashtags = [];\n  let match;\n  while ((match = hashtagRegex.exec(post.caption || '')) !== null) {\n    hashtags.push(match[1]);\n  }\n  \n  let contentType = 'text';\n  if (post.media_type === 'IMAGE') contentType = 'image';\n  else if (post.media_type === 'VIDEO') contentType = 'video';\n  else if (post.media_type === 'CAROUSEL_ALBUM') contentType = 'carousel';\n  \n  return {\n    organization_id: account.organization_id,\n    account_id: account.id,\n    platform: 'instagram',\n    platform_post_id: post.id,\n    post_url: post.permalink,\n    content_text: post.caption || '',\n    content_type: contentType,\n    media_urls: post.media_url ? JSON.stringify([post.media_url]) : '[]',\n    media_count: post.media_url ? 1 : 0,\n    published_at: post.timestamp,\n    is_published: true,\n    hashtags: JSON.stringify(hashtags),\n    likes_count: post.like_count || 0,\n    comments_count: post.comments_count || 0,\n    shares_count: 0, // Instagram doesn't track shares\n    saves_count: insights.saved || 0,\n    views_count: post.video_views || 0,\n    reach: insights.reach || 0,\n    impressions: insights.impressions || 0,\n    last_metrics_update: new Date().toISOString()\n  };\n});\n\nreturn transformedPosts.map(post => ({json: post}));"
+      },
+      "id": "sync-instagram",
+      "name": "Sync Instagram Posts",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [850, 300]
+    },
+    {
+      "parameters": {
+        "jsCode": "// ===============================================\n// TWITTER/X POST SYNC\n// ===============================================\nconst account = $input.first().json;\n\n// Twitter API v2\n// URL: https://api.twitter.com/2/users/{id}/tweets\n// Fields: id,text,created_at,public_metrics,entities\n\nconst mockTweets = [\n  {\n    id: 'tweet_123',\n    text: 'Just listed! Stunning 4BR home with pool and mountain views. Schedule your showing today! 🏡 #RealEstate #HomesForSale #DreamHome',\n    created_at: new Date(Date.now() - 8 * 60 * 60 * 1000).toISOString(),\n    public_metrics: {\n      retweet_count: 23,\n      reply_count: 12,\n      like_count: 89,\n      quote_count: 5,\n      impression_count: 3400,\n      url_link_clicks: 45\n    },\n    entities: {\n      hashtags: [{tag: 'RealEstate'}, {tag: 'HomesForSale'}, {tag: 'DreamHome'}],\n      urls: [{expanded_url: 'https://example.com/listing/123'}]\n    }\n  },\n  {\n    id: 'tweet_124',\n    text: 'Market update: Inventory is low and buyers are motivated. Great time to sell! Contact us for a free home valuation. #RealEstateMarket #HomeSelling',\n    created_at: new Date(Date.now() - 28 * 60 * 60 * 1000).toISOString(),\n    public_metrics: {\n      retweet_count: 15,\n      reply_count: 8,\n      like_count: 54,\n      quote_count: 2,\n      impression_count: 2100,\n      url_link_clicks: 18\n    },\n    entities: {\n      hashtags: [{tag: 'RealEstateMarket'}, {tag: 'HomeSelling'}]\n    }\n  }\n];\n\nconst transformedTweets = mockTweets.map(tweet => {\n  const hashtags = (tweet.entities?.hashtags || []).map(h => h.tag);\n  \n  return {\n    organization_id: account.organization_id,\n    account_id: account.id,\n    platform: 'twitter',\n    platform_post_id: tweet.id,\n    post_url: `https://twitter.com/${account.account_handle}/status/${tweet.id}`,\n    content_text: tweet.text,\n    content_type: 'text',\n    media_urls: '[]',\n    media_count: 0,\n    published_at: tweet.created_at,\n    is_published: true,\n    hashtags: JSON.stringify(hashtags),\n    likes_count: tweet.public_metrics.like_count || 0,\n    comments_count: tweet.public_metrics.reply_count || 0,\n    shares_count: tweet.public_metrics.retweet_count + (tweet.public_metrics.quote_count || 0),\n    clicks_count: tweet.public_metrics.url_link_clicks || 0,\n    impressions: tweet.public_metrics.impression_count || 0,\n    last_metrics_update: new Date().toISOString()\n  };\n});\n\nreturn transformedTweets.map(tweet => ({json: tweet}));"
+      },
+      "id": "sync-twitter",
+      "name": "Sync Twitter Posts",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [850, 400]
+    },
+    {
+      "parameters": {
+        "jsCode": "// ===============================================\n// LINKEDIN POST SYNC\n// ===============================================\nconst account = $input.first().json;\n\n// LinkedIn API\n// URL: https://api.linkedin.com/v2/ugcPosts\n\nconst mockPosts = [\n  {\n    id: 'urn:li:share:7123456789',\n    text: 'Excited to announce our latest commercial property development in the heart of downtown. State-of-the-art office spaces now available. Learn more in the comments. #CommercialRealEstate #OfficeSpace #BusinessGrowth',\n    created: new Date(Date.now() - 15 * 60 * 60 * 1000).toISOString(),\n    numLikes: 234,\n    numComments: 45,\n    numShares: 28,\n    numViews: 5600\n  },\n  {\n    id: 'urn:li:share:7123456790',\n    text: 'Proud to be recognized as a top real estate agency in the region! Thank you to our amazing clients and team. #RealEstateExcellence #TeamSuccess',\n    created: new Date(Date.now() - 40 * 60 * 60 * 1000).toISOString(),\n    numLikes: 412,\n    numComments: 67,\n    numShares: 45,\n    numViews: 8200\n  }\n];\n\nconst transformedPosts = mockPosts.map(post => {\n  const hashtagRegex = /#(\\w+)/g;\n  const hashtags = [];\n  let match;\n  while ((match = hashtagRegex.exec(post.text || '')) !== null) {\n    hashtags.push(match[1]);\n  }\n  \n  return {\n    organization_id: account.organization_id,\n    account_id: account.id,\n    platform: 'linkedin',\n    platform_post_id: post.id,\n    post_url: `https://linkedin.com/feed/update/${post.id}`,\n    content_text: post.text,\n    content_type: 'text',\n    media_urls: '[]',\n    media_count: 0,\n    published_at: post.created,\n    is_published: true,\n    hashtags: JSON.stringify(hashtags),\n    likes_count: post.numLikes || 0,\n    comments_count: post.numComments || 0,\n    shares_count: post.numShares || 0,\n    views_count: post.numViews || 0,\n    last_metrics_update: new Date().toISOString()\n  };\n});\n\nreturn transformedPosts.map(post => ({json: post}));"
+      },
+      "id": "sync-linkedin",
+      "name": "Sync LinkedIn Posts",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [850, 500]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Generic fallback for other platforms\nconst account = $input.first().json;\n\nreturn [{\n  json: {\n    account_id: account.id,\n    platform: account.platform,\n    status: 'skipped',\n    message: `Platform ${account.platform} not yet implemented`\n  }\n}];"
+      },
+      "id": "sync-other",
+      "name": "Other Platforms",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [850, 600]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $env.SUPABASE_URL }}/rest/v1/social_media_posts",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {"name": "apikey", "value": "={{ $env.SUPABASE_SERVICE_KEY }}"},
+            {"name": "Authorization", "value": "=Bearer {{ $env.SUPABASE_SERVICE_KEY }}"},
+            {"name": "Content-Type", "value": "application/json"},
+            {"name": "Prefer", "value": "resolution=merge-duplicates"}
+          ]
+        },
+        "sendBody": true,
+        "contentType": "application/json",
+        "body": "={{ JSON.stringify($json) }}",
+        "options": {
+          "batching": {
+            "batch": {
+              "batchSize": 50,
+              "batchInterval": 1000
+            }
+          }
+        }
+      },
+      "id": "upsert-posts",
+      "name": "Upsert Posts to Database",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [1050, 400]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Update hashtag performance\nconst posts = $input.all();\nconst hashtagStats = {};\n\nposts.forEach(item => {\n  const post = item.json;\n  if (!post.hashtags) return;\n  \n  let hashtags = [];\n  try {\n    hashtags = JSON.parse(post.hashtags);\n  } catch (e) {\n    return;\n  }\n  \n  hashtags.forEach(tag => {\n    const key = `${post.organization_id}:${post.platform}:${tag}`;\n    if (!hashtagStats[key]) {\n      hashtagStats[key] = {\n        organization_id: post.organization_id,\n        platform: post.platform,\n        hashtag: tag,\n        times_used: 0,\n        total_likes: 0,\n        total_comments: 0,\n        total_shares: 0,\n        total_impressions: 0,\n        engagement_rates: []\n      };\n    }\n    \n    hashtagStats[key].times_used++;\n    hashtagStats[key].total_likes += post.likes_count || 0;\n    hashtagStats[key].total_comments += post.comments_count || 0;\n    hashtagStats[key].total_shares += post.shares_count || 0;\n    hashtagStats[key].total_impressions += post.impressions || 0;\n    if (post.engagement_rate) {\n      hashtagStats[key].engagement_rates.push(post.engagement_rate);\n    }\n  });\n});\n\n// Calculate averages and prepare for upsert\nconst hashtagRecords = Object.values(hashtagStats).map(stat => {\n  const avgEngagement = stat.engagement_rates.length > 0\n    ? stat.engagement_rates.reduce((sum, r) => sum + r, 0) / stat.engagement_rates.length\n    : 0;\n  \n  return {\n    organization_id: stat.organization_id,\n    platform: stat.platform,\n    hashtag: stat.hashtag,\n    times_used: stat.times_used,\n    avg_engagement_rate: parseFloat(avgEngagement.toFixed(2)),\n    total_impressions: stat.total_impressions,\n    total_likes: stat.total_likes,\n    total_comments: stat.total_comments,\n    total_shares: stat.total_shares,\n    last_used_at: new Date().toISOString(),\n    updated_at: new Date().toISOString()\n  };\n});\n\nreturn hashtagRecords.map(record => ({json: record}));"
+      },
+      "id": "process-hashtags",
+      "name": "Process Hashtag Performance",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1250, 400]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $env.SUPABASE_URL }}/rest/v1/hashtag_performance",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {"name": "apikey", "value": "={{ $env.SUPABASE_SERVICE_KEY }}"},
+            {"name": "Authorization", "value": "=Bearer {{ $env.SUPABASE_SERVICE_KEY }}"},
+            {"name": "Content-Type", "value": "application/json"},
+            {"name": "Prefer", "value": "resolution=merge-duplicates"}
+          ]
+        },
+        "sendBody": true,
+        "contentType": "application/json",
+        "body": "={{ JSON.stringify($json) }}",
+        "options": {
+          "batching": {
+            "batch": {
+              "batchSize": 100
+            }
+          }
+        }
+      },
+      "id": "save-hashtags",
+      "name": "Save Hashtag Stats",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [1450, 400]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Summary of sync\nconst items = $input.all();\n\nconst summary = {\n  total_posts_synced: items.length,\n  platforms: {},\n  sync_completed_at: new Date().toISOString()\n};\n\nitems.forEach(item => {\n  const platform = item.json.platform;\n  if (!summary.platforms[platform]) {\n    summary.platforms[platform] = 0;\n  }\n  summary.platforms[platform]++;\n});\n\nreturn [{json: summary}];"
+      },
+      "id": "summarize",
+      "name": "Summarize Sync",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1650, 400]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $env.SUPABASE_URL }}/rest/v1/workflow_executions",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {"name": "apikey", "value": "={{ $env.SUPABASE_SERVICE_KEY }}"},
+            {"name": "Authorization", "value": "=Bearer {{ $env.SUPABASE_SERVICE_KEY }}"},
+            {"name": "Content-Type", "value": "application/json"}
+          ]
+        },
+        "sendBody": true,
+        "contentType": "application/json",
+        "body": "={{ JSON.stringify({\n  workflow_name: 'social-media-post-sync-v1',\n  execution_id: $execution.id,\n  trigger_type: 'schedule',\n  status: 'success',\n  items_processed: $json.total_posts_synced,\n  output_data: $json,\n  completed_at: new Date().toISOString()\n}) }}"
+      },
+      "id": "log-execution",
+      "name": "Log Execution",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [1850, 400]
+    }
+  ],
+  "connections": {
+    "Every 2 Hours": {
+      "main": [[{"node": "Fetch Active Accounts", "type": "main", "index": 0}]]
+    },
+    "Fetch Active Accounts": {
+      "main": [[{"node": "Route by Platform", "type": "main", "index": 0}]]
+    },
+    "Route by Platform": {
+      "main": [
+        [{"node": "Sync Facebook Posts", "type": "main", "index": 0}],
+        [{"node": "Sync Instagram Posts", "type": "main", "index": 0}],
+        [{"node": "Sync Twitter Posts", "type": "main", "index": 0}],
+        [{"node": "Sync LinkedIn Posts", "type": "main", "index": 0}],
+        [{"node": "Other Platforms", "type": "main", "index": 0}]
+      ]
+    },
+    "Sync Facebook Posts": {
+      "main": [[{"node": "Upsert Posts to Database", "type": "main", "index": 0}]]
+    },
+    "Sync Instagram Posts": {
+      "main": [[{"node": "Upsert Posts to Database", "type": "main", "index": 0}]]
+    },
+    "Sync Twitter Posts": {
+      "main": [[{"node": "Upsert Posts to Database", "type": "main", "index": 0}]]
+    },
+    "Sync LinkedIn Posts": {
+      "main": [[{"node": "Upsert Posts to Database", "type": "main", "index": 0}]]
+    },
+    "Other Platforms": {
+      "main": [[{"node": "Upsert Posts to Database", "type": "main", "index": 0}]]
+    },
+    "Upsert Posts to Database": {
+      "main": [[{"node": "Process Hashtag Performance", "type": "main", "index": 0}]]
+    },
+    "Process Hashtag Performance": {
+      "main": [[{"node": "Save Hashtag Stats", "type": "main", "index": 0}]]
+    },
+    "Save Hashtag Stats": {
+      "main": [[{"node": "Summarize Sync", "type": "main", "index": 0}]]
+    },
+    "Summarize Sync": {
+      "main": [[{"node": "Log Execution", "type": "main", "index": 0}]]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  }
+}
